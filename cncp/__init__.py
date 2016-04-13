@@ -7,3 +7,4 @@
 #
 
 from .lattice import lattice_graph, draw_lattice
+from .ernetworks import erdos_renyi_graph_from_scratch
