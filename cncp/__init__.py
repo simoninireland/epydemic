@@ -8,3 +8,6 @@
 
 from .lattice import lattice_graph, draw_lattice
 from .ernetworks import erdos_renyi_graph_from_scratch
+from .networkwithdynamics import GraphWithDynamics
+from .synchronousdynamics import GraphWithSynchronousDynamics
+from .sirsynchronousdynamics import SIRSynchronousDynamics

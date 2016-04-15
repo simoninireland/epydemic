@@ -1,4 +1,4 @@
-# Functions for ER networks
+# Makefile for "Complex networks, complex processes"
 #
 # Copyright (C) 2014-2016 Simon Dobson
 # 

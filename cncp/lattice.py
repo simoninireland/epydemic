@@ -1,4 +1,4 @@
-# Makefile for "Complex networks, complex processes"
+# Functions to create and display lattice networks.
 #
 # Copyright (C) 2014-2016 Simon Dobson
 # 
