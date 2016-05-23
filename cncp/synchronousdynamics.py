@@ -74,6 +74,6 @@ class GraphWithSynchronousDynamics(GraphWithDynamics):
         rc['events'] = events
         rc['event_distribution'] = eventDist
         rc['timesteps_with_events'] = timestepEvents
+        rc['node_types'] = self.populations()
         return rc
-    
 
