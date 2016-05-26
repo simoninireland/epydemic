@@ -11,7 +11,7 @@ import numpy
 import time
 
 from .networkwithdynamics import GraphWithDynamics
-from .gillespiedynamics import GraphWithGillespieDynamics
+from .stochasticdynamics import GraphWithStochasticDynamics
 
 
 class SIRStochasticDynamics(GraphWithStochasticDynamics):
