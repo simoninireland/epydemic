@@ -6,6 +6,8 @@
 # Alike 3.0 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 #
 
+import math
+import numpy
 import networkx
 import time
 
@@ -32,6 +34,10 @@ class GraphWithStochasticDynamics(GraphWithDynamics):
         It's important that the transitions always come in the same order
         in the vector, even though the rates (and indeed functions) can
         change over time.
+
+        The transition functions should throw an exception if the transition
+        can't happen for whatever reason. This will stop the dynamics and
+        not be propagated. (Is this the right behaviour?)
         
         t: timestep for which we want the transitions
         returns: the transition vector'''
@@ -84,7 +90,12 @@ class GraphWithStochasticDynamics(GraphWithDynamics):
             #    pr[k] = p       
             
             # perform the transition
-            f(t)
+            try:
+                # call the transition function associated with the selected event
+                f(t)
+            except Exception:
+                # if the transition fails, silently stop the dynamics
+                break
             
             # increment the event counter and distribution
             events = events + 1
