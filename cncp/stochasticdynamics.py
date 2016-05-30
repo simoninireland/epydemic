@@ -67,7 +67,9 @@ class GraphWithStochasticDynamics(GraphWithDynamics):
             a = 0.0
             for (r, _) in transitions:
                 a = a + r
-                
+            if a == 0:       # no events with non-zero rates 
+                break
+            
             # calculate the timestep delta
             r1 = numpy.random.random()
             dt = (1.0 / a) * math.log(1.0 / r1)
