@@ -18,3 +18,8 @@ from .stochasticdynamics import GraphWithStochasticDynamics
 # SIR processes under different dynamics
 from .sirsynchronousdynamics import SIRSynchronousDynamics
 from .sirstochasticdynamics import SIRStochasticDynamics
+
+# experiment management
+from .experiment import Experiment
+from .lab import Lab
+

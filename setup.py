@@ -9,7 +9,7 @@
 setup(name = 'cncp',
       version = '0.1',
       description = 'Complex networks, complex processes',
-      url = 'http://github.com/simoninireland/cncp/lib/cncp',
+      url = 'http://github.com/simoninireland/cncp/src',
       author = 'Simon Dobson',
       author_email = 'simon.dobson@computer.org',
       license = 'CC-BY-NC-SA',

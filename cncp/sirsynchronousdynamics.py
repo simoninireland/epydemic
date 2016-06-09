@@ -23,10 +23,7 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
     SUSCEPTIBLE = 'S'
     INFECTED = 'I'
     RECOVERED = 'R'
-    
-    # list of infected nodes, the site of all the dynamics
-    _infected = []
-    
+        
     def __init__( self, pInfect = 0.0, pRecover = 1.0, pInfected = 0.0, g = None ):
         '''Generate a graph with SIR dynamics for the given parameters.
         
@@ -35,10 +32,15 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
         pInfected: initial infection probability (defaults to 0.0)
         g: the graph to copy from (optional)'''
         GraphWithSynchronousDynamics.__init__(self, g)
+
+        # dynamics parameters
         self._pInfect = pInfect
         self._pRecover = pRecover
         self._pInfected = pInfected
-            
+
+        # list of infected nodes, the sites of all the dynamics
+        self._infected = []
+
     def before( self ):
         '''Seed the network with infected nodes, and mark all edges
         as unoccupied by the dynamics.'''
