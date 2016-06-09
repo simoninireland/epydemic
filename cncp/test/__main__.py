@@ -8,11 +8,12 @@
 
 import unittest
 from .experiments import *
+from .labs import *
 
 experimentsSuite = unittest.TestLoader().loadTestsFromTestCase(ExperimentTests)
+labsSuite = unittest.TestLoader().loadTestsFromTestCase(LabTests)
 
-suite = unittest.TestSuite([ experimentsSuite ])
-
+suite = unittest.TestSuite([ experimentsSuite, labsSuite ])
 
 if __name__ == '__main__':
     unittest.TextTestRunner(verbosity = 2).run(suite)
