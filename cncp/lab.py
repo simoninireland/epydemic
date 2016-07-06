@@ -6,21 +6,29 @@
 # Alike 3.0 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 #
 
-import numpy
-import numpy.random
+import cncp
 
 
 class Lab:
-    '''A computational experiment. The experiment is performed in parallel
-    across a cluster, conducting repeated calculations for points in a
-    multi-dimensional parameter space. Experiments are stored
-    persistently along with their metadata to allow for
-    replication.'''
+    '''A laboratory for computational experiments. The lab conducts an
+    experiment at different points in a multi-dimensional parameter space.
+    The default performs all the experiments locally; sub-classes exist
+    to perform remote parallel experiments.'''
 
-    def __init__( self ):
-        '''Create an empty lab.'''
+    def __init__( self, name = None ):
+        '''Create an empty lab.
+ 
+        name: an identifier for this lab, only used for documentation'''
+        self._name = name
         self._parameters = dict()
+        self._results = None
 
+    def name( self ):
+        '''Return the lab's name.
+
+        returns: the lab name'''
+        return self._name
+    
     def addParameter( self, k, r ):
         '''Add a parameter to the experiment's parameter space. k is the
         parameter name, and r is its range.
@@ -85,20 +93,7 @@ class Lab:
 
         # return the complete parameter space
         return ds
-
-    def _mixup( self, ps ):
-        '''Private method to mix up a list of values in-place using a Fisher-Yates
-        shuffle (see https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
-
-        ps: the array
-        returns: the array, shuffled in-place'''
-        for i in xrange(len(ps) - 1, 0, -1):
-            j = int(numpy.random.random() * i)
-            temp = ps[i]
-            ps[i] = ps[j]
-            ps[j] = temp
-        return ps
-            
+           
     def parameterSpace( self ):
         '''Return the parameter space of the experiment as a list of dicts,
         with each dict mapping each parameter name to a value.
@@ -111,26 +106,32 @@ class Lab:
             return self._crossProduct(ps)
     
     def runExperiment( self, e ):
-        '''Run an experiment over all the points in the parameter space,
-        returning a list of result dicts (each of which contains the
+        '''Run an experiment over all the points in the parameter space.
+
+        e: the experiment'''
+
+        # create the parameter space
+        ps = self.parameterSpace()
+
+        # run the experiment at each point
+        self._results = []
+        for p in ps:
+            res = e.runExperiment(p)
+            self._results.append(res)
+
+    def results( self ):
+        '''Retrieve the list of result dicts (each of which contains the
         point at which the experiment was evaluated to get this
         result).
 
-        e: the experiment
-        returns: a list of results'''
-
-        # create the parameter space
-        ps = self._mixup(self.parameterSpace())
-
-        # run the experiment at each point
-        results = []
-        for p in ps:
-            res = e.runExperiment(p)
-            results.append(res)
-
-        # return the final results
-        return results
+        returns: a list of experimental results'''
+        return self._results
     
-    
+    def ready( self ):
+        '''Test whether all the results are ready. For this sequential
+        implementation all results are either ready or not.
+
+        returns: Trus if the results are in'''
+        return (self.results() is not None)
         
     

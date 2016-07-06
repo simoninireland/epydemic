@@ -22,4 +22,8 @@ from .sirstochasticdynamics import SIRStochasticDynamics
 # experiment management
 from .experiment import Experiment
 from .lab import Lab
+from .clusterlab import ClusterLab
+from .labnotebook import LabNotebook
+from .sqlitelabnotebook import SqliteLabNotebook
+
 

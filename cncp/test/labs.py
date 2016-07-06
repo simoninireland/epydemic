@@ -28,16 +28,6 @@ class LabTests(unittest.TestCase):
         '''Create a lab in which to perform tests.'''
         self._lab = Lab()
         
-    def testMixup( self ):
-        '''Test that parameter spaces are suitably mixed, defined as not
-        more than 0.5% of elements landing in their original place'''
-        n = 1000
-        
-        l = numpy.arange(0, n)
-        self._lab._mixup(l)
-        sp = [ v for v in (l == numpy.arange(0, n)) if v ]
-        self.assertTrue(len(sp) <= (n / 0.005))
-
     def testParameterOne( self ):
         '''Test that we can set a single parameter.'''
         self._lab['a'] = numpy.arange(0, 100)
@@ -68,16 +58,17 @@ class LabTests(unittest.TestCase):
 
         r = numpy.arange(0, n)
         self._lab['a'] = r
-        res = self._lab.runExperiment(SampleExperiment())
-
+        self._lab.runExperiment(SampleExperiment())
+        res = self._lab.results()
+        
         # check that the whole parameter space has a result
         self.assertEqual(len(res), n)
         for p in res:
-            self.assertIn(p['parameters']['a'], r)
+            self.assertIn(p[Experiment.PARAMETERS]['a'], r)
 
         # check that each result corresponds to its parameter
         for p in res:
-            self.assertEqual(p['parameters']['a'], p['total'])
+            self.assertEqual(p[Experiment.PARAMETERS]['a'], p[Experiment.RESULTS]['total'])
 
     def testRunTwo( self ):
         '''Test that a simple experiment runs against a 2D parameter space.'''
@@ -86,16 +77,17 @@ class LabTests(unittest.TestCase):
         r = numpy.arange(0, n)
         self._lab['a'] = r
         self._lab['b'] = r
-        res = self._lab.runExperiment(SampleExperiment())
+        self._lab.runExperiment(SampleExperiment())
+        res = self._lab.results()
 
         # check that the whole parameter space has a result
         self.assertEqual(len(res), n * n)
         for p in res:
-            self.assertIn(p['parameters']['a'], r)
-            self.assertIn(p['parameters']['b'], r)
+            self.assertIn(p[Experiment.PARAMETERS]['a'], r)
+            self.assertIn(p[Experiment.PARAMETERS]['b'], r)
 
         # check that each result corresponds to its parameter
         for p in res:
-            self.assertEqual(p['parameters']['a'] + p['parameters']['b'], p['total'])
+            self.assertEqual(p[Experiment.PARAMETERS]['a'] + p[Experiment.PARAMETERS]['b'], p[Experiment.RESULTS]['total'])
  
         

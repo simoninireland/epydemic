@@ -58,7 +58,6 @@ class GraphWithStochasticDynamics(GraphWithDynamics):
         self.before()
         t = 0
         events = 0
-        eventDist = dict()
         while True:
             # pull the transition dynamics at this timestep
             transitions = self.transitions(t)
@@ -101,7 +100,6 @@ class GraphWithStochasticDynamics(GraphWithDynamics):
             
             # increment the event counter and distribution
             events = events + 1
-            eventDist[t] = 1
             
             # check for termination
             if self.at_equilibrium(t):
@@ -113,7 +111,6 @@ class GraphWithStochasticDynamics(GraphWithDynamics):
         rc['elapsed_time'] = rc['end_time'] - rc['start_time']
         rc['timesteps'] = t
         rc['events'] = events
-        rc['event_distribution'] = eventDist
         rc['node_types'] = self.populations()        
         return rc
 

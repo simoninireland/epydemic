@@ -31,7 +31,7 @@ class SampleExperiment0(Experiment):
 
     def report( self, res ):
         ext = Experiment.report(self, res)
-        ext['phases'] = self._ps
+        ext[self.METADATA]['phases'] = self._ps
         return ext
 
 class SampleExperiment1(Experiment):
@@ -85,7 +85,6 @@ class SampleExperiment7(SampleExperiment0):
         raise Exception('We failed (on purpose)')
 
 
-        
 class ExperimentTests(unittest.TestCase):
 
     def testNoResults( self ):
@@ -93,23 +92,23 @@ class ExperimentTests(unittest.TestCase):
         e = SampleExperiment1()
         params = dict()
         res = e.runExperiment(params)
-        self.assertTrue(res[Experiment.STATUS])
+        self.assertTrue(res[Experiment.METADATA][Experiment.STATUS])
 
     def testPhases( self ):
         '''Test that phases execute correctly.'''
         e = SampleExperiment2()
         params = dict()
         res = e.runExperiment(params)
-        self.assertTrue(res[Experiment.STATUS])
-        self.assertIn('phases', res.keys())
-        self.assertEqual(res['phases'], [ 'setup', 'do', 'teardown' ])
+        self.assertTrue(res[Experiment.METADATA][Experiment.STATUS])
+        self.assertIn('phases', res[Experiment.METADATA].keys())
+        self.assertEqual(res[Experiment.METADATA]['phases'], [ 'setup', 'do', 'teardown' ])
 
     def testParameters( self ):
         '''Test that parameters are recorded properly.'''
         e = SampleExperiment2()
         params = dict(a = 1, b = 1.0, c = 'hello world')
         res = e.runExperiment(params)
-        self.assertTrue(res[Experiment.STATUS])
+        self.assertTrue(res[Experiment.METADATA][Experiment.STATUS])
         self.assertIn(Experiment.PARAMETERS, res.keys())
         for k in params.keys():
             self.assertEqual(res[Experiment.PARAMETERS][k], params[k])
@@ -119,49 +118,51 @@ class ExperimentTests(unittest.TestCase):
         e = SampleExperiment3()
         params = dict(a = 1, b = 2, c = 'hello world')
         res = e.runExperiment(params)
-        self.assertTrue(res[Experiment.STATUS])
-        self.assertIn('result', res.keys())
-        self.assertEqual(res['result'], params['a'] + params['b'])
+        self.assertTrue(res[Experiment.METADATA][Experiment.STATUS])
+        self.assertIn('result', res[Experiment.RESULTS].keys())
+        self.assertEqual(res[Experiment.RESULTS]['result'], params['a'] + params['b'])
 
     def testTiming( self ):
         '''Test that timings are plausible.'''
         e = SampleExperiment4()
         params = dict()
         res = e.runExperiment(params)
-        self.assertTrue(res[Experiment.STATUS])
-        self.assertTrue(res[Experiment.END_TIME] > res[Experiment.START_TIME])
-        self.assertTrue(res[Experiment.ELAPSED_TIME] > 0)
-        self.assertTrue(res[Experiment.SETUP_TIME] > 0)
-        self.assertTrue(res[Experiment.EXPERIMENT_TIME] > 0)
-        self.assertTrue(res[Experiment.TEARDOWN_TIME] > 0)
-        self.assertTrue(res[Experiment.ELAPSED_TIME] >= res[Experiment.SETUP_TIME] + res[Experiment.TEARDOWN_TIME] + res[Experiment.EXPERIMENT_TIME])
+        self.assertTrue(res[Experiment.METADATA][Experiment.STATUS])
+
+        timing = res[Experiment.METADATA]
+        self.assertTrue(timing[Experiment.END_TIME] > timing[Experiment.START_TIME])
+        self.assertTrue(timing[Experiment.ELAPSED_TIME] > 0)
+        self.assertTrue(timing[Experiment.SETUP_TIME] > 0)
+        self.assertTrue(timing[Experiment.EXPERIMENT_TIME] > 0)
+        self.assertTrue(timing[Experiment.TEARDOWN_TIME] > 0)
+        self.assertTrue(timing[Experiment.ELAPSED_TIME] >= timing[Experiment.SETUP_TIME] + timing[Experiment.TEARDOWN_TIME] + timing[Experiment.EXPERIMENT_TIME])
 
     def testException( self ):
         '''Test that exceptions are caught and reported in-line.'''
         e = SampleExperiment5()
         params = dict()
         res = e.runExperiment(params)
-        self.assertFalse(res[Experiment.STATUS])
-        self.assertIn('phases', res.keys())
-        self.assertEqual(res['phases'], [ 'setup', 'teardown' ])
+        self.assertFalse(res[Experiment.METADATA][Experiment.STATUS])
+        self.assertIn('phases', res[Experiment.METADATA].keys())
+        self.assertEqual(res[Experiment.METADATA]['phases'], [ 'setup', 'teardown' ])
 
     def testExceptionInSetup( self ):
         '''Test that exceptions in setup are caught and not torn down.'''
         e = SampleExperiment6()
         params = dict()
         res = e.runExperiment(params)
-        self.assertFalse(res[Experiment.STATUS])
-        self.assertIn('phases', res.keys())
-        self.assertEqual(res['phases'], [ ])
+        self.assertFalse(res[Experiment.METADATA][Experiment.STATUS])
+        self.assertIn('phases', res[Experiment.METADATA].keys())
+        self.assertEqual(res[Experiment.METADATA]['phases'], [ ])
 
     def testExceptionInTeardown( self ):
         '''Test that exceptions in teardown are caught.'''
         e = SampleExperiment7()
         params = dict()
         res = e.runExperiment(params)
-        self.assertFalse(res[Experiment.STATUS])
-        self.assertIn('phases', res.keys())
-        self.assertEqual(res['phases'], [ 'setup', 'do' ])
+        self.assertFalse(res[Experiment.METADATA][Experiment.STATUS])
+        self.assertIn('phases', res[Experiment.METADATA].keys())
+        self.assertEqual(res[Experiment.METADATA]['phases'], [ 'setup', 'do' ])
 
     def testRecordingOnObject( self ):
         '''Test that everything is also available through the experiment object.'''
@@ -169,8 +170,8 @@ class ExperimentTests(unittest.TestCase):
         params = dict(a = 1, b = 1.0, c = 'hello world')
         e.runExperiment(params)
         res = e.results()
-        self.assertTrue(res[Experiment.STATUS])
-        self.assertEqual(res[Experiment.STATUS], e.success())
-        self.assertIn('result', res.keys())
-        self.assertEqual(res['result'], params['a'] + params['b'])
+        self.assertTrue(res[Experiment.METADATA][Experiment.STATUS])
+        self.assertEqual(res[Experiment.METADATA][Experiment.STATUS], e.success())
+        self.assertIn('result', res[Experiment.RESULTS].keys())
+        self.assertEqual(res[Experiment.RESULTS]['result'], params['a'] + params['b'])
 

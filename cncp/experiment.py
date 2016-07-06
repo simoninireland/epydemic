@@ -12,9 +12,16 @@ import time
 class Experiment:
     '''Base class for experiments conducted in a lab. An experiment
     consists of four phases: set up, do the experiment, tear down, and
-    report. Each of these can be overridden to create suites of experiments.'''
+    report. Each of these can be overridden to create suites of experiments.
+    The results are a dict containing metadata, paranmeters, and results,
+    each of which can be extended beyond the common core.'''
 
-    # Common elements reported
+    # Top-level structure for results
+    METADATA = 'metadata'
+    PARAMETERS = 'parameters'
+    RESULTS = 'results'
+
+    # Common metadata elements reported
     START_TIME = 'start_time'
     END_TIME = 'end_time'
     ELAPSED_TIME = 'elapsed_time'
@@ -47,16 +54,19 @@ class Experiment:
         raise NotYetImplementedError('do()')
 
     def report( self, res ):
-        '''Return a dict of results. The default adds timing information
-        to the dict returned by the do() method. Overriding this method can
-        be used to record extra metadata, but be sure to call the base method
-        as well.
+        '''Return a dict of results. The default returns a dict with
+        results keyed by self.RESULTS, the data point in the parameter space
+        keyed by self.PARAMETERS, and timing and other metadata keyed
+        by self.METADATA. Overriding this method can be used to record extra
+        values, but be sure to call the base method as well.
  
         res: the results of do()
         returns: a dict of extended results'''
-        extres = dict(self._timings, **res)
-        extres[self.PARAMETERS] = self._parameters
-        return extres
+        rc = dict()
+        rc[self.METADATA] = self._timings
+        rc[self.PARAMETERS] = self._parameters
+        rc[self.RESULTS] = res
+        return rc
 
     def runExperiment( self, params ):
         '''Run the experiment's set up, do, tear down, and reporting
