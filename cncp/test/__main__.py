@@ -11,6 +11,7 @@ from .experiments import *
 from .labs import *
 from .clusterlabs import *
 from .notebooks import *
+from .sqlitenotebooks import *
 
 experimentsSuite = unittest.TestLoader().loadTestsFromTestCase(ExperimentTests)
 labsSuite = unittest.TestLoader().loadTestsFromTestCase(LabTests)
@@ -18,6 +19,7 @@ clusterlabsSuite = unittest.TestLoader().loadTestsFromTestCase(ClusterLabTests)
 notebooksSuite = unittest.TestLoader().loadTestsFromTestCase(NotebookTests)
 
 suite = unittest.TestSuite([ experimentsSuite, labsSuite, clusterlabsSuite, notebooksSuite ])
+suite = unittest.TestSuite([ labsSuite, notebooksSuite ])
 
 if __name__ == '__main__':
     unittest.TextTestRunner(verbosity = 2).run(suite)

@@ -84,7 +84,6 @@ class ClusterLabTests(unittest.TestCase):
         f = 0.0
         while f < 1:
             f1 = self._lab.readyFraction()
-            print f1
             self.assertTrue( f1 >= f )
             f = f1
         self.assertTrue(self._lab.ready())

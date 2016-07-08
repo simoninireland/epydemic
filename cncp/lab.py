@@ -13,22 +13,23 @@ class Lab:
     '''A laboratory for computational experiments. The lab conducts an
     experiment at different points in a multi-dimensional parameter space.
     The default performs all the experiments locally; sub-classes exist
-    to perform remote parallel experiments.'''
+    to perform remote parallel experiments.
 
-    def __init__( self, name = None ):
+    A Lab stores its result in a notebook, an instance of LabNotebook. By
+    default the ordinary Lab classes uses an in-memory notebook, essentially
+    just a dict; sub-clasess use persistent notebooks to manage larger
+    sets of experiments.'''
+
+    def __init__( self, notebook = None ):
         '''Create an empty lab.
  
-        name: an identifier for this lab, only used for documentation'''
-        self._name = name
+        notebook: the notebook used to store results (defaults to an empty LabNotebook)'''
+        if notebook is None:
+            self._notebook = cncp.LabNotebook()
+        else:
+            self._notebook = notebook
         self._parameters = dict()
-        self._results = None
 
-    def name( self ):
-        '''Return the lab's name.
-
-        returns: the lab name'''
-        return self._name
-    
     def addParameter( self, k, r ):
         '''Add a parameter to the experiment's parameter space. k is the
         parameter name, and r is its range.
@@ -117,21 +118,27 @@ class Lab:
         self._results = []
         for p in ps:
             res = e.runExperiment(p)
-            self._results.append(res)
+            self._notebook.addResult(res)
 
+    def notebook( self ):
+        '''Return the notebook being used by this lab.
+
+        returns: the notebook'''
+        return self._notebook
+    
     def results( self ):
         '''Retrieve the list of result dicts (each of which contains the
         point at which the experiment was evaluated to get this
         result).
 
         returns: a list of experimental results'''
-        return self._results
+        return self._notebook.results()
     
     def ready( self ):
-        '''Test whether all the results are ready. For this sequential
-        implementation all results are either ready or not.
+        '''Test whether all the results are ready, that is none are
+        pending,
 
-        returns: Trus if the results are in'''
-        return (self.results() is not None)
+        returns: True if the results are in'''
+        return (len(selfnotebook().pendingResults()) == 0)
         
     

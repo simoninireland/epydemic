@@ -145,8 +145,7 @@ class ClusterLab(cncp.Lab):
 
         # submit an experiment at each point in the parameter space to the cluster
         view = self._client.load_balanced_view()
-        sim = lambda p: e.runExperiment(p)
-        jobs = view.map_async(sim, ps)
+        jobs = view.map_async((lambda p: e.runExperiment(p)), ps)
 
         # record the mesage ids of all the jobs as submitted but not yet completed
         self._jobs = dict()
