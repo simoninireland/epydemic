@@ -10,7 +10,7 @@ import cncp
 import numpy
 import pickle
 import dill
-from ipyparallel import Client
+#from ipyparallel import Client
 
 
 class ClusterLab(cncp.Lab):
@@ -19,19 +19,19 @@ class ClusterLab(cncp.Lab):
     being performed asynchronously to allow for disconnection and subsequent
     retrieval of results. Combined with a persistent LabNotebook, this
     allows for fully decoupled access to an on-going computational
-    experiment with pircewis retrieval.
+    experiment with piecewise retrieval.
 
     This class requires a cluster to already be set up and running, configured
     for persistent access, with access to the necessary code and libraries,
     and with appropriate security information available.'''
 
-    def __init__( self, name = None, robust = False, url_file = None, profile = None, profile_dir = None, ipython_dir = None, context = None, debug = False, sshserver = None, sshkey = None, password = None, paramiko = None, timeout = 10, cluster_id = None, **extra_args ):
+    def __init__( self, notebook = None, robust = False, url_file = None, profile = None, profile_dir = None, ipython_dir = None, context = None, debug = False, sshserver = None, sshkey = None, password = None, paramiko = None, timeout = 10, cluster_id = None, **extra_args ):
         '''Create an empty lab attached to the given cluster. most of the arguments
         are as expected by the ipyparallel.Client class, and are used to create the
         underlying connection to the cluster.
 
         Lab arguments:
-           name: the lab name, used for documentation
+           notebook: the notebook used to results (defaults to an empty LabNotebook)
            robust: if True, ignores individual job failures (defaults to False)
 
         Cluster client arguments:
@@ -47,7 +47,7 @@ class ClusterLab(cncp.Lab):
            paramiko: True to use paramiko for ssh (defaults to False)
            timeout: timeout in seconds for ssh connection (defaults to 10s)
            cluster_id: string added to runtime files to prevent collisions'''
-        cncp.Lab.__init__(self, name)
+        cncp.Lab.__init__(self, notebook)
         self._robust = robust
         
         # record all the connection arguments for later
@@ -148,9 +148,9 @@ class ClusterLab(cncp.Lab):
         jobs = view.map_async((lambda p: e.runExperiment(p)), ps)
 
         # record the mesage ids of all the jobs as submitted but not yet completed
-        self._jobs = dict()
-        for j in jobs.msg_ids:
-            self._jobs[j] = None
+        psjs = zip(ps, jobs)
+        for (p, j) in psjs:
+            self._notebook.addPendingResult(p, j)
 
         # close our connection to the cluster
         self.close()
@@ -165,7 +165,8 @@ class ClusterLab(cncp.Lab):
         try:
             self.open()
             n = 0
-            for j in self._jobs.keys():
+            for j in self._notebook.pendingResults():
+                # ***** sd: fix to allow better params and job ids in notebooks *****
                 try:
                     if self._client.get_result(j).ready():
                         self._jobs[j] = (self._client.get_result(j).get())[0] # wrangle the list

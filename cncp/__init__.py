@@ -24,6 +24,7 @@ from .experiment import Experiment
 from .lab import Lab
 from .clusterlab import ClusterLab
 from .labnotebook import LabNotebook
+from .jsonlabnotebook import JSONLabNotebook
 from .sqlitelabnotebook import SqliteLabNotebook
 
 

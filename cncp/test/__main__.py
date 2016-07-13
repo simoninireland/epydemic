@@ -11,15 +11,18 @@ from .experiments import *
 from .labs import *
 from .clusterlabs import *
 from .notebooks import *
+from .jsonnotebooks import *
 from .sqlitenotebooks import *
 
 experimentsSuite = unittest.TestLoader().loadTestsFromTestCase(ExperimentTests)
+notebooksSuite = unittest.TestLoader().loadTestsFromTestCase(LabNotebookTests)
+jsonnotebooksSuite = unittest.TestLoader().loadTestsFromTestCase(JSONLabNotebookTests)
 labsSuite = unittest.TestLoader().loadTestsFromTestCase(LabTests)
 clusterlabsSuite = unittest.TestLoader().loadTestsFromTestCase(ClusterLabTests)
-notebooksSuite = unittest.TestLoader().loadTestsFromTestCase(NotebookTests)
 
-suite = unittest.TestSuite([ experimentsSuite, labsSuite, clusterlabsSuite, notebooksSuite ])
-suite = unittest.TestSuite([ labsSuite, notebooksSuite ])
+suite = unittest.TestSuite([ experimentsSuite,
+                             notebooksSuite, jsonnotebooksSuite,
+                             labsSuite, clusterlabsSuite ])
 
 if __name__ == '__main__':
     unittest.TextTestRunner(verbosity = 2).run(suite)

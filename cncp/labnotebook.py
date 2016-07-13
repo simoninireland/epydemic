@@ -21,16 +21,29 @@ class LabNotebook:
     in progress. A pending result can be finalised by providing it with a
     value, or can be deleted.'''
 
-    def __init__( self, name = None ):
-        '''Create an empty notebook.'''
+    def __init__( self, name = None, description = None ):
+        '''Create an empty notebook.
+
+        name: the notebook's name
+        description a free text description'''
         self._name = name
+        self._description = description
         self._results = dict()
+        self._pending = dict()
 
     def name( self ):
-        '''Return the name of the notebook.
+        '''Return the name of the notebook. If the notebook is persistent,
+        this likely relates to its storage in some way (for example a
+        file name).
 
         returns: the notebook name'''
         return self._name
+
+    def description( self ):
+        '''Return the free text description of the notebook.
+
+        returns: the notebook description'''
+        return self._description
 
     def isPersistent( self ):
         '''By default notebooks are not persistent.
@@ -38,6 +51,12 @@ class LabNotebook:
         returns: False'''
         return False
 
+    def commit( self ):
+        '''Commit to persistent form. By default does nothing. This should
+        be called periodically to save intermediate results: it may happen
+        automatically in some sub-classes, depending on their implementation.'''
+        pass
+    
     def _parametersAsIndex( self, ps ):
         '''Private method to turn a parameter dict into a string suitable for
         keying a dict.
@@ -54,14 +73,23 @@ class LabNotebook:
         '''Add a result. This should be a dict as returned from an instance of Experiment,
         that contains metadata, parameters, and result. Results cannot be overridden, as
         notebooks are immutable: however, if the result is pending, the result is
-        substitued for the identifier to "finalise" the result.
+        substituted for the identifier to "finalise" the result.
 
         result: the result'''
         k = self._parametersAsIndex(result[cncp.Experiment.PARAMETERS])
-        if (k in self._results.keys()) and isinstance(self._results[k], dict):
-            raise KeyError("Can't overwrite result in notebook")
-        else:
+
+        # check if result is pending
+        if k in self._pending.keys():
+            # pending, so finalise it by writing the result and removing the pending record
             self._results[k] = result
+            del self._pending[k]
+        else:
+            # not pending, check if we have a result already
+            if k in self._results.keys():
+                raise KeyError("Can't overwrite result in notebook")
+            else:
+                # new result, add to notebook
+                self._results[k] = result
 
     def addPendingResult( self, ps, jobid = None ):
         '''Add a "pending" result that we expect to get results for.
@@ -69,54 +97,65 @@ class LabNotebook:
         ps: the parameters for the result
         jobid: an identifier for the pending result (defaults to None)'''
         k = self._parametersAsIndex(ps)
-        self._results[k] = jobid
+
+        # check if we already have a result for these parameters
+        if k in self._results.keys():
+            # yes, can't generate another
+            raise KeyError("Already have result")
+        else:
+            # record job id
+            self._pending[k] = jobid
 
     def cancelPendingResult( self, ps ):
-        '''Cancel a pending result.
+        '''Cancel a pending result. Note that this only affects the
+        notebook's record, not any job running in a lab.
 
         ps: parameters or job id for pending result'''
         if isinstance(ps, dict):
             # parameters, try to remove
             k = self._parametersAsIndex(ps)
-            if k in self._results.keys():
-                if isinstance(self._results[k], dict):
-                    raise KeyError("Can't delete existing result from notebook")
-                else:
-                    del self._results[k]
+            if k in self._pending.keys():
+                del self._pending[k]
             else:
-                raise KeyError("No result for given parameters in notebook")
+                raise KeyError("No pending result for given parameters")
         else:
             # job id, search for it
-            for k in self._results.keys():
-                if not isinstance(self._results[k], dict):
-                    if self._results[k] == ps:
-                        del self._results[k]
-                        return
-                    
-            # if we get here, fail
-            raise KeyError("No result for given parameters in notebook")
+            for k in self._pending.keys():
+                if self._pending[k] == ps:
+                    del self._pending[k]
+                    return
+
+    def cancelPendingResults( self ):
+        '''Cancel all pending results. Note that this only affects the
+        notebook's record, not any job running in a lab.'''
+        self._pending = dict()
 
     def pendingResults( self ):
         '''Return the job ids of all pending results.
 
         returns: a list of job ids'''
         jobs = []
-        for k in self._results.keys():
-            jobid = self._results[k]
-            if (not isinstance(jobid, dict)) and (jobid is not None):
-                jobs.append(jobid)
+        for k in self._pending.keys():
+            jobs.append(self._pending[k])
         return jobs
          
     def resultPending( self, ps ):
         '''Test whether a result is pending.
 
-        ps: the parameters of the result
+        ps: parameters of job id of the result
         returns: True if the result is pending'''
-        k = self._parametersAsIndex(ps)
-        if k in self._results.keys():
-            return (not isinstance(self._results[k], dict))
+        if isinstance(ps, dict):
+            # parameters, check whether they're pending
+            k = self._parametersAsIndex(ps)
+            return (k in self._pending.keys())
         else:
-            return False
+            # job id, search for it
+            for k in self._pending.keys():
+                if self._results[k] == ps:
+                    return True
+                
+        # if we get here, there's no pending record
+        return False
         
     def result( self, ps ):
         '''Retrieve the result associated with the given parameters.
@@ -124,7 +163,7 @@ class LabNotebook:
         ps: the parameters
         returns: the result, or None if the result is pending or not present'''
         k = self._parametersAsIndex(ps)
-        if (k in self._results.keys()) and (isinstance(self._results[k], dict)):
+        if k in self._results.keys():
             return self._results[k]
         else:
             return None
@@ -134,6 +173,6 @@ class LabNotebook:
         excludes pending results.
 
         returns: a list of results'''
-        return [ self._results[k] for k in self._results.keys() if isinstance(self._results[k], dict) ]
+        return [ self._results[k] for k in self._results.keys() ]
     
        
