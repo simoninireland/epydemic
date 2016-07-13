@@ -19,7 +19,9 @@ class LabNotebook:
 
     Notebooks support "pending" results, llowing us to record experiments
     in progress. A pending result can be finalised by providing it with a
-    value, or can be deleted.'''
+    value, or can be deleted.
+
+    Notebooks support both len() and iterator access.'''
 
     def __init__( self, name = None, description = None ):
         '''Create an empty notebook.
@@ -138,7 +140,7 @@ class LabNotebook:
         for k in self._pending.keys():
             jobs.append(self._pending[k])
         return jobs
-         
+
     def resultPending( self, ps ):
         '''Test whether a result is pending.
 
@@ -174,5 +176,24 @@ class LabNotebook:
 
         returns: a list of results'''
         return [ self._results[k] for k in self._results.keys() ]
+
+    def __len__( self ):
+        '''The length of a notebook is the number of results it currently
+        has available at present.
+
+        returns: the number of results available'''
+        return len(self._results)
+
+    def parameterSpaceSize( self ):
+        '''Return the size of the parameter space, i.e., the number of results
+        we can eventually expect, the sum of the available and pending results.
+
+        returns: the total size of the experimental parameter space'''
+        return len(self._results) + len(self._pending)
     
-       
+    def __iter__( self ):
+        '''Return an iterator over the results available.
+
+        returns: an iteration over the results'''
+        return self.results().__iter__()
+    

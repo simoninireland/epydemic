@@ -10,7 +10,7 @@ import cncp
 import numpy
 import pickle
 import dill
-#from ipyparallel import Client
+from ipyparallel import Client
 
 
 class ClusterLab(cncp.Lab):
@@ -148,7 +148,7 @@ class ClusterLab(cncp.Lab):
         jobs = view.map_async((lambda p: e.runExperiment(p)), ps)
 
         # record the mesage ids of all the jobs as submitted but not yet completed
-        psjs = zip(ps, jobs)
+        psjs = zip(ps, jobs.msg_ids)
         for (p, j) in psjs:
             self._notebook.addPendingResult(p, j)
 
@@ -165,20 +165,24 @@ class ClusterLab(cncp.Lab):
         try:
             self.open()
             n = 0
-            for j in self._notebook.pendingResults():
-                # ***** sd: fix to allow better params and job ids in notebooks *****
+            for j in self.notebook().pendingResults():
                 try:
                     if self._client.get_result(j).ready():
-                        self._jobs[j] = (self._client.get_result(j).get())[0] # wrangle the list
-                                                                              # that gets returned
-                                                                              # into a single value
+                        # result is ready, grab it
+                        r = (self._client.get_result(j).get())[0] # wrangle the list
+                                                                  # that gets returned
+                                                                  # into a single value
                         n = n + 1
+
+                        # update the result in the notebook
+                        self.notebook().addResult(r)
                 except Exception as x:
                     if self._robust:
-                        # we're running robustly, so elide the exception with
-                        # a warning (there seems to sometimes be a race condition
+                        # we're running robustly, so elide the exception 
+                        # (there seems to sometimes be a race condition
                         # the makes retrieval fail, but succeed later)
-                        print "Job id {id} inaccessible, will try again".format(id = j)
+                        #print "Job id {id} inaccessible, will try again".format(id = j)
+                        pass
                     else:
                         # we're not running robustly, pass on the exception
                         raise x
@@ -195,25 +199,22 @@ class ClusterLab(cncp.Lab):
         # grab any results that have come in recently
         self._updateResults()
 
-        # collect the results into a list, losing the job ids
-        results = []
-        for j in [ j for j in self._jobs.keys() if self._jobs[j] is not None ]:
-            results.append(self._jobs[j])
-        return results
+        # collect the results into a list
+        return self.notebook().results()
 
     def _availableResults( self ):
         '''Private method to return the number of results available.
         This does not update the results fetched from the cluster.
 
         returns: the number of available results'''
-        return len([ j for j in self._jobs.keys() if self._jobs[j] is not None ])
+        return len(self.notebook())
 
     def _availableResultsFraction( self ):
         '''Private method to return the fraction of results available, as a real number
         between 0 and 1. This does not update the results fetched from the cluster.
 
         returns: the fraction of available results'''
-        return ((self._availableResults() + 0.0) / len(self._jobs.keys()))
+        return ((self._availableResults() + 0.0) / self.notebook().parameterSpaceSize())
     
     def readyFraction( self ):
         '''Test what fraction of results are available. This will change over

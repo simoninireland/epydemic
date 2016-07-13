@@ -136,9 +136,9 @@ class Lab:
     
     def ready( self ):
         '''Test whether all the results are ready, that is none are
-        pending,
+        pending.
 
         returns: True if the results are in'''
         return (len(selfnotebook().pendingResults()) == 0)
-        
-    
+
+

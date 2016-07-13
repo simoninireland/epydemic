@@ -44,7 +44,7 @@ class ClusterLabTests(unittest.TestCase):
         sp = [ v for v in (l == numpy.arange(0, n)) if v ]
         self.assertTrue(len(sp) <= (n * 0.005))
 
-    def testRunExprimentAsync( self ):
+    def testRunExprimentSync( self ):
         '''Test running an experiment and grabbing all the results by waiting'''
         n = 100
 
@@ -69,7 +69,7 @@ class ClusterLabTests(unittest.TestCase):
             self.assertEqual(p[Experiment.PARAMETERS]['a'], p[Experiment.RESULTS]['total'])
 
             
-    def testRunExprimentSync( self ):
+    def testRunExprimentAsync( self ):
         '''Test running an experiment and check the results come in piecemeal'''
         n = 500
 
