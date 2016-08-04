@@ -1,4 +1,4 @@
-# SIR simulator with stochastic (Gillespie)  dynamics
+# SIR simulator with stochastic (Gillespie) dynamics
 #
 # Copyright (C) 2014-2016 Simon Dobson
 # 
@@ -6,15 +6,12 @@
 # Alike 3.0 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 #
 
+import cncp
 import networkx
 import numpy
-import time
-
-from .networkwithdynamics import GraphWithDynamics
-from .stochasticdynamics import GraphWithStochasticDynamics
 
 
-class SIRStochasticDynamics(GraphWithStochasticDynamics):
+class SIRStochasticDynamics(cncp.StochasticDynamics):
     '''An SIR dynamics with stochastic simulation.'''
 
     # keys for node and edge data
@@ -31,8 +28,8 @@ class SIRStochasticDynamics(GraphWithStochasticDynamics):
         pInfect: infection probability (defaults to 0.0)
         pRecover: probability of recovery (defaults to 1.0)
         pInfected: initial infection probability (defaults to 0.0)
-        g: the graph to copy from (optional)'''
-        GraphWithStochasticDynamics.__init__(self, g)
+        g: the graph to run the dynamics over (optional)'''
+        cncp.StochasticDynamics.__init__(self, g)
 
         # dynamics parameters
         self._pInfect = pInfect

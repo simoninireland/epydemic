@@ -11,20 +11,12 @@ from .lattice import lattice_graph, draw_lattice
 from .ernetworks import erdos_renyi_graph_from_scratch
 
 # networks with dynamical processes
-from .networkwithdynamics import GraphWithDynamics
-from .synchronousdynamics import GraphWithSynchronousDynamics
-from .stochasticdynamics import GraphWithStochasticDynamics
+from .networkwdynamics import Dynamics
+from .synchronousdynamics import SynchronousDynamics
+from .stochasticdynamics import StochasticDynamics
 
 # SIR processes under different dynamics
 from .sirsynchronousdynamics import SIRSynchronousDynamics
 from .sirstochasticdynamics import SIRStochasticDynamics
-
-# experiment management
-from .experiment import Experiment
-from .lab import Lab
-from .clusterlab import ClusterLab
-from .labnotebook import LabNotebook
-from .jsonlabnotebook import JSONLabNotebook
-from .sqlitelabnotebook import SqliteLabNotebook
 
 

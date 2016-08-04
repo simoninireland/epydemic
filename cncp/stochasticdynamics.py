@@ -6,24 +6,22 @@
 # Alike 3.0 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 #
 
+import cncp
+
 import math
 import numpy
 import networkx
-import time
-
-from .networkwithdynamics import GraphWithDynamics
 
 
-class GraphWithStochasticDynamics(GraphWithDynamics):
-    '''A graph with a dynamics that runs stochastically, skipping timesteps
-    in which nothing changes.'''
+
+class StochasticDynamics(Dynamics):
+    '''A dynamics that runs stochastically, skipping timesteps in which nothing changes.'''
         
     def __init__( self, g = None ):
-        '''Create a graph, optionally with nodes and edges copied from
-        the graph given.
+         '''Create a dynamics, optionally initialised to run on the given network.
         
-        g: graph to copy (optional)'''
-        GraphWithDynamics.__init__(self, g)
+        g: network to run the dynamics over (optional)'''
+        Dynamics.__init__(self, g)
 
     def transitions( self, t ):
         '''Return the transition vector, a sequence of (r, f) pairs
@@ -54,7 +52,6 @@ class GraphWithStochasticDynamics(GraphWithDynamics):
         pr = range(len(transitions))
         
         # run the dynamics
-        rc['start_time'] = time.clock()
         self.before()
         t = 0
         events = 0
@@ -105,10 +102,8 @@ class GraphWithStochasticDynamics(GraphWithDynamics):
             if self.at_equilibrium(t):
                 break
         self.after()
-        rc['end_time'] = time.clock()
         
-        # complete statistics
-        rc['elapsed_time'] = rc['end_time'] - rc['start_time']
+        # record statistics
         rc['timesteps'] = t
         rc['events'] = events
         rc['node_types'] = self.populations()        

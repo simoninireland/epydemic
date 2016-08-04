@@ -6,16 +6,14 @@
 # Alike 3.0 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 #
 
+import cncp
+
 import networkx
 import numpy
-import time
-
-from .networkwithdynamics import GraphWithDynamics
-from .synchronousdynamics import GraphWithSynchronousDynamics
 
 
-class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
-    '''A graph with a particular SIR dynamics. We use probabilities
+class SIRSynchronousDynamics(SynchronousDynamics):
+    '''A synchronous SIR dynamics. We use probabilities
     to express infection and recovery per timestep, and run the system
     using synchronous dynamics.'''
     
@@ -30,8 +28,8 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
         pInfect: infection probability (defaults to 0.0)
         pRecover: probability of recovery (defaults to 1.0)
         pInfected: initial infection probability (defaults to 0.0)
-        g: the graph to copy from (optional)'''
-        GraphWithSynchronousDynamics.__init__(self, g)
+        g: the graph to run over (optional)'''
+        SynchronousDynamics.__init__(self, g)
 
         # dynamics parameters
         self._pInfect = pInfect
@@ -44,15 +42,18 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
     def before( self ):
         '''Seed the network with infected nodes, and mark all edges
         as unoccupied by the dynamics.'''
-        self._infected = []       # in case we re-run from a dirty intermediate state
+        g = self.network()
+
+        # in case we re-run from a dirty intermediate state
+        self._infected = []
         
         # seed the network with infected nodes, making all the other susceptible
-        for n in self.node.keys():
+        for n in g.node.keys():
             if numpy.random.random() <= self._pInfected:
                 self._infected.insert(0, n)
-                self.node[n][self.DYNAMICAL_STATE] = self.INFECTED
+                g.node[n][self.DYNAMICAL_STATE] = self.INFECTED
             else:
-                self.node[n][self.DYNAMICAL_STATE] = self.SUSCEPTIBLE
+                g.node[n][self.DYNAMICAL_STATE] = self.SUSCEPTIBLE
                 
         # mark all edges as unoccupied
         for (n, m, data) in self.edges_iter(data = True):
@@ -64,6 +65,7 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
         end of each timestep we re-build the infected node list.
         
         returns: the number of events that happened in this timestep'''
+        g = self.network()
         events = 0
         
         # run model dynamics on infected nodes only
@@ -71,7 +73,7 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
             events = events + self.model(n)
     
         # remove any nodes that are no longer infected from the infected list
-        self._infected = [ n for n in self._infected if self.node[n][self.DYNAMICAL_STATE] == self.INFECTED ]
+        self._infected = [ n for n in self._infected if g.node[n][self.DYNAMICAL_STATE] == self.INFECTED ]
         
         return events
             
@@ -81,16 +83,17 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
 
         n: the node
         returns: the number of changes made'''
+        g = self.network()
         events = 0
         
         # infect susceptible neighbours with probability pInfect
-        for (_, m, data) in self.edges_iter(n, data = True):
-            if self.node[m][self.DYNAMICAL_STATE] is self.SUSCEPTIBLE:
+        for (_, m, data) in g.edges_iter(n, data = True):
+            if g.node[m][self.DYNAMICAL_STATE] is self.SUSCEPTIBLE:
                 if numpy.random.random() <= self._pInfect:
                     events = events + 1
                     
                     # infect the node
-                    self.node[m][self.DYNAMICAL_STATE] = self.INFECTED
+                    g.node[m][self.DYNAMICAL_STATE] = self.INFECTED
                     self._infected.insert(0, m)
                         
                     # label the edge we traversed as occupied
@@ -100,7 +103,7 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
         if numpy.random.random() <= self._pRecover:
             # recover the node
             events = events + 1
-            self.node[n][self.DYNAMICAL_STATE] = self.RECOVERED
+            g.node[n][self.DYNAMICAL_STATE] = self.RECOVERED
                 
         return events
             
@@ -112,7 +115,7 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
         if (len(self._infected) == 0):
             return True
         else:
-            return GraphWithSynchronousDynamics.at_equilibrium(self, t)
+            return SynchronousDynamics.at_equilibrium(self, t)
             
     def dynamics( self ):
         '''Returns statistics of outbreak sizes. This skeletonises the
@@ -126,7 +129,7 @@ class SIRSynchronousDynamics(GraphWithSynchronousDynamics):
         # compute the limits and means
         cs = sorted(networkx.connected_components(self.skeletonise()), key = len, reverse = True)
         max_outbreak_size = len(cs[0])
-        max_outbreak_proportion = (max_outbreak_size + 0.0) / self.order()
+        max_outbreak_proportion = (max_outbreak_size + 0.0) / self.network().order()
         mean_outbreak_size = numpy.mean([ len(c) for c in cs ])
         
         # add parameters and metrics for this simulation run

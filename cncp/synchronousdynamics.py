@@ -6,22 +6,21 @@
 # Alike 3.0 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 #
 
+import cncp
+
 import networkx
 import time
 
-from .networkwithdynamics import GraphWithDynamics
 
-
-class GraphWithSynchronousDynamics(GraphWithDynamics):
-    '''A graph with a dynamics that runs synchronously,
-    applying the dynamics to each node in the network.'''
+class SynchronousDynamics(cncp.Dynamics):
+    '''A dynamics that runs synchronously in discrete time, applying local
+    rules to each node in the network.'''
         
     def __init__( self, g = None ):
-        '''Create a graph, optionally with nodes and edges copied from
-        the graph given.
+        '''Create a dynamics, optionally initialised to run on the given network.
         
-        g: graph to copy (optional)'''
-        GraphWithDynamics.__init__(self, g)
+        g: network to run over (optional)'''
+        Dynamics.__init__(self, g)
         
     def model( self, n ):
         '''The dynamics function that's run over the network. This
@@ -34,8 +33,9 @@ class GraphWithSynchronousDynamics(GraphWithDynamics):
         '''Run a single step of the model over the network.
         
         returns: the number of dynamic events that happened in this timestep'''
+        g = self.network()
         events = 0
-        for i in self.node.keys():
+        for i in g.node.keys():
             events = events + self.model(i)
         return events
 
@@ -46,7 +46,6 @@ class GraphWithSynchronousDynamics(GraphWithDynamics):
         returns: a dict of simulation properties'''
         rc = dict()
 
-        rc['start_time'] = time.clock()
         self.before()
         t = 0
         events = 0
@@ -66,13 +65,10 @@ class GraphWithSynchronousDynamics(GraphWithDynamics):
             
             t = t + 1
         self.after()
-        rc['end_time'] = time.clock()
         
         # return the simulation-level results
-        rc['elapsed_time'] = rc['end_time'] - rc['start_time']
         rc['timesteps'] = t
         rc['events'] = events
-        rc['event_distribution'] = eventDist
         rc['timesteps_with_events'] = timestepEvents
         rc['node_types'] = self.populations()
         return rc

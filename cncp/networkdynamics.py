@@ -1,4 +1,4 @@
-# Networks-with-dynamics simulation base class
+# Networks dynamics simulation base class
 #
 # Copyright (C) 2014-2016 Simon Dobson
 # 
@@ -9,45 +9,36 @@
 import networkx
 
 
-class GraphWithDynamics(networkx.Graph):
-    '''A NetworkX undirected network with an associated dynamics. This
-    class combines two sets of entwined functionality: a network, and
-    the dynamical process being studied. This is the abstract base class
-    for studying different kinds of dynamics.'''
+class Dynamics:
+    '''A dynamical process over a network. This is the abstract base class
+    for implementing different kinds of dynamics. Sub-classes provide
+    synchronous and stochastic (Gillespie) simulation dynamics.'''
 
     # keys for node and edge attributes
     DYNAMICAL_STATE = 'state'   # dynamical state of a node
     OCCUPIED = 'occupied'       # edge has been used to transfer infection or not
 
     def __init__( self, g = None ):
-        '''Create a graph, optionally with nodes and edges copied from
-        the graph given.
+        '''Create a dynamics, optionally initialised to run on the given network.
         
-        g: graph to copy (optional)'''
-        networkx.Graph.__init__(self, g)
+        g: network to copy (optional)'''
         if g is not None:
-            self.copy_from(g)
-        
-    def copy_from( self, g ):
-        '''Copy the nodes and edges from another graph into us.
-        
-        g: the graph to copy from
-        returns: the copy of the graph'''
-        
-        # copy in nodes and edges from source network
-        self.add_nodes_from(g.nodes_iter())
-        self.add_edges_from(g.edges_iter())
-        
-        # remove self-loops
-        es = self.selfloop_edges()
-        self.remove_edges_from(es)
-        
-        return self
-    
-    def remove_all_nodes( self ):
-        '''Remove all nodes and edges from the graph.'''
-        self.remove_nodes_from(self.nodes())
+            self._graph = g
+        else:
+            self._graph = None
+            
+    def network( self ):
+        '''Return the network this dynamics is running over.
 
+        returns: the network'''
+        return self._graph
+
+    def setNetwork( self, g ):
+        '''Set the network the dynamics will run over.
+
+        g: the network'''
+        self._graph = g
+        
     def at_equilibrium( self, t ):
         '''Test whether the model is an equilibrium. The default runs for
         20000 timesteps and then stops.
@@ -86,25 +77,27 @@ class GraphWithDynamics(networkx.Graph):
         returns: the network with unoccupied edges removed'''
         
         # find all unoccupied edges
+        g = self.network()
         edges = []
-        for n in self.nodes_iter():
-            for (np, m, data) in self.edges_iter(n, data = True):
+        for n in g.nodes_iter():
+            for (np, m, data) in g.edges_iter(n, data = True):
                 if (self.OCCUPIED not in data.keys()) or (data[self.OCCUPIED] != True):
                     # edge is unoccupied, mark it to be removed
                     # (safe because there are no parallel edges)
                     edges.insert(0, (n, m))
                     
         # remove all the unoccupied edges in one go
-        self.remove_edges_from(edges)
-        return self
+        g.remove_edges_from(edges)
+        return g
     
     def populations( self ):
         '''Return a count of the number of nodes in each dynamical state.
         
         returns: a dict mapping states to number of nodes in that state'''
+        g = self.network()
         pops = dict()
-        for n in self.nodes_iter():
-            s = self.node[n][self.DYNAMICAL_STATE]
+        for n in g.nodes_iter():
+            s = g.node[n][self.DYNAMICAL_STATE]
             if s not in pops.keys():
                 pops[s] = 1
             else:
