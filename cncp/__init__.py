@@ -11,7 +11,7 @@ from .lattice import lattice_graph, draw_lattice
 from .ernetworks import erdos_renyi_graph_from_scratch
 
 # networks with dynamical processes
-from .networkwdynamics import Dynamics
+from .networkdynamics import Dynamics
 from .synchronousdynamics import SynchronousDynamics
 from .stochasticdynamics import StochasticDynamics
 

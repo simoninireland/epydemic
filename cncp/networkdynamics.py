@@ -6,13 +6,15 @@
 # Alike 3.0 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 #
 
+import epyc
 import networkx
 
 
-class Dynamics:
+class Dynamics(epyc.Experiment, object):
     '''A dynamical process over a network. This is the abstract base class
-    for implementing different kinds of dynamics. Sub-classes provide
-    synchronous and stochastic (Gillespie) simulation dynamics.'''
+    for implementing different kinds of dynamics as computational experiments
+    suitable for running under. Sub-classes provide synchronous and stochastic
+    (Gillespie) simulation dynamics.'''
 
     # keys for node and edge attributes
     DYNAMICAL_STATE = 'state'   # dynamical state of a node
@@ -20,24 +22,25 @@ class Dynamics:
 
     def __init__( self, g = None ):
         '''Create a dynamics, optionally initialised to run on the given network.
+        This will be copied for each individual experiment.
         
-        g: network to copy (optional)'''
-        if g is not None:
-            self._graph = g
-        else:
-            self._graph = None
-            
+        g: prototype network (optional)'''
+        super(Dynamics, self).__init__()
+        self._graphPrototype = g
+        self._graph = None
+
     def network( self ):
         '''Return the network this dynamics is running over.
 
         returns: the network'''
         return self._graph
 
-    def setNetwork( self, g ):
-        '''Set the network the dynamics will run over.
+    def setNetworkPrototype( self, g ):
+        '''Set the network the dynamics will run over. This will be
+        copied for each individual experiment.
 
         g: the network'''
-        self._graph = g
+        self._graphPrototype = g
         
     def at_equilibrium( self, t ):
         '''Test whether the model is an equilibrium. The default runs for
@@ -47,27 +50,24 @@ class Dynamics:
         returns: True if we're done'''
         return (t >= 20000)
 
-    def before( self ):
-        '''Placeholder to be run ahead of simulation. Default does nothing.'''
-        pass
+    def setUp( self, params ): 
+        '''Before each experiment, create a working copy of the prototype network.
 
-    def after( self ):
-        '''Placeholder to be run after simulation Default does nothing.'''
-        pass
-    
-    def _dynamics( self ):
-        '''Internal function defining the way the dynamics works. Must be
-        overridden in sub-classes.
+        params: parameters of the experiment'''
+        self._graph = self._graphPrototype.copy()
 
-        returns: a dict of properties'''
-        raise NotYetImplementedError('_dynamics()')
+    def tearDown( self ):
+        '''At the end of each experiment, tear down the copy.'''
+        self._graph = None
         
-    def dynamics( self ):
-        '''Run a number of iterations of the model over the network. The
-        default simply runs the dynamics once.
-        
+    def dynamics( self, params ):
+        '''The way the particular dynamics works. Typically this defines the
+        skeleton of the dynamical process in terms of other methods that provide
+        the actual detail. Must be overridden in sub-classes.
+
+        params: the parameters of the simulation
         returns: a dict of properties'''
-        return self._dynamics()
+        raise NotYetImplementedError('dynamics()')
 
     def skeletonise( self ):
         '''Remove unoccupied edges from the network. This leaves the network

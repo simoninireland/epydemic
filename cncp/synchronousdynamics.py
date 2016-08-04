@@ -7,9 +7,8 @@
 #
 
 import cncp
-
+import epyc
 import networkx
-import time
 
 
 class SynchronousDynamics(cncp.Dynamics):
@@ -19,52 +18,46 @@ class SynchronousDynamics(cncp.Dynamics):
     def __init__( self, g = None ):
         '''Create a dynamics, optionally initialised to run on the given network.
         
-        g: network to run over (optional)'''
-        Dynamics.__init__(self, g)
+        g: prototype network to run over (optional)'''
+        super(SynchronousDynamics, self).__init__(g)
         
-    def model( self, n ):
+    def model( self, n, params ):
         '''The dynamics function that's run over the network. This
         is a placeholder to be re-defined by sub-classes.
         
+        params: the parameters of the simulation
         n: the node being simulated'''
         raise NotYetImplementedError('model()')
 
-    def _dynamics_step( self ):
+    def dynamics( self, params ):
         '''Run a single step of the model over the network.
         
+        params: the parameters of the simulation
         returns: the number of dynamic events that happened in this timestep'''
         g = self.network()
         events = 0
-        for i in g.node.keys():
-            events = events + self.model(i)
+        for n in g.node.keys():
+            events = events + self.model(n, params)
         return events
 
-    def _dynamics( self ):
-        '''Synchronous dynamics. We apply _dynamics_step() at each timestep
+    def do( self, params ):
+        '''Synchronous dynamics. We apply dynamics() at each timestep
         and then check for completion using at_equilibrium().
         
+        params: the parameters of the simulation
         returns: a dict of simulation properties'''
         rc = dict()
 
-        self.before()
         t = 0
         events = 0
-        eventDist = dict()
         timestepEvents = 0
-        while True:
+        while not self.at_equilibrium(t):
             # run a step
-            nev = self._dynamics_step()
+            nev = self.dynamics(params)
             if nev > 0:
                 events = events + nev
                 timestepEvents = timestepEvents + 1
-                eventDist[t] = nev
-        
-            # test for termination
-            if self.at_equilibrium(t):
-                break
-            
             t = t + 1
-        self.after()
         
         # return the simulation-level results
         rc['timesteps'] = t

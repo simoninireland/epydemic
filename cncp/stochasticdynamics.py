@@ -7,23 +7,23 @@
 #
 
 import cncp
-
+import epyc
 import math
 import numpy
 import networkx
 
 
 
-class StochasticDynamics(Dynamics):
+class StochasticDynamics(cncp.Dynamics):
     '''A dynamics that runs stochastically, skipping timesteps in which nothing changes.'''
         
     def __init__( self, g = None ):
-         '''Create a dynamics, optionally initialised to run on the given network.
+        '''Create a dynamics, optionally initialised to run on the given network.
         
-        g: network to run the dynamics over (optional)'''
-        Dynamics.__init__(self, g)
+        g: prototype network to run the dynamics over (optional)'''
+        super(StochasticDynamics, self).__init__(g)
 
-    def transitions( self, t ):
+    def transitions( self, t, params ):
         '''Return the transition vector, a sequence of (r, f) pairs
         where r is the rate at which a transition happens and
         f is the transition function called to make it happen. Note that
@@ -38,26 +38,29 @@ class StochasticDynamics(Dynamics):
         not be propagated. (Is this the right behaviour?)
         
         t: timestep for which we want the transitions
+        params: the paramneters of the simulation
         returns: the transition vector'''
         raise NotYetImplementedError('transitions()')
         
-    def _dynamics( self ):
-        '''Stochastic dynamics.
+    def do( self, params ):
+        '''Stochastic dynamics. We use the transition probabilities to
+        locate trhe next event in time, and then call the appropriate
+        event service routine.
         
+        params: parameters of the simulation
         returns: a dict of simulation properties'''
         rc = dict()
         
         # set up the priority list
-        transitions = self.transitions(0)
+        transitions = self.transitions(0, params)
         pr = range(len(transitions))
         
         # run the dynamics
-        self.before()
         t = 0
         events = 0
         while True:
             # pull the transition dynamics at this timestep
-            transitions = self.transitions(t)
+            transitions = self.transitions(t, params)
             
             # compute the total rate of transitions for the entire network
             a = 0.0
@@ -90,7 +93,7 @@ class StochasticDynamics(Dynamics):
             # perform the transition
             try:
                 # call the transition function associated with the selected event
-                f(t)
+                f(t, params)
             except Exception:
                 # if the transition fails, silently stop the dynamics
                 break
@@ -101,7 +104,6 @@ class StochasticDynamics(Dynamics):
             # check for termination
             if self.at_equilibrium(t):
                 break
-        self.after()
         
         # record statistics
         rc['timesteps'] = t
