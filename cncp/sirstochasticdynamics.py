@@ -76,7 +76,10 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
             return super(SIRStochasticDynamics, self).at_equilibrium(t)
          
     def infect( self, t, params ):
-        '''Infect a node chosen at random from the SI edges.'''
+        '''Infect a node chosen at random from the SI edges.
+
+        t: the timestep
+        params: the parameters of the experiment'''
         g = self.network()
         
         # choose an SI edge
@@ -99,7 +102,10 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
                 self._si.insert(0, (m, mp, datap))
 
     def recover( self, t, params ):
-        '''Cause a node to recover.'''
+        '''Cause a node to recover.
+
+        t: the timestep
+        params: the parameters of the experiment'''
         g = self.network()
         
         # choose an infected node at random
@@ -122,8 +128,8 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
         
         # transitions are expressed as rates, whereas we're specified
         # in terms of probabilities, so we convert the latter to the former.
-        return [ (len(self._si) * params['pInfect'],        lambda t: self.infect(t)),
-                 (len(self._infected) * params['pRecover'], lambda t: self.recover(t)) ]
+        return [ (len(self._si) * params['pInfect'],        lambda t: self.infect(t, params)),
+                 (len(self._infected) * params['pRecover'], lambda t: self.recover(t, params)) ]
             
     def do( self, params ):
         '''Returns statistics of outbreak sizes. This skeletonises the

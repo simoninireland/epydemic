@@ -39,11 +39,11 @@ class SIRTests(unittest.TestCase):
         
         self.assertIn('timesteps', res[epyc.Experiment.RESULTS])
         self.assertIn('events', res[epyc.Experiment.RESULTS])
+        self.assertTrue(res[epyc.Experiment.RESULTS]['events'] > 0)
         self.assertIn('mean_outbreak_size', res[epyc.Experiment.RESULTS])
 
     def testLab( self ):
-        '''Test successful repeated experiments of SIR.'''
-       
+        '''Test successful SIR experiments across a parameter space.'''       
         self._lab.runExperiment(self._experiment)
         rcs = self._lab.results()
         #print rcs
@@ -52,6 +52,15 @@ class SIRTests(unittest.TestCase):
         for res in rcs:
             self.assertIn('timesteps', res[epyc.Experiment.RESULTS])
             self.assertIn('events', res[epyc.Experiment.RESULTS])
+            self.assertTrue(res[epyc.Experiment.RESULTS]['events'] > 0)
             self.assertIn('mean_outbreak_size', res[epyc.Experiment.RESULTS])
 
+    def testInfection( self ):
+        '''Test that an experiment converges.'''
+        self._experiment.set(self._params).run()
+        res = self._experiment.results()
+        #print res
+        
+        self.assertTrue(res[epyc.Experiment.RESULTS]['mean_outbreak_size'] > 0.5)
+        
         

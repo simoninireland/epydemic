@@ -74,26 +74,31 @@ class StochasticDynamics(cncp.Dynamics):
             dt = (1.0 / a) * math.log(1.0 / r1)
             t = t + dt
             
-            # calculate which transition happens 
-            r2 = numpy.random.random()
-            xc = r2 * a
-            k = 0
-            (xs, f) = transitions[pr[k]]
-            while xs < xc:
-                k = k + 1
-                (xsp, f) = transitions[pr[k]]
-                xs = xs + xsp
+            # calculate which transition happens
+            if len(transitions) == 1:
+                # if there's only one, that's the one that happens
+                (_, f) = transitions[0]
+            else:
+                # otherwise, choose one at random based on the rates
+                r2 = numpy.random.random()
+                xc = r2 * a
+                k = 0
+                (xs, f) = transitions[pr[k]]
+                while xs < xc:
+                    k = k + 1
+                    (xsp, f) = transitions[pr[k]]
+                    xs = xs + xsp
 
-            # if we used a low-priority transition, swap it up the priority queue
-            #if k > 0:
-            #    p = pr[k - 1]
-            #    pr[k - 1] = pr[k]
-            #    pr[k] = p       
+                # if we used a low-priority transition, swap it up the priority queue
+                #if k > 0:
+                #    p = pr[k - 1]
+                #    pr[k - 1] = pr[k]
+                #    pr[k] = p       
             
             # perform the transition
             try:
                 # call the transition function associated with the selected event
-                f(t, params)
+                f(t)
             except Exception:
                 # if the transition fails, silently stop the dynamics
                 break
