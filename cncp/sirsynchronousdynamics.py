@@ -10,6 +10,7 @@ import cncp
 import epyc
 import networkx
 import numpy
+from copy import copy
 
 
 class SIRSynchronousDynamics(cncp.SynchronousDynamics):
@@ -18,14 +19,14 @@ class SIRSynchronousDynamics(cncp.SynchronousDynamics):
     using synchronous dynamics.'''
     
     # the possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE = 'S'
-    INFECTED = 'I'
-    RECOVERED = 'R'
+    SUSCEPTIBLE = 'S'    #: Node is susceptible to infection
+    INFECTED = 'I'       #: Node is infected
+    RECOVERED = 'R'      #: Node is recovered/removed
         
     def __init__( self, g = None ):
-        '''Generate an SIR dynamics.
+        '''Generate an SIR dynamics over an (optional) prototype network.
         
-        g: the graph to run over (optional)'''
+        :param g: the graph to run over (optional)'''
         super(SIRSynchronousDynamics, self).__init__(g)
 
         # list of infected nodes, the sites of all the dynamics
@@ -35,7 +36,9 @@ class SIRSynchronousDynamics(cncp.SynchronousDynamics):
         '''Seed the network with infected nodes, and mark all edges
         as unoccupied by the dynamics.
 
-        params: the parameters of the simulation'''
+        :param params: the parameters of the simulation'''
+
+        # perform the base behaviour, which copies the prototype network
         super(SIRSynchronousDynamics, self).setUp(params)
         
         g = self.network()
@@ -56,39 +59,44 @@ class SIRSynchronousDynamics(cncp.SynchronousDynamics):
         for (n, m, data) in g.edges_iter(data = True):
             data[self.OCCUPIED] = False
 
-    def dynamics( self, params ):
+    def dynamics( self, t, params ):
         '''Optimised per-step dynamics that only runs the model at infected
         nodes, since they're the only places where state changes originate. At the
         end of each timestep we re-build the infected node list.
         
-        params: the parameters of the simulation
-        returns: the number of events that happened in this timestep'''
+        :param t: the timestep
+        :param params: the parameters of the simulation
+        :returns: the number of events that happened in this timestep'''
         g = self.network()
         events = 0
         
         # run model dynamics on infected nodes only
-        for n in self._infected:
+        for n in copy(self._infected):
             events = events + self.model(n, params)
     
-        # remove any nodes that are no longer infected from the infected list
+        # retain only infected nodes in the infected list
         self._infected = [ n for n in self._infected if g.node[n][self.DYNAMICAL_STATE] == self.INFECTED ]
         
         return events
             
     def model( self, n, params ):
-        '''Apply the SIR dynamics to node n. From the re-definition of dynamics_step()
-        we already know this node is infected.
+        '''Apply the SIR dynamics to node n. From the re-definition of
+        :meth:`SIRSynchronousDynamics.dynamics` we already know this node is infected.
 
-        params: the parameters of thje simulation
-        n: the node
-        returns: the number of changes made'''
+        :param params: the parameters of the simulation
+        :param n: the node
+        :returns: the number of changes made'''
         g = self.network()
+        pInfect = params['pInfect']
+        pRecover = params['pRecover']
         events = 0
         
         # infect susceptible neighbours with probability pInfect
         for (_, m, data) in g.edges_iter(n, data = True):
-            if g.node[m][self.DYNAMICAL_STATE] is self.SUSCEPTIBLE:
-                if numpy.random.random() <= params['pInfect']:
+            if g.node[m][self.DYNAMICAL_STATE] == self.SUSCEPTIBLE:
+                # we've got a susceptible neighbour, do we infect them?
+                if numpy.random.random() <= pInfect:
+                    # yes we do!
                     events = events + 1
                     
                     # infect the node
@@ -99,7 +107,7 @@ class SIRSynchronousDynamics(cncp.SynchronousDynamics):
                     data[self.OCCUPIED] = True
     
         # recover with probability pRecover
-        if numpy.random.random() <= params['pRecover']:
+        if numpy.random.random() <= pRecover:
             # recover the node
             events = events + 1
             g.node[n][self.DYNAMICAL_STATE] = self.RECOVERED
@@ -110,18 +118,17 @@ class SIRSynchronousDynamics(cncp.SynchronousDynamics):
         '''SIR dynamics is at equilibrium if there are no more infected nodes
         left in the network or if we've hit the default equilibrium conditions.
         
-        returns: True if the model has stopped'''
+        :returns: True if the model has stopped'''
         if (len(self._infected) == 0):
             return True
         else:
             return super(SIRSynchronousDynamics, self).at_equilibrium(t)
             
     def do( self, params ):
-        '''Returns statistics of outbreak sizes. This skeletonises the
-        network, so it can't have any further dynamics run on it.
+        '''Run the dynamics and return statistics of outbreak sizes.
         
-        params: parameters of the simulation
-        returns: a dict of statistical properties'''
+        :param params: parameters of the simulation
+        :returns: a dict of statistical properties'''
         
         # run the basic dynamics
         rc = super(SIRSynchronousDynamics, self).do(params)

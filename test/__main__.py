@@ -16,8 +16,8 @@ from .sirstochastic import SIRStochasticTests
 sirsynchronousSuite = unittest.TestLoader().loadTestsFromTestCase(SIRSynchronousTests)
 sirstochasticSuite = unittest.TestLoader().loadTestsFromTestCase(SIRStochasticTests)
 
-suite = unittest.TestSuite([ sirsynchronousSuite, sirstochasticSuite
-                              ])
+suite = unittest.TestSuite([ sirsynchronousSuite,
+                             sirstochasticSuite ])
 
 if __name__ == '__main__':
     unittest.TextTestRunner(verbosity = 2).run(suite)

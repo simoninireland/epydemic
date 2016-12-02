@@ -17,47 +17,60 @@ class Dynamics(epyc.Experiment, object):
     (Gillespie) simulation dynamics.'''
 
     # keys for node and edge attributes
-    DYNAMICAL_STATE = 'state'   # dynamical state of a node
-    OCCUPIED = 'occupied'       # edge has been used to transfer infection or not
+    DYNAMICAL_STATE = 'state'   #: dynamical state of a node
+    OCCUPIED = 'occupied'       #: edge has been used to transfer infection or not
 
+    # the default maximum simulation time
+    DEFAULT_MAX_TIME = 20000
+    
     def __init__( self, g = None ):
         '''Create a dynamics, optionally initialised to run on the given network.
-        This will be copied for each individual experiment.
+        The network (if provided) is treated as a prototype that is copied before
+        each individual simulation experiment.
         
-        g: prototype network (optional)'''
+        :param g: prototype network (optional)'''
         super(Dynamics, self).__init__()
         self._graphPrototype = g
         self._graph = None
+        self._maxTime = self.DEFAULT_MAX_TIME
 
     def network( self ):
         '''Return the network this dynamics is running over.
 
-        returns: the network'''
+        :returns: the network'''
         return self._graph
 
     def setNetworkPrototype( self, g ):
         '''Set the network the dynamics will run over. This will be
-        copied for each individual experiment.
+        copied for each run of an individual experiment.
 
-        g: the network'''
+        :param g: the network'''
         self._graphPrototype = g
+
+    def setMaximumTime( self, t ):
+        '''Set the maximum default simulation time. The default is given
+        by `DEFAULT_MAX_TIME`.
+
+        param: t: the maximum time'''
+        self._maxTime = t
         
     def at_equilibrium( self, t ):
         '''Test whether the model is an equilibrium. The default runs for
-        20000 timesteps and then stops.
+        20000 timesteps and then stops. Override this method to provide
+        alternative and/or faster simulations.
         
-        t: the current simulation timestep
-        returns: True if we're done'''
-        return (t >= 20000)
+        :param t: the current simulation timestep
+        :returns: True if we're done'''
+        return (t >= self._maxTime)
 
     def setUp( self, params ): 
         '''Before each experiment, create a working copy of the prototype network.
 
-        params: parameters of the experiment'''
+        :param params: parameters of the experiment'''
         self._graph = self._graphPrototype.copy()
 
     def tearDown( self ):
-        '''At the end of each experiment, tear down the copy.'''
+        '''At the end of each experiment, throw away the copy.'''
         self._graph = None
         
     def dynamics( self, params ):
@@ -65,8 +78,8 @@ class Dynamics(epyc.Experiment, object):
         skeleton of the dynamical process in terms of other methods that provide
         the actual detail. Must be overridden in sub-classes.
 
-        params: the parameters of the simulation
-        returns: a dict of properties'''
+        :param params: the parameters of the simulation
+        :returns: a dict of properties'''
         raise NotYetImplementedError('dynamics()')
 
     def skeletonise( self ):
@@ -74,7 +87,7 @@ class Dynamics(epyc.Experiment, object):
         consisting of only "occupied" edges that were used to transmit the
         infection between nodes.
         
-        returns: the network with unoccupied edges removed'''
+        :returns: the network with unoccupied edges removed'''
         
         # find all unoccupied edges
         g = self.network()
@@ -93,7 +106,7 @@ class Dynamics(epyc.Experiment, object):
     def populations( self ):
         '''Return a count of the number of nodes in each dynamical state.
         
-        returns: a dict mapping states to number of nodes in that state'''
+        :returns: a dict mapping states to number of nodes in that state'''
         g = self.network()
         pops = dict()
         for n in g.nodes_iter():

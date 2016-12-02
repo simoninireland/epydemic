@@ -13,20 +13,17 @@ import numpy
 
 
 class SIRStochasticDynamics(cncp.StochasticDynamics):
-    '''An SIR dynamics with stochastic simulation.'''
+    '''A stochastic SIR dynamics.'''
 
-    # keys for node and edge data
-    DYNAMICAL_STATE = 'sir'   # dynamical state of a node
-    
     # the possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE = 'S'
-    INFECTED = 'I'
-    RECOVERED = 'R'
+    SUSCEPTIBLE = 'S'    #: Node is susceptible to infection
+    INFECTED = 'I'       #: Node is infected
+    RECOVERED = 'R'      #: Node is recovered/removed
     
     def __init__( self, g = None ):
         '''Generate an SIR dynamics.
         
-        g: the graph to run over (optional)'''
+        :param g: the graph to run over (optional)'''
         super(SIRStochasticDynamics, self).__init__(g)
 
         # list of infected nodes, the sites of all the dynamics
@@ -37,7 +34,11 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
 
     def setUp( self, params ):
         '''Seed the network with infected nodes, extract the initial set of
-        SI nodes, and mark all edges as unoccupied by the dynamics.'''
+        SI nodes, and mark all edges as unoccupied by the dynamics.
+
+        :param params: the paemeters of the experiment'''
+
+        # perform the default setup
         super(SIRStochasticDynamics, self).setUp(params)
 
         g = self.network()
@@ -57,7 +58,8 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
                 
         # extract the initial set of SI edges
         for (n, m, data) in g.edges_iter(self._infected, data = True):
-            self._si.insert(0, (n, m, data))
+            if g.node[m][self.DYNAMICAL_STATE] == self.SUSCEPTIBLE:
+                self._si.insert(0, (n, m, data))
         
         # mark all edges as unoccupied
         for (n, m, data) in g.edges_iter(data = True):
@@ -68,8 +70,8 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
         in the network, no susceptible nodes adjacent to infected nodes, or if we've
         exceeded the default simulation length.
         
-        t: the current time
-        returns: True if the model has stopped'''
+        :param t: the current time
+        :returns: True if the model has stopped'''
         if (len(self._infected) == 0):
             return True
         else:
@@ -78,12 +80,12 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
     def infect( self, t, params ):
         '''Infect a node chosen at random from the SI edges.
 
-        t: the timestep
-        params: the parameters of the experiment'''
+        :param t: the timestep
+        :param params: the parameters of the experiment'''
         g = self.network()
         
         # choose an SI edge
-        i = int(numpy.random.random() * len(self._si))
+        i = int(numpy.random.random() * (len(self._si) - 1))
         (n, m, data) = self._si[i]
         
         # infect the susceptible end
@@ -93,8 +95,9 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
         # label the edge we traversed as occupied
         data[self.OCCUPIED] = True
         
-        # remove all edges in the SI list from an infected node to this one
-        self._si = [ (np, mp, data) for (np, mp, data) in self._si if m != mp ]
+        # remove all edges in the SI list from an infected node to the
+        # node we just infected
+        self._si = [ (np, mp, data) for (np, mp, data) in self._si if mp != m ]
         
         # add all the edges incident on this node connected to susceptible nodes
         for (_, mp, datap) in g.edges_iter(m, data = True):
@@ -104,12 +107,12 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
     def recover( self, t, params ):
         '''Cause a node to recover.
 
-        t: the timestep
-        params: the parameters of the experiment'''
+        :param t: the timestep
+        :param params: the parameters of the experiment'''
         g = self.network()
         
         # choose an infected node at random
-        i = int(numpy.random.random() * len(self._infected))
+        i = int(numpy.random.random() * (len(self._infected) - 1))
         n = self._infected[i]
         
         # mark the node as recovered
@@ -117,14 +120,14 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
         g.node[n][self.DYNAMICAL_STATE] = self.RECOVERED
         
         # remove all edges in the SI list incident on this node
-        self._si = [ (np, m, e) for (np, m, e) in self._si if np != n ]
+        self._si = [ (np, m, datap) for (np, m, datap) in self._si if np != n ]
         
     def transitions( self, t, params ):
         '''Return the transition vector for the dynamics.
         
-        t: time (ignored)
-        params: the parameters of the simulation
-        returns: the transition vector'''
+        :param t: time (ignored)
+        :param params: the parameters of the simulation
+        :returns: the transition vector'''
         
         # transitions are expressed as rates, whereas we're specified
         # in terms of probabilities, so we convert the latter to the former.
@@ -135,8 +138,8 @@ class SIRStochasticDynamics(cncp.StochasticDynamics):
         '''Returns statistics of outbreak sizes. This skeletonises the
         network, so it can't have any further dynamics run on it.
         
-        params: the parameters of the experiment
-        returns: a dict of statistical properties'''
+        :param params: the parameters of the experiment
+        :returns: a dict of statistical properties'''
         g = self.network()
         
         # run the basic dynamics

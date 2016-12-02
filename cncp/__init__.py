@@ -19,4 +19,8 @@ from .stochasticdynamics import StochasticDynamics
 from .sirsynchronousdynamics import SIRSynchronousDynamics
 from .sirstochasticdynamics import SIRStochasticDynamics
 
+# SIS processes under different dynamics
+from .sissynchronousdynamics import SISSynchronousDynamics
+from .sisstochasticdynamics import SISStochasticDynamics
+
 
