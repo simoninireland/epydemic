@@ -73,15 +73,6 @@ class Dynamics(epyc.Experiment, object):
         '''At the end of each experiment, throw away the copy.'''
         self._graph = None
         
-    def dynamics( self, params ):
-        '''The way the particular dynamics works. Typically this defines the
-        skeleton of the dynamical process in terms of other methods that provide
-        the actual detail. Must be overridden in sub-classes.
-
-        :param params: the parameters of the simulation
-        :returns: a dict of properties'''
-        raise NotYetImplementedError('dynamics()')
-
     def skeletonise( self ):
         '''Remove unoccupied edges from the network. This leaves the network
         consisting of only "occupied" edges that were used to transmit the
