@@ -49,7 +49,9 @@ SOURCES_DOC_ZIP = epydemic-doc-$(VERSION).zip
 SOURCES_DOCUMENTATION = \
 	doc/index.rst \
 	doc/bibliography.rst \
-	doc/networkdynamics.rst
+	doc/networkdynamics.rst \
+	doc/synchronousdynamics.rst \
+	doc/stochasticdynamics.rst
 
 SOURCES_EXTRA = \
 	README.rst \
@@ -73,7 +75,8 @@ PY_INTERACTIVE = \
 	jupyter \
 	matplotlib \
 	seaborn \
-	sphinx
+	sphinx \
+	twine
 
 # Packages that shouldn't be saved as requirements (because they're
 # OS-specific, in this case OS X, and screw up Linux compute servers)
@@ -89,6 +92,8 @@ IPYTHON = ipython
 JUPYTER = jupyter
 IPCLUSTER = ipcluster
 PIP = pip
+TWINE = twine
+GPG = gpg
 VIRTUALENV = virtualenv
 ACTIVATE = . bin/activate
 TR = tr
@@ -138,9 +143,10 @@ docserver:
 dist: $(SOURCES_GENERATED)
 	$(RUN_SETUP) sdist
 
-# Upload a source distribution to PyPi (has to be done in one command)
-upload: $(SOURCES_GENERATED)
-	$(RUN_SETUP) sdist upload -r pypi
+# Upload a source distribution to PyPi
+upload: $(SOURCES_GENERATED) dist
+	$(GPG) --detach-sign -a dist/epydemic-$(VERSION).tar.gz
+	$(TWINE) upload dist/epydemic-$(VERSION).tar.gz dist/epydemic-$(VERSION).tar.gz.asc
 
 # Clean up the distribution build 
 clean:

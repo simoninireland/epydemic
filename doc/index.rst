@@ -16,7 +16,9 @@ Basic concepts and classes
    :maxdepth: 2
 
    networkdynamics
-
+   synchronousdynamics
+   stochasticdynamics
+   
 
 Epidemic processes
 ------------------
