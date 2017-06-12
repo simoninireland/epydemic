@@ -1,25 +1,21 @@
-# Initialisation for "Complex networks, complex processes" package
+# Initialisation for epydemic
 #
-# Copyright (C) 2014-2017 Simon Dobson
+# Copyright (C) 2017 Simon Dobson
 # 
-# This file is part of Complex networks, complex processes (CNCP).
+# This file is part of epydemic, epidemic network simulations in Python.
 #
-# CNCP is free software: you can redistribute it and/or modify
+# epydemic is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# CNCP is distributed in the hope that it will be useful,
+# epydemic is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CNCP. If not, see <http://www.gnu.org/licenses/gpl.html>.
-
-# regular networks
-from .lattice import lattice_graph, draw_lattice
-from .ernetworks import erdos_renyi_graph_from_scratch
+# along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 # networks with dynamical processes
 from .networkdynamics import Dynamics

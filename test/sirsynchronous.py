@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CNCP. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from cncp import *
+from epydemic import *
 from .sir import SIRTests
 
 import epyc
