@@ -17,6 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+'''`epydemic` is a library for performing simulations over networks
+for a range of epidemic spreeading (and other) processes. It provides
+classes to perform synchronous and stochastic (Gillespie) simulation
+over arbitrary networks defined using the Python `networkx` library.
+'''
+ 
 # networks with dynamical processes
 from .networkdynamics import Dynamics
 from .synchronousdynamics import SynchronousDynamics
@@ -29,5 +35,3 @@ from .sirstochasticdynamics import SIRStochasticDynamics
 # SIS processes under different dynamics
 from .sissynchronousdynamics import SISSynchronousDynamics
 from .sisstochasticdynamics import SISStochasticDynamics
-
-

@@ -48,8 +48,8 @@ SOURCES_DOC_BUILD_HTML_DIR = $(SOURCES_DOC_BUILD_DIR)/html
 SOURCES_DOC_ZIP = epydemic-doc-$(VERSION).zip
 SOURCES_DOCUMENTATION = \
 	doc/index.rst \
-	doc/glossary.rst \
-	doc/index.rst
+	doc/bibliography.rst \
+	doc/networkdynamics.rst
 
 SOURCES_EXTRA = \
 	README.rst \
@@ -57,8 +57,7 @@ SOURCES_EXTRA = \
 	HISTORY
 SOURCES_GENERATED = \
 	MANIFEST \
-	setup.py \
-	$(SOURCES_DOC_CONF)
+	setup.py
 
 # Python packages needed
 # For the system to install and run
