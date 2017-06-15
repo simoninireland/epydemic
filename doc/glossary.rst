@@ -42,4 +42,7 @@ Glossary
       network or simulation. Events can occur in :term:`continuous
       time` or :term:`discrete time`.
 
- 
+
+   stochastic process
+      A process whose exact progression is determined by random
+      variables drawn from particular probability distributions.
