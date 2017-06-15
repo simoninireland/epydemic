@@ -4,8 +4,20 @@ epydemic: Epidemic simulations on networks in Python
 Overview
 --------
 
-``epyc`` is a Python library that implements simulations of epidemic
-(and other) processes over networks.
+``epydemic`` is a Python library that implements simulations of epidemic
+(and other) processes over networks. Epidemic processes are very
+important in both network science and its applications. The most
+common application is to study the was in which diseases progress in
+different network conditions, depending on their infectiousness and
+other properties.
+
+``epydemic` provides the basic simulation machinery for performing
+epidemic simulations under two different simulation regimes:
+synchronous simulation in which time proceeds in discrete time
+intervals, and stochastic or Gillespuie simulations which are better
+for handling a wider range of probabilities (but which are slightly
+harder to specify).
+
 
 
 Installation

@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 # The version we're building
-VERSION = 0.1.0
+VERSION = 0.1.1
 
 # ----- Sources -----
 
@@ -49,9 +49,12 @@ SOURCES_DOC_ZIP = epydemic-doc-$(VERSION).zip
 SOURCES_DOCUMENTATION = \
 	doc/index.rst \
 	doc/bibliography.rst \
+	doc/glossary.rst \
 	doc/networkdynamics.rst \
 	doc/synchronousdynamics.rst \
-	doc/stochasticdynamics.rst
+	doc/stochasticdynamics.rst \
+	doc/sir.rst \
+	doc/sis.rst
 
 SOURCES_EXTRA = \
 	README.rst \
@@ -64,14 +67,12 @@ SOURCES_GENERATED = \
 # Python packages needed
 # For the system to install and run
 PY_COMPUTATIONAL = \
-	ipython \
-	pyzmq \
-	ipyparallel \
+	numpy \
 	networkx \
 	epyc
 # For the documentation
 PY_INTERACTIVE = \
-	numpy \
+	ipython \
 	jupyter \
 	matplotlib \
 	seaborn \

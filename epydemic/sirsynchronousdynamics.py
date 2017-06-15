@@ -25,9 +25,7 @@ from copy import copy
 
 
 class SIRSynchronousDynamics(SynchronousDynamics):
-    '''A synchronous SIR dynamics. We use probabilities
-    to express infection and recovery per timestep, and run the system
-    using synchronous dynamics.'''
+    '''A synchronous SIR dynamics.'''
     
     # the possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE = 'S'    #: Node is susceptible to infection
@@ -45,7 +43,8 @@ class SIRSynchronousDynamics(SynchronousDynamics):
 
     def setUp( self, params ):
         '''Seed the network with infected nodes, and mark all edges
-        as unoccupied by the dynamics.
+        as unoccupied by the dynamics. A node is infected with a
+        probability given by the ``pInfected`` parameter.
 
         :param params: the parameters of the simulation'''
 
@@ -72,8 +71,7 @@ class SIRSynchronousDynamics(SynchronousDynamics):
 
     def dynamics( self, t, params ):
         '''Optimised per-step dynamics that only runs the model at infected
-        nodes, since they're the only places where state changes originate. At the
-        end of each timestep we re-build the infected node list.
+        nodes, since they're the only places where state changes originate.
         
         :param t: the timestep
         :param params: the parameters of the simulation
@@ -92,7 +90,12 @@ class SIRSynchronousDynamics(SynchronousDynamics):
             
     def model( self, n, params ):
         '''Apply the SIR dynamics to node n. From the re-definition of
-        :meth:`SIRSynchronousDynamics.dynamics` we already know this node is infected.
+        :meth:`SIRSynchronousDynamics.dynamics` we already know this node
+        is infected. The node infects each susceptible neighbour with
+        probability given by the ``pInfect`` parameter, and recovers with
+        a probability given by the ``pRecover`` parameter: several infection
+        events may occur in a single timestep, possibly followed by
+        a recovery event.
 
         :param params: the parameters of the simulation
         :param n: the node

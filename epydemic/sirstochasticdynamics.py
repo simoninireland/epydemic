@@ -27,9 +27,9 @@ class SIRStochasticDynamics(StochasticDynamics):
     '''A stochastic SIR dynamics.'''
 
     # the possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE = 'S'    #: Node is susceptible to infection
-    INFECTED = 'I'       #: Node is infected
-    RECOVERED = 'R'      #: Node is recovered/removed
+    SUSCEPTIBLE = 'S'    #: Node dynamical state marking node as susceptible to infection
+    INFECTED = 'I'       #: Node dynamical state marking node as infected
+    RECOVERED = 'R'      #: Node dynamical state marking node as recovered/removed
     
     def __init__( self, g = None ):
         '''Generate an SIR dynamics.
@@ -79,14 +79,17 @@ class SIRStochasticDynamics(StochasticDynamics):
     def at_equilibrium( self, t ):
         '''SIR dynamics is at equilibrium if there are no more infected nodes left
         in the network, no susceptible nodes adjacent to infected nodes, or if we've
-        exceeded the default simulation length.
+        met the default termination conditions.
         
         :param t: the current time
         :returns: True if the model has stopped'''
-        if (len(self._infected) == 0):
+        if len(self._infected) == 0:
             return True
         else:
-            return super(SIRStochasticDynamics, self).at_equilibrium(t)
+            if len(self._si) == 0:
+                return True
+            else:
+                return super(SIRStochasticDynamics, self).at_equilibrium(t)
          
     def infect( self, t, params ):
         '''Infect a node chosen at random from the SI edges.
@@ -134,7 +137,8 @@ class SIRStochasticDynamics(StochasticDynamics):
         self._si = [ (np, m, datap) for (np, m, datap) in self._si if np != n ]
         
     def transitions( self, t, params ):
-        '''Return the transition vector for the dynamics.
+        '''Return the transition vector for the dynamics. This consists of
+        two entries, for the infection and recovery events.
         
         :param t: time (ignored)
         :param params: the parameters of the simulation

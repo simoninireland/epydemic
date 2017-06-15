@@ -23,6 +23,11 @@ Basic concepts and classes
 Epidemic processes
 ------------------
 
+.. toctree::
+   :maxdepth: 2
+
+   sir
+   sis
 
 
 
@@ -30,5 +35,6 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
+* :ref:`glossary`
 * :ref:`bibliography`
 * :ref:`search`

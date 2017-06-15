@@ -2,9 +2,30 @@
 ====================================================================
 
 .. currentmodule:: epydemic
-   
-.. autoclass:: StochasticDynamics
 
+The idea of stochastic event-based simulation arose in *ab initio*
+chemistry to simulate interactions between molecules. The basic
+technique is due to `Gillespie <Gil76>`_ and was later `refined by him
+<Gil77>`_.
+
+The basic idea of Gillespie simulation is to structure an experiment
+in terms of events which occur with some probability over continuous
+time. Individual event probabilities are converted to rates by
+multiplying the individual probability by the number of possible ways
+it can occur at this instance, leading to a probability distribution
+of events and the time until they occur. We then draw from this
+distribution and update it according to the behaviour defined for that
+particular event. This allows the rates of events to change over time.
+
+The :class:`StochasticDynamics` class provides the basic statistical
+machinery for performing a simulation. Sub-classes must provide (at
+least) a :meth:`transitions` method to return the probability
+distribution being drawn from, and an event service routine for each
+event that can occur which will be called to update the simulation.  
+
+.. autoclass:: StochasticDynamics
+   :show-inheritance:
+	 
 
 Creating a dynamics class
 -------------------------

@@ -24,7 +24,7 @@ import numpy
 
 
 class SISSynchronousDynamics(SIRSynchronousDynamics):
-    '''An SIR synchronous dynamics.'''
+    '''An SIS synchronous dynamics.'''
     
     def __init__( self, g = None ):
         '''Generate an SIS dynamics over an (optional) prototype network.

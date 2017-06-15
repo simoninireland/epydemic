@@ -24,11 +24,7 @@ import numpy
 
 
 class SISStochasticDynamics(SIRStochasticDynamics):
-    '''An SIS stochastic dynamics. This is very like the SIR
-    dynamics but recovered nodes become susceptible again, modelling
-    recurrent disease where infection does not confer immunity. SIS also
-    allows endemic diseases to form, existing indefinitely in the network
-    at low levels.'''
+    '''An SIS stochastic dynamics..'''
 
     def __init__( self, g = None ):
         '''Generate an SIS dynamics with an optional prototype network.

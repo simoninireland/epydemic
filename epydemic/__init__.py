@@ -17,10 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-'''`epydemic` is a library for performing simulations over networks
-for a range of epidemic spreeading (and other) processes. It provides
-classes to perform synchronous and stochastic (Gillespie) simulation
-over arbitrary networks defined using the Python `networkx` library.
+'''`epydemic` is a library for performing simulations for a range of
+epidemic spreeading (and other) processes, simulated over networks
+represented using `networkx`.
+
+Epidemic processes are very important in both network science and its
+applications. The most common application is to study the was in which
+diseases progress in different network conditions, depending on their
+infectiousness and other properties. Typically such processes are
+modelled as a :term:`compartmented model of disease` (familiar to
+computer scientists as finite state machines) with conditional
+probabilities for moving between compartments.
+
+`epydemic` provides the basic simulation machinery for performing
+epidemic simulations under two different simulation regimes:
+synchronous :term:`discrete time` simulation in which time proceeds in
+discrete time intervals, and stochastic or Gillespuie :term:`continuous
+time` simulations which are better for handling a wider range of
+:term:`event` probabilities (but which are slightly harder to
+specify).
+
 '''
  
 # networks with dynamical processes

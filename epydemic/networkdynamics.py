@@ -28,11 +28,11 @@ class Dynamics(epyc.Experiment, object):
     (Gillespie) simulation dynamics.'''
 
     # keys for node and edge attributes
-    DYNAMICAL_STATE = 'state'   #: dynamical state of a node
-    OCCUPIED = 'occupied'       #: edge has been used to transfer infection or not
+    DYNAMICAL_STATE = 'state'   #: Node attribute holding dynamical state of a node.
+    OCCUPIED = 'occupied'       #: Edge attribute indicating whether the edge has been used to transfer infection.
 
     # the default maximum simulation time
-    DEFAULT_MAX_TIME = 20000
+    DEFAULT_MAX_TIME = 20000    #: Default maximum simulation time.
     
     def __init__( self, g = None ):
         '''Create a dynamics, optionally initialised to run on the given network.
@@ -60,14 +60,13 @@ class Dynamics(epyc.Experiment, object):
 
     def setMaximumTime( self, t ):
         '''Set the maximum default simulation time. The default is given
-        by `DEFAULT_MAX_TIME`.
+        by :attr:`DEFAULT_MAX_TIME`.
 
         param: t: the maximum time'''
         self._maxTime = t
         
     def at_equilibrium( self, t ):
-        '''Test whether the model is an equilibrium. The default runs for
-        20000 timesteps and then stops. Override this method to provide
+        '''Test whether the model is an equilibrium. Override this method to provide
         alternative and/or faster simulations.
         
         :param t: the current simulation timestep
