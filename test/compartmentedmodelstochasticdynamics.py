@@ -59,10 +59,8 @@ class CompartmentedModelStochasticDynamicsTest(unittest.TestCase):
         else:
             print rc[epyc.Experiment.RESULTS]
 
-    @unittest.skip('for now')
     def testRunMultiple( self ):
         '''Test a run of a model over a (small) parameter space.'''
         m = SIR()
         e = CompartmentedStochasticDynamics(m, self._er)
-        rc = self._lab.runExperiment(e)
-        
+        self._lab.runExperiment(e)

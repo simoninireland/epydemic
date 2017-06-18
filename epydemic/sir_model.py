@@ -53,72 +53,53 @@ class SIR(CompartmentedModel):
         # initialise nodes according to the initial compartment probability distribution
         dist = self.initialCompartmentDistribution()
         self.checkDistributionIsNormalised(dist)
-        for (n, data) in g.nodes_iter(data = True):
+        for n in g.nodes_iter():
             # label node with its compartment
             c = self.drawFromDistribution(dist)
-            data[self.COMPARTMENT] = c
+            self.moveCompartment(g, n, c)
 
             # store node in locus
             self.addToLocus(c, n)
 
         # initialise edge loci
-        for (n, m, data) in g.edges_iter(data = True):
+        for (n, m) in g.edges_iter():
             # mark edge as unocupied by the dynamics
-            data[self.OCCUPIED] = False
+            self.markUnoccupied(g, n, m)
             
             # store edge in locus
-            if (g.node[n][self.COMPARTMENT] == self.SUSCEPTIBLE) and (g.node[m][self.COMPARTMENT] == self.INFECTED):
-                self.addToLocus(self.SI, (n, m))
-            else:
-                if (g.node[n][self.COMPARTMENT] == self.INFECTED) and (g.node[m][self.COMPARTMENT] == self.SUSCEPTIBLE):
-                    self.addToLocus(self.SI, (m, n))
+            self.addEdgeToLocus(g, n, m, self.SI)
 
-        #print 'I {i}'.format(i = len(self._loci[self.INFECTED]))
-        #print 'SI {si}'.format(si = len(self._loci[self.SI]))
-                                    
     def infect( self, g ):
-        #print 'infect'
-        
         # choose an SI edge at random
         (n, m) = self.drawFromLocus(self.SI)
-        print 'infect {n}-{m}'.format(n = n, m = m)
 
         # mark the edge as occupied
-        data = g.get_edge_data(n, m)
-        data[self.OCCUPIED] = True
+        self.markOccupied(g, n, m)
         
-        # remove any edges in SI depending on n in being SUSCEPTIBLE
-        es = set([ (n, m) for (_, m) in g.edges_iter(n) if (n, m) in self._loci[self.SI] ])
-        print 'losing SI edges {es}'.format(es = es)
+        # remove any edges in SI depending on n being SUSCEPTIBLE
+        es = set([ (n, m) for (_, m) in g.edges_iter(n) if self.isInLocus(g, (n, m), self.SI) ])
         self.removeFromLocus(self.SI, es)
 
         # move compartment
-        print 'infect {n}'.format(n = n)
-        g.node[n][self.COMPARTMENT] = self.INFECTED
+        self.moveCompartment(g, n, self.INFECTED)
 
         # add to INFECTED locus
         self.addToLocus(self.INFECTED, n)
 
         # add any edges that are now SI
-        es = set([ (m, n) for (_, m) in g.edges_iter(n) if g.node[m][self.COMPARTMENT] == self.SUSCEPTIBLE ])
-        print 'new SI edges {es}'.format(es = es)
+        es = set([ (m, n) for (_, m) in g.edges_iter(n) if self.isInCompartment(g, m, self.SUSCEPTIBLE) ])
         self.addToLocus(self.SI, es)
 
     def remove( self, g ):
-        #print 'remove'
-        
         # choose an INFECTED node edge at random
         n = self.drawFromLocus(self.INFECTED)
-        print n
         
         # remove any edges in SI depending on n in being INFECTED
         es = set([ (m, n) for (_, m) in g.edges_iter(n) if g.node[m][self.COMPARTMENT] == self.SUSCEPTIBLE ])
-        print 'losing SI edges {es}'.format(es = es)
         self.removeFromLocus(self.SI, es)
 
         # move compartment
-        print 'remove {n}'.format(n = n)
-        g.node[n][self.COMPARTMENT] = self.REMOVED
+        self.moveCompartment(g, n, self.REMOVED)
 
                 
                 

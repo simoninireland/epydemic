@@ -51,6 +51,10 @@ class CompartmentedModel(object):
         # create locus
         self._loci[name] = set()
 
+        # for edge loci, record the end compartments
+        if r is not None:
+            self._effects[name] = (l, r)
+            
     def addEvent( self, locus, p, event ):
         self._events.append((locus, p, event))
 
@@ -78,8 +82,9 @@ class CompartmentedModel(object):
     def setUp( self, g, params ):
         # re-set the model ready for a new run
         self._compartments = []       # list of (compartment, initial-probability) pairs
-        self._loci = dict()           # mapping from locus to set of elements
+        self._loci = dict()           # mapping from locus to set of elements (nodes or edges)
         self._events = []             # list of (locus, probability, event) triples
+        self._effects = dict()
         
         # build the model
         self.build(g, params)
@@ -98,7 +103,35 @@ class CompartmentedModel(object):
 
     def totalLoci( self ):
         return self._totalLoci
+
+    def moveCompartment( self, g, n, c ):
+        g.node[n][self.COMPARTMENT] = c
+
+    def isInCompartment( self, g, n, l ):
+        return g.node[n][self.COMPARTMENT] == l
+
+    def isInLocus( self, g, v, l ):
+        return v in self._loci[l]
+    
+    def markUnoccupied( self, g, n, m ):
+        data = g.get_edge_data(n, m)
+        data[self.OCCUPIED] = False
+ 
+    def markOccupied( self, g, n, m ):
+        data = g.get_edge_data(n, m)
+        data[self.OCCUPIED] = True
+
+    def addEdgeToLocus( self, g, n, m, l ):
+        (lc, rc) = self._effects[l]
         
+        nc = g.node[n][self.COMPARTMENT]
+        mc = g.node[m][self.COMPARTMENT]
+        if (nc == lc) and (mc == rc):
+            self.addToLocus(l, (n, m))
+        else:
+            if (mc == lc) and (nc == rc):
+                self.addToLocus(l, (m, n))
+
     def addToLocus( self, l, vs ):
         if l in self._loci.keys():
             if isinstance(vs, collections.Set):
@@ -112,7 +145,7 @@ class CompartmentedModel(object):
                 self._loci[l].difference_update(vs)
             else:
                 self._loci[l].remove(vs)
-            
+
     def drawFromLocus( self, l ):
         e = (random.sample(self._loci[l], 1))[0]
         self._loci[l].remove(e)
