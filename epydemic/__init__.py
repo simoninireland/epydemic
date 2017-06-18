@@ -41,13 +41,18 @@ specify).
  
 # networks with dynamical processes
 from .networkdynamics import Dynamics
-from .synchronousdynamics import SynchronousDynamics
+#from .synchronousdynamics import SynchronousDynamics
 from .stochasticdynamics import StochasticDynamics
 
 # SIR processes under different dynamics
-from .sirsynchronousdynamics import SIRSynchronousDynamics
-from .sirstochasticdynamics import SIRStochasticDynamics
+#from .sirsynchronousdynamics import SIRSynchronousDynamics
+#from .sirstochasticdynamics import SIRStochasticDynamics
 
 # SIS processes under different dynamics
-from .sissynchronousdynamics import SISSynchronousDynamics
-from .sisstochasticdynamics import SISStochasticDynamics
+#from .sissynchronousdynamics import SISSynchronousDynamics
+#from .sisstochasticdynamics import SISStochasticDynamics
+
+# new compartmented models
+from .compartmentedmodel import CompartmentedModel
+from .sir_model import SIR
+from .compartmentedstochasticdynamics import CompartmentedStochasticDynamics

@@ -77,44 +77,20 @@ class Dynamics(epyc.Experiment, object):
         '''Before each experiment, create a working copy of the prototype network.
 
         :param params: parameters of the experiment'''
+
+        # perform the default setup
+        super(Dynamics, self).setUp(params)
+
+        # make a copyt of the network prototype
         self._graph = self._graphPrototype.copy()
 
     def tearDown( self ):
         '''At the end of each experiment, throw away the copy.'''
+
+        # perform the default tear-down
+        super(Dynamics, self).tearDown()
+
+        # throw away the worked-on model
         self._graph = None
         
-    def skeletonise( self ):
-        '''Remove unoccupied edges from the network. This leaves the network
-        consisting of only "occupied" edges that were used to transmit the
-        infection between nodes.
-        
-        :returns: the network with unoccupied edges removed'''
-        
-        # find all unoccupied edges
-        g = self.network()
-        edges = []
-        for n in g.nodes_iter():
-            for (np, m, data) in g.edges_iter(n, data = True):
-                if (self.OCCUPIED not in data.keys()) or (data[self.OCCUPIED] != True):
-                    # edge is unoccupied, mark it to be removed
-                    # (safe because there are no parallel edges)
-                    edges.insert(0, (n, m))
-                    
-        # remove all the unoccupied edges in one go
-        g.remove_edges_from(edges)
-        return g
-    
-    def populations( self ):
-        '''Return a count of the number of nodes in each dynamical state.
-        
-        :returns: a dict mapping states to number of nodes in that state'''
-        g = self.network()
-        pops = dict()
-        for n in g.nodes_iter():
-            s = g.node[n][self.DYNAMICAL_STATE]
-            if s not in pops.keys():
-                pops[s] = 1
-            else:
-                pops[s] = pops[s] + 1
-        return pops
     
