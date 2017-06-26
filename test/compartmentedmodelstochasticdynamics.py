@@ -47,7 +47,38 @@ class CompartmentedModelStochasticDynamicsTest(unittest.TestCase):
         m = SIR()
         e = CompartmentedStochasticDynamics(m, self._er)
         e.setUp(self._params)
-    
+                
+    def testLoci( self ):
+        '''Test we can populate loci correctly.'''
+        m = SIR()
+        g = networkx.Graph()
+        g.add_edges_from([ (1, 2), (2, 3), (1, 4), (3, 4) ])
+        e = CompartmentedStochasticDynamics(m, g)
+        params = dict(pInfect = 0.1,
+                      pInfected = 1.0,    # infect all nodes initially
+                      pRecover = 0.05)
+        e.setUp(params)
+
+        # keep track of the other compartments as well
+        e._model.addLocus(SIR.SUSCEPTIBLE)
+        e._model.addLocus(SIR.REMOVED)
+        
+        # all nodes in I
+        self.assertItemsEqual(e._model._loci[SIR.INFECTED].elements(), [ 1, 2, 3, 4 ])
+
+        # one node from I into S, two edges into SI
+        m.changeCompartment(e.network(), 1, SIR.SUSCEPTIBLE)
+        self.assertItemsEqual(e._model._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
+        self.assertItemsEqual(e._model._loci[SIR.SUSCEPTIBLE].elements(), [ 1 ])
+        self.assertItemsEqual(e._model._loci[SIR.SI].elements(), [ (1, 2), (1, 4) ])
+
+        # recover the infected node
+        m.changeCompartment(e.network(), 1, SIR.REMOVED)
+        self.assertItemsEqual(e._model._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
+        self.assertItemsEqual(e._model._loci[SIR.SUSCEPTIBLE].elements(), [])
+        self.assertItemsEqual(e._model._loci[SIR.REMOVED].elements(), [ 1 ])
+        self.assertItemsEqual(e._model._loci[SIR.SI].elements(), [ ])        
+        
     def testRunSingle( self ):
         '''Test a single run of a model.'''
         m = SIR()
@@ -59,6 +90,7 @@ class CompartmentedModelStochasticDynamicsTest(unittest.TestCase):
         else:
             print rc[epyc.Experiment.RESULTS]
 
+    @unittest.skip('not yet')
     def testRunMultiple( self ):
         '''Test a run of a model over a (small) parameter space.'''
         m = SIR()

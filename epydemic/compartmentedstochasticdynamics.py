@@ -33,29 +33,19 @@ class CompartmentedStochasticDynamics(StochasticDynamics):
         super(CompartmentedStochasticDynamics, self).__init__(g)
         self._model = m
 
-    def _drawFrom( self, dist ):
-        '''Draw an element from a distribution. Essentially this converts a uniformly
-        distributed value (which is easily obtainable) into a number drawn from a
-        discrete but arbitrary distribution.
-
-        :param dist: the distribution represented as a list of (value, probability) pairs
-        :returns: a value selected at random according to the distribution'''
-        r1 = numpy.random.random()
-        a = 0.0
-        for (s, p) in dist:
-            a = a + p
-            if r1 <= a:
-                return s
-
     def setUp( self, params ):
-        '''Set up the experiment for a run. This performs the default action of
-        copying the prototype network and then uses the model to initialise the
-        nodes into the various compartments according to the parameters.
+        '''Set up the experiment for a run. This performs the default action
+        of copying the prototype network and then builds the model and
+        uses it to initialise the nodes into the various compartments
+        according to the parameters.
 
         :params params: the experimental parameters'''
         
         # perform the default setup
         super(CompartmentedStochasticDynamics, self).setUp(params)
+
+        # build the model
+        self._model.build(params)
 
         # initialise the network from the model
         g = self.network()
@@ -68,7 +58,7 @@ class CompartmentedStochasticDynamics(StochasticDynamics):
         :param t: the current time
         :returns: the event rate distribution'''
         dist = self._model.eventDistribution(t)
-        return map((lambda (l, p, f): (l, p * self._model.sizeOfLocus(l), f)), dist)
+        return map((lambda (l, p, f): (l, p * len(l), f)), dist)
 
     def experimentalResults( self ):
         '''Report the model's experimental results.

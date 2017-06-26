@@ -40,14 +40,14 @@ class StochasticDynamics(Dynamics):
         super(StochasticDynamics, self).__init__(g)
 
     def eventRateDistribution( self, t ):
-        '''Return the transition vector event distribution, a sequence of (r, f) pairs
-        where r is the rate at which a transition happens and
+        '''Return the event distribution, a sequence of (r, f) pairs
+        where r is the rate at which an event happens and
         f is the event function called to make it happen. This method
         must be overridden in sub-classes. Note that it's a rate we want,
         not a probability: the former can be obtained from the latter
         simply by multiplying the event probability by the number of
-        times it's possible in the network, which is often a population of
-        nodes in a given state.
+        times it's possible in the current network, which is often a
+        population of nodes or edges in a given state.
         
         It is perfectly fine for an event to have a zero rate. The process
         is assumed to have reached equilibrium if all events have zero rates.
@@ -57,8 +57,8 @@ class StochasticDynamics(Dynamics):
         raise NotYetImplementedError('eventRateDistribution()')
 
     def do( self, params ):
-        '''Run the epidemic simulation using Gillespie dynamics. The process terminates
-        when either there are no events with zero rates or when :meth:`at_equilibrium()`
+        '''Run the simulation using Gillespie dynamics. The process terminates
+        when either there are no events with zero rates or when :meth:`at_equilibrium`
         return True.
 
         :param params: the experimental parameters
@@ -74,7 +74,7 @@ class StochasticDynamics(Dynamics):
             
             # compute the total rate of transitions for the entire network
             a = 0.0
-            for (l, r, _) in transitions:
+            for (_, r, _) in transitions:
                 a = a + r
             if a == 0:       
                 break              # no events with non-zero rates 
@@ -89,21 +89,23 @@ class StochasticDynamics(Dynamics):
             # calculate which transition happens
             if len(transitions) == 1:
                 # if there's only one, that's the one that happens
-                (_, _, f) = transitions[0]
+                (l, _, f) = transitions[0]
             else:
                 # otherwise, choose one at random based on the rates
                 r2 = numpy.random.random()
                 xc = r2 * a
                 k = 0
-                (_, xs, f) = transitions[k]
+                (l, xs, f) = transitions[k]
                 while xs < xc:
                     k = k + 1
-                    (_, xsp, f) = transitions[k]
+                    (l, xsp, f) = transitions[k]
                     xs = xs + xsp
+
+            # drawe a random element from the chosen locus
+            e = l.draw()
             
-            # perform the transition
-            # call the transition function associated with the selected event
-            f(t, g)
+            # perform the event by calling the event function
+            f(t, l, g, e)
             
             # increment the event counter
             events = events + 1

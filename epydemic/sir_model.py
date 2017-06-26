@@ -24,6 +24,11 @@ import random
 
 class SIR(CompartmentedModel):
 
+    # the model parameters
+    P_INFECTED = 'pInfected'  #: Parameter for a not initially being infected
+    P_INFECT = 'pInfect'      #: Parameter for infection on contact
+    P_REMOVE = 'pRecover'     #: Parameter for recovery
+    
     # the possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE = 'S'    #: Compartment for nodes susceptible to infection
     INFECTED = 'I'       #: Compartment for nodes infected
@@ -35,10 +40,13 @@ class SIR(CompartmentedModel):
     def __init__( self ):
         super(SIR, self).__init__()
 
-    def build( self, g, params ):
-        pInfected = params['pInfected']
-        pInfect = params['pInfect']
-        pRecover = params['pRecover']
+    def build( self, params ):
+        '''Build the SIR model.
+
+        :param params: the model parameters'''
+        pInfected = params[self.P_INFECTED]
+        pInfect = params[self.P_INFECT]
+        pRecover = params[self.P_REMOVE]
 
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
@@ -47,60 +55,15 @@ class SIR(CompartmentedModel):
         self.addLocus(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
         self.addLocus(self.INFECTED)
 
-        self.addEvent(self.INFECTED, pRecover, lambda t, g: self.remove(g))
-        self.addEvent(self.SI, pInfect, lambda t, g: self.infect(g))
+        self.addEvent(self.INFECTED, pRecover, lambda t, l, g, e: self.remove(l, g, e))
+        self.addEvent(self.SI, pInfect, lambda t, l, g, e: self.infect(l, g, e))
 
-        # initialise nodes according to the initial compartment probability distribution
-        dist = self.initialCompartmentDistribution()
-        self.checkDistributionIsNormalised(dist)
-        for n in g.nodes_iter():
-            # label node with its compartment
-            c = self.drawFromDistribution(dist)
-            self.moveCompartment(g, n, c)
+    def infect( self, l, g, (n, m) ):
+        self.changeCompartment(g, n, self.INFECTED)
+        self.markOccupied(g, (n, m))
 
-            # store node in locus
-            self.addToLocus(c, n)
-
-        # initialise edge loci
-        for (n, m) in g.edges_iter():
-            # mark edge as unocupied by the dynamics
-            self.markUnoccupied(g, n, m)
-            
-            # store edge in locus
-            self.addEdgeToLocus(g, n, m, self.SI)
-
-    def infect( self, g ):
-        # choose an SI edge at random
-        (n, m) = self.drawFromLocus(self.SI)
-
-        # mark the edge as occupied
-        self.markOccupied(g, n, m)
-        
-        # remove any edges in SI depending on n being SUSCEPTIBLE
-        es = set([ (n, m) for (_, m) in g.edges_iter(n) if self.isInLocus(g, (n, m), self.SI) ])
-        self.removeFromLocus(self.SI, es)
-
-        # move compartment
-        self.moveCompartment(g, n, self.INFECTED)
-
-        # add to INFECTED locus
-        self.addToLocus(self.INFECTED, n)
-
-        # add any edges that are now SI
-        es = set([ (m, n) for (_, m) in g.edges_iter(n) if self.isInCompartment(g, m, self.SUSCEPTIBLE) ])
-        self.addToLocus(self.SI, es)
-
-    def remove( self, g ):
-        # choose an INFECTED node edge at random
-        n = self.drawFromLocus(self.INFECTED)
-        
-        # remove any edges in SI depending on n in being INFECTED
-        es = set([ (m, n) for (_, m) in g.edges_iter(n) if g.node[m][self.COMPARTMENT] == self.SUSCEPTIBLE ])
-        self.removeFromLocus(self.SI, es)
-
-        # move compartment
-        self.moveCompartment(g, n, self.REMOVED)
-
-                
+    def remove( self, l, g, n ):
+        self.changeCompartment(g, n, self.REMOVED)
+    
                 
    

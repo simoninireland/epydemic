@@ -25,9 +25,9 @@ Epidemic processes are very important in both network science and its
 applications. The most common application is to study the was in which
 diseases progress in different network conditions, depending on their
 infectiousness and other properties. Typically such processes are
-modelled as a :term:`compartmented model of disease` (familiar to
-computer scientists as finite state machines) with conditional
-probabilities for moving between compartments.
+modelled as a :term:`compartmented model of disease` with conditional
+probabilities for moving between compartments (familiar to
+computer scientists as stochastic finite state machines).
 
 `epydemic` provides the basic simulation machinery for performing
 epidemic simulations under two different simulation regimes:
@@ -54,5 +54,6 @@ from .stochasticdynamics import StochasticDynamics
 
 # new compartmented models
 from .compartmentedmodel import CompartmentedModel
+from .loci import Locus, NodeLocus, EdgeLocus
 from .sir_model import SIR
 from .compartmentedstochasticdynamics import CompartmentedStochasticDynamics
