@@ -54,15 +54,32 @@ class SIS(CompartmentedModel):
         self.addLocus(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
         self.addLocus(self.INFECTED)
 
-        self.addEvent(self.INFECTED, pRecover, lambda t, g, e: self.recover(g, e))
-        self.addEvent(self.SI, pInfect, lambda t, g, e: self.infect(g, e))
+        self.addEvent(self.INFECTED, pRecover, lambda t, g, e: self.recover(t, g, e))
+        self.addEvent(self.SI, pInfect, lambda t, g, e: self.infect(t, g, e))
 
-    def infect( self, g, (n, m) ):
+    def infect( self, t, g, (n, m) ):
+        '''Perform an infection event. This changes the compartment of
+        the susceptible-end node to :attr:`INFECTED`. It also marks the edge
+        traversed as occupied.
+
+        :param t: the simulation time (unused)
+        :param g: the network
+        :param (n, m): the edge transmitting the infection, susceptible-infected
+        :returns: True'''
         self.changeCompartment(g, n, self.INFECTED)
         self.markOccupied(g, (n, m))
+        return True
 
-    def recover( self, g, n ):
+    def recover( self, t, g, n ):
+        '''Perform a removal event. This changes the compartment of
+        the node back to :attr:`SUSCEPTIBLE`, allowing re-infection.
+
+        :param t: the simulation time (unused)
+        :param g: the network
+        :param n: the node
+        returns: True'''
         self.changeCompartment(g, n, self.SUSCEPTIBLE)
+        return True
     
                 
    

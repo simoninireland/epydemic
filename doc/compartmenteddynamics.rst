@@ -55,11 +55,11 @@ as usual.
 
 .. automethod:: CompartmentedSynchronousDynamics.setUp
 
-Under synchronous dynamics we use the event probabilities to test
-whether an event occurred at each possible locus in each discrete
-timestep.
+Under synchronous dynamics we use the model-provided event
+probabilities to test whether an event occurred at each possible locus
+in each discrete timestep.
 
-.. automethod:: CompartmentedSynchronousDynamics.dynamics
+.. automethod:: CompartmentedSynchronousDynamics.eventDistribution
 
 Finally, we defer the experimental results collection to the model.
 

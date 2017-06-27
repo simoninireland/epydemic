@@ -24,10 +24,12 @@ The synchronous dynamics records extra metadata.
 Running a dynamics
 ------------------
 
-To run a process' dynamics we need to define two things: the action
-that runs in each single timestep; and the overall experimental
-control that runs the experiment and packages-up some key common
-results.
+To run a process' dynamics we need to define three things: the event
+distribution, the action that runs in each single timestep; and the
+overall experimental control that runs the experiment and packages-up
+some key common results.
+
+.. automethod:: SynchronousDynamics.eventDistribution
 
 .. automethod:: SynchronousDynamics.dynamics
 

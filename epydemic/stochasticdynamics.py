@@ -35,14 +35,15 @@ class StochasticDynamics(Dynamics):
         super(StochasticDynamics, self).__init__(g)
 
     def eventRateDistribution( self, t ):
-        '''Return the event distribution, a sequence of (r, f) pairs
-        where r is the rate at which an event happens and
-        f is the event function called to make it happen. This method
-        must be overridden in sub-classes. Note that it's a rate we want,
-        not a probability: the former can be obtained from the latter
-        simply by multiplying the event probability by the number of
-        times it's possible in the current network, which is often a
-        population of nodes or edges in a given state.
+        '''Return the event distribution, a sequence of (l, r, f) triples
+        where l is the locus where the event occurs, r is the rate at
+        which an event occurs, and f is the event function called to
+        make it happen. This method must be overridden in
+        sub-classes. Note that it's a rate we want, not a probability:
+        the former can be obtained from the latter simply by
+        multiplying the event probability by the number of times it's
+        possible in the current network, which is often a population
+        of nodes or edges in a given state.
         
         It is perfectly fine for an event to have a zero rate. The process
         is assumed to have reached equilibrium if all events have zero rates.
@@ -55,6 +56,10 @@ class StochasticDynamics(Dynamics):
         '''Run the simulation using Gillespie dynamics. The process terminates
         when either there are no events with zero rates or when :meth:`at_equilibrium`
         return True.
+
+        Event functions may return False to indicate that the event didn't fire,
+        and in this case the dynamics will select another event and not increment the
+        simulation time.
 
         :param params: the experimental parameters
         :returns: the experimental results dict'''
@@ -77,9 +82,6 @@ class StochasticDynamics(Dynamics):
             # calculate the timestep delta
             r1 = numpy.random.random()
             dt = (1.0 / a) * math.log(1.0 / r1)
-
-            # advance time by the timestep
-            t = t + dt
             
             # calculate which transition happens
             if len(transitions) == 1:
@@ -99,11 +101,14 @@ class StochasticDynamics(Dynamics):
             # draw a random element from the chosen locus
             e = l.draw()
             
-            # perform the event by calling the event function
-            f(t, g, e)
-            
-            # increment the event counter
-            events = events + 1
+            # perform the event by calling the event function,
+            # passing the event time, network, and element
+            happened = f(t + dt, g, e)
+            if happened:
+                # event happened, advance time by the timestep
+                # and increment the event counter
+                t = t + dt
+                events = events + 1
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

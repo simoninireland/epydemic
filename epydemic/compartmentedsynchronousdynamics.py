@@ -56,31 +56,12 @@ class CompartmentedSynchronousDynamics(SynchronousDynamics):
         g = self.network()
         self._model.setUp(g, params)
 
-    def dynamics( self, t, params ):
-        '''Run a single step of the model over the network.
-        
-        :param t: the current timestep
-        :param params: the parameters of the simulation
-        :returns: the number of dynamic events that happened in this timestep'''
-        g = self.network()
-        events = 0
-        
-        # retrieve all the events, their loci, probabilities, and event functions
-        dist = self._model.eventDistribution(t)
+    def eventDistribution( self, t ):
+        '''Return the model's event distribution.
 
-        # run through all the events
-        for (l, p, f) in dist:
-            # run through every possible element on which this event may occur
-            for e in copy(l.elements()):
-                # test for occurrance of the event on this element
-                if numpy.random.random() < p:
-                    # yes, perform the event
-                    f(t, g, e)
-
-                    # update the event count
-                    events = events + 1
-
-        return events
+        :param t: current time
+        :returns: the event distribution'''
+        return self._model.eventDistribution(t)
 
     def experimentalResults( self ):
         '''Report the model's experimental results.
