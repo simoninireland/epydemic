@@ -19,8 +19,6 @@
 
 from epydemic import *
 
-import random
-
 class SIR(CompartmentedModel):
     '''The Susceptible-Infected-Removed :term:`compartmented model of disease`.
     Susceptible nodes are infected by infected neighbours, and recover to

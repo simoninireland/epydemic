@@ -19,8 +19,6 @@
 
 from epydemic import *
 
-import random
-
 class SIS(CompartmentedModel):
     '''The Susceptible-Infected-Susceptible :term:`compartmented model of disease`.
     Susceptible nodes are infected by infected neighbours, and recover back
