@@ -23,15 +23,10 @@ import epyc
 import math
 import numpy
 
-
 class StochasticDynamics(Dynamics):
-    '''A dynamics that runs stochastically in continuous time. This is a
+    '''A dynamics that runs stochastically in :term:`continuous time`. This is a
     very efficient and statistically exact approach, but requires that the
     statistical properties of the events making up the process are known.'''
-
-    # Additional metadata elements
-    TIME = 'simulation_time'      #: Metadata element holding the logical simulation end-time
-    EVENTS = 'simulation_events'  #: Metadata element holding the number of events that happened
     
     def __init__( self, g = None ):
         '''Create a dynamics, optionally initialised to run on the given network.
@@ -101,11 +96,11 @@ class StochasticDynamics(Dynamics):
                     (l, xsp, f) = transitions[k]
                     xs = xs + xsp
 
-            # drawe a random element from the chosen locus
+            # draw a random element from the chosen locus
             e = l.draw()
             
             # perform the event by calling the event function
-            f(t, l, g, e)
+            f(t, g, e)
             
             # increment the event counter
             events = events + 1

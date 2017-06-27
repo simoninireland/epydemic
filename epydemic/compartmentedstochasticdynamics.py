@@ -21,9 +21,11 @@ from epydemic import *
 
 import numpy
 
-
 class CompartmentedStochasticDynamics(StochasticDynamics):
-        
+    '''A :term:`stochastic dynamics` running a compartmented model. The
+    behaviour of the simulation is completely described within the model
+    rather than here.'''
+    
     def __init__( self, m, g = None ):
         '''Create a dynamics over the given process model, optionally
         initialised to run on the given network.

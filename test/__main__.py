@@ -18,17 +18,17 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import unittest
-#from .sirsynchronous import SIRSynchronousTests
-#from .sirstochastic import SIRStochasticTests
-from .compartmentedmodelstochasticdynamics import CompartmentedModelStochasticDynamicsTest
+from .compartmentedmodel import CompartmentedModelTest
+from .sir import SIRTest
+from .sis import SISTest
 
-#sirsynchronousSuite = unittest.TestLoader().loadTestsFromTestCase(SIRSynchronousTests)
-#sirstochasticSuite = unittest.TestLoader().loadTestsFromTestCase(SIRStochasticTests)
-cmstosuite = unittest.TestLoader().loadTestsFromTestCase(CompartmentedModelStochasticDynamicsTest)
+cmsuite = unittest.TestLoader().loadTestsFromTestCase(CompartmentedModelTest)
+sirsuite = unittest.TestLoader().loadTestsFromTestCase(SIRTest)
+sissuite = unittest.TestLoader().loadTestsFromTestCase(SISTest)
 
-suite = unittest.TestSuite([ #sirsynchronousSuite,
-                             #sirstochasticSuite,
-                             cmstosuite])
+suite = unittest.TestSuite([ cmsuite,
+                             sirsuite,
+                             sissuite ])
 
 if __name__ == '__main__':
     unittest.TextTestRunner(verbosity = 2).run(suite)

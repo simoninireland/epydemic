@@ -1,4 +1,4 @@
-# SIR as a compartmented model
+# SIS as a compartmented model
 #
 # Copyright (C) 2017 Simon Dobson
 # 
@@ -21,64 +21,50 @@ from epydemic import *
 
 import random
 
-class SIR(CompartmentedModel):
-    '''The Susceptible-Infected-Removed :term:`compartmented model of disease`.
-    Susceptible nodes are infected by infected neighbours, and recover to
-    removed.'''
-    
+class SIS(CompartmentedModel):
+    '''The Susceptible-Infected-Susceptible :term:`compartmented model of disease`.
+    Susceptible nodes are infected by infected neighbours, and recover back
+    to the susceptible state (which allows future re-infection, unlike for
+    :class:`SIR`.'''
+
     # the model parameters
     P_INFECTED = 'pInfected'  #: Parameter for probability of initially being infected.
     P_INFECT = 'pInfect'      #: Parameter for probability of infection on contact.
-    P_REMOVE = 'pRemove'      #: Parameter for probability of removal.
+    P_RECOVER = 'pRecover'    #: Parameter for probability of recovery.
     
     # the possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE = 'S'         #: Compartment for nodes susceptible to infection.
     INFECTED = 'I'            #: Compartment for nodes infected.
-    REMOVED = 'R'             #: Compartment for nodes recovered/removed.
 
     # the edges at which dynamics can occur
     SI = 'SI'                 #: Edge able to transmit infection.
 
     def __init__( self ):
-        super(SIR, self).__init__()
+        super(SIS, self).__init__()
 
     def build( self, params ):
-        '''Build the SIR model.
+        '''Build the SIS model.
 
         :param params: the model parameters'''
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
-        pRemove = params[self.P_REMOVE]
+        pRecover = params[self.P_RECOVER]
 
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
-        self.addCompartment(self.REMOVED, 0.0)
 
         self.addLocus(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
         self.addLocus(self.INFECTED)
 
-        self.addEvent(self.INFECTED, pRemove, lambda t, g, e: self.remove(t, g, e))
-        self.addEvent(self.SI, pInfect, lambda t, g, e: self.infect(t, g, e))
+        self.addEvent(self.INFECTED, pRecover, lambda t, g, e: self.recover(g, e))
+        self.addEvent(self.SI, pInfect, lambda t, g, e: self.infect(g, e))
 
-    def infect( self, t, g, (n, m) ):
-        '''Perform an infection event. This changes the compartment of
-        the susceptible-end node to :attr:`INFECTED`. It also marks the edge
-        traversed as occupied.
-
-        :param t: the simulation time (unused)
-        :param g: the network
-        :param (n, m): the edge transmitting the infection, susceptible-infected'''
+    def infect( self, g, (n, m) ):
         self.changeCompartment(g, n, self.INFECTED)
         self.markOccupied(g, (n, m))
 
-    def remove( self, t, g, n ):
-        '''Perform a removal event. This changes the compartment of
-        the node to :attr:`REMOVED`.
-
-        :param t: the simulation time (unused)
-        :param g: the network
-        :param n: the node'''
-        self.changeCompartment(g, n, self.REMOVED)
+    def recover( self, g, n ):
+        self.changeCompartment(g, n, self.SUSCEPTIBLE)
     
                 
    

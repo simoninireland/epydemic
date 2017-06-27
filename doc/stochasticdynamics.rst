@@ -17,18 +17,12 @@ of events and the time until they occur. We then draw from this
 distribution and update it according to the behaviour defined for that
 particular event. This allows the rates of events to change over time.
 
-The :class:`StochasticDynamics` class provides the basic statistical
-machinery for performing a simulation. Sub-classes must provide (at
-least) a :meth:`transitions` method to return the probability
-distribution being drawn from, and an event service routine for each
-event that can occur which will be called to update the simulation.  
-
 .. autoclass:: StochasticDynamics
    :show-inheritance:
 	 
 
-Creating a dynamics class
--------------------------
+Creating a dynamics
+-------------------
 
 .. automethod:: StochasticDynamics.__init__
 
@@ -36,15 +30,11 @@ Creating a dynamics class
 Running a dynamics
 ------------------
 
-To run a process' dynamics we need to define two things: the
-transition table that maps an event type and its rate to the function
-for that event; and the overall experimental control that runs the
-experiment and packages-up some key common results.
+To run a process' dynamics we need two things: the event rate table
+that maps an event type and its rate to the function for that event;
+and the overall experimental control that runs the experiment and
+packages-up some key common results.
 
-:class:`StochasticDynamics` encodes a stochastic dynamics, meaning
-that the simulation selects an event and a time in the future and then
-jumps directly to that point to execute the event.
-
-.. automethod:: StochasticDynamics.transitions
+.. automethod:: StochasticDynamics.eventRateDistribution
 
 .. automethod:: StochasticDynamics.do

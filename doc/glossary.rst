@@ -42,7 +42,25 @@ Glossary
       network or simulation. Events can occur in :term:`continuous
       time` or :term:`discrete time`.
 
-
+   locus
+      A "place" at which dynamics can occur, that is to say, where
+      nodes can change compartments and any other tasks can happen.
+      Each :term:`event` is associated with a particular locus: the 
+      locus contains the set of nodes or edges to which the event may
+      be applied, while the event defines chat happens.
+   
    stochastic process
       A process whose exact progression is determined by random
       variables drawn from particular probability distributions.
+
+   stochastic dynamics
+      Also known as Gillespie dynamics, this process dynamics operates
+      in :term:`continuous time` with one event occurring at each time
+      point.
+
+   synchronous dynamics
+      A process dynamics using :term:`discrete time`, where a
+      simulation passes through a sequence of discrete timesteps which
+      may include several (or no) events happening.
+
+      

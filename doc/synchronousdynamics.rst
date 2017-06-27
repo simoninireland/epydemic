@@ -12,6 +12,15 @@ Creating a dynamics class
 .. automethod:: SynchronousDynamics.__init__
 
 
+Extra metadata
+--------------
+
+The synchronous dynamics records extra metadata.
+
+.. autoattribute:: SynchronousDynamics.TIMESTEPS_WITH_EVENTS
+
+
+
 Running a dynamics
 ------------------
 

@@ -38,9 +38,9 @@ Creating a dynamics class
 Attributes
 ----------
 
-.. autoattribute:: Dynamics.DYNAMICAL_STATE
-		   
-.. autoattribute:: Dynamics.OCCUPIED
+.. autoattribute:: Dynamics.TIME
+
+.. autoattribute:: Dynamics.EVENTS
 
 .. autoattribute:: Dynamics.DEFAULT_MAX_TIME
 		   
@@ -80,19 +80,6 @@ execution, and tear-down phases.
 
 .. automethod:: Dynamics.tearDown
 
-
-Extracting basic results
-------------------------
-
-Once an experiment is run we will need to summarise the results. How
-this is done depends on the dynamics and the simulation method, but
-the :class:`Dynamics` class provides some basic operations that can be
-used.
-
-.. automethod:: Dynamics.skeletonise
-
-.. automethod:: Dynamics.populations
-		
 
 
 		

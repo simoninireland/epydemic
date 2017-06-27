@@ -16,9 +16,20 @@ Basic concepts and classes
    :maxdepth: 2
 
    networkdynamics
+   compartmentedmodel
+   loci
+   
+
+Dynamics
+--------
+
+.. toctree::
+   :maxdepth: 2
+
    synchronousdynamics
    stochasticdynamics
-   
+   compartmenteddynamics
+	      
 
 Epidemic processes
 ------------------
@@ -28,7 +39,6 @@ Epidemic processes
 
    sir
    sis
-
 
 
 Indices and tables

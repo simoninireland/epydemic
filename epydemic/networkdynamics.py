@@ -27,12 +27,12 @@ class Dynamics(epyc.Experiment, object):
     suitable for running under. Sub-classes provide synchronous and stochastic
     (Gillespie) simulation dynamics.'''
 
-    # keys for node and edge attributes
-    DYNAMICAL_STATE = 'state'   #: Node attribute holding dynamical state of a node.
-    OCCUPIED = 'occupied'       #: Edge attribute indicating whether the edge has been used to transfer infection.
+    # Additional metadata elements
+    TIME = 'simulation_time'      #: Metadata element holding the logical simulation end-time.
+    EVENTS = 'simulation_events'  #: Metadata element holding the number of events that happened.
 
     # the default maximum simulation time
-    DEFAULT_MAX_TIME = 20000    #: Default maximum simulation time.
+    DEFAULT_MAX_TIME = 20000      #: Default maximum simulation time.
     
     def __init__( self, g = None ):
         '''Create a dynamics, optionally initialised to run on the given network.

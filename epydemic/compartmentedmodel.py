@@ -25,12 +25,24 @@ import random
 import collections
 
 class CompartmentedModel(object):
+    '''The base class for compartmented models. A :term:`compartmented model of disease`
+    represents a disease as a collection of discrete compartments, with each
+    :term:`compartment` specifying some facet of the disease's progression. Nodes
+    transition between compartments with some probability, so the disease's
+    progession is a stochastic process in which the various nodes typically move
+    through several compartments according to the probabilities defined.
 
+    Compartmented models can be run in :term:`discrete time` using :term:`synchronous dynamics`,
+    or in :term:`continuous time` using :term:`stochastic dynamics` (also known as Gilespie
+    dynamics).'''
+    
+    
     # model state variables
     COMPARTMENT = 'dynamics_compartment'   #: Node attribute used to hold compartment
     OCCUPIED = 'occupied'                  #: Edge attribute, True if edge passed infection
     
     def __init__( self ):
+        '''Create a new compartmented model.'''
         super(CompartmentedModel, self).__init__()
         self._compartments = []
         self._loci = dict()
@@ -67,8 +79,8 @@ class CompartmentedModel(object):
             self._loci[name] = locus
 
             # add effects
-            self.addHandlers(l, lambda m, g, n, c: locus.leaveHandler(m, g, n, c),
-                                lambda m, g, n, c: locus.enterHandler(m, g, n, c))
+            self._addHandlers(l, lambda m, g, n, c: locus.leaveHandler(m, g, n, c),
+                                 lambda m, g, n, c: locus.enterHandler(m, g, n, c))
         else:
             # two compartments, edge locus
             if name is None:
@@ -81,14 +93,18 @@ class CompartmentedModel(object):
             self._loci[name] = locus
 
             # add effects
-            self.addHandlers(l, lambda m, g, n, c: locus.leaveHandler(m, g, n, c),
-                                lambda m, g, n, c: locus.enterHandler(m, g, n, c))
-            self.addHandlers(r, lambda m, g, n, c: locus.leaveHandler(m, g, n, c),
-                                lambda m, g, n, c: locus.enterHandler(m, g, n, c))
+            self._addHandlers(l, lambda m, g, n, c: locus.leaveHandler(m, g, n, c),
+                                 lambda m, g, n, c: locus.enterHandler(m, g, n, c))
+            self._addHandlers(r, lambda m, g, n, c: locus.leaveHandler(m, g, n, c),
+                                 lambda m, g, n, c: locus.enterHandler(m, g, n, c))
 
-    def addHandlers( self, c, lh, eh ):
+    def _addHandlers( self, c, lh, eh ):
         '''Add handler functions for a compartment, to be called whenever the contents
-        of that compartment change. This links compartments to loci
+        of that compartment change. This links compartments to loci.
+
+        Handlers are functions that take a model, a network, a node, and a
+        compartment, and provide the appropriate behaviour for when the node
+        enters (or leaves) the compartment.
         
         :param c: the compartment
         :param lh: the leave handler
@@ -98,7 +114,7 @@ class CompartmentedModel(object):
         else:
             self._effects[c].append((lh, eh))
 
-    def callLeaveHandlers( self, g, n, c ):
+    def _callLeaveHandlers( self, g, n, c ):
         '''Call all handlers affected by a node leaving a compartment.
 
         :param g: the network
@@ -108,7 +124,7 @@ class CompartmentedModel(object):
             for (lh, _) in self._effects[c]:
                 lh(self, g, n, c)
 
-    def callEnterHandlers( self, g, n, c ):
+    def _callEnterHandlers( self, g, n, c ):
         '''Call all handlers affected by a node entering a compartment.
 
         :param g: the network
@@ -119,20 +135,21 @@ class CompartmentedModel(object):
                 eh(self, g, n, c)
 
     def changeCompartment( self, g, n, c ):
-        '''Change the compartment of a node.
+        '''Change the compartment of a node. This will update all loci
+        potentiually affected by the change.
 
         :param g: the network
         :param n: the node
         :param c: the new compartment for the node'''
         
         # propagate effects of leaving the current compartment
-        self.callLeaveHandlers(g, n, g.node[n][self.COMPARTMENT])
+        self._callLeaveHandlers(g, n, g.node[n][self.COMPARTMENT])
 
         # record new compartment on node
         g.node[n][self.COMPARTMENT] = c
 
         # propagate effects of entering new compartment
-        self.callEnterHandlers(g, n, c)
+        self._callEnterHandlers(g, n, c)
 
     def addEvent( self, l, p, ef ):
         '''Add an event to a locus, occurring with a particular (fixed)
@@ -187,7 +204,7 @@ class CompartmentedModel(object):
                     g.node[n][self.COMPARTMENT] = c
                     
                     # propagate effects of entering new compartment
-                    self.callEnterHandlers(g, n, c)
+                    self._callEnterHandlers(g, n, c)
 
                     # on to the next node
                     break
@@ -207,6 +224,10 @@ class CompartmentedModel(object):
         data[self.OCCUPIED] = True
         
     def results( self, g ):
+        '''Create a dict of experimental results for the experiment.
+
+        :param g: the network
+        :returns: a dict of experimental results'''
         rc = dict()
 
         # add final sizes of all loci
@@ -227,7 +248,8 @@ class CompartmentedModel(object):
     def skeletonise( self, g ):
         '''Remove unoccupied edges from the network. This leaves the network
         consisting of only "occupied" edges that were used to transmit the
-        infection between nodes.
+        infection between nodes. Note that this process means that further
+        dynamics over the network doesn't make sense.
         
         :returns: the network with unoccupied edges removed'''
         

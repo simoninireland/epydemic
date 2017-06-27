@@ -1,12 +1,16 @@
 Version 0.2.0
 
-
-Version 0.1.1 (15Jun2017)
+   - New approach for compartmented models and dynamics
+   - Updated documentation
+   - Added "Mathematics of epidemics on networks" book to bibliography
+   - Refactored test suite
+   
+Version 0.1.1 2017-06-15
 
    - Added more documentation, bibliography, glossary
    - Started on first explanatory notebook draft
 
-Version 0.1.0 (12Jun2017)
+Version 0.1.0 2017-06-12
 
    - First disentanglement from the book repo
    

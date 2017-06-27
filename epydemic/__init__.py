@@ -32,7 +32,7 @@ computer scientists as stochastic finite state machines).
 `epydemic` provides the basic simulation machinery for performing
 epidemic simulations under two different simulation regimes:
 synchronous :term:`discrete time` simulation in which time proceeds in
-discrete time intervals, and stochastic or Gillespuie :term:`continuous
+discrete time intervals, and stochastic or Gillespie :term:`continuous
 time` simulations which are better for handling a wider range of
 :term:`event` probabilities (but which are slightly harder to
 specify).
@@ -41,19 +41,15 @@ specify).
  
 # networks with dynamical processes
 from .networkdynamics import Dynamics
-#from .synchronousdynamics import SynchronousDynamics
+from .synchronousdynamics import SynchronousDynamics
 from .stochasticdynamics import StochasticDynamics
 
-# SIR processes under different dynamics
-#from .sirsynchronousdynamics import SIRSynchronousDynamics
-#from .sirstochasticdynamics import SIRStochasticDynamics
-
-# SIS processes under different dynamics
-#from .sissynchronousdynamics import SISSynchronousDynamics
-#from .sisstochasticdynamics import SISStochasticDynamics
-
-# new compartmented models
+# compartmented models
 from .compartmentedmodel import CompartmentedModel
 from .loci import Locus, NodeLocus, EdgeLocus
-from .sir_model import SIR
+from .compartmentedsynchronousdynamics import CompartmentedSynchronousDynamics
 from .compartmentedstochasticdynamics import CompartmentedStochasticDynamics
+
+# disease models
+from .sir_model import SIR
+from .sis_model import SIS

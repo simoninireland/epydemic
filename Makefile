@@ -17,8 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+# The name of our package on PyPi
+PACKAGENAME = epydemic
+
 # The version we're building
-VERSION = 0.1.1
+VERSION = 0.2.0
 
 # ----- Sources -----
 
@@ -29,16 +32,19 @@ SOURCES_CODE = \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
 	epydemic/stochasticdynamics.py \
-	epydemic/sissynchronousdynamics.py \
-	epydemic/sisstochasticdynamics.py \
-	epydemic/sirsynchronousdynamics.py \
-	epydemic/sirstochasticdynamics.py
+	epydemic/compartmentedmodel.py \
+	epydemic/loci.py \
+	epydemic/compartmentedsynchronousdynamics.py \
+	epydemic/compartmentedstochasticdynamics.py \
+	epydemic/sir_model.py \
+	epydemic/sis_model.py
+
 SOURCES_TESTS = \
 	test/__init__.py \
 	test/__main__.py \
+	test/compartmentedmodel.py \
 	test/sir.py \
-	test/sirsynchronous.py \
-	test/sirstochastic.py
+	test/sis.py
 TESTSUITE = test
 
 SOURCES_TUTORIAL = doc/epydemic.ipynb
@@ -53,6 +59,9 @@ SOURCES_DOCUMENTATION = \
 	doc/networkdynamics.rst \
 	doc/synchronousdynamics.rst \
 	doc/stochasticdynamics.rst \
+	doc/compartmenteddynamics.rst \
+	doc/loci.rst \
+	doc/compartmentedmodel.rst \
 	doc/sir.rst \
 	doc/sis.rst
 
@@ -82,7 +91,9 @@ PY_INTERACTIVE = \
 # Packages that shouldn't be saved as requirements (because they're
 # OS-specific, in this case OS X, and screw up Linux compute servers)
 PY_NON_REQUIREMENTS = \
-	appnope
+	appnope \
+	functools32 \
+	subprocess32
 
 
 # ----- Tools -----
@@ -110,6 +121,7 @@ RUN_TESTS = $(IPYTHON) -m $(TESTSUITE)
 RUN_NOTEBOOK = $(JUPYTER) notebook
 RUN_SETUP = $(PYTHON) setup.py
 RUN_SPHINX_HTML = make html
+RUN_TWINE = $(TWINE) upload dist/$(PACKAGENAME)-$(VERSION).tar.gz dist/$(PACKAGENAME)-$(VERSION).tar.gz.asc
 
 # Virtual environment support
 ENV_COMPUTATIONAL = venv
@@ -146,8 +158,8 @@ dist: $(SOURCES_GENERATED)
 
 # Upload a source distribution to PyPi
 upload: $(SOURCES_GENERATED) dist
-	$(GPG) --detach-sign -a dist/epydemic-$(VERSION).tar.gz
-	$(TWINE) upload dist/epydemic-$(VERSION).tar.gz dist/epydemic-$(VERSION).tar.gz.asc
+	$(GPG) --detach-sign -a dist/$(PACKAGENAME)-$(VERSION).tar.gz
+	($(CHDIR) $(ENV_COMPUTATIONAL) && $(ACTIVATE) && $(CHDIR) .. && $(RUN_TWINE))
 
 # Clean up the distribution build 
 clean:

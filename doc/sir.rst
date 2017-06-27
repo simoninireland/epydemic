@@ -1,31 +1,38 @@
-:class:`SIS`: The SIS processes
+:class:`SIR`: The SIR processes
 ===============================
 
 .. currentmodule:: epydemic
    
-The Synchronous-Infected-Susceptible or SIS process is a variant of
-the more common SIR process which cycles between only two states,
-keeping nodes part of the dynamics indefinitely.
+The Synchronous-Infected-Recovered or SIR process is one of the oldest
+models of disease, first arising in a paper by :ref:`Kermack and
+McKendrick <KMcK27>` in 1927.
 
 Nodes in the network represent individuals, with edges representing
 contacts between them. Each individual is assigned a dynamical state
 which changes according to the rules of the model.
 
-SIS is a :term:`compartmented model of disease` with two :term:`compartments`:
+SIR is a :term:`compartmented model of disease` with three :term:`compartments`:
 
-* *Susceptible (S)*, when an individual be infected with the disease; and
+* *Susceptible (S)*, when an individual be infected with the disease;
 * *Infected (I)*, when an individual can infect neighbouring susceptible
-  individuals.
+  individuals; and
+* *Removed (R)*, when an individual has recovered from the infection and
+  neither infects nor can be infected.
+
+Essentially a removed individual takes no further part in the
+dynamics.
 
 
 Dynamical states
 ----------------
 
-SIS simulation places nodes into one of three compartments:
+SIR simulation places nodes into one of three compartments:
 
-.. autoattribute:: SIS.SUSCEPTIBLE
+.. autoattribute:: SIR.SUSCEPTIBLE
 		   
-.. autoattribute:: SIS.INFECTED
+.. autoattribute:: SIR.INFECTED
+		   
+.. autoattribute:: SIR.REMOVED
 
 
 Parameters
@@ -33,11 +40,11 @@ Parameters
 
 The process is parameterised by three parameters:
 
-.. autoattribute:: SIS.P_INFECTED
+.. autoattribute:: SIR.P_INFECTED
 
-.. autoattribute:: SIS.P_INFECT
+.. autoattribute:: SIR.P_INFECT
 
-.. autoattribute:: SIS.P_RECOVER
+.. autoattribute:: SIR.P_REMOVE
 
 The :attr:`SIR.P_INFECTED` parameter defines the proportion of nodes
 that are initially placed into the :attr:`SIR.INFECTED` compartment, with
@@ -47,14 +54,14 @@ all other nodes being placed into the :attr:`SIR.SUSCEPTIBLE` compartment.
 Dynamics
 --------
 
-Dynamics in SIS occurs in two places:
+Dynamics in SIR occurs in two places:
 
-* At infected nodes, which which recover back to susceptible with a
-  probability given by the :attr:`SIR.P_RECOVER` parameter; and
+* At infected nodes, which which are removed with a probability given
+  by the :attr:`SIR.P_REMOVE` parameter; and
 * At SI edges, where the node at one endpoint is susceptible and the
   node at the other is infected.
 
-These two options define the loci for the SIS model.
+These two options define the loci for the SIR model.
 
 .. autoattribute:: SIR.SI
 
@@ -65,7 +72,7 @@ compartment.
 Building the model
 ------------------
 
-Building the model creates the two epidemic compartments and
+Building the model creates the three epidemic compartments and
 installs the necessary loci and events to define the disease
 dynamics. The event methods are described more thoroughly below.
 
@@ -80,6 +87,6 @@ process: infection and removal (recovery).
 
 .. automethod:: SIR.infect
 		
-.. automethod:: SIR.recover
+.. automethod:: SIR.remove
 		
 		

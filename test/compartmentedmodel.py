@@ -1,4 +1,4 @@
-# Test compartmented model stochastic dynamics, using an SIR model
+# Test compartmented model basic functions
 #
 # Copyright (C) 2017 Simon Dobson
 # 
@@ -24,24 +24,15 @@ import unittest
 import networkx
 import traceback
 
-
-class CompartmentedModelStochasticDynamicsTest(unittest.TestCase):
+class CompartmentedModelTest(unittest.TestCase):
 
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''
-        
-        # single experiment
+        self._er = networkx.erdos_renyi_graph(1000, 0.005)
         self._params = dict(pInfect = 0.1,
                             pInfected = 0.01,
-                            pRecover = 0.05)
-        self._er = networkx.erdos_renyi_graph(1000, 0.005)
-
-        # lab run
-        self._lab = epyc.Lab()
-        self._lab['pInfect'] = [ 0.1, 0.2, 0.3 ]
-        self._lab['pInfected'] = [ 0.01 ]
-        self._lab['pRecover'] = [ 0.05, 0.1, 1 ]
-    
+                            pRemove = 0.05)
+       
     def testPopulation( self ):
         '''Test populating a model.'''
         m = SIR()
@@ -56,7 +47,7 @@ class CompartmentedModelStochasticDynamicsTest(unittest.TestCase):
         e = CompartmentedStochasticDynamics(m, g)
         params = dict(pInfect = 0.1,
                       pInfected = 1.0,    # infect all nodes initially
-                      pRecover = 0.05)
+                      pRemove = 0.05)
         e.setUp(params)
 
         # keep track of the other compartments as well
@@ -78,21 +69,3 @@ class CompartmentedModelStochasticDynamicsTest(unittest.TestCase):
         self.assertItemsEqual(e._model._loci[SIR.SUSCEPTIBLE].elements(), [])
         self.assertItemsEqual(e._model._loci[SIR.REMOVED].elements(), [ 1 ])
         self.assertItemsEqual(e._model._loci[SIR.SI].elements(), [ ])        
-        
-    def testRunSingle( self ):
-        '''Test a single run of a model.'''
-        m = SIR()
-        e = CompartmentedStochasticDynamics(m, self._er)
-        rc = e.set(self._params).run()
-        if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
-        else:
-            print rc[epyc.Experiment.RESULTS]
-
-    @unittest.skip('not yet')
-    def testRunMultiple( self ):
-        '''Test a run of a model over a (small) parameter space.'''
-        m = SIR()
-        e = CompartmentedStochasticDynamics(m, self._er)
-        self._lab.runExperiment(e)

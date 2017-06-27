@@ -23,9 +23,15 @@ import numpy
 import random
 
 class Locus(object):
-    '''The locus of dynamics.'''
+    '''The locus of dynamics. A locus is where dynamics happens, allowing the
+    compartments of nodes to be changed and other effects to be coded-up. Loci
+    are filled with nodes or edges, typically populated and re-populated as the
+    dynamics moves nodes between components.'''
 
     def __init__( self, name ):
+        '''Create a new named locus.
+
+        :param name: the locus; name'''
         super(Locus, self).__init__()
         self._name = name
         self._elements = set()
@@ -78,7 +84,8 @@ class Locus(object):
 
 
 class NodeLocus(Locus):
-    '''A locus for dynamics occurring at a single node.'''
+    '''A locus for dynamics occurring at a single node. Node loci
+    contain nodes, typically all in a single compartment.'''
 
     def __init__( self, name, c ):
         '''Create a locus for nodes in the given compartment.
@@ -89,13 +96,13 @@ class NodeLocus(Locus):
         self._compartment = c
         
     def leaveHandler( self, m, g, n, c ):
-        '''Node leves the right compartment, rewmove it from the locus
+        '''Node leaves the right compartment, remove it from the locus
 
         :param m: the model
         :param g: the network
         :param n: the node
         :param c: the compartment the node is leavinging'''
-        print 'node {n} leaves {c}'.format(n = n, c = self._compartment)
+        #print 'node {n} leaves {c}'.format(n = n, c = self._compartment)
         self._elements.remove(n)
 
     def enterHandler( self, m, g, n, c ):
@@ -105,12 +112,14 @@ class NodeLocus(Locus):
         :param g: the network
         :param n: the node
         :param c: the compartment the node is entering'''
-        print 'node {n} enters {c}'.format(n = n, c = self._compartment)
+        #print 'node {n} enters {c}'.format(n = n, c = self._compartment)
         self._elements.add(n)
 
 
 class EdgeLocus(Locus):
-    '''A locus for dynamics occurring at an edge.'''
+    '''A locus for dynamics occurring at an edge. Edge loci contain
+    edges, typically with the endpoint nodes in different compartments. The
+    edges within a locus change as nodes move between compartments.'''
 
     def __init__( self, name, l, r ):
         '''Create a locus for an edge with endpoints in the
@@ -135,11 +144,11 @@ class EdgeLocus(Locus):
         :param c: the compartment the node is leaving'''
         for (nn, mm) in g.edges_iter(n):
             if (g.node[nn][m.COMPARTMENT] == self._right) and (g.node[mm][m.COMPARTMENT] == self._left):
-                print 'edge ({m}, {n}) leaves {l}'.format(n = nn, m = mm, l = self._name)
+                #print 'edge ({m}, {n}) leaves {l}'.format(n = nn, m = mm, l = self._name)
                 self._elements.remove((mm, nn))
             else:
                 if (g.node[nn][m.COMPARTMENT] == self._left) and (g.node[mm][m.COMPARTMENT] == self._right):
-                    print 'edge ({n}, {m}) leaves {l}'.format(n = nn, m = mm, l = self._name)
+                    #print 'edge ({n}, {m}) leaves {l}'.format(n = nn, m = mm, l = self._name)
                     self._elements.remove((nn, mm))
 
     def enterHandler( self, m, g, n, c ):
@@ -152,9 +161,9 @@ class EdgeLocus(Locus):
         :param c: the compartment the node is entering'''
         for (nn, mm) in g.edges_iter(n):
             if (g.node[nn][m.COMPARTMENT] == self._right) and (g.node[mm][m.COMPARTMENT] == self._left):
-                print 'edge ({m}, {n}) enters {l}'.format(n = nn, m = mm, l = self._name)
+                #print 'edge ({m}, {n}) enters {l}'.format(n = nn, m = mm, l = self._name)
                 self._elements.add((mm, nn))
             else:
                 if (g.node[nn][m.COMPARTMENT] == self._left) and (g.node[mm][m.COMPARTMENT] == self._right):
-                    print 'edge ({n}, {m}) enters {l}'.format(n = nn, m = mm, l = self._name)
+                    #print 'edge ({n}, {m}) enters {l}'.format(n = nn, m = mm, l = self._name)
                     self._elements.add((nn, mm))
