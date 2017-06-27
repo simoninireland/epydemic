@@ -39,9 +39,9 @@ The process is parameterised by three parameters:
 
 .. autoattribute:: SIS.P_RECOVER
 
-The :attr:`SIR.P_INFECTED` parameter defines the proportion of nodes
-that are initially placed into the :attr:`SIR.INFECTED` compartment, with
-all other nodes being placed into the :attr:`SIR.SUSCEPTIBLE` compartment.
+The :attr:`SIS.P_INFECTED` parameter defines the proportion of nodes
+that are initially placed into the :attr:`SIS.INFECTED` compartment, with
+all other nodes being placed into the :attr:`SIS.SUSCEPTIBLE` compartment.
 
 
 Dynamics
@@ -50,15 +50,15 @@ Dynamics
 Dynamics in SIS occurs in two places:
 
 * At infected nodes, which which recover back to susceptible with a
-  probability given by the :attr:`SIR.P_RECOVER` parameter; and
+  probability given by the :attr:`SIS.P_RECOVER` parameter; and
 * At SI edges, where the node at one endpoint is susceptible and the
   node at the other is infected.
 
 These two options define the loci for the SIS model.
 
-.. autoattribute:: SIR.SI
+.. autoattribute:: SIS.SI
 
-The other locus is named :attr:`SIR.INFECTED`, the same as the
+The other locus is named :attr:`SIS.INFECTED`, the same as the
 compartment.
 
 		   
@@ -69,7 +69,7 @@ Building the model creates the two epidemic compartments and
 installs the necessary loci and events to define the disease
 dynamics. The event methods are described more thoroughly below.
 
-.. automethod:: SIR.build
+.. automethod:: SIS.build
 		
 		   
 Event methods
@@ -78,8 +78,8 @@ Event methods
 Event methods are defined for each of the two dynamical rules for the
 process: infection and removal (recovery).
 
-.. automethod:: SIR.infect
+.. automethod:: SIS.infect
 		
-.. automethod:: SIR.recover
+.. automethod:: SIS.recover
 		
 		

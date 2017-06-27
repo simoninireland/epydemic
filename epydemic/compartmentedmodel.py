@@ -26,8 +26,8 @@ import collections
 
 class CompartmentedModel(object):
     '''The base class for compartmented models. A :term:`compartmented model of disease`
-    represents a disease as a collection of discrete compartments, with each
-    :term:`compartment` specifying some facet of the disease's progression. Nodes
+    represents a disease as a collection of discrete :term:`compartments`, with each 
+    compartment specifying some facet of the disease's progression. Nodes
     transition between compartments with some probability, so the disease's
     progession is a stochastic process in which the various nodes typically move
     through several compartments according to the probabilities defined.

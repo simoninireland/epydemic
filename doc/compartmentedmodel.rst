@@ -11,9 +11,9 @@
 Attributes
 ----------
 
-.. autoattribute:: Dynamics.DYNAMICAL_STATE
+.. autoattribute:: CompartmentedModel.COMPARTMENT
 		   
-.. autoattribute:: Dynamics.OCCUPIED
+.. autoattribute:: CompartmentedModel.OCCUPIED
 
 
 Creating a model
@@ -27,7 +27,7 @@ Building the model
 
 Building a model means specifying the various compartments, loci, and events,
 and their associated probabilities. These methods are typically
-called from the :neth:`build` method, which is called during set-up to
+called from the :meth:`build` method, which is called during set-up to
 build the model using the experiment's simulation parameters.  
 
 .. automethod:: CompartmentedModel.addCompartment
@@ -36,7 +36,7 @@ build the model using the experiment's simulation parameters.
 
 .. automethod:: CompartmentedModel.addEvent
 
-
+		
 Model setup
 -----------
 

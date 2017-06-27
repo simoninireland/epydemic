@@ -24,16 +24,11 @@ The synchronous dynamics records extra metadata.
 Running a dynamics
 ------------------
 
-To run a process' dynamics we need to define three things: the process
-for a single timestep; the model function that will be run for each
-node; and the overall experimental control that runs the experiment
-and packages-up some key common results.
-
-:class:`SynchronousDynamics` encodes a synchronous dynamics, meaning
-that each timestep runs the model by default on each node in the network.
+To run a process' dynamics we need to define two things: the action
+that runs in each single timestep; and the overall experimental
+control that runs the experiment and packages-up some key common
+results.
 
 .. automethod:: SynchronousDynamics.dynamics
-
-.. automethod:: SynchronousDynamics.model
 
 .. automethod:: SynchronousDynamics.do

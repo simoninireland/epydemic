@@ -9,9 +9,9 @@ simulation approaches. In both cases, there is a common way to run
 processes specified with compartmented models that massively simplify
 the creation of simulations. 
 
-In use, these classes typically require no sub-classing, as all the
+In practice, these classes typically require no sub-classing, as all the
 variant behaviour can be more effectively provided in the code for
-the :term:`compartmented model` in a :class:`CompartmentedModel`
+the :term:`compartmented model of disease` in a :class:`CompartmentedModel`
 sub-class.
 
 
@@ -59,10 +59,7 @@ Under synchronous dynamics we use the event probabilities to test
 whether an event occurred at each possible locus in each discrete
 timestep.
 
-.. automethod:: CompartmentedSynchronousDynamics.do
-
-
-.. automethod:: CompartmentedStochasticDynamics.eventRateDistribution
+.. automethod:: CompartmentedSynchronousDynamics.dynamics
 
 Finally, we defer the experimental results collection to the model.
 
