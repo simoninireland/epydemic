@@ -18,13 +18,13 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
+from .compartmenteddynamics import CompartmentedDynamicsTest
 
 import epyc
 import unittest
 import networkx
-import traceback
 
-class SIRTest(unittest.TestCase):
+class SIRTest(CompartmentedDynamicsTest):
 
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''
@@ -33,47 +33,16 @@ class SIRTest(unittest.TestCase):
         self._params = dict(pInfect = 0.1,
                             pInfected = 0.01,
                             pRemove = 0.05)
-        self._er = networkx.erdos_renyi_graph(1000, 0.005)
+        self._network = networkx.erdos_renyi_graph(1000, 0.005)
 
         # lab run
         self._lab = epyc.Lab()
         self._lab['pInfect'] = [ 0.1, 0.2, 0.3 ]
         self._lab['pInfected'] = [ 0.01 ]
         self._lab['pRecover'] = [ 0.05, 0.1, 1 ]
-    
-    @unittest.skip('not yet')
-    def testRunSingleStochastic( self ):
-        '''Test a single run of a stochastic dynamics.'''
-        m = SIR()
-        e = CompartmentedStochasticDynamics(m, self._er)
-        rc = e.set(self._params).run()
-        if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
-        else:
-            print rc[epyc.Experiment.RESULTS]
-    
-    def testRunSingleSynchronous( self ):
-        '''Test a single run of a synchronous dynamics.'''
-        m = SIR()
-        e = CompartmentedSynchronousDynamics(m, self._er)
-        rc = e.set(self._params).run()
-        if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
-        else:
-            print rc[epyc.Experiment.RESULTS]
-        
-    @unittest.skip('not yet')
-    def testRunMultipleStochastic( self ):
-        '''Test a stochastic dynamics run of a model over a (small) parameter space.'''
-        m = SIR()
-        e = CompartmentedStochasticDynamics(m, self._er)
-        self._lab.runExperiment(e)
-        
-    @unittest.skip('not yet')
-    def testRunMultipleSynchronous( self ):
-        '''Test a synchronousdynamics run of a model over a (small) parameter space.'''
-        m = SIR()
-        e = CompartmentedSynchronousDynamics(m, self._er)
-        self._lab.runExperiment(e)
+
+        # model
+        self._model = SIR()
+
+        # no maximum time needed
+        self._maxTime = None

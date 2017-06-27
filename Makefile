@@ -43,6 +43,7 @@ SOURCES_TESTS = \
 	test/__init__.py \
 	test/__main__.py \
 	test/compartmentedmodel.py \
+	test/compartmenteddynamics.py \
 	test/sir.py \
 	test/sis.py
 TESTSUITE = test
