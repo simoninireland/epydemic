@@ -45,6 +45,7 @@ class SISTest(unittest.TestCase):
         '''Test a single run of a stochastic dynamics.'''
         m = SIS()
         e = CompartmentedStochasticDynamics(m, self._er)
+        e.setMaximumTime(2000)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
@@ -56,6 +57,7 @@ class SISTest(unittest.TestCase):
         '''Test a single run of a synchronous dynamics.'''
         m = SIS()
         e = CompartmentedSynchronousDynamics(m, self._er)
+        e.setMaximumTime(2000)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
@@ -69,6 +71,7 @@ class SISTest(unittest.TestCase):
         '''Test a stochastic dynamics run of a model over a (small) parameter space.'''
         m = SIS()
         e = CompartmentedStochasticDynamics(m, self._er)
+        e.setMaximumTime(2000)
         self._lab.runExperiment(e)
 
     @unittest.skip('not yet')
@@ -76,4 +79,5 @@ class SISTest(unittest.TestCase):
         '''Test a synchronousdynamics run of a model over a (small) parameter space.'''
         m = SIS()
         e = CompartmentedSynchronousDynamics(m, self._er)
+        e.setMaximumTime(2000)
         self._lab.runExperiment(e)
