@@ -42,24 +42,45 @@ Glossary
       network or simulation. Events can occur in :term:`continuous
       time` or :term:`discrete time`.
 
+   event function
+      A function called when an :term:`event` fires to perform the
+      action required. Event functions take three arguments: the
+      current simulation time, the network, and the element at which
+      the event occurs (which will be selected by the chosen
+      :term:`process dynamics`). Elements are typically either nodes
+      or edges, depending in the :term:`locus` at which the event
+      occurs.
+      
    locus
       A "place" at which dynamics can occur, that is to say, where
       nodes can change compartments and any other tasks can happen.
       Each :term:`event` is associated with a particular locus: the 
       locus contains the set of nodes or edges to which the event may
       be applied, while the event defines chat happens.
-   
+
+   posted event
+      An :term:`event` posted for a definite future time. The
+      :term:`process dynamics` will execute the posted events at the
+      appropriate time
+      
+   process dynamics
+      The simulation approach used, which selects how and when each
+      :term:`event` fires. Process dynamics execute events in time
+      order from two possible sources: a random distribution that
+      chooses an event based on their relative probability or rate; and
+      any :term:`posted event` that has been scheduled.
+	    
    stochastic process
       A process whose exact progression is determined by random
       variables drawn from particular probability distributions.
 
    stochastic dynamics
-      Also known as Gillespie dynamics, this process dynamics operates
+      Also known as Gillespie dynamics, this :term:`process dynamics` operates
       in :term:`continuous time` with one event occurring at each time
       point.
 
    synchronous dynamics
-      A process dynamics using :term:`discrete time`, where a
+      A :term:`process dynamics` using :term:`discrete time`, where a
       simulation passes through a sequence of discrete timesteps which
       may include several (or no) events happening.
 
