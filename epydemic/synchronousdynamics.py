@@ -52,52 +52,42 @@ class SynchronousDynamics(Dynamics):
         :returns: the event distribution'''
         raise NotYetImplementedError('eventDistribution()')
 
-    def dynamics( self, t, params ):
-        '''Run a single step of the model over the network.
-
-        Event functions may return False to indicate that the event didn't fire,
-        which the dynamics treats as identical to not having selecetd that particular
-        element of the locus for an event.
-        
-        :param t: the current timestep
-        :param params: the parameters of the simulation
-        :returns: the number of dynamic events that happened in this timestep'''
-        g = self.network()
-        events = 0
-        
-        # retrieve all the events, their loci, probabilities, and event functions
-        dist = self.eventDistribution(t)
-
-        # run through all the events
-        for (l, p, f) in dist:
-            # run through every possible element on which this event may occur
-            for e in copy(l.elements()):
-                # test for occurrance of the event on this element
-                if numpy.random.random() < p:
-                    # yes, perform the event
-                    happened = f(t, g, e)
-                    if happened:
-                        # event happened, update the event count
-                        events = events + 1
-
-        return events
-    
     def do( self, params ):
         '''Synchronous dynamics. We apply :meth:`dynamics` at each timestep
         and then check for completion using :meth:`at_equilibrium`.
         
         :param params: the parameters of the simulation
         :returns: a dict of experimental results'''
-
+        
         # run the dynamics
+        g = self.network()
         t = 0
         events = 0
         timestepEvents = 0
         while not self.at_equilibrium(t):
-            # run a step
-            nev = self.dynamics(t, params)
+            # run a single timestep
+            nev = 0
+        
+            # retrieve all the events, their loci, probabilities, and event functions
+            dist = self.eventDistribution(t)
+
+            # run through all the events in the distribution
+            for (l, p, f) in dist:
+                if p > 0.0:
+                    # run through every possible element on which this event may occur
+                    for e in copy(l.elements()):
+                        # test for occurrance of the event on this element
+                        if numpy.random.random() < p:
+                            # yes, perform the event
+                            f(t, g, e)
+                            
+                            # update the event count
+                            nev = nev + 1
+
+            # add the events to the count
+            events = events + nev
             if nev > 0:
-                events = events + nev
+                # we had a timestep containing events
                 timestepEvents = timestepEvents + 1
 
             # advance to the next timestep
