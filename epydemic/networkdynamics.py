@@ -19,7 +19,7 @@
 
 import epyc
 import networkx
-
+from heapq import *
 
 class Dynamics(epyc.Experiment, object):
     '''A dynamical process over a network. This is the abstract base class
@@ -44,6 +44,7 @@ class Dynamics(epyc.Experiment, object):
         self._graphPrototype = g
         self._graph = None
         self._maxTime = self.DEFAULT_MAX_TIME
+        self._posted = []
 
     def network( self ):
         '''Return the network this dynamics is running over.
@@ -81,8 +82,11 @@ class Dynamics(epyc.Experiment, object):
         # perform the default setup
         super(Dynamics, self).setUp(params)
 
-        # make a copyt of the network prototype
+        # make a copy of the network prototype
         self._graph = self._graphPrototype.copy()
+
+        # empty the queue of posted events
+        self._posted = []
 
     def tearDown( self ):
         '''At the end of each experiment, throw away the copy.'''
@@ -93,4 +97,51 @@ class Dynamics(epyc.Experiment, object):
         # throw away the worked-on model
         self._graph = None
         
-    
+    def postEvent( self, t, g, e, ef ):
+        '''Post an event to happen at time t. The :term:`event function` should
+        take the simulation time, network, and element for the event. At time t
+        it is called with the given network and element.
+
+        :param t: the current time
+        :param g: the network
+        :param e: the element (node or edge) on which the event occurs
+        :param ef: the event function'''
+        heappush(self._posted, (t, (lambda: ef(t, g, e))))
+
+    def pendingEvents( self, t ):
+        '''Retrieve any :term:`posted event` pending to be executed at or
+        before time t.  The pending events are returned in the form of
+        zero-argument functions that can simply be called to execute
+        the events. The events are returned as a list, with the
+        earliest-posted event first.
+
+        It may be easier to use :meth:`runPendingEvents` to automatically
+        run all pending events.
+
+        :param t: the current time
+        :returns: a (possibly empty) list of pending event functions'''
+        pending = []
+        while len(self._posted) > 0:
+            (et, pef) = heappop(self._posted)
+            if et <= t:
+                # event should have occurred, store it
+                pending.append(pef)
+            else:
+                # this and further events are in the future, put it back
+                heappush(self._posted, (et, pef))
+                break
+
+        # return the pending events, if any
+        return pending
+
+    def runPendingEvents( self, t):
+        '''Retrieve and fire any pending events at time t.
+
+        :param t: the current time
+        :returns: the number of events fired'''
+        pefs = self.pendingEvents(t)
+        n = len(pefs)
+        for i in range(n):
+            pef = pefs[i]
+            pef()
+        return n

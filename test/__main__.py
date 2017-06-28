@@ -18,17 +18,21 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import unittest
+from .networkdynamics import NetworkDynamicsTest
 from .compartmentedmodel import CompartmentedModelTest
 from .sir import SIRTest
 from .sis import SISTest
 
+ndsuite = unittest.TestLoader().loadTestsFromTestCase(NetworkDynamicsTest)
 cmsuite = unittest.TestLoader().loadTestsFromTestCase(CompartmentedModelTest)
 sirsuite = unittest.TestLoader().loadTestsFromTestCase(SIRTest)
 sissuite = unittest.TestLoader().loadTestsFromTestCase(SISTest)
 
-suite = unittest.TestSuite([ cmsuite,
-                             sirsuite,
-                             sissuite ])
+suite = unittest.TestSuite([ ndsuite,
+                             #cmsuite,
+                             #sirsuite,
+                             #sissuite,
+                            ])
 
 if __name__ == '__main__':
     unittest.TextTestRunner(verbosity = 2).run(suite)
