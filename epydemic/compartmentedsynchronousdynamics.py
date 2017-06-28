@@ -54,7 +54,7 @@ class CompartmentedSynchronousDynamics(SynchronousDynamics):
 
         # initialise the network from the model
         g = self.network()
-        self._model.setUp(g, params)
+        self._model.setUp(self, g, params)
 
     def eventDistribution( self, t ):
         '''Return the model's event distribution.

@@ -3,9 +3,19 @@
 
 .. currentmodule:: epydemic
 
-
 .. autoclass:: CompartmentedModel
    :show-inheritance:
+
+Compartmented models are designed so that their specification is
+independent of the :term:`process dynamics` used to simulate them:
+they can be run in :term:`discrete time` using :term:`synchronous dynamics`,
+or in :term:`continuous time` using :term:`stochastic dynamics`.
+
+:class:`CompartmentedModel` is an abstract class that must be
+sub-classed to define actual disease models. `epydemic` provides
+implementations of the two "reference" compartmented models,
+:class:`SIR` and :class:`SIS`, as well as several variants of them:
+:ref:`Hethcote <Het00>` provides a survey of a huge range of others.
 
 
 Attributes
@@ -25,10 +35,11 @@ Creating a model
 Building the model
 ------------------
 
-Building a model means specifying the various compartments, loci, and events,
-and their associated probabilities. These methods are typically
-called from the :meth:`build` method, which is called during set-up to
-build the model using the experiment's simulation parameters.  
+Building a model means specifying the various compartments, loci, and
+events, and their associated probabilities. These methods are
+typically called from the :meth:`CompartmentedModel.build` method,
+which is called during set-up to build the model using the
+experiment's simulation parameters.
 
 .. automethod:: CompartmentedModel.addCompartment
 
@@ -75,6 +86,8 @@ Once an experiment is run we will need to summarise the results. How
 this is done depends on the dynamics and the simulation method, but
 the :class:`CompartmentedModel` class provides some basic operations that can be
 used.
+
+.. automethod:: CompartmentedModel.compartment
 
 .. automethod:: CompartmentedModel.results
 

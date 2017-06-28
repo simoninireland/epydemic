@@ -30,16 +30,11 @@ class CompartmentedModel(object):
     compartment specifying some facet of the disease's progression. Nodes
     transition between compartments with some probability, so the disease's
     progession is a stochastic process in which the various nodes typically move
-    through several compartments according to the probabilities defined.
-
-    Compartmented models can be run in :term:`discrete time` using :term:`synchronous dynamics`,
-    or in :term:`continuous time` using :term:`stochastic dynamics` (also known as Gilespie
-    dynamics).'''
-    
+    through several compartments according to the probabilities defined.'''
     
     # model state variables
-    COMPARTMENT = 'dynamics_compartment'   #: Node attribute used to hold compartment
-    OCCUPIED = 'occupied'                  #: Edge attribute, True if edge passed infection
+    COMPARTMENT = 'dynamics_compartment'   #: Node attribute used to hold compartment.
+    OCCUPIED = 'occupied'                  #: Edge attribute, True if edge passed infection.
     
     def __init__( self ):
         '''Create a new compartmented model.'''
@@ -134,6 +129,14 @@ class CompartmentedModel(object):
             for (_, eh) in self._effects[c]:
                 eh(self, g, n, c)
 
+    def compartment( self, g, c ):
+        '''Return all the nodes currently in a particular compartment in a network.
+
+        :param g: the network
+        :param c: the compartment
+        :returns: a collection of nodes'''
+        return [ n for n in g.nodes_iter() if g.node[n][self.COMPARTMENT] == c]
+    
     def changeCompartment( self, g, n, c ):
         '''Change the compartment of a node. This will update all loci
         potentiually affected by the change.
@@ -152,12 +155,12 @@ class CompartmentedModel(object):
         self._callEnterHandlers(g, n, c)
 
     def addEvent( self, l, p, ef ):
-        '''Add an event to a locus, occurring with a particular (fixed)
-        probability and calling the event function when it is selected.
+        '''Add a probabilistic event at a locus, occurring with a particular (fixed)
+        probability and calling the :term:`event function` when it is selected.
 
-        An :term:`event function` takes the simulation time, the network, and the
-        element to which the event applies (a node or an edge, which will
-        have been selected from the event's locus).
+        The :term:`event function` takes the dynamics, the simulation time,
+        the network, and the element to which the event applies (a node or an edge,
+        which will have been selected from the event's locus).
 
         :param l: the locus name
         :param p: the event probability
@@ -174,17 +177,18 @@ class CompartmentedModel(object):
 
     def eventDistribution( self, t ):
         '''Return the distribution of events. The result should be a valid distribution,
-        with probabilities summing to one. The default implemnentation returns a constantr
-        distribution populated from the model paremeters. Sub-classes may override to
-        provide time-evolving probabilities.
+        with probabilities summing to one. The default implemnentation returns a constant
+        distribution populated from the model parameters. Sub-classes may override to,
+        for example, provide time-evolving probabilities.
 
         :param t: the current simulation time
-        :returns: a list of (locus, probability, event) triples'''
+        :returns: a list of (locus, probability, event function) triples'''
         return self._events
 
-    def setUp( self, g, params ):
+    def setUp( self, dyn, g, params ):
         '''Set up the initial population of nodes into compartments.
-
+        
+        :param dyn: the dynamics
         :param g: the network
         :param params: the simulation parameters'''
 
@@ -205,11 +209,8 @@ class CompartmentedModel(object):
                 a = a + p
                 if r <= a:
                     # change node's compartment
-                    g.node[n][self.COMPARTMENT] = c
+                    self.changeCompartment(g, n, c)
                     
-                    # propagate effects of entering new compartment
-                    self._callEnterHandlers(g, n, c)
-
                     # on to the next node
                     break
 
@@ -218,7 +219,7 @@ class CompartmentedModel(object):
             data[self.OCCUPIED] = False
 
     def markOccupied( self, g, e ):
-        '''Mark the givewn edge as having been occupied by the dynamics, i.e., to
+        '''Mark the given edge as having been occupied by the dynamics, i.e., to
         have been traversed in transmitting the disease.
 
         :param g: the network

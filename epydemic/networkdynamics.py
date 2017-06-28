@@ -96,7 +96,19 @@ class Dynamics(epyc.Experiment, object):
 
         # throw away the worked-on model
         self._graph = None
+
+    def eventDistribution( self, t ):
+        '''Return the event distribution, a sequence of (l, p, f) triples
+        where l is the :term:`locus` of the event, p is the probability of an
+        event occurring, and f is the :term:`event function` called to make it
+        happen. This method must be overridden in sub-classes.
         
+        It is perfectly fine for an event to have a zero probability.
+
+        :param t: current time
+        :returns: the event distribution'''
+        raise NotYetImplemented('eventDistribution()')
+
     def postEvent( self, t, g, e, ef ):
         '''Post an event to happen at time t. The :term:`event function` should
         take the simulation time, network, and element for the event. At time t
@@ -106,42 +118,68 @@ class Dynamics(epyc.Experiment, object):
         :param g: the network
         :param e: the element (node or edge) on which the event occurs
         :param ef: the event function'''
-        heappush(self._posted, (t, (lambda: ef(t, g, e))))
+        heappush(self._posted, (t, (lambda: ef(self, t, g, e))))
 
+    def _nextPendingEventBefore( self, t ):
+        '''Return the next pending event to occur at or before time t.
+
+        :param t: the current time
+        :returns: a pending event function or None'''
+        if len(self._posted) > 0:
+            # we have events, grab the soonest
+            (et, pef) = heappop(self._posted)
+            if et <= t:
+                # event should have occurred, return it
+                return pef
+            else:
+                # this (and therefore all further events) are in the future, put it back
+                heappush(self._posted, (et, pef))
+                return None
+        else:
+            # we don't have any events
+            return None
+        
     def pendingEvents( self, t ):
         '''Retrieve any :term:`posted event` pending to be executed at or
-        before time t.  The pending events are returned in the form of
+        before time t. The pending events are returned in the form of
         zero-argument functions that can simply be called to execute
         the events. The events are returned as a list, with the
         earliest-posted event first.
 
-        It may be easier to use :meth:`runPendingEvents` to automatically
-        run all pending events.
+        Be aware that running the returned events in order may not be enough to
+        accurately run the simulation in the case where firing an
+        event causes another event to be posted before t. It may be
+        easier to use :meth:`runPendingEvents` to run all pending
+        events, which handles this case automatically.
 
         :param t: the current time
         :returns: a (possibly empty) list of pending event functions'''
         pending = []
-        while len(self._posted) > 0:
-            (et, pef) = heappop(self._posted)
-            if et <= t:
-                # event should have occurred, store it
-                pending.append(pef)
+        while True:
+            pef = self._nextPendingEventBefore(t)
+            if pef is None:
+                # no more events pending, return those we've got
+                return pending
             else:
-                # this and further events are in the future, put it back
-                heappush(self._posted, (et, pef))
-                break
-
-        # return the pending events, if any
-        return pending
+                # store the pending event function
+                pending.append(pef)
 
     def runPendingEvents( self, t):
-        '''Retrieve and fire any pending events at time t.
+        '''Retrieve and fire any pending events at time t. This method handles
+        the case where firing an event posts another event that needs to be run
+        before other already-posted events coming before time t: in other words,
+        it ensures that the simulation order is respected.
 
         :param t: the current time
         :returns: the number of events fired'''
-        pefs = self.pendingEvents(t)
-        n = len(pefs)
-        for i in range(n):
-            pef = pefs[i]
-            pef()
-        return n
+        n = 0
+        while True:
+            pef = self._nextPendingEventBefore(t)
+            if pef is None:
+                # no more pending events, return however many we've fired already
+                return n
+            else:
+                # fire the event
+                pef()
+                n = n + 1
+                

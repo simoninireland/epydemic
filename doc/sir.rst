@@ -1,8 +1,10 @@
-:class:`SIR`: The SIR processes
-===============================
+:class:`SIR`: The SIR process
+=============================
 
 .. currentmodule:: epydemic
-   
+
+.. autoclass:: SIR
+
 The Synchronous-Infected-Recovered or SIR process is one of the oldest
 models of disease, first arising in a paper by :ref:`Kermack and
 McKendrick <KMcK27>` in 1927.

@@ -40,7 +40,7 @@ class Locus(object):
         '''Returns the name of the locus.
 
         :returns: the locus' name'''
-        return self_name
+        return self._name
         
     def __len__( self ):
         '''Return the number of elements at the locus.
@@ -55,11 +55,10 @@ class Locus(object):
         return self._elements
     
     def draw( self ):
-        '''Draw a random element from the locus.
+        '''Draw a random element from the locus. The locus is left unchanged.
 
         :returns: a random element at the locus'''
         e = (random.sample(self._elements, 1))[0]
-        #self._elements.remove(e)
         return e
 
     def leaveHandler( self, m, g, n, c ):

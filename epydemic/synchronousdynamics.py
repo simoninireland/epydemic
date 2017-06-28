@@ -40,18 +40,6 @@ class SynchronousDynamics(Dynamics):
         :param g: prototype network to run over (optional)'''
         super(SynchronousDynamics, self).__init__(g)
 
-    def eventDistribution( self, t ):
-        '''Return the event distribution, a sequence of (l, p, f) triples
-        where l is the locus for the event, p is the probability of an
-        event occurring, and f is the event function called to make it
-        happen. This method must be overridden in sub-classes.
-        
-        It is perfectly fine for an event to have a zero probability.
-
-        :param t: current time
-        :returns: the event distribution'''
-        raise NotYetImplementedError('eventDistribution()')
-
     def do( self, params ):
         '''Synchronous dynamics. We apply :meth:`dynamics` at each timestep
         and then check for completion using :meth:`at_equilibrium`.
@@ -65,21 +53,21 @@ class SynchronousDynamics(Dynamics):
         events = 0
         timestepEvents = 0
         while not self.at_equilibrium(t):
-            # run a single timestep
-            nev = 0
-        
+            # fire any events posted for at or before this time
+            nev = self.runPendingEvents(t)
+            
             # retrieve all the events, their loci, probabilities, and event functions
             dist = self.eventDistribution(t)
 
             # run through all the events in the distribution
-            for (l, p, f) in dist:
+            for (l, p, ef) in dist:
                 if p > 0.0:
                     # run through every possible element on which this event may occur
                     for e in copy(l.elements()):
                         # test for occurrance of the event on this element
-                        if numpy.random.random() < p:
+                        if numpy.random.random() <= p:
                             # yes, perform the event
-                            f(t, g, e)
+                            ef(self, t, g, e)
                             
                             # update the event count
                             nev = nev + 1
@@ -87,11 +75,14 @@ class SynchronousDynamics(Dynamics):
             # add the events to the count
             events = events + nev
             if nev > 0:
-                # we had a timestep containing events
+                # we had events happen in this timestep
                 timestepEvents = timestepEvents + 1
 
             # advance to the next timestep
             t = t + 1
+
+        # run any events posted for before the maximum simulation time
+        self.runPendingEvents(self._maxTime)
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

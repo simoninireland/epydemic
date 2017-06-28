@@ -78,34 +78,45 @@ class StochasticDynamics(Dynamics):
             # calculate the timestep delta
             r1 = numpy.random.random()
             dt = (1.0 / a) * math.log(1.0 / r1)
-
-            # increment the time
-            t = t + dt
             
-            # calculate which transition happens
+            # calculate which event happens
             if len(transitions) == 1:
                 # if there's only one, that's the one that happens
-                (l, _, f) = transitions[0]
+                (l, _, ef) = transitions[0]
             else:
                 # otherwise, choose one at random based on the rates
                 r2 = numpy.random.random()
                 xc = r2 * a
                 k = 0
-                (l, xs, f) = transitions[k]
+                (l, xs, ef) = transitions[k]
                 while xs < xc:
                     k = k + 1
-                    (l, xsp, f) = transitions[k]
+                    (l, xsp, ef) = transitions[k]
                     xs = xs + xsp
 
-            # draw a random element from the chosen locus
-            e = l.draw()
+            # increment the time
+            t = t + dt
+
+            # fire any events posted for at or before this time
+            events = events + self.runPendingEvents(t)
+
+            # it's possible that posted events have removed all elements
+            # from the chosen locus, in which case we simply continue
+            # with the next event selection
+            # sd: is this correct? or does it mess up the statistics too much?
+            if len(l) > 0:
+                # draw a random element from the chosen locus
+                e = l.draw()
             
-            # perform the event by calling the event function,
-            # passing the event time, network, and element
-            f(t, g, e)
+                # perform the event by calling the event function,
+                # passing the dynamics, event time, network, and element
+                ef(self, t, g, e)
             
-            # increment the event counter    
-            events = events + 1
+                # increment the event counter    
+                events = events + 1
+
+        # run any events posted for before the maximum simulation time
+        self.runPendingEvents(self._maxTime)
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

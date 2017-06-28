@@ -33,7 +33,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         # value when fired
         self._v = 0
         def make_ef( w ):
-            def ef( t, g, e ):
+            def ef( dyn, t, g, e ):
                 self._v = self._v + w
             return ef
         
@@ -68,6 +68,47 @@ class NetworkDynamicsTest(unittest.TestCase):
         self.assertItemsEqual(dyn.pendingEvents(10), [])
         self.assertItemsEqual(dyn.pendingEvents(20), [])
         
-            
+    def testPostedPosting( self ):
+        '''Test the case when a posted event itself posts an event.'''
+        dyn = Dynamics()
+
+        # event function builder, will increment the shared
+        # value when fired and also post a further event
+        self._v = 0
+        def make_ef( dyn, dt ):
+            def ef( dyn, t, g, e ):
+                self._v = self._v + 1
+                dyn.postEvent(t + dt, None, None, make_ef(dyn, dt))
+            return ef
         
-                
+        # post the first of the events
+        dyn.postEvent(1, None, None, make_ef(dyn, 5))
+
+        # post an intermediate event that should be fired alongside a regular one
+        def inter( dyn, t, g, e ):
+            self._v = self._v + 1000
+        dyn.postEvent(12, None, None, inter)
+
+        # carefully run the event sequence for a while
+        for t in range(1, 25, 5):
+            nev = dyn.runPendingEvents(t)
+            v = self._v
+            if t == 1:
+                self.assertEqual(v, 1)
+                self.assertEqual(nev, 1)
+            if t == 6:
+                self.assertEqual(v, 2)
+                self.assertEqual(nev, 1)
+            if t == 11:
+                self.assertEqual(v, 3)
+                self.assertEqual(nev, 1)
+            if t == 16:
+                self.assertEqual(v, 1004)
+                self.assertEqual(nev, 2)
+            if t == 21:
+                self.assertEqual(v, 1005)
+                self.assertEqual(nev, 1)
+
+        # should be one event left
+        self.assertEqual(len(dyn.pendingEvents(100)), 1)
+        

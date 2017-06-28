@@ -5,8 +5,8 @@
 
 The idea of stochastic event-based simulation arose in *ab initio*
 chemistry to simulate interactions between molecules. The basic
-technique is due to `Gillespie <Gil76>`_ and was later `refined by him
-<Gil77>`_.
+technique is due to :ref:`Gillespie <Gil76>` and was later
+:ref:`refined further <Gil77>` by him.
 
 The basic idea of Gillespie simulation is to structure an experiment
 in terms of events which occur with some probability over continuous

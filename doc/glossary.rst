@@ -44,7 +44,8 @@ Glossary
 
    event function
       A function called when an :term:`event` fires to perform the
-      action required. Event functions take three arguments: the
+      action required. Event functions take four arguments: the
+      :term:`Dynamics` object running the simulation, the
       current simulation time, the network, and the element at which
       the event occurs (which will be selected by the chosen
       :term:`process dynamics`). Elements are typically either nodes

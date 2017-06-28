@@ -50,6 +50,10 @@ from .loci import Locus, NodeLocus, EdgeLocus
 from .compartmentedsynchronousdynamics import CompartmentedSynchronousDynamics
 from .compartmentedstochasticdynamics import CompartmentedStochasticDynamics
 
-# disease models
+# reference disease models
 from .sir_model import SIR
 from .sis_model import SIS
+
+# variant disease models
+from .sir_model_fixed_recovery import SIR_FixedRecovery
+from .sis_model_fixed_recovery import SIS_FixedRecovery

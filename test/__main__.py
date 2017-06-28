@@ -22,16 +22,19 @@ from .networkdynamics import NetworkDynamicsTest
 from .compartmentedmodel import CompartmentedModelTest
 from .sir import SIRTest
 from .sis import SISTest
+from .fixed_recovery import FixedRecoveryTest
 
 ndsuite = unittest.TestLoader().loadTestsFromTestCase(NetworkDynamicsTest)
 cmsuite = unittest.TestLoader().loadTestsFromTestCase(CompartmentedModelTest)
 sirsuite = unittest.TestLoader().loadTestsFromTestCase(SIRTest)
 sissuite = unittest.TestLoader().loadTestsFromTestCase(SISTest)
+fixedsuite = unittest.TestLoader().loadTestsFromTestCase(FixedRecoveryTest)
 
 suite = unittest.TestSuite([ ndsuite,
-                             #cmsuite,
-                             #sirsuite,
-                             #sissuite,
+                             cmsuite,
+                             sirsuite,
+                             sissuite,
+                             fixedsuite,
                             ])
 
 if __name__ == '__main__':

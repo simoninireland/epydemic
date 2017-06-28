@@ -31,8 +31,8 @@ Dynamics
    compartmenteddynamics
 	      
 
-Epidemic processes
-------------------
+Reference epidemic processes
+----------------------------
 
 .. toctree::
    :maxdepth: 2
@@ -40,6 +40,15 @@ Epidemic processes
    sir
    sis
 
+Process variants
+----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sir_fixed_recovery
+   sis_fixed_recovery
+   
 
 Indices and tables
 ==================

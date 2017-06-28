@@ -1,7 +1,9 @@
-:class:`SIS`: The SIS processes
-===============================
+:class:`SIS`: The SIS process
+=============================
 
 .. currentmodule:: epydemic
+
+.. autoclass:: SIS
    
 The Synchronous-Infected-Susceptible or SIS process is a variant of
 the more common SIR process which cycles between only two states,

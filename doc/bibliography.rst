@@ -28,6 +28,8 @@ theory of epidemics
 <http://dx.doi.org/10.1098/rspa.1927.0118>`_. Proceedings of the Royal
 Society A **115** (772). 1927.
 
+.. _KMS17:
+
 Istvan Kiss, Joel Miller, and Peter Simon. `Mathematics of
 epidemics on networks <http://dx.doi.org/10.1007/978-3-319-50806-1>`_.
 Springer series on Interdisciplinary Applied Mathematics

@@ -51,7 +51,7 @@ class CompartmentedStochasticDynamics(StochasticDynamics):
 
         # initialise the network from the model
         g = self.network()
-        self._model.setUp(g, params)
+        self._model.setUp(self, g, params)
 
     def eventRateDistribution( self, t ):
         '''Convert the model's event distribution into the rate-based distribution
