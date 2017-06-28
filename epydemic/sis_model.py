@@ -64,11 +64,9 @@ class SIS(CompartmentedModel):
 
         :param t: the simulation time (unused)
         :param g: the network
-        :param (n, m): the edge transmitting the infection, susceptible-infected
-        :returns: True'''
+        :param (n, m): the edge transmitting the infection, susceptible-infected'''
         self.changeCompartment(g, n, self.INFECTED)
         self.markOccupied(g, (n, m))
-        return True
 
     def recover( self, t, g, n ):
         '''Perform a removal event. This changes the compartment of
@@ -76,10 +74,8 @@ class SIS(CompartmentedModel):
 
         :param t: the simulation time (unused)
         :param g: the network
-        :param n: the node
-        returns: True'''
+        :param n: the node'''
         self.changeCompartment(g, n, self.SUSCEPTIBLE)
-        return True
     
                 
    

@@ -57,10 +57,6 @@ class StochasticDynamics(Dynamics):
         when either there are no events with zero rates or when :meth:`at_equilibrium`
         return True.
 
-        Event functions may return False to indicate that the event didn't fire,
-        and in this case the dynamics will select another event and not increment the
-        simulation time.
-
         :param params: the experimental parameters
         :returns: the experimental results dict'''
         
@@ -82,6 +78,9 @@ class StochasticDynamics(Dynamics):
             # calculate the timestep delta
             r1 = numpy.random.random()
             dt = (1.0 / a) * math.log(1.0 / r1)
+
+            # increment the time
+            t = t + dt
             
             # calculate which transition happens
             if len(transitions) == 1:
@@ -103,12 +102,10 @@ class StochasticDynamics(Dynamics):
             
             # perform the event by calling the event function,
             # passing the event time, network, and element
-            happened = f(t + dt, g, e)
-            if happened:
-                # event happened, advance time by the timestep
-                # and increment the event counter
-                t = t + dt
-                events = events + 1
+            f(t, g, e)
+            
+            # increment the event counter    
+            events = events + 1
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

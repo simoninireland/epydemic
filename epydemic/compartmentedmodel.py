@@ -156,11 +156,8 @@ class CompartmentedModel(object):
         probability and calling the event function when it is selected.
 
         Event functions should take the simulation time, the network, and the
-        element to which the event applies (a node or an edge, whcih will
-        have been selected from the event's locus), and should return True
-        if the event has successfully happened and False otherwise. This is
-        aa second level of checking that allows an event handler to decide
-        not to actually fire the event despite selection.
+        element to which the event applies (a node or an edge, which will
+        have been selected from the event's locus).
 
         :param l: the locus name
         :param p: the event probability
