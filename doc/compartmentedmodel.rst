@@ -51,11 +51,11 @@ experiment's simulation parameters.
 Model setup
 -----------
 
-Immediately before being run, the model is set up by placing all
-the nodes into compartments chosen randomly from the initial
-compartment distribution defined by the probabilities passed to
-:meth:`addCompartment` when the compartments are created. All edges
-are also marked as unoccupied. 
+Immediately before being run, the model is set up by placing all the
+nodes into compartments chosen randomly from the initial compartment
+distribution defined by the probabilities passed to
+:meth:`CompartmentedModel.addCompartment` when the compartments are
+created. All edges are also marked as unoccupied.
 
 .. automethod:: CompartmentedModel.setUp
 

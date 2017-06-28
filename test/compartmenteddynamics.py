@@ -41,8 +41,6 @@ class CompartmentedDynamicsTest(unittest.TestCase):
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
             traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
-        else:
-            print rc[epyc.Experiment.RESULTS]
     
     def testRunSingleSynchronous( self ):
         '''Test a single run of a synchronous dynamics.'''
@@ -53,9 +51,6 @@ class CompartmentedDynamicsTest(unittest.TestCase):
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
             traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
-        else:
-            print rc[epyc.Experiment.RESULTS]
-            print rc[epyc.Experiment.METADATA]
         
     @unittest.skip('not yet')
     def testRunMultipleStochastic( self ):
