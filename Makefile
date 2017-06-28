@@ -48,7 +48,8 @@ SOURCES_TESTS = \
 	test/compartmentedmodel.py \
 	test/compartmenteddynamics.py \
 	test/sir.py \
-	test/sis.py
+	test/sis.py \
+	test/fixed_recovery.py
 TESTSUITE = test
 
 SOURCES_TUTORIAL = doc/epydemic.ipynb

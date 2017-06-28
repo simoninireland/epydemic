@@ -1,7 +1,9 @@
-Version 0.3.0
+Version 0.3.0 2017-06-28
 
    - Refactored synchronous dynamics to be completely independent of models
-   
+   - Added posting events for fixed times
+   - Added fixed-recovery period model variants
+
 Version 0.2.0 2017-06-27
 
    - New approach for compartmented models and dynamics
