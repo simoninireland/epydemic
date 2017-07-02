@@ -1,3 +1,5 @@
+Version 0.4.0
+
 Version 0.3.0 2017-06-28
 
    - Refactored synchronous dynamics to be completely independent of models
