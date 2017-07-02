@@ -41,10 +41,10 @@ class Dynamics(epyc.Experiment, object):
         
         :param g: prototype network (optional)'''
         super(Dynamics, self).__init__()
-        self._graphPrototype = g
-        self._graph = None
-        self._maxTime = self.DEFAULT_MAX_TIME
-        self._posted = []
+        self._graphPrototype = g                 # prototype copied for each run
+        self._graph = None                       # working copy of prototype
+        self._maxTime = self.DEFAULT_MAX_TIME    # time allowed until equilibrium
+        self._posted = []                        # pri-queue of fixed-time events
 
     def network( self ):
         '''Return the network this dynamics is running over.
@@ -96,6 +96,7 @@ class Dynamics(epyc.Experiment, object):
 
         # throw away the worked-on model
         self._graph = None
+        self._posted = []
 
     def eventDistribution( self, t ):
         '''Return the event distribution, a sequence of (l, p, f) triples
@@ -111,8 +112,8 @@ class Dynamics(epyc.Experiment, object):
 
     def postEvent( self, t, g, e, ef ):
         '''Post an event to happen at time t. The :term:`event function` should
-        take the simulation time, network, and element for the event. At time t
-        it is called with the given network and element.
+        take the dynamics, simulation time, network, and element for the event.
+        At time t it is called with the given network and element.
 
         :param t: the current time
         :param g: the network
@@ -140,10 +141,10 @@ class Dynamics(epyc.Experiment, object):
             return None
         
     def pendingEvents( self, t ):
-        '''Retrieve any :term:`posted event` pending to be executed at or
+        '''Retrieve any :term:`posted event` scheduled to be fired at or
         before time t. The pending events are returned in the form of
-        zero-argument functions that can simply be called to execute
-        the events. The events are returned as a list, with the
+        zero-argument functions that can simply be called to fire
+        the corresponding event. The events are returned as a list with the
         earliest-posted event first.
 
         Be aware that running the returned events in order may not be enough to
