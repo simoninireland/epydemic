@@ -57,6 +57,10 @@ distribution defined by the probabilities passed to
 :meth:`CompartmentedModel.addCompartment` when the compartments are
 created. All edges are also marked as unoccupied.
 
+.. automethod:: CompartmentedModel.reset
+
+.. automethod:: CompartmentedModel.build
+
 .. automethod:: CompartmentedModel.setUp
 
 .. automethod:: CompartmentedModel.initialCompartmentDistribution

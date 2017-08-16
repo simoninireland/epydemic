@@ -41,8 +41,7 @@ class SynchronousDynamics(Dynamics):
         super(SynchronousDynamics, self).__init__(g)
 
     def do( self, params ):
-        '''Synchronous dynamics. We apply :meth:`dynamics` at each timestep
-        and then check for completion using :meth:`at_equilibrium`.
+        '''Synchronous dynamics.
         
         :param params: the parameters of the simulation
         :returns: a dict of experimental results'''

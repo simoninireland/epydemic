@@ -47,20 +47,19 @@ class CompartmentedStochasticDynamics(StochasticDynamics):
         super(CompartmentedStochasticDynamics, self).setUp(params)
 
         # build the model
+        self._model.reset()
         self._model.build(params)
 
         # initialise the network from the model
         g = self.network()
         self._model.setUp(self, g, params)
 
-    def eventRateDistribution( self, t ):
-        '''Convert the model's event distribution into the rate-based distribution
-        required by Gillespie simulation.
+    def eventDistribution( self, t ):
+        '''Return the model's event distribution.
 
-        :param t: the current time
-        :returns: the event rate distribution'''
-        dist = self._model.eventDistribution(t)
-        return map((lambda (l, p, f): (l, p * len(l), f)), dist)
+        :param t: current time
+        :returns: the event distribution'''
+        return self._model.eventDistribution(t)
 
     def experimentalResults( self ):
         '''Report the model's experimental results.

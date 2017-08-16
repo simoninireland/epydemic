@@ -30,7 +30,7 @@ class CompartmentedSynchronousDynamics(SynchronousDynamics):
     rather than here.'''
         
     def __init__( self, m, g = None ):
-        '''Create a dynamicsover the given disease model, optionally
+        '''Create a dynamics over the given disease model, optionally
         initialised to run on the given prototype network.
         
         :param m: the model
@@ -50,6 +50,7 @@ class CompartmentedSynchronousDynamics(SynchronousDynamics):
         super(CompartmentedSynchronousDynamics, self).setUp(params)
 
         # build the model
+        self._model.reset()
         self._model.build(params)
 
         # initialise the network from the model

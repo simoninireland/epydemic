@@ -1,5 +1,12 @@
-Version 0.4.0
+Version 0.3.1 2017-08-16
 
+   - Added a reset() method to compartmented models to allow them to
+     be built repeatedly
+   - Gave StochasticDynamics.eventRateDistribution() a default implemntation
+   - Added CompartmentedModel.build() as an abstract method, just so
+     we could add documentation for it
+   - Fixed a few minor issues
+   
 Version 0.3.0 2017-06-28
 
    - Refactored synchronous dynamics to be completely independent of models

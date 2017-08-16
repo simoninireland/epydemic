@@ -43,7 +43,22 @@ class CompartmentedModel(object):
         self._loci = dict()
         self._effects = dict()
         self._events = []
-        
+
+    def reset( self ):
+        '''Reset the model ready to be built.'''
+        self._compartments = []
+        self._loci = dict()
+        self._effects = dict()
+        self._events = []
+
+    def build( self, params ):
+        '''Build the model. This must be overridden by sub-classes, and should
+        call methods such as :meth:`addCompartment`, :meth:`addLocus`, and
+        :meth:`addEvent` to add the various elements. 
+
+        :param params: the model parameters'''
+        raise NotYetImplemented('build()')
+
     def addCompartment( self, c, p = 0.0 ):
         '''Add a compartment to the model. A node is assigned to the compartment
         initially with the given probability. The probabilities for all compartments

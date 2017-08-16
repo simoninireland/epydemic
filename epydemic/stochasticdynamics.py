@@ -38,11 +38,12 @@ class StochasticDynamics(Dynamics):
         '''Return the event distribution, a sequence of (l, r, f) triples
         where l is the locus where the event occurs, r is the rate at
         which an event occurs, and f is the event function called to
-        make it happen. This method must be overridden in
-        sub-classes. Note that it's a rate we want, not a probability:
+        make it happen.
+
+        Note that it's a rate we want, not a probability:
         the former can be obtained from the latter simply by
         multiplying the event probability by the number of times it's
-        possible in the current network, which is often a population
+        possible in the current network, which is the population
         of nodes or edges in a given state.
         
         It is perfectly fine for an event to have a zero rate. The process
@@ -50,7 +51,8 @@ class StochasticDynamics(Dynamics):
 
         :param t: current time
         :returns: the event rate distribution'''
-        raise NotYetImplementedError('eventRateDistribution()')
+        dist = self.eventDistribution(t)
+        return map((lambda (l, p, f): (l, p * len(l), f)), dist)
 
     def do( self, params ):
         '''Run the simulation using Gillespie dynamics. The process terminates
