@@ -1,3 +1,5 @@
+Version 0.4.0
+
 Version 0.3.1 2017-08-16
 
    - Added a reset() method to compartmented models to allow them to
