@@ -1,0 +1,40 @@
+# Setup for epydemic
+#
+# Copyright (C) 2017 Simon Dobson
+# 
+# This file is part of epydemic, epidemic network simulations in Python.
+#
+# epydemic is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# epydemic is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+from setuptools import setup
+
+with open('README.rst') as f:
+    longDescription = f.read()
+
+setup(name = 'epydemic',
+      version = '0.4.1',
+      description = 'Epidemic network simulations in Python',
+      long_description = longDescription,
+      url = 'http://github.com/simoninireland/epydemic',
+      author = 'Simon Dobson',
+      author_email = 'simon.dobson@computer.org',
+      license = 'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
+      classifiers = [ 'Development Status :: 4 - Beta',
+                      'Intended Audience :: Science/Research',
+                      'Intended Audience :: Developers',
+                      'Programming Language :: Python :: 2.7',
+                      'Topic :: Scientific/Engineering' ],
+      packages = [ 'epydemic' ],
+      zip_safe = True,
+      install_requires = [ "numpy", "networkx", "epyc", ])
