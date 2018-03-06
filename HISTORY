@@ -4,7 +4,7 @@ Version 0.4.1 2017-03-06
    - Move to slightly better build system
    - Refactored network setup to work better with epyc's distributed
      computations
-   
+
 Version 0.3.1 2017-08-16
 
    - Added a reset() method to compartmented models to allow them to
