@@ -27,16 +27,20 @@ from copy import copy
 class CompartmentedSynchronousDynamics(SynchronousDynamics):
     '''A :term:`synchronous dynamics` running a compartmented model. The
     behaviour of the simulation is completely described within the model
-    rather than here.'''
+    rather than here.
+
+    :param m: the model
+    :param g: prototype network to run over (optional)'''
         
     def __init__( self, m, g = None ):
-        '''Create a dynamics over the given disease model, optionally
-        initialised to run on the given prototype network.
-        
-        :param m: the model
-        :param g: prototype network to run over (optional)'''
         super(CompartmentedSynchronousDynamics, self).__init__(g)
         self._model = m
+
+    def model( self ):
+        '''Return the disease model being used.
+
+        :returns: the disease model'''
+        return self._model
 
     def setUp( self, params ):
         '''Set up the experiment for a run. This performs the default action

@@ -49,8 +49,6 @@ behaviour of node and edge loci.
 .. autoclass:: NodeLocus
    :show-inheritance:
 
-.. automethod:: NodeLocus.__init__
-
 .. automethod:: NodeLocus.leaveHandler
 
 .. automethod:: NodeLocus.enterHandler
@@ -62,8 +60,6 @@ behaviour of node and edge loci.
 
 .. autoclass:: EdgeLocus
    :show-inheritance:
-
-.. automethod:: EdgeLocus.__init__
 
 .. automethod:: EdgeLocus.leaveHandler
 

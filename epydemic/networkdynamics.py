@@ -21,11 +21,17 @@ import epyc
 import networkx
 from heapq import *
 
+
 class Dynamics(epyc.Experiment, object):
     '''A dynamical process over a network. This is the abstract base class
     for implementing different kinds of dynamics as computational experiments
     suitable for running under. Sub-classes provide synchronous and stochastic
-    (Gillespie) simulation dynamics.'''
+    (Gillespie) simulation dynamics.
+
+    The dynamics optionally takes a parameter providing a prototype network
+    that will be used for each experimental run.
+
+    :param g: prototype network (optional)'''
 
     # Additional metadata elements
     TIME = 'simulation_time'      #: Metadata element holding the logical simulation end-time.
@@ -35,11 +41,6 @@ class Dynamics(epyc.Experiment, object):
     DEFAULT_MAX_TIME = 20000      #: Default maximum simulation time.
     
     def __init__( self, g = None ):
-        '''Create a dynamics, optionally initialised to run on the given network.
-        The network (if provided) is treated as a prototype that is copied before
-        each individual simulation experiment.
-        
-        :param g: prototype network (optional)'''
         super(Dynamics, self).__init__()
         self._graphPrototype = g                 # prototype copied for each run
         self._graph = None                       # working copy of prototype
@@ -59,6 +60,13 @@ class Dynamics(epyc.Experiment, object):
         :param g: the network'''
         self._graphPrototype = g
 
+    def networkPrototype( self ):
+        '''Return the prototype network used to create the working
+        copy.
+
+        :returns: the prototype network'''
+        return self._graphPrototype
+    
     def setMaximumTime( self, t ):
         '''Set the maximum default simulation time. The default is given
         by :attr:`DEFAULT_MAX_TIME`.
@@ -74,8 +82,19 @@ class Dynamics(epyc.Experiment, object):
         :returns: True if we're done'''
         return (t >= self._maxTime)
 
+    def setUpNetwork( self, params ):
+        '''Set up the working copy of the network for this run of the
+        experiment, as will be returned by :meth:`network`. By default
+        this makes a copy of the prototype network, but the method may
+        be overridden to create a network locally if desired, making use
+        of the experimental parameters.
+
+        :param params: the experiment parameters
+        :returns: a working network'''
+        return self.networkPrototype().copy()
+    
     def setUp( self, params ): 
-        '''Before each experiment, create a working copy of the prototype network.
+        '''Before each experiment, create a new network to work with.
 
         :param params: parameters of the experiment'''
 
@@ -83,7 +102,7 @@ class Dynamics(epyc.Experiment, object):
         super(Dynamics, self).setUp(params)
 
         # make a copy of the network prototype
-        self._graph = self._graphPrototype.copy()
+        self._graph = self.setUpNetwork(params)
 
         # empty the queue of posted events
         self._posted = []

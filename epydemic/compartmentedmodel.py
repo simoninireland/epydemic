@@ -37,7 +37,6 @@ class CompartmentedModel(object):
     OCCUPIED = 'occupied'                  #: Edge attribute, True if edge passed infection.
     
     def __init__( self ):
-        '''Create a new compartmented model.'''
         super(CompartmentedModel, self).__init__()
         self._compartments = []
         self._loci = dict()
@@ -209,14 +208,14 @@ class CompartmentedModel(object):
 
         # initialise all nodes to an empty compartment
         # (so we can assume all nodes have a compartment attribute)
-        for n in g.nodes_iter():
+        for n in g.nodes():
             g.node[n][self.COMPARTMENT] = None
             
         # get the initial compartment distribution
         dist = self.initialCompartmentDistribution()
 
         # assign nodes to compartments
-        for n in g.nodes_iter():
+        for n in g.nodes():
             # select a compartment according to the initial distribution
             r = numpy.random.random()
             a = 0.0
@@ -230,7 +229,7 @@ class CompartmentedModel(object):
                     break
 
         # mark edges as unoccupied
-        for (_, _, data) in g.edges_iter(data = True):
+        for (_, _, data) in g.edges(data = True):
             data[self.OCCUPIED] = False
 
     def markOccupied( self, g, e ):
@@ -259,7 +258,7 @@ class CompartmentedModel(object):
         rc['compartments'] = dict()
         for (c, _) in self._compartments:
             rc['compartments'][c] = 0        
-        for n in g.nodes_iter():
+        for n in g.nodes():
             c = g.node[n][self.COMPARTMENT]
             rc['compartments'][c] = rc['compartments'][c] + 1
 
@@ -275,7 +274,7 @@ class CompartmentedModel(object):
         
         # find all unoccupied edges
         edges = []
-        for (n, m, data) in g.edges_iter(data = True):
+        for (n, m, data) in g.edges(data = True):
             if (self.OCCUPIED not in data.keys()) or (data[self.OCCUPIED] != True):
                 # edge is unoccupied, mark it to be removed
                 # (safe because there are no parallel edges)

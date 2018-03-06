@@ -43,15 +43,14 @@ copy, just clone the repo:
 Documentation
 -------------
 
-The ``doc/`` directory contains an IPython notebook that describes the
-use of ``epydemic`` in detail. You can also read it directly
-online <https://github.com/simoninireland/epydemic/blob/master/doc/epydemic.ipynb>.
+API documentation for `epydemic` is available on `ReadTheDocs <https://epydemic.readthedocs.io/en/latest/>`.
+
 
 
 Author and license
 ------------------
 
-Copyright (c) 2017, Simon Dobson <simon.dobson@computer.org>
+Copyright (c) 2017-2018, Simon Dobson <simon.dobson@computer.org>
 
 Licensed under the `GNU General Public Licence v.2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`.
 

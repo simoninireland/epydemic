@@ -4,12 +4,7 @@
 .. currentmodule:: epydemic
    
 .. autoclass:: SynchronousDynamics
-
-
-Creating a dynamics class
--------------------------
-
-.. automethod:: SynchronousDynamics.__init__
+   :show-inheritance:
 
 
 Extra metadata

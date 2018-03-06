@@ -27,7 +27,7 @@ class SIR(CompartmentedModel):
     # the model parameters
     P_INFECTED = 'pInfected'  #: Parameter for probability of initially being infected.
     P_INFECT = 'pInfect'      #: Parameter for probability of infection on contact.
-    P_REMOVE = 'pRemove'      #: Parameter for probability of removal.
+    P_REMOVE = 'pRemove'      #: Parameter for probability of removal (recovery).
     
     # the possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE = 'S'         #: Compartment for nodes susceptible to infection.

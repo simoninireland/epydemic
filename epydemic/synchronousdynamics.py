@@ -28,16 +28,14 @@ class SynchronousDynamics(Dynamics):
     '''A dynamics that runs synchronously in discrete time, applying local
     rules to each node in the network. These are simple to understand and
     simple to code for many cases, but can be statistically inexact and slow
-    for large systems.'''
+    for large systems.
+
+    :param g: prototype network to run over (optional)'''
 
     # additional metadata
     TIMESTEPS_WITH_EVENTS = 'timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
 
     def __init__( self, g = None ):
-        '''Create a dynamics, optionally initialised to run on the given prototype
-        network.
-        
-        :param g: prototype network to run over (optional)'''
         super(SynchronousDynamics, self).__init__(g)
 
     def do( self, params ):

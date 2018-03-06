@@ -24,17 +24,21 @@ import numpy
 class CompartmentedStochasticDynamics(StochasticDynamics):
     '''A :term:`stochastic dynamics` running a compartmented model. The
     behaviour of the simulation is completely described within the model
-    rather than here.'''
+    rather than here.
+
+    :param m: the compartmented model for the disease process
+    :param g: prototype network to run the dynamics over (optional)'''
     
     def __init__( self, m, g = None ):
-        '''Create a dynamics over the given process model, optionally
-        initialised to run on the given network.
-       
-        :param m: the compartmented model for the disease process
-        :param g: prototype network to run the dynamics over (optional)'''
         super(CompartmentedStochasticDynamics, self).__init__(g)
         self._model = m
 
+    def model( self ):
+        '''Return the disease model being used.
+
+        :returns: the disease model'''
+        return self._model
+    
     def setUp( self, params ):
         '''Set up the experiment for a run. This performs the default action
         of copying the prototype network and then builds the model and

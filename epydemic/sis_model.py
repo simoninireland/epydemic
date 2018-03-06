@@ -28,7 +28,7 @@ class SIS(CompartmentedModel):
     # the model parameters
     P_INFECTED = 'pInfected'  #: Parameter for probability of initially being infected.
     P_INFECT = 'pInfect'      #: Parameter for probability of infection on contact.
-    P_RECOVER = 'pRecover'    #: Parameter for probability of recovery.
+    P_REMOVE = 'pRemove'      #: Parameter for probability of removal (recovery).
     
     # the possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE = 'S'         #: Compartment for nodes susceptible to infection.
@@ -46,7 +46,7 @@ class SIS(CompartmentedModel):
         :param params: the model parameters'''
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
-        pRecover = params[self.P_RECOVER]
+        pRemove = params[self.P_REMOVE]
 
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
@@ -54,7 +54,7 @@ class SIS(CompartmentedModel):
         self.addLocus(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
         self.addLocus(self.INFECTED)
 
-        self.addEvent(self.INFECTED, pRecover, lambda d, t, g, e: self.recover(d, t, g, e))
+        self.addEvent(self.INFECTED, pRemove, lambda d, t, g, e: self.remove(d, t, g, e))
         self.addEvent(self.SI, pInfect, lambda d, t, g, e: self.infect(d, t, g, e))
 
     def infect( self, dyn, t, g, (n, m) ):
@@ -69,7 +69,7 @@ class SIS(CompartmentedModel):
         self.changeCompartment(g, n, self.INFECTED)
         self.markOccupied(g, (n, m))
 
-    def recover( self, dyn, t, g, n ):
+    def remove( self, dyn, t, g, n ):
         '''Perform a removal event. This changes the compartment of
         the node back to :attr:`SUSCEPTIBLE`, allowing re-infection.
 

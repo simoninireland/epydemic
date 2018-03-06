@@ -26,12 +26,11 @@ import numpy
 class StochasticDynamics(Dynamics):
     '''A dynamics that runs stochastically in :term:`continuous time`. This is a
     very efficient and statistically exact approach, but requires that the
-    statistical properties of the events making up the process are known.'''
-    
+    statistical properties of the events making up the process are known.
+
+    :param g: prototype network to run the dynamics over (optional)'''
+
     def __init__( self, g = None ):
-        '''Create a dynamics, optionally initialised to run on the given network.
-        
-        :param g: prototype network to run the dynamics over (optional)'''
         super(StochasticDynamics, self).__init__(g)
 
     def eventRateDistribution( self, t ):

@@ -26,12 +26,11 @@ class Locus(object):
     '''The locus of dynamics. A locus is where dynamics happens, allowing the
     compartments of nodes to be changed and other effects to be coded-up. Loci
     are filled with nodes or edges, typically populated and re-populated as the
-    dynamics moves nodes between components.'''
+    dynamics moves nodes between components.
+
+    :param name: the locus name'''
 
     def __init__( self, name ):
-        '''Create a new named locus.
-
-        :param name: the locus; name'''
         super(Locus, self).__init__()
         self._name = name
         self._elements = set()
@@ -84,13 +83,12 @@ class Locus(object):
 
 class NodeLocus(Locus):
     '''A locus for dynamics occurring at a single node. Node loci
-    contain nodes, typically all in a single compartment.'''
+    contain nodes, typically all in a single compartment.
+
+    :param name: the locus' name
+    :param c: the compartment''' 
 
     def __init__( self, name, c ):
-        '''Create a locus for nodes in the given compartment.
-
-        :param name: the locus' name
-        :param c: the compartment''' 
         super(NodeLocus, self).__init__(name)
         self._compartment = c
         
@@ -118,17 +116,13 @@ class NodeLocus(Locus):
 class EdgeLocus(Locus):
     '''A locus for dynamics occurring at an edge. Edge loci contain
     edges, typically with the endpoint nodes in different compartments. The
-    edges within a locus change as nodes move between compartments.'''
+    edges within a locus change as nodes move between compartments.
+
+    :param name: the locus' name
+    :param l: the left compartment 
+    :param r: the right compartment''' 
 
     def __init__( self, name, l, r ):
-        '''Create a locus for an edge with endpoints in the
-        given compartments. Edges are treated as directed, in the
-        sense that the edge will always be manipulated according to
-        the given orientation.
-
-        :param name: the locus' name
-        :param l: the left compartment 
-        :param r: the right compartment''' 
         super(EdgeLocus, self).__init__(name)
         self._left = l
         self._right = r
@@ -141,7 +135,7 @@ class EdgeLocus(Locus):
         :param g: the network
         :param n: the node
         :param c: the compartment the node is leaving'''
-        for (nn, mm) in g.edges_iter(n):
+        for (nn, mm) in g.edges(n):
             if (g.node[nn][m.COMPARTMENT] == self._right) and (g.node[mm][m.COMPARTMENT] == self._left):
                 #print 'edge ({m}, {n}) leaves {l}'.format(n = nn, m = mm, l = self._name)
                 self._elements.remove((mm, nn))
@@ -158,7 +152,7 @@ class EdgeLocus(Locus):
         :param g: the network
         :param n: the node
         :param c: the compartment the node is entering'''
-        for (nn, mm) in g.edges_iter(n):
+        for (nn, mm) in g.edges(n):
             if (g.node[nn][m.COMPARTMENT] == self._right) and (g.node[mm][m.COMPARTMENT] == self._left):
                 #print 'edge ({m}, {n}) enters {l}'.format(n = nn, m = mm, l = self._name)
                 self._elements.add((mm, nn))

@@ -26,12 +26,6 @@ Attributes
 .. autoattribute:: CompartmentedModel.OCCUPIED
 
 
-Creating a model
-----------------
-
-.. automethod:: CompartmentedModel.__init__
-
-
 Building the model
 ------------------
 

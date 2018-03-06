@@ -21,12 +21,13 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.3.1
+VERSION = 0.4.1
 
 # ----- Sources -----
 
 # Source code
 SOURCES_SETUP_IN = setup.py.in
+SOURCES_SDIST = dist/$(PACKAGENAME)-$(VERSION).tar.gz
 SOURCES_CODE = \
 	epydemic/__init__.py \
 	epydemic/networkdynamics.py \
@@ -82,12 +83,12 @@ SOURCES_GENERATED = \
 
 # Python packages needed
 # For the system to install and run
-PY_COMPUTATIONAL = \
+PY_REQUIREMENTS = \
 	numpy \
 	networkx \
 	epyc
-# For the documentation
-PY_INTERACTIVE = \
+# For the documentation and development venv
+PY_DEV_REQUIREMENTS = \
 	ipython \
 	jupyter \
 	matplotlib \
@@ -101,6 +102,9 @@ PY_NON_REQUIREMENTS = \
 	appnope \
 	functools32 \
 	subprocess32
+VENV = venv
+REQUIREMENTS = requirements.txt
+DEV_REQUIREMENTS = dev-requirements.txt
 
 
 # ----- Tools -----
@@ -123,18 +127,16 @@ CP = cp
 CHDIR = cd
 ZIP = zip -r
 
+# Root directory
+ROOT = $(shell pwd)
+
 # Constructed commands
 RUN_TESTS = $(IPYTHON) -m $(TESTSUITE)
 RUN_NOTEBOOK = $(JUPYTER) notebook
 RUN_SETUP = $(PYTHON) setup.py
 RUN_SPHINX_HTML = make html
 RUN_TWINE = $(TWINE) upload dist/$(PACKAGENAME)-$(VERSION).tar.gz dist/$(PACKAGENAME)-$(VERSION).tar.gz.asc
-
-# Virtual environment support
-ENV_COMPUTATIONAL = venv
-REQ_COMPUTATIONAL = requirements.txt
 NON_REQUIREMENTS = $(SED) $(patsubst %, -e '/^%*/d', $(PY_NON_REQUIREMENTS))
-REQ_SETUP = $(PY_COMPUTATIONAL:%="%",)
 
 
 # ----- Top-level targets -----
@@ -144,29 +146,52 @@ help:
 	@make usage
 
 # Run the test suite in a suitable (predictable) virtualenv
-test: env-computational
-	($(CHDIR) $(ENV_COMPUTATIONAL) && $(ACTIVATE) && $(CHDIR) .. && $(RUN_TESTS))
+.PHONY: test
+test: venv
+	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) .. && $(RUN_TESTS))
 
 # Build the API documentation using Sphinx
 .PHONY: doc
 doc: $(SOURCES_DOCUMENTATION) $(SOURCES_DOC_CONF)
-	($(CHDIR) $(ENV_COMPUTATIONAL) && $(ACTIVATE) && $(CHDIR) ../doc && PYTHONPATH=.. $(RUN_SPHINX_HTML))
+	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) ../doc && PYTHONPATH=.. $(RUN_SPHINX_HTML))
 	($(CHDIR) $(SOURCES_DOC_BUILD_HTML_DIR) && $(ZIP) $(SOURCES_DOC_ZIP) *)
 	$(CP) $(SOURCES_DOC_BUILD_HTML_DIR)/$(SOURCES_DOC_ZIP) .
 
 # Run a server for writing the documentation
 .PHONY: docserver
 docserver:
-	($(CHDIR) $(ENV_COMPUTATIONAL) && $(ACTIVATE) && $(CHDIR) ../doc && PYTHONPATH=.. $(RUN_NOTEBOOK))
+	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) ../doc && PYTHONPATH=.. $(RUN_NOTEBOOK))
+
+# Build a development venv from the known-good requirements in the repo
+.PHONY: env
+env: $(VENV)
+
+$(VENV):
+	$(VIRTUALENV) $(VENV)
+	$(CP) $(DEV_REQUIREMENTS) $(VENV)/requirements.txt
+	$(CHDIR) $(VENV) && $(ACTIVATE) && $(PIP) install -r requirements.txt
+
+# Build a development venv from the latest versions of the required packages,
+# creating a new requirements.txt ready for committing to the repo. Make sure
+# things actually work in this venv before committing!
+.PHONY: newenv
+newenv:
+	$(RM) $(VENV)
+	$(VIRTUALENV) $(VENV)
+	echo $(PY_REQUIREMENTS) | $(TR) ' ' '\n' >$(VENV)/$(REQUIREMENTS)
+	$(CHDIR) $(VENV) && $(ACTIVATE) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
+	$(NON_REQUIREMENTS) $(VENV)/requirements.txt >$(REQUIREMENTS)
+	echo $(PY_DEV_REQUIREMENTS) | $(TR) ' ' '\n' >$(VENV)/$(REQUIREMENTS)
+	$(CHDIR) $(VENV) && $(ACTIVATE) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
+	$(NON_REQUIREMENTS) $(VENV)/requirements.txt >$(DEV_REQUIREMENTS)
 
 # Build a source distribution
-dist: $(SOURCES_GENERATED)
-	$(RUN_SETUP) sdist
+sdist: $(SOURCES_SDIST)
 
 # Upload a source distribution to PyPi
-upload: $(SOURCES_GENERATED) dist
+upload: $(SOURCES_SDIST)
 	$(GPG) --detach-sign -a dist/$(PACKAGENAME)-$(VERSION).tar.gz
-	($(CHDIR) $(ENV_COMPUTATIONAL) && $(ACTIVATE) && $(CHDIR) .. && $(RUN_TWINE))
+	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) $(ROOT) && $(RUN_TWINE))
 
 # Clean up the distribution build 
 clean:
@@ -174,7 +199,7 @@ clean:
 
 # Clean up everything, including the computational environment (which is expensive to rebuild)
 reallyclean: clean
-	$(RM) $(ENV_COMPUTATIONAL)
+	$(RM) $(VENV)
 
 
 # ----- Helper targets -----
@@ -204,7 +229,7 @@ MANIFEST: Makefile
 
 # The setup.py script
 setup.py: $(SOURCES_SETUP_IN) Makefile
-	$(CAT) $(SOURCES_SETUP_IN) | $(SED) -e 's/VERSION/$(VERSION)/g' -e 's/REQ_SETUP/$(REQ_SETUP)/g' >$@
+	$(CAT) $(SOURCES_SETUP_IN) | $(SED) -e 's/VERSION/$(VERSION)/g' -e 's/REQUIREMENTS/$(PY_REQUIREMENTS:%="%",)/g' >$@
 
 
 # ----- Usage -----

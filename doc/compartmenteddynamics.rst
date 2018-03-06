@@ -21,10 +21,6 @@ sub-class.
 .. autoclass:: CompartmentedStochasticDynamics
    :show-inheritance:
 	 
-Creating the dynamics involves providing the necessary model. 
-
-.. automethod:: CompartmentedStochasticDynamics.__init__
-
 To set up the experiment we provide the parameters for the experiment
 as usual.
 
@@ -46,10 +42,6 @@ Finally, we defer the experimental results collection to the model.
 .. autoclass:: CompartmentedSynchronousDynamics
    :show-inheritance:
 	 
-Creating the dynamics involves providing the necessary model. 
-
-.. automethod:: CompartmentedSynchronousDynamics.__init__
-
 To set up the experiment we provide the parameters for the experiment
 as usual.
 

@@ -27,7 +27,7 @@ import traceback
 class CompartmentedDynamicsTest(unittest.TestCase):
 
     def setUp( self ):
-        '''Set upo for the specific model under test. This should fill in
+        '''Set up for the specific model under test. This should fill in
         self._network, self._model, self._params, self._maxTime, 
         and self._lab as required.'''
         raise NotYetImplementyed('setUp')
@@ -40,7 +40,7 @@ class CompartmentedDynamicsTest(unittest.TestCase):
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
+            print rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK]
     
     def testRunSingleSynchronous( self ):
         '''Test a single run of a synchronous dynamics.'''
@@ -50,9 +50,8 @@ class CompartmentedDynamicsTest(unittest.TestCase):
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
+            print rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK]
         
-    @unittest.skip('not yet')
     def testRunMultipleStochastic( self ):
         '''Test a stochastic dynamics run of a model over a (small) parameter space.'''
         e = CompartmentedStochasticDynamics(self._model, self._network)
@@ -60,9 +59,8 @@ class CompartmentedDynamicsTest(unittest.TestCase):
             e.setMaximumTime(self._maxTime)
         self._lab.runExperiment(e)
 
-    @unittest.skip('not yet')
     def testRunMultipleSynchronous( self ):
-        '''Test a synchronousdynamics run of a model over a (small) parameter space.'''
+        '''Test a synchronous dynamics run of a model over a (small) parameter space.'''
         e = CompartmentedSynchronousDynamics(self._model, self._network)
         if self._maxTime is not None:
             e.setMaximumTime(self._maxTime)

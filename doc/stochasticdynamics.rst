@@ -21,12 +21,6 @@ particular event. This allows the rates of events to change over time.
    :show-inheritance:
 	 
 
-Creating a dynamics
--------------------
-
-.. automethod:: StochasticDynamics.__init__
-
-
 Running a dynamics
 ------------------
 

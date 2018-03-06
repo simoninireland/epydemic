@@ -37,4 +37,4 @@ setup(name = 'epydemic',
                       'Topic :: Scientific/Engineering' ],
       packages = [ 'epydemic' ],
       zip_safe = True,
-      install_requires = [ REQ_SETUP ])
+      install_requires = [ REQUIREMENTS ])

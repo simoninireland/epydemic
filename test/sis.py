@@ -30,16 +30,17 @@ class SISTest(CompartmentedDynamicsTest):
         '''Set up the experimental parameters and experiment.'''
         
         # single experiment
-        self._params = dict(pInfect = 0.1,
-                            pInfected = 0.01,
-                            pRecover = 0.05)
+        self._params = dict()
+        self._params[SIS.P_INFECT] = 0.1
+        self._params[SIS.P_INFECTED] = 0.01
+        self._params[SIS.P_REMOVE] = 0.05
         self._network = networkx.erdos_renyi_graph(1000, 0.005)
 
         # lab run
         self._lab = epyc.Lab()
-        self._lab['pInfect'] = [ 0.1, 0.2, 0.3 ]
-        self._lab['pInfected'] = [ 0.01 ]
-        self._lab['pRecover'] = [ 0.05, 0.1, 1 ]
+        self._lab[SIS.P_INFECT] = [ 0.1, 0.3 ]
+        self._lab[SIS.P_INFECTED] = 0.01
+        self._lab[SIS.P_REMOVE] = [ 0.05, 1 ]
 
         # model
         self._model = SIS()

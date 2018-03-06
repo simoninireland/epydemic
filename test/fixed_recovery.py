@@ -31,16 +31,17 @@ class FixedRecoveryTest(unittest.TestCase):
         '''Set up the experimental parameters and experiment.'''
         
         # single experiment
-        self._params = dict(pInfect = 0.1,
-                            pInfected = 0.01,
-                            tInfected = 1)
+        self._params = dict()
+        self._params[SIR_FixedRecovery.P_INFECT] = 0.1
+        self._params[SIR_FixedRecovery.P_INFECTED] = 0.01
+        self._params[SIR_FixedRecovery.T_INFECTED] = 1
         self._network = networkx.erdos_renyi_graph(1000, 0.005)
 
         # lab run
         self._lab = epyc.Lab()
-        self._lab['pInfect'] = [ 0.1, 0.2, 0.3 ]
-        self._lab['pInfected'] = [ 0.01 ]
-        self._lab['tInfected'] = [ 0.5, 1, 2 ]
+        self._lab[SIR_FixedRecovery.P_INFECT] = [ 0.1, 0.3 ]
+        self._lab[SIR_FixedRecovery.P_INFECTED] = [ 0.01 ]
+        self._lab[SIR_FixedRecovery.T_INFECTED] = [ 0.5, 1, 2 ]
 
     def testRunSingleSIRSynchronous( self ):
         '''Test a single run of a fixed-period SIR under synchronous dynamics.'''
@@ -48,7 +49,7 @@ class FixedRecoveryTest(unittest.TestCase):
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
+            print rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK]
 
     def testRunSingleSIRStochastic( self ):
         '''Test a single run of a fixed-period SIR under stochastic dynamics.'''
@@ -56,5 +57,5 @@ class FixedRecoveryTest(unittest.TestCase):
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            traceback.print_tb(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
+            print rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK]
   
