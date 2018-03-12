@@ -23,7 +23,7 @@ with open('README.rst') as f:
     longDescription = f.read()
 
 setup(name = 'epydemic',
-      version = '0.4.1',
+      version = '0.4.2',
       description = 'Epidemic network simulations in Python',
       long_description = longDescription,
       url = 'http://github.com/simoninireland/epydemic',
