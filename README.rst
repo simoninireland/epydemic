@@ -43,7 +43,8 @@ copy, just clone the repo:
 Documentation
 -------------
 
-API documentation for `epydemic` is available on `ReadTheDocs <https://epydemic.readthedocs.io/en/latest/>`.
+API documentation for `epydemic` is available on `ReadTheDocs <https://pyepydemic.readthedocs.io/en/latest/>`
+(please note the slightly different project name).
 
 
 

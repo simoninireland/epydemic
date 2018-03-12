@@ -149,7 +149,7 @@ class CompartmentedModel(object):
         :param g: the network
         :param c: the compartment
         :returns: a collection of nodes'''
-        return [ n for n in g.nodes_iter() if g.node[n][self.COMPARTMENT] == c]
+        return [ n for n in g.nodes() if g.node[n][self.COMPARTMENT] == c]
     
     def changeCompartment( self, g, n, c ):
         '''Change the compartment of a node. This will update all loci
