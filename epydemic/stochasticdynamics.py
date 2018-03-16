@@ -73,7 +73,7 @@ class StochasticDynamics(Dynamics):
             a = 0.0
             for (_, r, _) in transitions:
                 a = a + r
-            if a == 0:       
+            if a == 0.0:       
                 break              # no events with non-zero rates 
             
             # calculate the timestep delta
@@ -81,19 +81,22 @@ class StochasticDynamics(Dynamics):
             dt = (1.0 / a) * math.log(1.0 / r1)
             
             # calculate which event happens
-            if len(transitions) == 1:
-                # if there's only one, that's the one that happens
-                (l, _, ef) = transitions[0]
-            else:
-                # otherwise, choose one at random based on the rates
+            (l, xs, ef) = transitions[0]
+            if len(transitions) > 1:
+                # choose the rate threshold
                 r2 = numpy.random.random()
                 xc = r2 * a
-                k = 0
-                (l, xs, ef) = transitions[k]
-                while xs < xc:
-                    k = k + 1
-                    (l, xsp, ef) = transitions[k]
-                    xs = xs + xsp
+
+                # find the largest event for which the cumulative rates
+                # are less than the random threshold
+                for v in range(1, len(transitions)):
+                    (lp, xsp, efp) = transitions[v]
+                    if (xs + xsp) > xc:
+                        # threshold exceeded, use the current values
+                        break
+                    else:
+                        # threshold not exceeded, step up
+                        (l, xs, ef) = (lp, xs + xsp, efp)
 
             # increment the time
             t = t + dt
