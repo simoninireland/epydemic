@@ -85,8 +85,6 @@ Running the experiment
 A simulation takes the form of an `epyc` experiment which has set-up,
 execution, and tear-down phases.
 
-.. automethod:: Dynamics.setUpNetwork
-
 .. automethod:: Dynamics.setUp
 
 .. automethod:: Dynamics.tearDown
