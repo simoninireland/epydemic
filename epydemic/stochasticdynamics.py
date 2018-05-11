@@ -22,6 +22,7 @@ from epydemic import *
 import epyc
 import math
 import numpy
+import random
 
 class StochasticDynamics(Dynamics):
     '''A dynamics that runs stochastically in :term:`continuous time`. This is a
@@ -68,13 +69,16 @@ class StochasticDynamics(Dynamics):
         while not self.at_equilibrium(t):
             # pull the transition dynamics at this timestep
             transitions = self.eventRateDistribution(t)
-            
+
             # compute the total rate of transitions for the entire network
             a = 0.0
             for (_, r, _) in transitions:
                 a = a + r
             if a == 0.0:       
                 break              # no events with non-zero rates 
+            
+            # shuffle the transitions
+            random.shuffle(transitions)
             
             # calculate the timestep delta
             r1 = numpy.random.random()
