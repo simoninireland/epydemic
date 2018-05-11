@@ -82,17 +82,6 @@ class Dynamics(epyc.Experiment, object):
         :returns: True if we're done'''
         return (t >= self._maxTime)
 
-    def setUpNetwork( self, params ):
-        '''Set up the working copy of the network for this run of the
-        experiment, as will be returned by :meth:`network`. By default
-        this makes a copy of the prototype network, but the method may
-        be overridden to create a network locally if desired, making use
-        of the experimental parameters.
-
-        :param params: the experiment parameters
-        :returns: a working network'''
-        return self.networkPrototype().copy()
-    
     def setUp( self, params ): 
         '''Before each experiment, create a new network to work with.
 
@@ -102,7 +91,7 @@ class Dynamics(epyc.Experiment, object):
         super(Dynamics, self).setUp(params)
 
         # make a copy of the network prototype
-        self._graph = self.setUpNetwork(params)
+        self._graph = self.networkPrototype().copy()
 
         # empty the queue of posted events
         self._posted = []
