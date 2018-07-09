@@ -69,7 +69,7 @@ class SIR_FixedRecovery(SIR):
             # post the removal event
             dyn.postEvent(tInfected, g, n, lambda d, t, g, e: self.remove(d, t, g, e))          
         
-    def infect( self, dyn, t, g, (n, m) ):
+    def infect( self, dyn, t, g,n, m):
         '''Perform the normal infection event, and then post an event to remove the
         infected node at the appropriate time.
 

@@ -57,7 +57,7 @@ class SIS(CompartmentedModel):
         self.addEvent(self.INFECTED, pRemove, lambda d, t, g, e: self.remove(d, t, g, e))
         self.addEvent(self.SI, pInfect, lambda d, t, g, e: self.infect(d, t, g, e))
 
-    def infect( self, dyn, t, g, (n, m) ):
+    def infect(self, dyn, t, g, n, m):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
