@@ -51,7 +51,7 @@ class StochasticDynamics(Dynamics):
         :param t: current time
         :returns: the event rate distribution'''
         dist = self.eventDistribution(t)
-        return map((lambda (l, p, f): (l, p * len(l), f)), dist)
+        return map((lambda l, p, f: (l, p * len(l), f)), dist)
 
     def do( self, params ):
         '''Run the simulation using Gillespie dynamics. The process terminates
