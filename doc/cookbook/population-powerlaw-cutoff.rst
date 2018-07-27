@@ -7,16 +7,17 @@ Models of human populations
 
 *Problem*: You want to work with a realistic model of a human contact network. What is the appropriate topology?
 
-*Solution*: This is an active area of research, but a common answer is the appeoach given by
+*Solution*: This is an active area of research, but a common answer is the approach given by
 :ref:`Newman <New02>` which is to use a powerlaw network with exponential cut-off.
 
-A powerlaw network has a degree distibution given by
+A powerlaw network with exponent :math:`\alpha` has a degree distibution given by
 
 .. math::
 
     p_k = C \, k^{-\alpha}
 
-where :math:`C` is a normalising constant given by
+where :math:`p_k` is the probability of encountering a node of degree :math:`k` and :math:`C` is a normalising
+constant given by
 
 .. math::
 
@@ -29,29 +30,29 @@ massively better connected than the others, which is considered undesirable.
 
 A powerlaw-with-cutoff network, by contrast, place a limit (denoted :math:`\kappa`) on the "likely" highest degree.
 Below the cutoff the degree distribution behaves like a powerlaw network; above the cutoff, the probability drops
-off exponentially quickly, making large hubs highly unlikely. The degree distributioon is given by
+off exponentially quickly, making large hubs highly unlikely. The degree distribution is given by
 
 .. math::
 
     p_k = \frac{1}{C} k^{-\alpha} \, e^{-k / \kappa}
 
-for cutoff :math:`\kappa`, where :math:`C` is again a normalising constant this time given by
+where :math:`C` is again a normalising constant this time given by
 
 .. math::
 
     C = Li_{\alpha}(e^{-1 / \kappa})
 
 with :math:`Li_{\alpha}(x)` being the :math:`\alpha`'th `polylogarithm <https://en.wikipedia.org/wiki/Polylogarithm>`_
-of :math:`x`. The following plot shows the difference in the probability of finding nodes of different degrees under the two
-distributions.
+of :math:`x`. The following plot shows the difference in the probability of encountering nodes of different degrees under
+the two distributions.
 
 .. figure:: powerlaw-cutoff.png
     :alt: Powerlaw vs powerlaw with cutoff degree distributions
     :align: center
 
-So the probability of finding, for example, a node of degree 100, :math:`p_k \approx 0.0001` under the powerlaw
-whereas with a cutoff at :math:`\kappa = 10` the probability drops to :math:`p_k \approx 0.00000001` -- ten thousand
-times smaller.
+So the probability of finding, for example, a node of degree 100 is :math:`p_k \approx 0.0001` under the powerlaw
+distribution, whereas with a cutoff at :math:`\kappa = 10` the probability drops to :math:`p_k \approx 0.00000001`
+-- ten thousand times smaller.
 
 Fortunately the polylogarithm function is built into the ``mpmath`` package, so all we need to do is code-up the
 distribution function in Python. In the following we create an experiment that can take parameters for the size :math:`N`
@@ -75,8 +76,8 @@ of the network, its exponent :math:`\alpha` and cutoff :math:`\kappa`, and const
         KAPPA = 'kappa'     #: Cutoff of degree distribution
 
         def __init__( self, m ):
-            '''Create a dynamics over the given model. There is no prorotype
-            network parameter as we'll create one using experimental parameters.
+            '''Create a dynamics over the given model. There is no prototype
+            network given as we'll create one using experimental parameters.
 
             :param m: the model'''
             super(PWCPopulation, self).__init__(m)
@@ -148,7 +149,11 @@ of the network, its exponent :math:`\alpha` and cutoff :math:`\kappa`, and const
             '''Delete the prototype network.'''
             self.setNetworkPrototype(None)
 
+The ``makePowerlawWithCutoff`` method just transcribes the definition of the distribution from above, taking the
+distribution parameters :math:`\alpha` and :math:`\kappa` and returning a model function that, for any
+degree :math:`k`, returns the probability :math:`p_k` of encountering a node of that degree.
+
 The actual construction of the network is done in the ``generateFrom`` method using the configuration model, where we
 first build a list of :math:`N` node degrees by repeatedly drawing from the powerlaw-with-cutoff distribution. When
-expeerimental parameters are provided, the ``configure`` method will create the random network (see
+experimental parameters are provided, the ``configure`` method will create the random network (see
 :ref:`build-network-in-experiment` for an explanation of this approach).
