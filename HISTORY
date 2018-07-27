@@ -1,8 +1,19 @@
-Version 0.4.2 2017-03012
+Version 0.5.1 2018-07-27
 
-   - Maintenance release to fix compatibility with NetworkX  2.1
+   - Fixed bug in the event selection routine for Gillespie dynamics
+   - Added shuffling of events to avoid anomalies in event selection
+   - Syntax changes to be Python3 compatible
+   - Made test.CompartmentedDynamicsTest a mixin to avoid incorrect test calls
+   - Introduced nose and tox for testing against multiple Python versions
+   - Changed compartmented models to return a flat dict of results with just
+     the final sizes of each compartment
+   - Changed documentation to a more tutorial format
+   
+Version 0.4.2 2018-03-12
 
-Version 0.4.1 2017-03-06
+   - Maintenance release to fix compatibility with NetworkX 2.1
+
+Version 0.4.1 2018-03-06
 
    - Upgraded to match new version of NetworkX
    - Move to slightly better build system
