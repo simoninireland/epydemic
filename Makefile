@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2018 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.5.1
+VERSION = 0.6.1
 
 
 # ----- Sources -----
@@ -66,6 +66,8 @@ SOURCES_DOCUMENTATION = \
 	doc/reference.rst \
 	doc/cookbook.rst \
 	doc/cookbook/build-network-in-experiment.rst \
+	doc/cookbook/population-powerlaw-cutoff.rst \
+	doc/cookbook/powerlaw-cutoff.png \
 	doc/bibliography.rst \
 	doc/glossary.rst \
 	doc/networkdynamics.rst \
@@ -78,6 +80,9 @@ SOURCES_DOCUMENTATION = \
 	doc/sis.rst \
 	doc/sir_fixed_recovery.rst \
 	doc/sis_fixed_recovery.rst
+
+SOURCES_UTILS = \
+    utils/make-powerlaw-cutoff.py
 
 SOURCES_EXTRA = \
 	README.rst \

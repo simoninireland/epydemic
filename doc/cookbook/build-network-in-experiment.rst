@@ -1,3 +1,5 @@
+.. _build-network-in-experiment:
+
 .. currentmodule:: epydemic
 
 Creating random networks in the experiment
