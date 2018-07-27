@@ -39,7 +39,7 @@ The process is parameterised by three parameters:
 
 .. autoattribute:: SIS.P_INFECT
 
-.. autoattribute:: SIS.P_RECOVER
+.. autoattribute:: SIS.P_REMOVE
 
 The :attr:`SIS.P_INFECTED` parameter defines the proportion of nodes
 that are initially placed into the :attr:`SIS.INFECTED` compartment, with
@@ -52,7 +52,7 @@ Dynamics
 Dynamics in SIS occurs in two places:
 
 * At infected nodes, which which recover back to susceptible with a
-  probability given by the :attr:`SIS.P_RECOVER` parameter; and
+  probability given by the :attr:`SIS.P_REMOVE` parameter; and
 * At SI edges, where the node at one endpoint is susceptible and the
   node at the other is infected.
 
@@ -82,6 +82,6 @@ process: infection and removal (recovery).
 
 .. automethod:: SIS.infect
 		
-.. automethod:: SIS.recover
+.. automethod:: SIS.remove
 		
 		

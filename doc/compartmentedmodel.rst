@@ -22,7 +22,7 @@ Attributes
 ----------
 
 .. autoattribute:: CompartmentedModel.COMPARTMENT
-		   
+
 .. autoattribute:: CompartmentedModel.OCCUPIED
 
 

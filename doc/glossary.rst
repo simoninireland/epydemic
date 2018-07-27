@@ -70,7 +70,17 @@ Glossary
       order from two possible sources: a random distribution that
       chooses an event based on their relative probability or rate; and
       any :term:`posted event` that has been scheduled.
-	    
+
+   SIS
+      A :term:`compartmened model of disease` where nodes go from being
+      Susceptible to the disease, to Infected and able to infect others,
+      and then recover back to Susceptible.
+
+   SIR
+      A :term:`compartmened model of disease` where nodes go from being
+      Susceptible to the disease, to Infected and able to infect others,
+      and are then Removed and take no further part in the dynamics.
+
    stochastic process
       A process whose exact progression is determined by random
       variables drawn from particular probability distributions.
