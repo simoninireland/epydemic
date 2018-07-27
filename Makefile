@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.4.2
+VERSION = 0.5.1
 
 
 # ----- Sources -----
@@ -46,12 +46,12 @@ SOURCES_CODE = \
 SOURCES_TESTS = \
 	test/__init__.py \
 	test/__main__.py \
-	test/networkdynamics.py \
-	test/compartmentedmodel.py \
+	test/test_networkdynamics.py \
+	test/test_compartmentedmodel.py \
 	test/compartmenteddynamics.py \
-	test/sir.py \
-	test/sis.py \
-	test/fixed_recovery.py
+	test/test_sir.py \
+	test/test_sis.py \
+	test/test_fixed_recovery.py
 TESTSUITE = test
 
 SOURCES_TUTORIAL = doc/epydemic.ipynb
@@ -61,6 +61,11 @@ SOURCES_DOC_BUILD_HTML_DIR = $(SOURCES_DOC_BUILD_DIR)/html
 SOURCES_DOC_ZIP = epydemic-doc-$(VERSION).zip
 SOURCES_DOCUMENTATION = \
 	doc/index.rst \
+	doc/install.rst \
+	doc/start.rst \
+	doc/reference.rst \
+	doc/cookbook.rst \
+	doc/cookbook/build-network-in-experiment.rst \
 	doc/bibliography.rst \
 	doc/glossary.rst \
 	doc/networkdynamics.rst \
@@ -85,8 +90,10 @@ SOURCES_GENERATED = \
 # Python packages needed
 # For the system to install and run
 PY_REQUIREMENTS = \
+    six \
 	numpy \
 	networkx \
+	future \
 	epyc
 # For the documentation and development venv
 PY_DEV_REQUIREMENTS = \
@@ -94,15 +101,20 @@ PY_DEV_REQUIREMENTS = \
 	jupyter \
 	matplotlib \
 	seaborn \
+	nose \
+	tox \
+	coverage \
 	sphinx \
 	twine
 
 # Packages that shouldn't be saved as requirements (because they're
-# OS-specific, in this case OS X, and screw up Linux compute servers)
+# OS-specific, in this case OS X, and screw up Linux compute servers,
+# or because of Python 2.7 vs 3.7 incompatibilities)
 PY_NON_REQUIREMENTS = \
 	appnope \
 	functools32 \
-	subprocess32
+	subprocess32 \
+	futures
 VENV = venv
 REQUIREMENTS = requirements.txt
 DEV_REQUIREMENTS = dev-requirements.txt
@@ -115,11 +127,13 @@ PYTHON = python
 IPYTHON = ipython
 JUPYTER = jupyter
 IPCLUSTER = ipcluster
+TOX = tox
+COVERAGE = coverage
 PIP = pip
 TWINE = twine
 GPG = gpg
 VIRTUALENV = virtualenv
-ACTIVATE = . bin/activate
+ACTIVATE = . $(VENV)/bin/activate
 TR = tr
 CAT = cat
 SED = sed
@@ -132,10 +146,11 @@ ZIP = zip -r
 ROOT = $(shell pwd)
 
 # Constructed commands
-RUN_TESTS = $(IPYTHON) -m $(TESTSUITE)
+RUN_TESTS = tox
+RUN_COVERAGE = $(COVERAGE) erase && $(COVERAGE) run -a setup.py test && $(COVERAGE) report -m --include '$(PACKAGENAME)*'
 RUN_NOTEBOOK = $(JUPYTER) notebook
 RUN_SETUP = $(PYTHON) setup.py
-RUN_SPHINX_HTML = make html
+RUN_SPHINX_HTML = PYTHONPATH=$(ROOT) make html
 RUN_TWINE = $(TWINE) upload dist/$(PACKAGENAME)-$(VERSION).tar.gz dist/$(PACKAGENAME)-$(VERSION).tar.gz.asc
 NON_REQUIREMENTS = $(SED) $(patsubst %, -e '/^%*/d', $(PY_NON_REQUIREMENTS))
 
@@ -146,22 +161,22 @@ NON_REQUIREMENTS = $(SED) $(patsubst %, -e '/^%*/d', $(PY_NON_REQUIREMENTS))
 help:
 	@make usage
 
-# Run the test suite in a suitable (predictable) virtualenv
-.PHONY: test
-test: venv
-	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) .. && $(RUN_TESTS))
+# Run tests for all versions of Python we're interested in
+test: env setup.py
+	$(ACTIAVTE) && $(RUN_TESTS)
+
+# Run coverage checks over the test suite
+coverage: env
+	$(ACTIVATE) && $(RUN_COVERAGE)
 
 # Build the API documentation using Sphinx
-.PHONY: doc
 doc: $(SOURCES_DOCUMENTATION) $(SOURCES_DOC_CONF)
-	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) ../doc && PYTHONPATH=.. $(RUN_SPHINX_HTML))
-	($(CHDIR) $(SOURCES_DOC_BUILD_HTML_DIR) && $(ZIP) $(SOURCES_DOC_ZIP) *)
-	$(CP) $(SOURCES_DOC_BUILD_HTML_DIR)/$(SOURCES_DOC_ZIP) .
+	$(ACTIVATE) && $(CHDIR) doc && $(RUN_SPHINX_HTML)
 
 # Run a server for writing the documentation
 .PHONY: docserver
 docserver:
-	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) ../doc && PYTHONPATH=.. $(RUN_NOTEBOOK))
+	$(ACTIVATE) && $(CHDIR) doc && PYTHONPATH=.. $(RUN_NOTEBOOK)
 
 # Build a development venv from the known-good requirements in the repo
 .PHONY: env
@@ -170,7 +185,7 @@ env: $(VENV)
 $(VENV):
 	$(VIRTUALENV) $(VENV)
 	$(CP) $(DEV_REQUIREMENTS) $(VENV)/requirements.txt
-	$(CHDIR) $(VENV) && $(ACTIVATE) && $(PIP) install -r requirements.txt
+	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
 
 # Build a development venv from the latest versions of the required packages,
 # creating a new requirements.txt ready for committing to the repo. Make sure
@@ -180,10 +195,10 @@ newenv:
 	$(RM) $(VENV)
 	$(VIRTUALENV) $(VENV)
 	echo $(PY_REQUIREMENTS) | $(TR) ' ' '\n' >$(VENV)/$(REQUIREMENTS)
-	$(CHDIR) $(VENV) && $(ACTIVATE) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
+	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
 	$(NON_REQUIREMENTS) $(VENV)/requirements.txt >$(REQUIREMENTS)
 	echo $(PY_DEV_REQUIREMENTS) | $(TR) ' ' '\n' >$(VENV)/$(REQUIREMENTS)
-	$(CHDIR) $(VENV) && $(ACTIVATE) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
+	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
 	$(NON_REQUIREMENTS) $(VENV)/requirements.txt >$(DEV_REQUIREMENTS)
 
 # Build a source distribution
@@ -192,7 +207,7 @@ sdist: $(SOURCES_SDIST)
 # Upload a source distribution to PyPi
 upload: $(SOURCES_SDIST)
 	$(GPG) --detach-sign -a dist/$(PACKAGENAME)-$(VERSION).tar.gz
-	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) $(ROOT) && $(RUN_TWINE))
+	$(ACTIVATE) && $(RUN_TWINE)
 
 # Clean up the distribution build 
 clean:
@@ -201,25 +216,6 @@ clean:
 # Clean up everything, including the computational environment (which is expensive to rebuild)
 reallyclean: clean
 	$(RM) $(VENV)
-
-
-# ----- Helper targets -----
-
-# Build a computational environment in which to run the test suite
-env-computational: $(ENV_COMPUTATIONAL)
-
-# Build a new, updated, requirements.txt file ready for commiting to the repo
-# Only commit if we're sure we pass the test suite!
-newenv-computational:
-	echo $(PY_COMPUTATIONAL) $(PY_INTERACTIVE) | $(TR) ' ' '\n' >$(REQ_COMPUTATIONAL)
-	make env-computational
-	$(NON_REQUIREMENTS) $(ENV_COMPUTATIONAL)/requirements.txt >$(REQ_COMPUTATIONAL)
-
-# Only re-build computational environment if the directory is missing
-$(ENV_COMPUTATIONAL):
-	$(VIRTUALENV) $(ENV_COMPUTATIONAL)
-	$(CP) $(REQ_COMPUTATIONAL) $(ENV_COMPUTATIONAL)/requirements.txt
-	$(CHDIR) $(ENV_COMPUTATIONAL) && $(ACTIVATE) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
 
 
 # ----- Generated files -----
@@ -234,16 +230,16 @@ setup.py: $(SOURCES_SETUP_IN) Makefile
 
 # The source distribution tarball
 $(SOURCES_SDIST): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
-	($(CHDIR) $(VENV) && $(ACTIVATE) && $(CHDIR) $(ROOT) && $(RUN_SETUP) sdist)
+	$(ACTIVATE) && $(RUN_SETUP) sdist
 
 
 # ----- Usage -----
 
 define HELP_MESSAGE
 Available targets:
-   make test         run the test suite in a suitable virtualenv
+   make test         run the test suite for all Python versions we support
+   make coverage     ru coverage checks of the test suite
    make doc          build the API documentation using Sphinx
-   make docserver    run a Jupyter notebook to edit the tutorial
    make dist         create a source distribution
    make upload       upload distribution to PyPi
    make clean        clean-up the build
