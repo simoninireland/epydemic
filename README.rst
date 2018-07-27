@@ -14,7 +14,7 @@ other properties.
 ``epydemic`` provides the basic simulation machinery for performing
 epidemic simulations under two different simulation regimes:
 synchronous simulation in which time proceeds in discrete time
-intervals, and stochastic or Gillespuie simulations which are better
+intervals, and stochastic or Gillespie simulations which are better
 for handling a wider range of probabilities (but which are slightly
 harder to specify).
 
@@ -43,7 +43,7 @@ copy, just clone the repo:
 Documentation
 -------------
 
-API documentation for `epydemic` is available on `ReadTheDocs <https://pyepydemic.readthedocs.io/en/latest/>`
+API documentation for `epydemic` is available on `ReadTheDocs <https://pyepydemic.readthedocs.io/en/latest/>`_
 (please note the slightly different project name).
 
 
@@ -53,5 +53,5 @@ Author and license
 
 Copyright (c) 2017-2018, Simon Dobson <simon.dobson@computer.org>
 
-Licensed under the `GNU General Public Licence v.2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`.
+Licensed under the `GNU General Public License v3 <http://www.gnu.org/licenses/gpl.html>`_.
 
