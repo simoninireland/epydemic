@@ -17,13 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from __future__ import print_function
 from epydemic import *
-from .compartmenteddynamics import CompartmentedDynamicsTest
-
+from test.compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
-import traceback
 
 class FixedRecoveryTest(unittest.TestCase):
 
@@ -48,14 +47,14 @@ class FixedRecoveryTest(unittest.TestCase):
         e = CompartmentedSynchronousDynamics(SIR_FixedRecovery(), self._network)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK]
+            print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
+            print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
 
     def testRunSingleSIRStochastic( self ):
         '''Test a single run of a fixed-period SIR under stochastic dynamics.'''
         e = CompartmentedStochasticDynamics(SIR_FixedRecovery(), self._network)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK]
+            print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
+            print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
   

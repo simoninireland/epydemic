@@ -18,11 +18,9 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-
-import epyc
 import unittest
 import networkx
-import traceback
+import six
 
 class CompartmentedModelTest(unittest.TestCase):
 
@@ -38,7 +36,27 @@ class CompartmentedModelTest(unittest.TestCase):
         m = SIR()
         e = CompartmentedStochasticDynamics(m, self._er)
         e.setUp(self._params)
-                
+
+    def testDuplicateNodeLocus( self ):
+        '''Test we can't duplicate node-loci names'''
+        m = SIR()
+        params = dict(pInfect = 0.1,
+                      pInfected = 1.0,    # infect all nodes initially
+                      pRemove = 0.05)
+        m.build(params)
+        with self.assertRaises(Exception):
+            m.addLocus(SIR.INFECTED)      # part of SIR already
+
+    def testDuplicateEdgeLocus( self ):
+        '''Test we can't duplicate edge-loci names'''
+        m = SIR()
+        params = dict(pInfect = 0.1,
+                      pInfected = 1.0,    # infect all nodes initially
+                      pRemove = 0.05)
+        m.build(params)
+        with self.assertRaises(Exception):
+            m.addLocus(SIR.SUSCEPTIBLE, SIR.INFECTED, name = SIR.SI)      # part of SIR already
+
     def testLoci( self ):
         '''Test we can populate loci correctly.'''
         m = SIR()
@@ -55,17 +73,32 @@ class CompartmentedModelTest(unittest.TestCase):
         e._model.addLocus(SIR.REMOVED)
         
         # all nodes in I
-        self.assertItemsEqual(e._model._loci[SIR.INFECTED].elements(), [ 1, 2, 3, 4 ])
+        six.assertCountEqual(self, e._model._loci[SIR.INFECTED].elements(), [ 1, 2, 3, 4 ])
 
         # one node from I into S, two edges into SI
         m.changeCompartment(e.network(), 1, SIR.SUSCEPTIBLE)
-        self.assertItemsEqual(e._model._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
-        self.assertItemsEqual(e._model._loci[SIR.SUSCEPTIBLE].elements(), [ 1 ])
-        self.assertItemsEqual(e._model._loci[SIR.SI].elements(), [ (1, 2), (1, 4) ])
+        six.assertCountEqual(self, e._model._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
+        six.assertCountEqual(self, e._model._loci[SIR.SUSCEPTIBLE].elements(), [ 1 ])
+        six.assertCountEqual(self, e._model._loci[SIR.SI].elements(), [ (1, 2), (1, 4) ])
 
         # recover the infected node
         m.changeCompartment(e.network(), 1, SIR.REMOVED)
-        self.assertItemsEqual(e._model._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
-        self.assertItemsEqual(e._model._loci[SIR.SUSCEPTIBLE].elements(), [])
-        self.assertItemsEqual(e._model._loci[SIR.REMOVED].elements(), [ 1 ])
-        self.assertItemsEqual(e._model._loci[SIR.SI].elements(), [ ])        
+        six.assertCountEqual(self, e._model._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
+        six.assertCountEqual(self, e._model._loci[SIR.SUSCEPTIBLE].elements(), [])
+        six.assertCountEqual(self, e._model._loci[SIR.REMOVED].elements(), [ 1 ])
+        six.assertCountEqual(self, e._model._loci[SIR.SI].elements(), [ ])
+
+    def testSkeletonise( self ):
+        '''Test that a network skeletonises correctly'''
+        m = SIR()
+        g = networkx.Graph()
+        g.add_edges_from([ (1, 2), (2, 3), (1, 4), (3, 4) ])
+
+        # mark some edges as occupied
+        m.markOccupied(g, (1, 2))
+        m.markOccupied(g, (1, 4))
+
+        # check skeletonisation
+        g2 = m.skeletonise(g)
+        six.assertCountEqual(self, g2.edges(), [(1, 2), (1, 4)])
+        six.assertCountEqual(self, g2.nodes(), [ 1, 2, 3, 4])

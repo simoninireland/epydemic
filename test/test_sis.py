@@ -18,13 +18,13 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-from .compartmenteddynamics import CompartmentedDynamicsTest
+from test.compartmenteddynamics import CompartmentedDynamicsTest
 
 import epyc
 import unittest
 import networkx
 
-class SISTest(CompartmentedDynamicsTest):
+class SISTest(unittest.TestCase, CompartmentedDynamicsTest):
 
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''

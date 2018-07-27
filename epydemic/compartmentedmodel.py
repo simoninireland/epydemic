@@ -29,11 +29,15 @@ class CompartmentedModel(object):
     represents a disease as a collection of discrete :term:`compartments`, with each 
     compartment specifying some facet of the disease's progression. Nodes
     transition between compartments with some probability, so the disease's
-    progession is a stochastic process in which the various nodes typically move
-    through several compartments according to the probabilities defined.'''
+    progression is a stochastic process in which the various nodes typically move
+    through several compartments according to the probabilities defined.
+
+    When run, a compartmented model generates results consisting of the size of each
+    compartment at the end of the experiment. This can be changed by overriding the
+    :meth:`results` method.'''
     
     # model state variables
-    COMPARTMENT = 'dynamics_compartment'   #: Node attribute used to hold compartment.
+    COMPARTMENT = 'compartment'            #: Node attribute holding the node's compartment.
     OCCUPIED = 'occupied'                  #: Edge attribute, True if edge passed infection.
     
     def __init__( self ):
@@ -56,7 +60,7 @@ class CompartmentedModel(object):
         :meth:`addEvent` to add the various elements. 
 
         :param params: the model parameters'''
-        raise NotYetImplemented('build()')
+        raise NotImplementedError('build')
 
     def addCompartment( self, c, p = 0.0 ):
         '''Add a compartment to the model. A node is assigned to the compartment
@@ -94,8 +98,8 @@ class CompartmentedModel(object):
             # two compartments, edge locus
             if name is None:
                 name = '{l}{r}'.format(l = l, r = r)
-                if name in self._loci.keys():
-                    raise Exception('Locus {n} already exists'.format(n = name))
+            if name in self._loci.keys():
+                raise Exception('Locus {n} already exists'.format(n = name))
 
             # add locus
             locus = epydemic.EdgeLocus(name, l, r)
@@ -243,24 +247,18 @@ class CompartmentedModel(object):
         data[self.OCCUPIED] = True
         
     def results( self, g ):
-        '''Create a dict of experimental results for the experiment.
+        '''Create a dict of experimental results for the experiment, constsing of the final
+        sizes of all the compartments.
 
         :param g: the network
         :returns: a dict of experimental results'''
         rc = dict()
 
-        # add final sizes of all loci
-        rc['loci'] = dict()
-        for (l, locus) in self._loci.iteritems():
-            rc['loci'][l] = len(locus)
-
-        # add final sizes of all compartments
-        rc['compartments'] = dict()
         for (c, _) in self._compartments:
-            rc['compartments'][c] = 0        
+            rc[c] = 0
         for n in g.nodes():
             c = g.node[n][self.COMPARTMENT]
-            rc['compartments'][c] = rc['compartments'][c] + 1
+            rc[c] = rc[c] + 1
 
         return rc
 
@@ -268,8 +266,10 @@ class CompartmentedModel(object):
         '''Remove unoccupied edges from the network. This leaves the network
         consisting of only "occupied" edges that were used to transmit the
         infection between nodes. Note that this process means that further
-        dynamics over the network doesn't make sense.
-        
+        dynamics over the network probably don't make sense, unless you're
+        actually wanting to run on the residual network post-infection.
+
+        :param g: the network
         :returns: the network with unoccupied edges removed'''
         
         # find all unoccupied edges

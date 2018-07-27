@@ -18,11 +18,11 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import unittest
-from .networkdynamics import NetworkDynamicsTest
-from .compartmentedmodel import CompartmentedModelTest
-from .sir import SIRTest
-from .sis import SISTest
-from .fixed_recovery import FixedRecoveryTest
+from .test_networkdynamics import NetworkDynamicsTest
+from .test_compartmentedmodel import CompartmentedModelTest
+from .test_sir import SIRTest
+from .test_sis import SISTest
+from .test_fixed_recovery import FixedRecoveryTest
 
 ndsuite = unittest.TestLoader().loadTestsFromTestCase(NetworkDynamicsTest)
 cmsuite = unittest.TestLoader().loadTestsFromTestCase(CompartmentedModelTest)

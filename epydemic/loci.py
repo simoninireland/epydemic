@@ -68,7 +68,7 @@ class Locus(object):
         :param g: the network
         :param n: the node
         :param c: the compartment the node is leaving'''
-        raise NotYetImplemented('leaveHandler()')
+        raise NotImplementedError('leaveHandler')
 
     def enterHandler( self, m, g, n, c ):
         '''Handler for when a node enters a compartment., Must be overridden
@@ -78,7 +78,7 @@ class Locus(object):
         :param g: the network
         :param n: the node
         :param c: the compartment the node is entering'''
-        raise NotYetImplemented('enterHandler()')
+        raise NotImplementedError('enterHandler')
 
 
 class NodeLocus(Locus):

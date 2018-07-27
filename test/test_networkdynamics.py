@@ -18,10 +18,8 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-
-import epyc
 import unittest
-import networkx
+import six
 
 class NetworkDynamicsTest(unittest.TestCase):
 
@@ -44,14 +42,14 @@ class NetworkDynamicsTest(unittest.TestCase):
         dyn.postEvent(4, None, None, make_ef(200))
 
         # check no events before the first one posted
-        self.assertItemsEqual(dyn.pendingEvents(0.5), [])
+        six.assertCountEqual(self, dyn.pendingEvents(0.5), [])
 
         # check firing of earliest event
         pefs = dyn.pendingEvents(1)
         self.assertTrue(len(pefs), 1)
         (pefs[0])()                # fire the event
         self.assertTrue(self._v, 1)
-        self.assertItemsEqual(dyn.pendingEvents(1), [])
+        six.assertCountEqual(self, dyn.pendingEvents(1), [])
 
         # check multiple events coming off in the right order
         pefs = dyn.pendingEvents(3)
@@ -60,13 +58,13 @@ class NetworkDynamicsTest(unittest.TestCase):
         self.assertTrue(self._v, 21)
         (pefs[1])()
         self.assertTrue(self._v, 121)
-        self.assertItemsEqual(dyn.pendingEvents(3), [])
+        six.assertCountEqual(self, dyn.pendingEvents(3), [])
 
         # check we can run all remaining events
         dyn.runPendingEvents(10)       # a long time in the future
         self.assertTrue(self._v, 321)
-        self.assertItemsEqual(dyn.pendingEvents(10), [])
-        self.assertItemsEqual(dyn.pendingEvents(20), [])
+        six.assertCountEqual(self, dyn.pendingEvents(10), [])
+        six.assertCountEqual(self, dyn.pendingEvents(20), [])
         
     def testPostedPosting( self ):
         '''Test the case when a posted event itself posts an event.'''

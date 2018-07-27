@@ -58,7 +58,7 @@ class SIR(CompartmentedModel):
         self.addEvent(self.INFECTED, pRemove, lambda d, t, g, e: self.remove(d, t, g, e))
         self.addEvent(self.SI, pInfect, lambda d, t, g, e: self.infect(d, t, g, e))
 
-    def infect( self, dyn, t, g, (n, m) ):
+    def infect( self, dyn, t, g, e ):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
@@ -67,8 +67,9 @@ class SIR(CompartmentedModel):
         :param t: the simulation time (unused)
         :param g: the network
         :param e: the edge transmitting the infection, susceptible-infected'''
+        (n, m) = e
         self.changeCompartment(g, n, self.INFECTED)
-        self.markOccupied(g, (n, m))
+        self.markOccupied(g, e)
 
     def remove( self, dyn, t, g, n ):
         '''Perform a removal event. This changes the compartment of

@@ -18,13 +18,13 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-from .compartmenteddynamics import CompartmentedDynamicsTest
-
+from test.compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
+import six
 
-class SIRTest(CompartmentedDynamicsTest):
+class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
 
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''
@@ -47,3 +47,18 @@ class SIRTest(CompartmentedDynamicsTest):
 
         # no maximum time needed
         self._maxTime = None
+
+    def testEpidemic( self ):
+        '''Test we get an epidemic'''
+        self._lab = epyc.Lab()
+        self._lab[SIR.P_INFECT] = 0.3
+        self._lab[SIR.P_INFECTED] = 0.01
+        self._lab[SIR.P_REMOVE] = 0.05
+        e = CompartmentedStochasticDynamics(self._model, self._network)
+        self._lab.runExperiment(e)
+        rc = (self._lab.results())[0]
+        six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [ 'S', 'I', 'R' ])
+        self.assertTrue(rc[epyc.Experiment.RESULTS]['S'] > 0)
+        self.assertTrue(rc[epyc.Experiment.RESULTS]['I'] == 0)
+        self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
+        self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())

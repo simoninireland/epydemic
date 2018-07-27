@@ -116,7 +116,7 @@ class Dynamics(epyc.Experiment, object):
 
         :param t: current time
         :returns: the event distribution'''
-        raise NotYetImplemented('eventDistribution()')
+        raise NotImplementedError('eventDistribution')
 
     def postEvent( self, t, g, e, ef ):
         '''Post an event to happen at time t. The :term:`event function` should

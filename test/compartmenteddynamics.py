@@ -1,4 +1,4 @@
-# Base class for testing compartmented models under different dynamics
+# Mixin class containing common tests for compartmented models
 #
 # Copyright (C) 2017 Simon Dobson
 # 
@@ -17,20 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from __future__ import print_function
 from epydemic import *
-
 import epyc
-import unittest
-import networkx
-import traceback
 
-class CompartmentedDynamicsTest(unittest.TestCase):
+class CompartmentedDynamicsTest():
 
     def setUp( self ):
         '''Set up for the specific model under test. This should fill in
         self._network, self._model, self._params, self._maxTime, 
         and self._lab as required.'''
-        raise NotYetImplementyed('setUp')
+        raise NotImplementedError('setUp')
 
     def testRunSingleStochastic( self ):
         '''Test a single run of a stochastic dynamics.'''
@@ -39,8 +36,8 @@ class CompartmentedDynamicsTest(unittest.TestCase):
             e.setMaximumTime(self._maxTime)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK]
+            print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
+            print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
     
     def testRunSingleSynchronous( self ):
         '''Test a single run of a synchronous dynamics.'''
@@ -49,8 +46,8 @@ class CompartmentedDynamicsTest(unittest.TestCase):
             e.setMaximumTime(self._maxTime)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION]
-            print rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK]
+            print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
+            print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
         
     def testRunMultipleStochastic( self ):
         '''Test a stochastic dynamics run of a model over a (small) parameter space.'''

@@ -52,7 +52,7 @@ class StochasticDynamics(Dynamics):
         :param t: current time
         :returns: the event rate distribution'''
         dist = self.eventDistribution(t)
-        return map((lambda (l, p, f): (l, p * len(l), f)), dist)
+        return list(map(lambda ed: (ed[0], ed[1] * len(ed[0]), ed[2]), dist))   # Python3 lambdas are all single-argument
 
     def do( self, params ):
         '''Run the simulation using Gillespie dynamics. The process terminates
@@ -78,14 +78,14 @@ class StochasticDynamics(Dynamics):
                 break              # no events with non-zero rates 
             
             # shuffle the transitions
-            random.shuffle(transitions)
+            #random.shuffle(transitions)
             
             # calculate the timestep delta
             r1 = numpy.random.random()
             dt = (1.0 / a) * math.log(1.0 / r1)
             
             # calculate which event happens
-            (l, xs, ef) = transitions[0]
+            (l, _, ef) = transitions[0]
             if len(transitions) > 1:
                 # choose the rate threshold
                 r2 = numpy.random.random()
@@ -93,6 +93,7 @@ class StochasticDynamics(Dynamics):
 
                 # find the largest event for which the cumulative rates
                 # are less than the random threshold
+                xs = 0.0
                 for v in range(1, len(transitions)):
                     (lp, xsp, efp) = transitions[v]
                     if (xs + xsp) > xc:
