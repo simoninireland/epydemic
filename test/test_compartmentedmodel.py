@@ -57,6 +57,16 @@ class CompartmentedModelTest(unittest.TestCase):
         with self.assertRaises(Exception):
             m.addLocus(SIR.SUSCEPTIBLE, SIR.INFECTED, name = SIR.SI)      # part of SIR already
 
+    def testLocusNames(self):
+        '''Test that a locus gets an automatic name.'''
+        m = SIR()
+
+        # add new loci
+        m.addLocus(SIR.REMOVED)
+        self.assertIn(SIR.REMOVED, m._loci.keys())
+        m.addLocus(SIR.REMOVED, SIR.SUSCEPTIBLE)
+        self.assertIn("{l}{r}".format(l = SIR.REMOVED, r = SIR.SUSCEPTIBLE), m._loci.keys())
+
     def testLoci( self ):
         '''Test we can populate loci correctly.'''
         m = SIR()
