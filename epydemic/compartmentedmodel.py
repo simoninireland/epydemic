@@ -188,14 +188,15 @@ class CompartmentedModel(object):
     def initialCompartmentDistribution( self ):
         '''Return the initial distribution of nodes to compartments. The
         result should be a valid distribution, with probabilities summing
-        to one.
+        to one. This is used by :meth:`initialCompartments` to set the initial
+        compartment of each node.
 
         :returns: a list of (compartment, probability) pairs'''
         return self._compartments
 
     def eventDistribution( self, t ):
         '''Return the distribution of events. The result should be a valid distribution,
-        with probabilities summing to one. The default implemnentation returns a constant
+        with probabilities summing to one. The default implementation returns a constant
         distribution populated from the model parameters. Sub-classes may override to,
         for example, provide time-evolving probabilities.
 
@@ -203,18 +204,15 @@ class CompartmentedModel(object):
         :returns: a list of (locus, probability, event function) triples'''
         return self._events
 
-    def setUp( self, dyn, g, params ):
-        '''Set up the initial population of nodes into compartments.
-        
-        :param dyn: the dynamics
-        :param g: the network
-        :param params: the simulation parameters'''
+    def initialCompartments( self, g ):
+        '''Place each node in the network into its initial compartment. The default
+        initialises the nodes into a random compartment according to the initial
+        compartment distribution returned by :meth:`initialCompartmentDistribution`.
+        This method may be overridden to, for example structure the initial
+        population non-randomly.
 
-        # initialise all nodes to an empty compartment
-        # (so we can assume all nodes have a compartment attribute)
-        for n in g.nodes():
-            g.node[n][self.COMPARTMENT] = None
-            
+        :param g: the network'''
+
         # get the initial compartment distribution
         dist = self.initialCompartmentDistribution()
 
@@ -228,13 +226,28 @@ class CompartmentedModel(object):
                 if r <= a:
                     # change node's compartment
                     self.changeCompartment(g, n, c)
-                    
+
                     # on to the next node
                     break
+
+    def setUp( self, dyn, g, params ):
+        '''Set up the initial population of nodes into compartments.
+        
+        :param dyn: the dynamics
+        :param g: the network
+        :param params: the simulation parameters'''
+
+        # initialise all nodes to an empty compartment
+        # (so we can assume all nodes have a compartment attribute)
+        for n in g.nodes():
+            g.node[n][self.COMPARTMENT] = None
 
         # mark edges as unoccupied
         for (_, _, data) in g.edges(data = True):
             data[self.OCCUPIED] = False
+
+        # place nodes in initial compartments
+        self.initialCompartments(g)
 
     def markOccupied( self, g, e ):
         '''Mark the given edge as having been occupied by the dynamics, i.e., to
@@ -247,7 +260,7 @@ class CompartmentedModel(object):
         data[self.OCCUPIED] = True
         
     def results( self, g ):
-        '''Create a dict of experimental results for the experiment, constsing of the final
+        '''Create a dict of experimental results for the experiment, consistsing of the final
         sizes of all the compartments.
 
         :param g: the network
@@ -259,7 +272,6 @@ class CompartmentedModel(object):
         for n in g.nodes():
             c = g.node[n][self.COMPARTMENT]
             rc[c] = rc[c] + 1
-
         return rc
 
     def skeletonise( self, g ):

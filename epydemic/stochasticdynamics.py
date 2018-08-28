@@ -93,15 +93,13 @@ class StochasticDynamics(Dynamics):
 
                 # find the largest event for which the cumulative rates
                 # are less than the random threshold
-                xs = 0.0
-                for v in range(1, len(transitions)):
-                    (lp, xsp, efp) = transitions[v]
+                xs = 0
+                for v in range(0, len(transitions)):
+                    (l, xsp, ef) = transitions[v]
                     if (xs + xsp) > xc:
-                        # threshold exceeded, use the current values
                         break
                     else:
-                        # threshold not exceeded, step up
-                        (l, xs, ef) = (lp, xs + xsp, efp)
+                        xs = xs + xsp
 
             # increment the time
             t = t + dt
@@ -124,7 +122,7 @@ class StochasticDynamics(Dynamics):
                 # increment the event counter    
                 events = events + 1
 
-        # run any events posted for before the maximum simulation time
+        # run any remaining posted events
         self.runPendingEvents(self._maxTime)
 
         # add some more metadata

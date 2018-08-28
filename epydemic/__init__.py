@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 '''`epydemic` is a library for performing simulations for a range of
-epidemic spreeading (and other) processes, simulated over networks
+epidemic spreading (and other) processes, simulated over networks
 represented using `networkx`.
 
 Epidemic processes are very important in both network science and its

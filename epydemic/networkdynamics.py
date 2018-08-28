@@ -112,7 +112,8 @@ class Dynamics(epyc.Experiment, object):
         event occurring, and f is the :term:`event function` called to make it
         happen. This method must be overridden in sub-classes.
         
-        It is perfectly fine for an event to have a zero probability.
+        It is perfectly fine for an event to have a zero probability. The probabilities
+        will also generally be independent, and so don't have to sum to one.
 
         :param t: current time
         :returns: the event distribution'''
