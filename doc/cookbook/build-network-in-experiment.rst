@@ -35,6 +35,7 @@ class and override its ``configure`` method to create a network and store it usi
             kmean (average degree) or phi (connection probability).
 
             :param params: the experimental parameters'''
+            super(ERPopulation, self).configure(params)
 
             # extract ER network parameters
             N = params['N']

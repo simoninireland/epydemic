@@ -35,7 +35,21 @@ epidemics on networks <http://dx.doi.org/10.1007/978-3-319-50806-1>`_.
 Springer series on Interdisciplinary Applied Mathematics
 **46**. ISBN 978-3-319-50804-7. 2017.
 
+.. _MGN06:
+
+Christopher Moore, Gourab Ghosal, and M.E.J. Newman. `Exact solutions for models of evolving
+networks with addition and deletion of nodes <https://doi.org/10.1103/PhysRevE.74.036121>`_.
+Physical Review E **74**. September 2006.
+
 .. _New02:
+
 M.E.J. Newman. `Spread of epidemic disease on networks
 <http://dx.doi.org/10.1103/PhysRevE.66.016128>`_. Physical Review E
 **66**. July 2002.
+
+.. _MGN06:
+
+Cristopher Moore, Gourab Ghoshal, and M.E.J. Newman. `Exact solutions for models of evolving networks with addition
+and deletion of nodes <https://doi.org/10.1103/PhysRevE.74.036121>`_. Physical Review E **74**. September 2006.
+
+

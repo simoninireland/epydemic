@@ -7,7 +7,7 @@ Overview
 ``epydemic`` is a Python library that implements simulations of epidemic
 (and other) processes over networks. Epidemic processes are very
 important in both network science and its applications. The most
-common application is to study the was in which diseases progress in
+common application is to study the ways in which diseases progress in
 different network conditions, depending on their infectiousness and
 other properties.
 

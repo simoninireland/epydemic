@@ -7,6 +7,13 @@ Glossary
 		   
 .. glossary::
 
+   addition-deletion process
+      A process that adds and removes nodes from a network. The usual
+      model (due to :ref:`Moore *et alia* <MGN06>`) adds nodes at a
+      constant rate and with constant degree, removes nodes randomly
+      at a constant rate, and connects new nodes to existing nodes according
+      to some probabilistic attachment kernel.
+
    compartments
       The possible dynamical states in a :term:`compartmented model of disease`.
    

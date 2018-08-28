@@ -2,35 +2,36 @@
 
 .. currentmodule:: epydemic
 
-Models of human populations
----------------------------
+Modelling human contact networks
+--------------------------------
 
 *Problem*: You want to work with a realistic model of a human contact network. What is the appropriate topology?
 
-*Solution*: This is an active area of research, but a common answer is the approach given by
-:ref:`Newman <New02>` which is to use a powerlaw network with exponential cut-off.
+*Solution*: This is an active area of research, but a common answer is to use the approach given by
+:ref:`Newman <New02>`, which is to use a powerlaw network with exponential cut-off.
 
 A powerlaw network with exponent :math:`\alpha` has a degree distibution given by
 
 .. math::
 
-    p_k = C \, k^{-\alpha}
+    p_k = \frac{1}{C} \, k^{-\alpha}
 
-where :math:`p_k` is the probability of encountering a node of degree :math:`k` and :math:`C` is a normalising
-constant given by
+where :math:`p_k` is the probability that a randomly-chosen node in the network will have degree :math:`k` and
+:math:`C` is a normalising constant given by
 
 .. math::
 
-    C = \frac{1}{\zeta(\alpha, 1)}
+    C = \zeta(\alpha, 1)
 
 with :math:`\zeta` being the `Hurwitz zeta function <https://en.wikipedia.org/wiki/Hurwitz_zeta_function>`_. This
 degree distribution has the property that some nodes can have very high degrees with non-zero probability, leading
 to very large hubs with high centrality. In a population network this would introduce individuals who were
-massively better connected than the others, which is considered undesirable.
+massively better connected than the others, which is generally considered undesirable: therre are limits to how
+many people even the most popular person can actually come into physical contact with.
 
 A powerlaw-with-cutoff network, by contrast, place a limit (denoted :math:`\kappa`) on the "likely" highest degree.
 Below the cutoff the degree distribution behaves like a powerlaw network; above the cutoff, the probability drops
-off exponentially quickly, making large hubs highly unlikely. The degree distribution is given by
+off exponentially quickly, making large hubs highly unlikely. This degree distribution is given by
 
 .. math::
 
@@ -133,7 +134,7 @@ of the network, its exponent :math:`\alpha` and cutoff :math:`\kappa`, and const
             This allows the network to be re-used across experiments.
 
             :params params: the experimental parameters'''
-            epydemic.CompartmentedStochasticDynamics.configure(self, params)
+            super(PWCPopulation, self).configure(params)
 
             # create prototype network
             N = params[self.N]

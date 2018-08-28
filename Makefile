@@ -41,14 +41,16 @@ SOURCES_CODE = \
 	epydemic/sir_model.py \
 	epydemic/sir_model_fixed_recovery.py \
 	epydemic/sis_model.py \
-	epydemic/sis_model_fixed_recovery.py
+	epydemic/sis_model_fixed_recovery.py \
+	epydemic/sirs_model.py
 
 SOURCES_TESTS = \
 	test/__init__.py \
-	test/__main__.py \
 	test/test_networkdynamics.py \
+	test/test_stochasticrates.py \
 	test/test_compartmentedmodel.py \
 	test/compartmenteddynamics.py \
+	test/test_compartmentedstochasticrates.py \
 	test/test_sir.py \
 	test/test_sis.py \
 	test/test_fixed_recovery.py
@@ -151,7 +153,7 @@ ZIP = zip -r
 ROOT = $(shell pwd)
 
 # Constructed commands
-RUN_TESTS = tox
+RUN_TESTS = $(TOX)
 RUN_COVERAGE = $(COVERAGE) erase && $(COVERAGE) run -a setup.py test && $(COVERAGE) report -m --include '$(PACKAGENAME)*'
 RUN_NOTEBOOK = $(JUPYTER) notebook
 RUN_SETUP = $(PYTHON) setup.py
@@ -243,7 +245,7 @@ $(SOURCES_SDIST): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
 define HELP_MESSAGE
 Available targets:
    make test         run the test suite for all Python versions we support
-   make coverage     ru coverage checks of the test suite
+   make coverage     run coverage checks of the test suite
    make doc          build the API documentation using Sphinx
    make dist         create a source distribution
    make upload       upload distribution to PyPi

@@ -46,10 +46,7 @@ Model setup
 -----------
 
 Immediately before being run, the model is set up by placing all the
-nodes into compartments chosen randomly from the initial compartment
-distribution defined by the probabilities passed to
-:meth:`CompartmentedModel.addCompartment` when the compartments are
-created. All edges are also marked as unoccupied.
+nodes into compartments. All edges are also marked as unoccupied.
 
 .. automethod:: CompartmentedModel.reset
 
@@ -58,6 +55,8 @@ created. All edges are also marked as unoccupied.
 .. automethod:: CompartmentedModel.setUp
 
 .. automethod:: CompartmentedModel.initialCompartmentDistribution
+
+.. automethod:: CompartmentedModel.initialCompartments
 
 
 Running the model

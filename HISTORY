@@ -1,3 +1,7 @@
+Version 0.6.1
+
+   - Added SIRS model of partial-in-time immunity
+
 Version 0.5.1 2018-07-27
 
    - Fixed bug in the event selection routine for Gillespie dynamics
