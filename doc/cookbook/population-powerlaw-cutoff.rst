@@ -14,37 +14,23 @@ A powerlaw network with exponent :math:`\alpha` has a degree distibution given b
 
 .. math::
 
-    p_k = \frac{1}{C} \, k^{-\alpha}
+    p_k \propto k^{-\alpha}
 
-where :math:`p_k` is the probability that a randomly-chosen node in the network will have degree :math:`k` and
-:math:`C` is a normalising constant given by
-
-.. math::
-
-    C = \zeta(\alpha, 1)
-
-with :math:`\zeta` being the `Hurwitz zeta function <https://en.wikipedia.org/wiki/Hurwitz_zeta_function>`_. This
+where :math:`p_k` is the probability that a randomly-chosen node in the network will have degree :math:`k`. This
 degree distribution has the property that some nodes can have very high degrees with non-zero probability, leading
 to very large hubs with high centrality. In a population network this would introduce individuals who were
 massively better connected than the others, which is generally considered undesirable: therre are limits to how
 many people even the most popular person can actually come into physical contact with.
 
 A powerlaw-with-cutoff network, by contrast, place a limit (denoted :math:`\kappa`) on the "likely" highest degree.
-Below the cutoff the degree distribution behaves like a powerlaw network; above the cutoff, the probability drops
+Up to the cutoff the degree distribution behaves like a powerlaw network; above the cutoff, the probability drops
 off exponentially quickly, making large hubs highly unlikely. This degree distribution is given by
 
 .. math::
 
-    p_k = \frac{1}{C} k^{-\alpha} \, e^{-k / \kappa}
+    p_k \propto k^{-\alpha} \, e^{-k / \kappa}
 
-where :math:`C` is again a normalising constant this time given by
-
-.. math::
-
-    C = Li_{\alpha}(e^{-1 / \kappa})
-
-with :math:`Li_{\alpha}(x)` being the :math:`\alpha`'th `polylogarithm <https://en.wikipedia.org/wiki/Polylogarithm>`_
-of :math:`x`. The following plot shows the difference in the probability of encountering nodes of different degrees under
+The following plot shows the difference in the probability of encountering nodes of different degrees under
 the two distributions.
 
 .. figure:: powerlaw-cutoff.png
@@ -55,9 +41,18 @@ So the probability of finding, for example, a node of degree 100 is :math:`p_k \
 distribution, whereas with a cutoff at :math:`\kappa = 10` the probability drops to :math:`p_k \approx 0.00000001`
 -- ten thousand times smaller.
 
-Fortunately the polylogarithm function is built into the ``mpmath`` package, so all we need to do is code-up the
-distribution function in Python. In the following we create an experiment that can take parameters for the size :math:`N`
-of the network, its exponent :math:`\alpha` and cutoff :math:`\kappa`, and constructs a random network:
+Note that these distributions are expressed as proportionalities, because that exposes the essence of what's going on. To
+actually implement the distributions, though, we need to know the constants of proportionality :math:`\frac{1}{C}` that normalise the
+distribution so that the area under the curve is one. For the powerlaw with
+cutoff this constant is built from a `polylogarithm <https://en.wikipedia.org/wiki/Polylogarithm>`_, :math:`C = Li_\alpha(e^{-1 /\kappa})`, a "special" function that's
+fortunately built-into the ``mpmath`` package,
+so all we need to do is code-up the distribution function in Python. (The equivalent for the powerlaw distribution is
+built from the `Hurwitz zeta function <https://en.wikipedia.org/wiki/Hurwitz_zeta_function>`_, :math:`C = \zeta(\alpha, 1)`.)
+
+
+In the following we create an experiment that can
+take parameters for the size :math:`N` of the network, its exponent :math:`\alpha` and cutoff :math:`\kappa`, and
+constructs a random network:
 
 .. code-block:: python
 

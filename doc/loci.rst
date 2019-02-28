@@ -6,8 +6,7 @@
 Loci are an abstraction of where disease happens within a model. The
 dynamics of a model defines what events are called; the loci define
 the population of nodes or edges that may be subject to a particular
-event. The :class:`CompartmentedModel` class keeps track of these
-populations automatically from the definition of a model.
+event.
 
 There will seldom be any need to understand (or even interact with)
 loci except if, for example, defining new dynamics. For building and
@@ -32,6 +31,12 @@ the elements themselves; and to draw one element at random.
 
 .. automethod:: Locus.draw
 
+Events are attached to loci with a given probability.
+
+.. automethod:: Locus.addEvent
+
+.. automethod:: Locus.events
+
 There are also two abstract methods that define the way in which
 changes in node compartments are reflected in the populations of loci.
 
@@ -43,24 +48,76 @@ It is these methods that are overridden in sub-classes to provide the
 behaviour of node and edge loci.
 
 
-:class:`NodeLocus`: Loci for node-level dynamics
-------------------------------------------------
+:class:`Singleton`: A locus for the network
+-------------------------------------------
 
-.. autoclass:: NodeLocus
+.. autoclass:: Singleton
    :show-inheritance:
 
-.. automethod:: NodeLocus.leaveHandler
+.. automethod:: Singleton.__len__
 
-.. automethod:: NodeLocus.enterHandler
+.. automethod:: Singleton.elements
+
+.. automethod:: Singleton.draw
+
+.. automethod:: Singleton.leaveHandler
+
+.. automethod:: Singleton.enterHandler
 
 
+:class:`AllNodes`: A locus holding all the nodes in a network
+-------------------------------------------------------------
 
-:class:`EdgeLocus`: Loci for edge-level dynamics
-------------------------------------------------
-
-.. autoclass:: EdgeLocus
+.. autoclass:: AllNodes
    :show-inheritance:
 
-.. automethod:: EdgeLocus.leaveHandler
+.. automethod:: AllNodes.__len__
 
-.. automethod:: EdgeLocus.enterHandler
+.. automethod:: AllNodes.elements
+
+.. automethod:: AllNodes.draw
+
+.. automethod:: AllNodes.leaveHandler
+
+.. automethod:: AllNodes.enterHandler
+
+
+:class:`AllEdges`: A locus holding all the edges in a network
+-------------------------------------------------------------
+
+.. autoclass:: AllEdges
+   :show-inheritance:
+
+.. automethod:: AllEdges.__len__
+
+.. automethod:: AllEdges.elements
+
+.. automethod:: AllEdges.draw
+
+.. automethod:: AllEdges.leaveHandler
+
+.. automethod:: AllEdges.enterHandler
+
+
+
+:class:`CompartmentedNodeLocus`: Loci for node-level dynamics
+------------------------------------------------
+
+.. autoclass:: CompartmentedNodeLocus
+   :show-inheritance:
+
+.. automethod:: CompartmentedNodeLocus.leaveHandler
+
+.. automethod:: CompartmentedNodeLocus.enterHandler
+
+
+
+:class:`CompartmentedEdgeLocus`: Loci for edge-level dynamics
+------------------------------------------------
+
+.. autoclass:: CompartmentedEdgeLocus
+   :show-inheritance:
+
+.. automethod:: CompartmentedEdgeLocus.leaveHandler
+
+.. automethod:: CompartmentedEdgeLocus.enterHandler

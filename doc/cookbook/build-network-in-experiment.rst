@@ -29,7 +29,7 @@ class and override its ``configure`` method to create a network and store it usi
 
     class ERPopulation(epydemic.CompartmentedStochasticDynamics):
 
-        def configure( self, params ):
+        def configure(self, params):
             '''Create a prototype ER network when parameters are set. This expects a
             parameter N for the number of nodes in the network, and one of
             kmean (average degree) or phi (connection probability).
@@ -45,13 +45,22 @@ class and override its ``configure`` method to create a network and store it usi
                 phi = (kmean + 0.0) / N
 
             # create a connected network with no self-loops
-            g = networkx.erdos_renyi_network(N, phi)
+            g = networkx.erdos_renyi_graph(N, phi)
             g = g.subgraph(max(networkx.connected_components(g), key = len)).copy()
             g.remove_edges_from(list(g.selfloop_edges()))
 
             # store the network for use
             self.setNetworkPrototype(g)
 
-         def deconfigure( self ):
+         def deconfigure(self):
             '''Undo the current experimental configuration.'''
+            super(ERPopulation, self).deconfigure()
             self.setNetworkPrototype(None)
+
+What we've done here is add a ``configure`` method that creates a network based on values provided
+as experimental parameters -- additional to those that the experiment expects anyway. In this case
+we expect a parameter "N" for the network size and either a mean degree "kmean" or a link probability
+"phi", from which we construct an ER network as the prototype.
+
+Notice that both the ``configure`` and the ``deconfigure`` method call the underlying method
+that they override, to make sure that the basic (de)configuration behaviour is still done.

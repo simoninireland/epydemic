@@ -35,7 +35,7 @@ we want to do lots of repetitions of experiments to explore how different parame
 epidemic behaves.
 
 
-What is `epydemic`?
+What is ``epydemic``?
 -------------------
 
 ``epydemic`` is a simulation framework for epidemic processes. It aims to provide the common simulation
@@ -53,7 +53,7 @@ Current features
   :term:`stochastic dynamics` (Gillespie simulation)
 
 * Uses ``networkx`` for representing disease networks, allowing random networks to be generated easily and
-  real networks to be impported from outside sources
+  real networks to be imported from outside sources
 
 * Support for a generic :term:`compartmented model of disease`, allowing
   more complex diseases to be described
