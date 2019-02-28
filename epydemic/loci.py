@@ -18,15 +18,13 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-
-import numpy
 import random
 
 class Locus(object):
-    '''The locus of dynamics. A locus is where dynamics happens, allowing the
-    compartments of nodes to be changed and other effects to be coded-up. Loci
-    are filled with nodes or edges, typically populated and re-populated as the
-    dynamics moves nodes between components.
+    '''The locus of dynamics, where chanmges can happen. Loci
+    are filled with nodes or edges, typically populated and re-populated as
+    a process over the network evolves. The contents of a locus are
+    tracked to improve performance.
 
     :param name: the locus name'''
 
@@ -34,6 +32,7 @@ class Locus(object):
         super(Locus, self).__init__()
         self._name = name
         self._elements = set()
+        self._events = []
 
     def name( self ):
         '''Returns the name of the locus.
@@ -60,103 +59,159 @@ class Locus(object):
         e = (random.sample(self._elements, 1))[0]
         return e
 
-    def leaveHandler( self, m, g, n, c ):
-        '''Handler for when a node leaves a compartment., Must be overridden
+    def leaveHandler( self, g, n ):
+        '''Handler for when a node leaves the locus. Must be overridden
         by sub-classes.
 
-        :param m: the model
         :param g: the network
-        :param n: the node
-        :param c: the compartment the node is leaving'''
+        :param n: the node'''
         raise NotImplementedError('leaveHandler')
 
-    def enterHandler( self, m, g, n, c ):
-        '''Handler for when a node enters a compartment., Must be overridden
+    def enterHandler( self, g, n ):
+        '''Handler for when a node enters the locus. Must be overridden
         by sub-classes.
 
-        :param m: the model
         :param g: the network
-        :param n: the node
-        :param c: the compartment the node is entering'''
+        :param n: the node'''
         raise NotImplementedError('enterHandler')
 
+    def addEvent( self, p, ef ):
+        '''Add a probabilistic event that occurs with a particular probability at
+        each element, calling the :term:`event function` when it is selected.
 
-class NodeLocus(Locus):
-    '''A locus for dynamics occurring at a single node. Node loci
-    contain nodes, typically all in a single compartment.
+        The :term:`event function` takes the dynamics, the simulation time,
+        the network, and the element to which the event applies (a node or an edge,
+        which will have been drawn from the event's locus).
 
-    :param name: the locus' name
-    :param c: the compartment''' 
+        :param l: the locus name
+        :param p: the event probability
+        :param ef: the event function'''
+        self._events.append((self, p, ef))
 
-    def __init__( self, name, c ):
-        super(NodeLocus, self).__init__(name)
-        self._compartment = c
-        
-    def leaveHandler( self, m, g, n, c ):
-        '''Node leaves the right compartment, remove it from the locus
+    def events(self):
+        '''Return the events associated with this locus.
 
-        :param m: the model
+        :returns: a list of (locus, probability, function) pairs'''
+        return self._events
+
+
+class Singleton(Locus):
+    '''A :class:`Locus` with a single element. This means that any events attached
+    to this locus will occur with a fixed given probability, independent of the size
+    of the network.
+
+    :param name: the locus; name'''
+
+    def __init__(self, name):
+        super(Singleton, self).__init__(name)
+        self._elements = set([ None ])
+
+    def __len__( self ):
+        '''A singleton is treated as a locus with a single element.
+
+        :returns: 1'''
+        return 1
+
+    def elements( self ):
+        '''A singleton uses None as its element
+
+        :returns: a list containing one None value'''
+        return [ None ]
+
+    def draw(self):
+        '''Draw the only element from the locus.
+
+        :returns: None'''
+        return None
+
+    def leaveHandler( self, g, n ):
+        '''Nothing ever leaves this locus.
+
         :param g: the network
-        :param n: the node
-        :param c: the compartment the node is leavinging'''
-        #print 'node {n} leaves {c}'.format(n = n, c = self._compartment)
-        self._elements.remove(n)
+        :param n: the node'''
+        raise Exception('Something tried to leave the singleton locus')
 
-    def enterHandler( self, m, g, n, c ):
-        '''Node enters the right compartment, add it to the locus
+    def enterHandler( self, g, n ):
+        '''Nothing can be added to this locis.
 
-        :param m: the model
         :param g: the network
-        :param n: the node
-        :param c: the compartment the node is entering'''
-        #print 'node {n} enters {c}'.format(n = n, c = self._compartment)
-        self._elements.add(n)
+        :param n: the node'''
+        raise Exception('Something tried to enter the singleton locus')
 
 
-class EdgeLocus(Locus):
-    '''A locus for dynamics occurring at an edge. Edge loci contain
-    edges, typically with the endpoint nodes in different compartments. The
-    edges within a locus change as nodes move between compartments.
+class AllNodes(Locus):
+    '''A :class:`Locus` containing all the nodes in a given network. This will reflect
+    changes to the node set as the graph evolves. An event attached to this locus will
+    choose any node from then network.
 
-    :param name: the locus' name
-    :param l: the left compartment 
-    :param r: the right compartment''' 
+    :param name: the name of the locus
+    :param g: the network for which we hold all the nodes'''
 
-    def __init__( self, name, l, r ):
-        super(EdgeLocus, self).__init__(name)
-        self._left = l
-        self._right = r
+    def __init__(self, name, g):
+        super(AllNodes, self).__init__(name)
+        self._g = g
 
-    def leaveHandler( self, m, g, n, c ):
-        '''Node leaves one of the edge's compartments, remove any incident edges
-        that no longer have the correct orientation.
+    def __len__( self ):
+        '''Return the number of nodes in the underlying network.
 
-        :param m: the model
+        :returns: the number of nodes'''
+        return self._g.order()
+
+    def elements( self ):
+        '''Return the nodes in the network we're tracking.
+
+        :returns: the nodes'''
+        return self._g.nodes()
+
+    def leaveHandler( self, g, n ):
+        '''Nothing to do.
+
         :param g: the network
-        :param n: the node
-        :param c: the compartment the node is leaving'''
-        for (nn, mm) in g.edges(n):
-            if (g.node[nn][m.COMPARTMENT] == self._right) and (g.node[mm][m.COMPARTMENT] == self._left):
-                #print 'edge ({m}, {n}) leaves {l}'.format(n = nn, m = mm, l = self._name)
-                self._elements.remove((mm, nn))
-            else:
-                if (g.node[nn][m.COMPARTMENT] == self._left) and (g.node[mm][m.COMPARTMENT] == self._right):
-                    #print 'edge ({n}, {m}) leaves {l}'.format(n = nn, m = mm, l = self._name)
-                    self._elements.remove((nn, mm))
+        :param n: the node'''
+        pass
 
-    def enterHandler( self, m, g, n, c ):
-        '''Node enters one of the edge's compartments, add any incident edges
-        that now have the correct orientation.
+    def enterHandler( self, g, n ):
+        '''Nothing to do.
 
-        :param m: the model
         :param g: the network
-        :param n: the node
-        :param c: the compartment the node is entering'''
-        for (nn, mm) in g.edges(n):
-            if (g.node[nn][m.COMPARTMENT] == self._right) and (g.node[mm][m.COMPARTMENT] == self._left):
-                #print 'edge ({m}, {n}) enters {l}'.format(n = nn, m = mm, l = self._name)
-                self._elements.add((mm, nn))
-            else:
-                if (g.node[nn][m.COMPARTMENT] == self._left) and (g.node[mm][m.COMPARTMENT] == self._right):
-                    #print 'edge ({n}, {m}) enters {l}'.format(n = nn, m = mm, l = self._name)
-                    self._elements.add((nn, mm))
+        :param n: the node'''
+        pass
+
+
+class AllEdges(Locus):
+    '''A :class:`Locus` containing all the edges in a given network. This will reflect
+    changes to the edge set as the graph evolves. An event attached to this locus will
+    choose any edge from then network.
+
+    :param name: the name of the locus
+    :param g: the network for which we hold all the edges'''
+
+    def __init__(self, name, g):
+        super(AllEdges, self).__init__(name)
+        self._g = g
+
+    def __len__( self ):
+        '''Return the number of edges in the underlying network.
+
+        :returns: the number of edges'''
+        return len(self._g.edges())
+
+    def elements( self ):
+        '''Return the edges in the network we're tracking.
+
+        :returns: the nodes'''
+        return self._g.edges()
+
+    def leaveHandler(self, g, n):
+        '''Nothing to do.
+
+        :param g: the network
+        :param n: the node'''
+        pass
+
+    def enterHandler(self, g, n):
+        '''Nothing to do.
+
+        :param g: the network
+        :param n: the node'''
+        pass
