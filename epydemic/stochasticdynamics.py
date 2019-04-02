@@ -19,56 +19,36 @@
 
 from epydemic import *
 
-import epyc
 import math
 import numpy
-import random
 
 class StochasticDynamics(Dynamics):
     '''A dynamics that runs stochastically in :term:`continuous time`. This is a
     very efficient and statistically exact approach, but requires that the
     statistical properties of the events making up the process are known.
 
-    :param g: prototype network to run the dynamics over (optional)'''
+    :param p: the process to run
+    :param g: prototype network to run the dynamics over (optional, can be provided later)'''
 
-    def __init__( self, g = None ):
-        super(StochasticDynamics, self).__init__(g)
-
-    def eventRateDistribution( self, t ):
-        '''Return the event distribution, a sequence of (l, r, f) triples
-        where l is the locus where the event occurs, r is the rate at
-        which an event occurs, and f is the event function called to
-        make it happen.
-
-        Note that it's a rate we want, not a probability:
-        the former can be obtained from the latter simply by
-        multiplying the event probability by the number of times it's
-        possible in the current network, which is the population
-        of nodes or edges in a given state.
-        
-        It is perfectly fine for an event to have a zero rate. The process
-        is assumed to have reached equilibrium if all events have zero rates.
-
-        :param t: current time
-        :returns: the event rate distribution'''
-        dist = self.eventDistribution(t)
-        return list(map(lambda ed: (ed[0], ed[1] * len(ed[0]), ed[2]), dist))   # Python3 lambdas are all single-argument
+    def __init__( self, p, g = None ):
+        super(StochasticDynamics, self).__init__(p, g)
 
     def do( self, params ):
         '''Run the simulation using Gillespie dynamics. The process terminates
         when either there are no events with zero rates or when :meth:`at_equilibrium`
-        return True.
+        returns True.
 
         :param params: the experimental parameters
         :returns: the experimental results dict'''
         
         # run the dynamics
         g = self.network()
+        proc = self.process()
         t = 0
         events = 0
         while not self.at_equilibrium(t):
             # pull the transition dynamics at this timestep
-            transitions = self.eventRateDistribution(t)
+            transitions = proc.eventRateDistribution(t)
 
             # compute the total rate of transitions for the entire network
             a = 0.0
@@ -117,7 +97,7 @@ class StochasticDynamics(Dynamics):
             
                 # perform the event by calling the event function,
                 # passing the dynamics, event time, network, and element
-                ef(self, t, g, e)
+                ef(t, g, e)
             
                 # increment the event counter    
                 events = events + 1

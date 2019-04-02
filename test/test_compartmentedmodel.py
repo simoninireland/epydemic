@@ -33,8 +33,7 @@ class CompartmentedModelTest(unittest.TestCase):
        
     def testPopulation( self ):
         '''Test populating a model.'''
-        m = SIR()
-        e = CompartmentedStochasticDynamics(m, self._er)
+        e = StochasticDynamics(SIR(), self._er)
         e.setUp(self._params)
 
     def testDuplicateNodeLocus( self ):
@@ -45,7 +44,7 @@ class CompartmentedModelTest(unittest.TestCase):
                       pRemove = 0.05)
         m.build(params)
         with self.assertRaises(Exception):
-            m.addLocus(SIR.INFECTED)      # part of SIR already
+            m.trackNodesInCompartment(SIR.INFECTED)      # part of SIR already
 
     def testDuplicateEdgeLocus( self ):
         '''Test we can't duplicate edge-loci names'''
@@ -55,48 +54,48 @@ class CompartmentedModelTest(unittest.TestCase):
                       pRemove = 0.05)
         m.build(params)
         with self.assertRaises(Exception):
-            m.addLocus(SIR.SUSCEPTIBLE, SIR.INFECTED, name = SIR.SI)      # part of SIR already
+            m.trackNodesBetweenCompartments(SIR.SUSCEPTIBLE, SIR.INFECTED, name = SIR.SI)      # part of SIR already
 
     def testLocusNames(self):
         '''Test that a locus gets an automatic name.'''
         m = SIR()
 
         # add new loci
-        m.addLocus(SIR.REMOVED)
+        m.trackNodesInCompartment(SIR.REMOVED)
         self.assertIn(SIR.REMOVED, m._loci.keys())
-        m.addLocus(SIR.REMOVED, SIR.SUSCEPTIBLE)
+        m.trackEdgesBetweenCompartments(SIR.REMOVED, SIR.SUSCEPTIBLE)
         self.assertIn("{l}{r}".format(l = SIR.REMOVED, r = SIR.SUSCEPTIBLE), m._loci.keys())
 
     def testLoci( self ):
         '''Test we can populate loci correctly.'''
-        m = SIR()
         g = networkx.Graph()
         g.add_edges_from([ (1, 2), (2, 3), (1, 4), (3, 4) ])
-        e = CompartmentedStochasticDynamics(m, g)
+        m = SIR()
+        e = StochasticDynamics(m, g)
         params = dict(pInfect = 0.1,
                       pInfected = 1.0,    # infect all nodes initially
                       pRemove = 0.05)
         e.setUp(params)
 
         # keep track of the other compartments as well
-        e._model.addLocus(SIR.SUSCEPTIBLE)
-        e._model.addLocus(SIR.REMOVED)
+        m.trackNodesInCompartment(SIR.SUSCEPTIBLE)
+        m.trackNodesInCompartment(SIR.REMOVED)
         
         # all nodes in I
-        six.assertCountEqual(self, e._model._loci[SIR.INFECTED].elements(), [ 1, 2, 3, 4 ])
+        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [ 1, 2, 3, 4 ])
 
         # one node from I into S, two edges into SI
         m.changeCompartment(e.network(), 1, SIR.SUSCEPTIBLE)
-        six.assertCountEqual(self, e._model._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
-        six.assertCountEqual(self, e._model._loci[SIR.SUSCEPTIBLE].elements(), [ 1 ])
-        six.assertCountEqual(self, e._model._loci[SIR.SI].elements(), [ (1, 2), (1, 4) ])
+        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
+        six.assertCountEqual(self, m._loci[SIR.SUSCEPTIBLE].elements(), [ 1 ])
+        six.assertCountEqual(self, m._loci[SIR.SI].elements(), [ (1, 2), (1, 4) ])
 
         # recover the infected node
         m.changeCompartment(e.network(), 1, SIR.REMOVED)
-        six.assertCountEqual(self, e._model._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
-        six.assertCountEqual(self, e._model._loci[SIR.SUSCEPTIBLE].elements(), [])
-        six.assertCountEqual(self, e._model._loci[SIR.REMOVED].elements(), [ 1 ])
-        six.assertCountEqual(self, e._model._loci[SIR.SI].elements(), [ ])
+        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
+        six.assertCountEqual(self, m._loci[SIR.SUSCEPTIBLE].elements(), [])
+        six.assertCountEqual(self, m._loci[SIR.REMOVED].elements(), [ 1 ])
+        six.assertCountEqual(self, m._loci[SIR.SI].elements(), [ ])
 
     def testSkeletonise( self ):
         '''Test that a network skeletonises correctly'''

@@ -43,9 +43,9 @@ class SIRS(SIR):
 
         # add components needed for SIRS
         pResuscept = params[self.P_RESUSCEPT]
-        self.addLocus(self.REMOVED)
+        self.trackNodesInCompartment(self.REMOVED)
 
-        self.addEvent(self.REMOVED, pResuscept, lambda d, t, g, e: self.resuscept(d, t, g, e))
+        self.addEvent(self.REMOVED, pResuscept, self.resuscept)
 
     def resuscept(self, dyn, t, g, n):
         '''Perform a re-susceptibility event. This changes the compartment of

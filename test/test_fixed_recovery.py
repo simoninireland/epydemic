@@ -44,7 +44,7 @@ class FixedRecoveryTest(unittest.TestCase):
 
     def testRunSingleSIRSynchronous( self ):
         '''Test a single run of a fixed-period SIR under synchronous dynamics.'''
-        e = CompartmentedSynchronousDynamics(SIR_FixedRecovery(), self._network)
+        e = SynchronousDynamics(SIR_FixedRecovery(), self._network)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
@@ -52,7 +52,7 @@ class FixedRecoveryTest(unittest.TestCase):
 
     def testRunSingleSIRStochastic( self ):
         '''Test a single run of a fixed-period SIR under stochastic dynamics.'''
-        e = CompartmentedStochasticDynamics(SIR_FixedRecovery(), self._network)
+        e = StochasticDynamics(SIR_FixedRecovery(), self._network)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
             print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])

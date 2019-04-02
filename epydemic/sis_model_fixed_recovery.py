@@ -47,26 +47,26 @@ class SIS_FixedRecovery(SIS):
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
 
-        self.addLocus(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
-        self.addEvent(self.SI, pInfect, lambda t, g, e: self.infect(t, g, e))
+        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
+        self.addEventAtLocus(self.SI, pInfect, self.infect)
 
-    def setUp( self, dyn, g, params ):
+    def setUp( self, dyn, params ):
         '''After setting up as normal, post recovery events for any nodes that are
         initially infected.
 
         :param dyn: the dynamics
-        :param g: the network
         :param params: the simulation parameters'''
-        super(SIS_FixedRecovery, self).setUp(dyn, g, params)
+        super(SIS_FixedRecovery, self).setUp(dyn, params)
 
         # traverse the set of initially-infected nodes
         tInfected = params[self.T_INFECTED]
+        g = self.network()
         for n in self.compartment(g, self.INFECTED):
             # record that the node was initially infected
             g.node[n][self.INFECTION_TIME] = 0.0
         
             # post the corresponding removal event
-            dyn.postEvent(tInfected, g, n, lambda d, t, g, e: self.removal(d, t, g, e))          
+            dyn.postEvent(tInfected, g, n, self.remove)
 
     def infect( self, dyn, t, g, e ):
         '''Perform the normal infection event, and then post an event to recover
@@ -85,7 +85,7 @@ class SIS_FixedRecovery(SIS):
         g.node[n][self.INFECTION_TIME] = t
         
         # post the removal event for the appropriate time in the future
-        dyn.postEvent(t + self._tInfected, g, n, lambda d, t, g, e: self.remove(d, t, g, e))
+        dyn.postEvent(t + self._tInfected, g, n, self.remove)
                 
                 
                 

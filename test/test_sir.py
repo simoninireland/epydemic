@@ -54,7 +54,7 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         self._lab[SIR.P_INFECT] = 0.3
         self._lab[SIR.P_INFECTED] = 0.01
         self._lab[SIR.P_REMOVE] = 0.05
-        e = CompartmentedStochasticDynamics(self._model, self._network)
+        e = StochasticDynamics(self._model, self._network)
         self._lab.runExperiment(e)
         rc = (self._lab.results())[0]
         six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [ 'S', 'I', 'R' ])

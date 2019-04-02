@@ -31,7 +31,7 @@ class DummyModel(CompartmentedModel):
         ep = params['eventProbability']
         for i in range(len(ep)):
             self.addCompartment(i, 1.0 / len(ep))
-            self.addLocus(i)
+            self.trackNodesInCompartment(i)
             self.addEvent(i, ep[i], self._event(i))
 
     def _event(self, i):
@@ -40,7 +40,8 @@ class DummyModel(CompartmentedModel):
     def event(self, i, d, t, g, e):
         d._eventCount[i] = d._eventCount[i] + 1
 
-class CompartmentedStochasticDynamicsFixedRates(CompartmentedStochasticDynamics):
+
+class CompartmentedStochasticDynamicsFixedRates(StochasticDynamics):
 
     def setUp( self, params ):
         super(CompartmentedStochasticDynamicsFixedRates, self).setUp(params)

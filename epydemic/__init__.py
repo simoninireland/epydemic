@@ -38,22 +38,27 @@ time` simulations which are better for handling a wider range of
 specify).
 
 '''
- 
+
+# network processes
+from .loci import Locus
+from .process import Process
+
 # networks with dynamical processes
 from .networkdynamics import Dynamics
 from .synchronousdynamics import SynchronousDynamics
 from .stochasticdynamics import StochasticDynamics
 
 # compartmented models
-from .compartmentedmodel import CompartmentedModel
-from .loci import Locus, NodeLocus, EdgeLocus
-from .compartmentedsynchronousdynamics import CompartmentedSynchronousDynamics
-from .compartmentedstochasticdynamics import CompartmentedStochasticDynamics
+from .compartmentedmodel import CompartmentedModel, CompartmentedNodeLocus, CompartmentedNodeLocus
 
 # reference disease models
 from .sir_model import SIR
 from .sis_model import SIS
+from .sirs_model import SIRS
 
 # variant disease models
 from .sir_model_fixed_recovery import SIR_FixedRecovery
 from .sis_model_fixed_recovery import SIS_FixedRecovery
+
+# other processes
+from .adddelete import AddDelete

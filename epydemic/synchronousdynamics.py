@@ -30,13 +30,14 @@ class SynchronousDynamics(Dynamics):
     simple to code for many cases, but can be statistically inexact and slow
     for large systems.
 
+    :pafram p: the network process to run
     :param g: prototype network to run over (optional)'''
 
     # additional metadata
     TIMESTEPS_WITH_EVENTS = 'timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
 
-    def __init__( self, g = None ):
-        super(SynchronousDynamics, self).__init__(g)
+    def __init__( self, p, g = None ):
+        super(SynchronousDynamics, self).__init__(p, g)
 
     def do( self, params ):
         '''Synchronous dynamics.
@@ -46,6 +47,7 @@ class SynchronousDynamics(Dynamics):
         
         # run the dynamics
         g = self.network()
+        proc = self.process()
         t = 0
         events = 0
         timestepEvents = 0
@@ -53,10 +55,8 @@ class SynchronousDynamics(Dynamics):
             # fire any events posted for at or before this time
             nev = self.runPendingEvents(t)
             
-            # retrieve all the events, their loci, probabilities, and event functions
-            dist = self.eventDistribution(t)
-
             # run through all the events in the distribution
+            dist = proc.perElementEventDistribution(t)
             for (l, p, ef) in dist:
                 if p > 0.0:
                     # run through every possible element on which this event may occur
@@ -64,10 +64,18 @@ class SynchronousDynamics(Dynamics):
                         # test for occurrance of the event on this element
                         if numpy.random.random() <= p:
                             # yes, perform the event
-                            ef(self, t, g, e)
-                            
-                            # update the event count
+                            ef(t, g, e)
                             nev = nev + 1
+
+            # run through all the fixed-rate events for this timestep
+            dist = proc.fixedRateEventDistribution(t)
+            for (l, p, ef) in dist:
+                if p > 0.0:
+                    if numpy.random.random() <= p:
+                        # yes, perform the event on an element drawn at random
+                        e = l.draw()
+                        ef(t, g, e)
+                        nev = nev + 1
 
             # add the events to the count
             events = events + nev

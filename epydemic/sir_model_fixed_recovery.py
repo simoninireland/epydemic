@@ -48,43 +48,42 @@ class SIR_FixedRecovery(SIR):
         self.addCompartment(self.INFECTED, pInfected)
         self.addCompartment(self.REMOVED, 0.0)
 
-        self.addLocus(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)       
-        self.addEvent(self.SI, pInfect, lambda d, t, g, e: self.infect(d, t, g, e))
+        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
+        self.addEventAtLocus(self.SI, pInfect, self.infect)
 
-    def setUp( self, dyn, g, params ):
+    def setUp( self, dyn, params ):
         '''After setting up as normal, post remove events for any nodes that are
         initially infected.
 
         :param dyn: the dynamics
-        :param g: the network
         :param params: the simulation parameters'''
-        super(SIR_FixedRecovery, self).setUp(dyn, g, params)
+        super(SIR_FixedRecovery, self).setUp(dyn, params)
 
         # traverse the set of initially-infected nodes
         tInfected = params[self.T_INFECTED]
+        g = self.network()
         for n in self.compartment(g, self.INFECTED):
             # record that the node was initially infected
             g.node[n][self.INFECTION_TIME] = 0.0
         
-            # post the removal event
-            dyn.postEvent(tInfected, g, n, lambda d, t, g, e: self.remove(d, t, g, e))          
+            # post the corresponding removal event
+            self.postEvent(tInfected, g, n, self.remove)
         
-    def infect( self, dyn, t, g, e ):
+    def infect( self, t, g, e ):
         '''Perform the normal infection event, and then post an event to remove the
         infected node at the appropriate time.
 
-        :param dyn: the dynamics
         :param t: the simulation time
         :param g: the network
         :param e: the edge transmitting the infection, susceptible-infected'''
         (n, m) = e
 
         # infect as normal
-        super(SIR_FixedRecovery, self).infect(dyn, t, g, e)
+        super(SIR_FixedRecovery, self).infect(t, g, e)
 
         # record the infection time
         g.node[n][self.INFECTION_TIME] = t
         
         # post the removal event for the appropriate time in the future
-        dyn.postEvent(t + self._tInfected, g, n, lambda d, t, g, e: self.remove(d, t, g, e))
+        self.postEvent(t + self._tInfected, g, n, self.remove)
    

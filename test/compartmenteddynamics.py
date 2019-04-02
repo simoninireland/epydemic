@@ -31,7 +31,7 @@ class CompartmentedDynamicsTest():
 
     def testRunSingleStochastic( self ):
         '''Test a single run of a stochastic dynamics.'''
-        e = CompartmentedStochasticDynamics(self._model, self._network)
+        e = StochasticDynamics(self._model, self._network)
         if self._maxTime is not None:
             e.setMaximumTime(self._maxTime)
         rc = e.set(self._params).run()
@@ -41,7 +41,7 @@ class CompartmentedDynamicsTest():
     
     def testRunSingleSynchronous( self ):
         '''Test a single run of a synchronous dynamics.'''
-        e = CompartmentedSynchronousDynamics(self._model, self._network)
+        e = SynchronousDynamics(self._model, self._network)
         if self._maxTime is not None:
             e.setMaximumTime(self._maxTime)
         rc = e.set(self._params).run()
@@ -51,14 +51,14 @@ class CompartmentedDynamicsTest():
         
     def testRunMultipleStochastic( self ):
         '''Test a stochastic dynamics run of a model over a (small) parameter space.'''
-        e = CompartmentedStochasticDynamics(self._model, self._network)
+        e = StochasticDynamics(self._model, self._network)
         if self._maxTime is not None:
             e.setMaximumTime(self._maxTime)
         self._lab.runExperiment(e)
 
     def testRunMultipleSynchronous( self ):
         '''Test a synchronous dynamics run of a model over a (small) parameter space.'''
-        e = CompartmentedSynchronousDynamics(self._model, self._network)
+        e = SynchronousDynamics(self._model, self._network)
         if self._maxTime is not None:
             e.setMaximumTime(self._maxTime)
         self._lab.runExperiment(e)

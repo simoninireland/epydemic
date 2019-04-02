@@ -1,6 +1,6 @@
 # Test network dynamics
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2018 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -25,7 +25,7 @@ class NetworkDynamicsTest(unittest.TestCase):
 
     def testPosting( self ):
         '''Test posting events.'''
-        dyn = Dynamics()
+        dyn = Dynamics(Process())
 
         # event function builder, will increment the shared
         # value when fired
@@ -68,7 +68,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         
     def testPostedPosting( self ):
         '''Test the case when a posted event itself posts an event.'''
-        dyn = Dynamics()
+        dyn = Dynamics(Process())
 
         # event function builder, will increment the shared
         # value when fired and also post a further event

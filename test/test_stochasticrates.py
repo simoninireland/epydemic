@@ -34,8 +34,8 @@ class DummyLocus(Locus):
 
 class StochasticDynamicsFixedRates(StochasticDynamics):
 
-    def __init__( self ):
-        super(StochasticDynamicsFixedRates, self).__init__()
+    def __init__(self):
+        super(StochasticDynamicsFixedRates, self).__init__(Process())
 
     def setUp( self, params ):
         ecr = params['eventCountRate']

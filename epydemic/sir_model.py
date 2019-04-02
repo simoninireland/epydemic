@@ -1,6 +1,6 @@
 # SIR as a compartmented model
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -52,18 +52,17 @@ class SIR(CompartmentedModel):
         self.addCompartment(self.INFECTED, pInfected)
         self.addCompartment(self.REMOVED, 0.0)
 
-        self.addLocus(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
-        self.addLocus(self.INFECTED)
+        self.addEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
+        self.addNodesInCompartment(self.INFECTED)
 
-        self.addEvent(self.INFECTED, pRemove, lambda d, t, g, e: self.remove(d, t, g, e))
-        self.addEvent(self.SI, pInfect, lambda d, t, g, e: self.infect(d, t, g, e))
+        self.addEventPerElement(self.SI, pInfect, self.infect)
+        self.addEventPerElement(self.INFECTED, pRemove, self.remove)
 
-    def infect( self, dyn, t, g, e ):
+    def infect( self, t, g, e ):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
 
-        :param dyn: the dynamics
         :param t: the simulation time (unused)
         :param g: the network
         :param e: the edge transmitting the infection, susceptible-infected'''
@@ -71,11 +70,10 @@ class SIR(CompartmentedModel):
         self.changeCompartment(g, n, self.INFECTED)
         self.markOccupied(g, e)
 
-    def remove( self, dyn, t, g, n ):
+    def remove( self, t, g, n ):
         '''Perform a removal event. This changes the compartment of
         the node to :attr:`REMOVED`.
 
-        :param dyn: the dynamics
         :param t: the simulation time (unused)
         :param g: the network
         :param n: the node'''

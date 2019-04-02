@@ -1,6 +1,6 @@
 # Networks dynamics simulation base class
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -19,18 +19,19 @@
 
 import epyc
 import networkx
-from heapq import *
 
 
 class Dynamics(epyc.Experiment, object):
-    '''A dynamical process over a network. This is the abstract base class
+    '''An abstract simulation framework for running a process over a network.
+    This is the abstract base class
     for implementing different kinds of dynamics as computational experiments
-    suitable for running under. Sub-classes provide synchronous and stochastic
+    suitable for running under `epyc`. Sub-classes provide synchronous and stochastic
     (Gillespie) simulation dynamics.
 
-    The dynamics optionally takes a parameter providing a prototype network
-    that will be used for each experimental run.
+    The dynamics actually runs a network process provides as a :class:`Process`
+    object. It optionally takes a prototype network over which the process runs.
 
+    :param p: network process to run
     :param g: prototype network (optional)'''
 
     # Additional metadata elements
@@ -40,12 +41,12 @@ class Dynamics(epyc.Experiment, object):
     # the default maximum simulation time
     DEFAULT_MAX_TIME = 20000      #: Default maximum simulation time.
     
-    def __init__( self, g = None ):
+    def __init__( self, p, g = None ):
         super(Dynamics, self).__init__()
         self._graphPrototype = g                 # prototype copied for each run
         self._graph = None                       # working copy of prototype
+        self._process = p                        # network process to run
         self._maxTime = self.DEFAULT_MAX_TIME    # time allowed until equilibrium
-        self._posted = []                        # pri-queue of fixed-time events
 
     def network( self ):
         '''Return the network this dynamics is running over.
@@ -73,19 +74,18 @@ class Dynamics(epyc.Experiment, object):
 
         param: t: the maximum time'''
         self._maxTime = t
-        
-    def at_equilibrium( self, t ):
-        '''Test whether the model is an equilibrium. Override this method to provide
-        alternative and/or faster simulations.
-        
-        :param t: the current simulation timestep
-        :returns: True if we're done'''
-        return (t >= self._maxTime)
 
-    def setUp( self, params ): 
-        '''Before each experiment, create a new network to work with.
+    def process(self):
+        '''Return the network process being run.
 
-        :param params: parameters of the experiment'''
+        :returns: the process'''
+        return self._process
+
+    def setUp(self, params):
+        '''Set up the experiment for a run. This performs the default action, then
+        copies the prototype network and builds the network process that the dynamics is to run.
+
+        :params params: the experimental parameters'''
 
         # perform the default setup
         super(Dynamics, self).setUp(params)
@@ -93,10 +93,13 @@ class Dynamics(epyc.Experiment, object):
         # make a copy of the network prototype
         self._graph = self.networkPrototype().copy()
 
-        # empty the queue of posted events
-        self._posted = []
+        # build the process
+        self._process.reset()
+        self._process.setNetwork(self.network())
+        self._process.build(params)
+        self._process.setUp(params)
 
-    def tearDown( self ):
+    def tearDown(self):
         '''At the end of each experiment, throw away the copy.'''
 
         # perform the default tear-down
@@ -106,75 +109,21 @@ class Dynamics(epyc.Experiment, object):
         self._graph = None
         self._posted = []
 
-    def eventDistribution( self, t ):
-        '''Return the event distribution, a sequence of (l, p, f) triples
-        where l is the :term:`locus` of the event, p is the probability of an
-        event occurring, and f is the :term:`event function` called to make it
-        happen. This method must be overridden in sub-classes.
+    def experimentalResults(self):
+        '''Report the process' experimental results.
+
+        :returns: the results of the process'''
+        return self._process.results()
+
+    def at_equilibrium( self, t ):
+        '''Test whether the model is an equilibrium. Override this method to provide
+        alternative and/or faster simulations.
         
-        It is perfectly fine for an event to have a zero probability. The probabilities
-        will also generally be independent, and so don't have to sum to one.
+        :param t: the current simulation timestep
+        :returns: True if we're done'''
+        return (t >= self._maxTime)
 
-        :param t: current time
-        :returns: the event distribution'''
-        raise NotImplementedError('eventDistribution')
-
-    def postEvent( self, t, g, e, ef ):
-        '''Post an event to happen at time t. The :term:`event function` should
-        take the dynamics, simulation time, network, and element for the event.
-        At time t it is called with the given network and element.
-
-        :param t: the current time
-        :param g: the network
-        :param e: the element (node or edge) on which the event occurs
-        :param ef: the event function'''
-        heappush(self._posted, (t, (lambda: ef(self, t, g, e))))
-
-    def _nextPendingEventBefore( self, t ):
-        '''Return the next pending event to occur at or before time t.
-
-        :param t: the current time
-        :returns: a pending event function or None'''
-        if len(self._posted) > 0:
-            # we have events, grab the soonest
-            (et, pef) = heappop(self._posted)
-            if et <= t:
-                # event should have occurred, return it
-                return pef
-            else:
-                # this (and therefore all further events) are in the future, put it back
-                heappush(self._posted, (et, pef))
-                return None
-        else:
-            # we don't have any events
-            return None
-        
-    def pendingEvents( self, t ):
-        '''Retrieve any :term:`posted event` scheduled to be fired at or
-        before time t. The pending events are returned in the form of
-        zero-argument functions that can simply be called to fire
-        the corresponding event. The events are returned as a list with the
-        earliest-posted event first.
-
-        Be aware that running the returned events in order may not be enough to
-        accurately run the simulation in the case where firing an
-        event causes another event to be posted before t. It may be
-        easier to use :meth:`runPendingEvents` to run all pending
-        events, which handles this case automatically.
-
-        :param t: the current time
-        :returns: a (possibly empty) list of pending event functions'''
-        pending = []
-        while True:
-            pef = self._nextPendingEventBefore(t)
-            if pef is None:
-                # no more events pending, return those we've got
-                return pending
-            else:
-                # store the pending event function
-                pending.append(pef)
-
-    def runPendingEvents( self, t):
+    def runPendingEvents(self, t):
         '''Retrieve and fire any pending events at time t. This method handles
         the case where firing an event posts another event that needs to be run
         before other already-posted events coming before time t: in other words,
@@ -184,7 +133,7 @@ class Dynamics(epyc.Experiment, object):
         :returns: the number of events fired'''
         n = 0
         while True:
-            pef = self._nextPendingEventBefore(t)
+            pef = self._process.nextPendingEventBefore(t)
             if pef is None:
                 # no more pending events, return however many we've fired already
                 return n
@@ -192,4 +141,4 @@ class Dynamics(epyc.Experiment, object):
                 # fire the event
                 pef()
                 n = n + 1
-                
+

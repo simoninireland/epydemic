@@ -51,11 +51,11 @@ class SIS(CompartmentedModel):
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
 
-        self.addLocus(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
-        self.addLocus(self.INFECTED)
+        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
+        self.trackNodesInCompartment(self.INFECTED)
 
-        self.addEvent(self.INFECTED, pRemove, lambda d, t, g, e: self.remove(d, t, g, e))
-        self.addEvent(self.SI, pInfect, lambda d, t, g, e: self.infect(d, t, g, e))
+        self.addEventAtLocus(self.INFECTED, pRemove, self.remove)
+        self.addEventAtLocus(self.SI, pInfect, self.infect)
 
     def infect( self, dyn, t, g, e ):
         '''Perform an infection event. This changes the compartment of
