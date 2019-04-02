@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017--2018 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -34,15 +34,15 @@ SOURCES_CODE = \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
 	epydemic/stochasticdynamics.py \
-	epydemic/compartmentedmodel.py \
 	epydemic/loci.py \
-	epydemic/compartmentedsynchronousdynamics.py \
-	epydemic/compartmentedstochasticdynamics.py \
+	epydemic/process.py \
+	epydemic/compartmentedmodel.py \
 	epydemic/sir_model.py \
 	epydemic/sir_model_fixed_recovery.py \
 	epydemic/sis_model.py \
 	epydemic/sis_model_fixed_recovery.py \
-	epydemic/sirs_model.py
+	epydemic/sirs_model.py \
+	epydemic/adddelete.py
 
 SOURCES_TESTS = \
 	test/__init__.py \
@@ -66,7 +66,9 @@ SOURCES_DOCUMENTATION = \
 	doc/install.rst \
 	doc/start.rst \
 	doc/reference.rst \
+	doc/simulation.rst \
 	doc/cookbook.rst \
+	doc/cookbook/use-standard-model.rst \
 	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/powerlaw-cutoff.png \
@@ -170,13 +172,14 @@ help:
 
 # Run tests for all versions of Python we're interested in
 test: env setup.py
-	$(ACTIAVTE) && $(RUN_TESTS)
+	$(ACTIVATE) && $(RUN_TESTS)
 
 # Run coverage checks over the test suite
 coverage: env
 	$(ACTIVATE) && $(RUN_COVERAGE)
 
 # Build the API documentation using Sphinx
+.PHONY: doc
 doc: $(SOURCES_DOCUMENTATION) $(SOURCES_DOC_CONF)
 	$(ACTIVATE) && $(CHDIR) doc && $(RUN_SPHINX_HTML)
 
