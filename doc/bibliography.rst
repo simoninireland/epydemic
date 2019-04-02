@@ -46,10 +46,3 @@ Physical Review E **74**. September 2006.
 M.E.J. Newman. `Spread of epidemic disease on networks
 <http://dx.doi.org/10.1103/PhysRevE.66.016128>`_. Physical Review E
 **66**. July 2002.
-
-.. _MGN06:
-
-Cristopher Moore, Gourab Ghoshal, and M.E.J. Newman. `Exact solutions for models of evolving networks with addition
-and deletion of nodes <https://doi.org/10.1103/PhysRevE.74.036121>`_. Physical Review E **74**. September 2006.
-
-

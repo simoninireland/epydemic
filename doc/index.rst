@@ -63,6 +63,8 @@ Current features
 * Susceptible-Infected-Removed (:term:`SIR`) and Susceptible-Infected-Susceptible (:term:`SIS`) models
   built-in, with either stochastic or fixed recovery times
 
+* Addition-deletion process to model natural birth and death
+
 * Integrated with ``epyc``'s labs and experiments, including execution in parallel
   on compute clusters
 

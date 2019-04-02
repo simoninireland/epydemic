@@ -9,36 +9,46 @@ Basic concepts and classes
 .. toctree::
    :maxdepth: 2
 
-   networkdynamics
-   compartmentedmodel
+   process
    loci
 
 
-Dynamics
---------
+Dynamics: how processes are simulated
+-------------------------------------
 
 .. toctree::
    :maxdepth: 2
 
+   networkdynamics
    synchronousdynamics
    stochasticdynamics
-   compartmenteddynamics
 
 
-Reference epidemic processes
-----------------------------
+Reference epidemic disease processes
+------------------------------------
 
 .. toctree::
    :maxdepth: 2
 
+   compartmentedmodel
    sir
    sis
 
-Process variants
-----------------
+
+Epidemic disease process variants
+---------------------------------
 
 .. toctree::
    :maxdepth: 2
 
    sir_fixed_recovery
    sis_fixed_recovery
+
+
+Other network processes
+-----------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   adddelete
