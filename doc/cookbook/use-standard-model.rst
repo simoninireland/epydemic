@@ -54,7 +54,7 @@ realistic, but for now we'll just use an ER random graph model:
 
     g = networkx.erdos_renyi_graph(N, (kmean + 0.0) / N)
 
-We can now perform a single run of the simulation:
+We can now perform a single run of the simulation, using :term:`stochastic dynamics`:
 
 .. code-block:: python
 
