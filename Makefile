@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.6.1
+VERSION = 0.99.1
 
 
 # ----- Sources -----
@@ -50,10 +50,10 @@ SOURCES_TESTS = \
 	test/test_stochasticrates.py \
 	test/test_compartmentedmodel.py \
 	test/compartmenteddynamics.py \
-	test/test_compartmentedstochasticrates.py \
 	test/test_sir.py \
 	test/test_sis.py \
-	test/test_fixed_recovery.py
+	test/test_fixed_recovery.py \
+	test/test_adddelete.py
 TESTSUITE = test
 
 SOURCES_TUTORIAL = doc/epydemic.ipynb
@@ -61,19 +61,15 @@ SOURCES_DOC_CONF = doc/conf.py
 SOURCES_DOC_BUILD_DIR = doc/_build
 SOURCES_DOC_BUILD_HTML_DIR = $(SOURCES_DOC_BUILD_DIR)/html
 SOURCES_DOC_ZIP = epydemic-doc-$(VERSION).zip
-SOURCES_DOCUMENTATION = \
+SOURCES_DOC_GENERAL = \
 	doc/index.rst \
 	doc/install.rst \
 	doc/start.rst \
 	doc/reference.rst \
 	doc/simulation.rst \
-	doc/cookbook.rst \
-	doc/cookbook/use-standard-model.rst \
-	doc/cookbook/build-network-in-experiment.rst \
-	doc/cookbook/population-powerlaw-cutoff.rst \
-	doc/cookbook/powerlaw-cutoff.png \
 	doc/bibliography.rst \
-	doc/glossary.rst \
+	doc/glossary.rst
+SOURCES_DOC_SOURCES = \
 	doc/networkdynamics.rst \
 	doc/synchronousdynamics.rst \
 	doc/stochasticdynamics.rst \
@@ -83,7 +79,18 @@ SOURCES_DOCUMENTATION = \
 	doc/sir.rst \
 	doc/sis.rst \
 	doc/sir_fixed_recovery.rst \
-	doc/sis_fixed_recovery.rst
+	doc/sis_fixed_recovery.rst \
+	doc/adddelete.rst
+SOURCES_DOC_COOKBOOK = \
+	doc/cookbook.rst \
+	doc/cookbook/use-standard-model.rst \
+	doc/cookbook/build-network-in-experiment.rst \
+	doc/cookbook/population-powerlaw-cutoff.rst \
+	doc/cookbook/powerlaw-cutoff.png
+SOURCES_DOCUMENTATION = \
+	$(SOURCES_DOC_GENERAL) \
+	$(SOURCES_DOC_SOURCES) \
+	$(SOURCES_DOC_COOKBOOK)
 
 SOURCES_UTILS = \
     utils/make-powerlaw-cutoff.py
