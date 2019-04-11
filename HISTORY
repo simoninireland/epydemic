@@ -1,6 +1,9 @@
-Version 0.6.1
+Version 0.99.1 (v1.0 release candidate 1) 2019-04-11
 
    - Added SIRS model of partial-in-time immunity
+   - Seperated process form dynamics
+   - Fixed rates
+   - Added cookbook of recipes for use
 
 Version 0.5.1 2018-07-27
 
