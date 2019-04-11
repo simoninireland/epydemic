@@ -51,14 +51,14 @@ class SynchronousDynamics(Dynamics):
         t = 0
         events = 0
         timestepEvents = 0
-        while not self.at_equilibrium(t):
+        while not proc.atEquilibrium(t):
             # fire any events posted for at or before this time
             nev = self.runPendingEvents(t)
             
             # run through all the events in the distribution
             dist = proc.perElementEventDistribution(t)
             for (l, p, ef) in dist:
-                if p > 0.0:
+                if (len(l) > 0) and (p > 0.0):
                     # run through every possible element on which this event may occur
                     for e in copy(l.elements()):
                         # test for occurrance of the event on this element
@@ -70,7 +70,7 @@ class SynchronousDynamics(Dynamics):
             # run through all the fixed-rate events for this timestep
             dist = proc.fixedRateEventDistribution(t)
             for (l, p, ef) in dist:
-                if p > 0.0:
+                if (len(l) > 0) and (p > 0.0):
                     if numpy.random.random() <= p:
                         # yes, perform the event on an element drawn at random
                         e = l.draw()
@@ -85,9 +85,6 @@ class SynchronousDynamics(Dynamics):
 
             # advance to the next timestep
             t = t + 1
-
-        # run any events posted for before the maximum simulation time
-        self.runPendingEvents(self._maxTime)
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

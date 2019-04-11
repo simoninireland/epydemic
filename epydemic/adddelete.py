@@ -34,8 +34,8 @@ class AddDelete(Process):
     P_DELETE = "pDelete"  #: Parameter for the node deletion probability
     DEGREE = "addDegree"  #: Degree of newly-added nodes
 
-    SINGLETON = "singleton"  #: Name of the locus capturing all the nodes
     NODES = "allnodes"       #: Name of the locus holding all nodes in the network
+    EDGES = "alledges"       #: Name of the locus holding all edgesin the network
 
     def __init__(self):
         super(AddDelete, self).__init__()
@@ -52,13 +52,20 @@ class AddDelete(Process):
         # stash the degree of new nodes for the events
         self._c = params[self.DEGREE]
 
-        # add events, which occur at constant probability regardless of the network size
-        self.trackNetwork(self.SINGLETON)
-        self.addEvent(self.SINGLETON, pAdd, self.add)
-        self.addEvent(self.SINGLETON, pDelete, self.remove)
+        # keep track of all the nodes and edges
+        self.addLocus(self.NODES)
+        self.addLocus(self.EDGES)
 
-        # also keep track of all the nodes
-        self.trackAllNodes(self.NODES, self.network())
+        # add events occurring at constant probability regardless of the network size
+        self.addFixedRateEvent(self.NODES, pAdd, self.add)
+        self.addFixedRateEvent(self.NODES, pDelete, self.remove)
+
+    def setUp(self, params):
+        super(AddDelete, self).setUp(params)
+
+        g = self.network()
+        for n in g.nodes():
+            self[self.NODES].enterHandler(g, n)
 
     def addNode(self):
         '''Add a new node to the network.
@@ -75,7 +82,7 @@ class AddDelete(Process):
         g.add_node(i)
 
         # add the new node to the all-nodes locus
-        self[self.NODES].enterHandler(g, n)
+        self[self.NODES].enterHandler(g, i)
 
         return i
 
@@ -84,19 +91,16 @@ class AddDelete(Process):
 
         :param n: one node
         :param m: the other node'''
-        self.network().add_edge(n, m)
+        g = self.network()
+        g.add_edge(n, m)
 
     def removeNode(self, n):
         '''Remove the given node and all its incident edges
 
         :param n: the node to remove'''
-
-        # remove the node from the network
-        self.network().remove_node(n)
-
-        # remove the node from the all-nodes locus
+        g = self.network()
+        g.remove_node(n)
         self[self.NODES].leaveHandler(g, n)
-
 
     def add(self, t, g, e):
         '''Add a node to the network, connecting it at random to
@@ -113,11 +117,11 @@ class AddDelete(Process):
         # link to c other nodes (not including i) with uniform probability
         ns = self[self.NODES]
         es = set()
-        for m in xrange(self._c):
+        for m in range(self._c):
             # a probably unnecessary test for parallel edges and self-loops
             while (True):
                 j = ns.draw()
-                if (i <> j) and (j not in es):
+                if (i != j) and (j not in es):
                     break
             es.add(j)
         for j in es:
@@ -128,5 +132,5 @@ class AddDelete(Process):
 
         :param t: the current simulation time (not used)
         :param g: the network
-        :param e: the node to be removed'''
-        self.removeNode(e)
+        :param n: the node to be removed'''
+        self.removeNode(n)

@@ -36,12 +36,6 @@ class FixedRecoveryTest(unittest.TestCase):
         self._params[SIR_FixedRecovery.T_INFECTED] = 1
         self._network = networkx.erdos_renyi_graph(1000, 0.005)
 
-        # lab run
-        self._lab = epyc.Lab()
-        self._lab[SIR_FixedRecovery.P_INFECT] = [ 0.1, 0.3 ]
-        self._lab[SIR_FixedRecovery.P_INFECTED] = [ 0.01 ]
-        self._lab[SIR_FixedRecovery.T_INFECTED] = [ 0.5, 1, 2 ]
-
     def testRunSingleSIRSynchronous( self ):
         '''Test a single run of a fixed-period SIR under synchronous dynamics.'''
         e = SynchronousDynamics(SIR_FixedRecovery(), self._network)

@@ -58,6 +58,8 @@ class Locus(object):
         draw that is equiprobable across all the elements.
 
         :returns: a random element at the locus'''
+        if len(self) == 0:
+            raise ValueError('Trying to draw element from empty locus {n}'.format(n = self.name()))
         e = (random.sample(self.elements(), 1))[0]
         return e
 

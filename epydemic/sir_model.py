@@ -52,8 +52,8 @@ class SIR(CompartmentedModel):
         self.addCompartment(self.INFECTED, pInfected)
         self.addCompartment(self.REMOVED, 0.0)
 
-        self.addEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
-        self.addNodesInCompartment(self.INFECTED)
+        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
+        self.trackNodesInCompartment(self.INFECTED)
 
         self.addEventPerElement(self.SI, pInfect, self.infect)
         self.addEventPerElement(self.INFECTED, pRemove, self.remove)

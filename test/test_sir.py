@@ -45,9 +45,6 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         # model
         self._model = SIR()
 
-        # no maximum time needed
-        self._maxTime = None
-
     def testEpidemic( self ):
         '''Test we get an epidemic'''
         self._lab = epyc.Lab()

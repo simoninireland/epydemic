@@ -54,7 +54,7 @@ class CompartmentedModelTest(unittest.TestCase):
                       pRemove = 0.05)
         m.build(params)
         with self.assertRaises(Exception):
-            m.trackNodesBetweenCompartments(SIR.SUSCEPTIBLE, SIR.INFECTED, name = SIR.SI)      # part of SIR already
+            m.trackEdgesBetweenCompartments(SIR.SUSCEPTIBLE, SIR.INFECTED, name = SIR.SI)      # part of SIR already
 
     def testLocusNames(self):
         '''Test that a locus gets an automatic name.'''
@@ -64,7 +64,7 @@ class CompartmentedModelTest(unittest.TestCase):
         m.trackNodesInCompartment(SIR.REMOVED)
         self.assertIn(SIR.REMOVED, m._loci.keys())
         m.trackEdgesBetweenCompartments(SIR.REMOVED, SIR.SUSCEPTIBLE)
-        self.assertIn("{l}{r}".format(l = SIR.REMOVED, r = SIR.SUSCEPTIBLE), m._loci.keys())
+        self.assertIn("{l}-{r}".format(l = SIR.REMOVED, r = SIR.SUSCEPTIBLE), m._loci.keys())
 
     def testLoci( self ):
         '''Test we can populate loci correctly.'''
@@ -108,6 +108,7 @@ class CompartmentedModelTest(unittest.TestCase):
         m.markOccupied(g, (1, 4))
 
         # check skeletonisation
-        g2 = m.skeletonise(g)
+        m.setNetwork(g)
+        g2 = m.skeletonise()
         six.assertCountEqual(self, g2.edges(), [(1, 2), (1, 4)])
         six.assertCountEqual(self, g2.nodes(), [ 1, 2, 3, 4])

@@ -1,6 +1,6 @@
 # Test stochastic dynamics generates believable event traces
 #
-# Copyright (C) 2017--18 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -20,38 +20,36 @@
 from __future__ import print_function
 import epyc
 from epydemic import *
+import networkx
 import unittest
 import six
 
 class DummyLocus(Locus):
+    def __init__(self, name):
+        super(DummyLocus, self).__init__(name)
 
-    def draw( self ):
+    def draw(self):
         return None
 
     def __len__(self):
         return 1
 
 
-class StochasticDynamicsFixedRates(StochasticDynamics):
-
+class FixedRatesCounter(Process):
     def __init__(self):
-        super(StochasticDynamicsFixedRates, self).__init__(Process())
+        super(FixedRatesCounter, self).__init__()
 
-    def setUp( self, params ):
+    def build( self, params ):
         ecr = params['eventCountRate']
         self._eventCount = [ 0 ] * len(ecr)
-        self._eventHandlers = [ (DummyLocus(i), ecr[i], self._event(i)) for i in range(len(ecr)) ]
+        for i in range(len(ecr)):
+            l = self.addLocus(i, DummyLocus(i))
+            self.addFixedRateEvent(l, ecr[i], lambda t, g, e: self.happened(i, t, g, e))
 
-    def eventRateDistribution( self, t ):
-        return self._eventHandlers
-
-    def _event(self, i):
-        return (lambda d, t, g, e: self.event(i, d, t, g, e))
-
-    def event( self, i, d, t, g, e ):
+    def happened( self, i, t, g, e ):
         self._eventCount[i] = self._eventCount[i] + 1
 
-    def experimentalResults(self):
+    def results(self):
         rc = dict()
         rc['eventCount'] = self._eventCount
         return rc
@@ -60,17 +58,18 @@ class StochasticDynamicsFixedRates(StochasticDynamics):
 class StochasticRatesTest(unittest.TestCase):
 
     def setUp(self):
-        self._dyn = StochasticDynamicsFixedRates()
+        self._dyn = StochasticDynamics(FixedRatesCounter(), networkx.erdos_renyi_graph(100, 0.01))
+        self._maxTime = 20000
 
     def _checkRates(self, rc):
-        eps = self._dyn._maxTime * 0.01
+        eps = self._maxTime * 0.01                                # allow 1% deviation
         ecr = rc[epyc.Experiment.PARAMETERS]['eventCountRate']
         ecs = rc[epyc.Experiment.RESULTS]['eventCount']
         for i in range(0, len(ecs)):
             if ecr[i] == 0:
                 self.assertEqual(ecs[i], 0)
             else:
-                self.assertAlmostEqual(((ecs[i] + 0.0) / ecr[i]) / self._dyn._maxTime, 1.0, delta = eps)
+                self.assertAlmostEqual(((ecs[i] + 0.0) / ecr[i]) / self._maxTime, 1.0, delta = eps)
 
     def testSameRates(self):
         '''Test same rates are generated in the correct proportions.'''

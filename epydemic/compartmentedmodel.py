@@ -125,14 +125,16 @@ class CompartmentedModel(Process):
         :param p: the initial occupancy probability (defaults to  0.0)'''
         self._compartments.append((c, p))
 
-    def addNodesInCompartment(self, c, name = None):
+    def trackNodesInCompartment(self, c, name = None):
         '''Add a locus tracking nodes in a given compartment.
 
         :param c: the compartment to track
-        :param name: (optional) the name of the locus'''
+        :param name: (optional) the name of the locus (defaults to the compartment name)'''
         if name is None:
             name = c
-        if name not in self:
+        if name in self:
+            raise NameError('Locus {c} already exists in model'.format(c = name))
+        else:
             # add locus
             locus = CompartmentedNodeLocus(name, c)
             self.addLocus(name, locus)
@@ -141,15 +143,17 @@ class CompartmentedModel(Process):
             self._addHandlers(c, lambda g, n: locus.leaveHandler(g, n),
                                  lambda g, n: locus.enterHandler(g, n))
 
-    def addEdgesBetweenCompartments(self, l, r, name = None):
+    def trackEdgesBetweenCompartments(self, l, r, name = None):
         '''Add a locus to track edges with endpoint nodes in the given compartments.
 
         :param l: the compartment of the left node
         :param r: the compartment of the right node
-        :param name: (optional) the name of the locus'''
+        :param name: (optional) the name of the locus (defaults to a combination of the two compartment names)'''
         if name is None:
-            name = '{l}{r}'.format(l = l, r = r)
-        if name not in self:
+            name = '{l}-{r}'.format(l = l, r = r)
+        if name in self:
+            raise NameError('Locus {c} already exists in model'.format(c = name))
+        else:
             # add locus
             locus = CompartmentedEdgeLocus(name, l, r)
             self.addLocus(name, locus)

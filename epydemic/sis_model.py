@@ -28,8 +28,8 @@ class SIS(CompartmentedModel):
     # the model parameters
     P_INFECTED = 'pInfected'  #: Parameter for probability of initially being infected.
     P_INFECT = 'pInfect'      #: Parameter for probability of infection on contact.
-    P_REMOVE = 'pRemove'      #: Parameter for probability of removal (recovery).
-    
+    P_RECOVER = 'pRecover'    #: Parameter for probability of recovery (reeturning to susceptible).
+
     # the possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE = 'S'         #: Compartment for nodes susceptible to infection.
     INFECTED = 'I'            #: Compartment for nodes infected.
@@ -46,7 +46,7 @@ class SIS(CompartmentedModel):
         :param params: the model parameters'''
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
-        pRemove = params[self.P_REMOVE]
+        pRecover = params[self.P_RECOVER]
 
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
@@ -54,15 +54,14 @@ class SIS(CompartmentedModel):
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
         self.trackNodesInCompartment(self.INFECTED)
 
-        self.addEventAtLocus(self.INFECTED, pRemove, self.remove)
-        self.addEventAtLocus(self.SI, pInfect, self.infect)
+        self.addEventPerElement(self.INFECTED, pRecover, self.recover)
+        self.addEventPerElement(self.SI, pInfect, self.infect)
 
-    def infect( self, dyn, t, g, e ):
+    def infect( self, t, g, e ):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
 
-        :param dyn: the dynamics
         :param t: the simulation time (unused)
         :param g: the network
         :param e: the edge transmitting the infection, susceptible-infected'''
@@ -70,11 +69,10 @@ class SIS(CompartmentedModel):
         self.changeCompartment(g, n, self.INFECTED)
         self.markOccupied(g, e)
 
-    def remove( self, dyn, t, g, n ):
-        '''Perform a removal event. This changes the compartment of
+    def recover( self, t, g, n ):
+        '''Perform a recovery event. This changes the compartment of
         the node back to :attr:`SUSCEPTIBLE`, allowing re-infection.
 
-        :param dyn: the dynamics
         :param t: the simulation time (unused)
         :param g: the network
         :param n: the node'''

@@ -49,15 +49,14 @@ class SIR_FixedRecovery(SIR):
         self.addCompartment(self.REMOVED, 0.0)
 
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
-        self.addEventAtLocus(self.SI, pInfect, self.infect)
+        self.addFixedRateEvent(self.SI, pInfect, self.infect)
 
-    def setUp( self, dyn, params ):
+    def setUp( self, params ):
         '''After setting up as normal, post remove events for any nodes that are
         initially infected.
 
-        :param dyn: the dynamics
         :param params: the simulation parameters'''
-        super(SIR_FixedRecovery, self).setUp(dyn, params)
+        super(SIR_FixedRecovery, self).setUp(params)
 
         # traverse the set of initially-infected nodes
         tInfected = params[self.T_INFECTED]
@@ -76,12 +75,12 @@ class SIR_FixedRecovery(SIR):
         :param t: the simulation time
         :param g: the network
         :param e: the edge transmitting the infection, susceptible-infected'''
-        (n, m) = e
 
         # infect as normal
         super(SIR_FixedRecovery, self).infect(t, g, e)
 
         # record the infection time
+        (n, m) = e
         g.node[n][self.INFECTION_TIME] = t
         
         # post the removal event for the appropriate time in the future

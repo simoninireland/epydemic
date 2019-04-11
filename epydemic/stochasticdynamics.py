@@ -46,7 +46,7 @@ class StochasticDynamics(Dynamics):
         proc = self.process()
         t = 0
         events = 0
-        while not self.at_equilibrium(t):
+        while not proc.atEquilibrium(t):
             # pull the transition dynamics at this timestep
             transitions = proc.eventRateDistribution(t)
 
@@ -101,9 +101,6 @@ class StochasticDynamics(Dynamics):
             
                 # increment the event counter    
                 events = events + 1
-
-        # run any remaining posted events
-        self.runPendingEvents(self._maxTime)
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

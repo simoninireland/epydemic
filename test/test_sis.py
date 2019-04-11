@@ -33,17 +33,17 @@ class SISTest(unittest.TestCase, CompartmentedDynamicsTest):
         self._params = dict()
         self._params[SIS.P_INFECT] = 0.1
         self._params[SIS.P_INFECTED] = 0.01
-        self._params[SIS.P_REMOVE] = 0.05
+        self._params[SIS.P_RECOVER] = 0.05
         self._network = networkx.erdos_renyi_graph(1000, 0.005)
 
         # lab run
         self._lab = epyc.Lab()
         self._lab[SIS.P_INFECT] = [ 0.1, 0.3 ]
         self._lab[SIS.P_INFECTED] = 0.01
-        self._lab[SIS.P_REMOVE] = [ 0.05, 1 ]
+        self._lab[SIS.P_RECOVER] = 0.05
 
         # model
         self._model = SIS()
 
         # maximum time needed as disease may be endemic
-        self._maxTime = 2000
+        self._model.setMaximumTime(200)

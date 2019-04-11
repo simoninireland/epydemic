@@ -38,15 +38,11 @@ class Dynamics(epyc.Experiment, object):
     TIME = 'simulation_time'      #: Metadata element holding the logical simulation end-time.
     EVENTS = 'simulation_events'  #: Metadata element holding the number of events that happened.
 
-    # the default maximum simulation time
-    DEFAULT_MAX_TIME = 20000      #: Default maximum simulation time.
-    
     def __init__( self, p, g = None ):
         super(Dynamics, self).__init__()
         self._graphPrototype = g                 # prototype copied for each run
         self._graph = None                       # working copy of prototype
         self._process = p                        # network process to run
-        self._maxTime = self.DEFAULT_MAX_TIME    # time allowed until equilibrium
 
     def network( self ):
         '''Return the network this dynamics is running over.
@@ -68,13 +64,6 @@ class Dynamics(epyc.Experiment, object):
         :returns: the prototype network'''
         return self._graphPrototype
     
-    def setMaximumTime( self, t ):
-        '''Set the maximum default simulation time. The default is given
-        by :attr:`DEFAULT_MAX_TIME`.
-
-        param: t: the maximum time'''
-        self._maxTime = t
-
     def process(self):
         '''Return the network process being run.
 
@@ -114,14 +103,6 @@ class Dynamics(epyc.Experiment, object):
 
         :returns: the results of the process'''
         return self._process.results()
-
-    def at_equilibrium( self, t ):
-        '''Test whether the model is an equilibrium. Override this method to provide
-        alternative and/or faster simulations.
-        
-        :param t: the current simulation timestep
-        :returns: True if we're done'''
-        return (t >= self._maxTime)
 
     def runPendingEvents(self, t):
         '''Retrieve and fire any pending events at time t. This method handles

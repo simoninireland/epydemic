@@ -29,17 +29,29 @@ class Process(object):
     attaching them to the network in different ways.
     '''
 
+    # defaults
+    DEFAULT_MAX_TIME = 20000      #: Default maximum simulation time.
+
+
     def __init__( self ):
         super(Process, self).__init__()
+
+        # set the default maximum time, which persists across runs of the process
+        self._maxTime = self.DEFAULT_MAX_TIME
+
+        # reset this instance
         self.reset()
+
+
+    # ---------- Setup and initialisation ----------
 
     def reset( self ):
         '''Reset the process ready to be built.'''
-        self._loci = dict()                      # loci for events
-        self._g = None                           # working network
-        self._perElementEvents = []              # events that occur per-element
-        self._perLocusEvents = []                # events that occur per-locus
-        self._posted = []                        # pri-queue of fixed-time events
+        self._loci = dict()                          # loci for events
+        self._g = None                               # working network
+        self._perElementEvents = []                  # events that occur per-element
+        self._perLocusEvents = []                    # events that occur per-locus
+        self._posted = []                            # pri-queue of fixed-time events
 
     def build( self, params ):
         '''Build the process model. This must be overridden by sub-classes, and should
@@ -57,13 +69,6 @@ class Process(object):
         :param params: the simulation parameters'''
         pass
 
-    def results( self ):
-        '''Create  and return an empty dict to be filled with experimental results.
-        Sub-classes should extend this method to add results to the dict.
-
-        :returns: a dict for experimental results'''
-        return dict()
-
     def setNetwork(self, g):
         '''Set the network the process is running over.
 
@@ -76,19 +81,46 @@ class Process(object):
         :returns: the network'''
         return self._g
 
-    def locus(self, n):
-        '''Return the named locus.
+    def setMaximumTime(self, t):
+        '''Set the maximum default simulation time. The default is given by :attr:`DEFAULT_MAX_TIME`.
+        This is used by :meth:`atEquilibrium` as the default way to determine equilibrium.
 
-        :param n: the locus name
-        :returns: the locus'''
-        return self._loci[n]
+        Setting the maximum time persists across runs of the process, and isn't reset to its
+        default by calling :meth:`reset`.
 
-    def __getitem__(self, n):
-        '''Return the given locus. Equivalent to :meth:`locus`.
+        :param t: the maximum simulation time'''
+        self._maxTime = t
 
-        :param n: the locus name
-        :returns: the locus'''
-        return self.locus(n)
+    def maximumTime(self):
+        '''Return the maximum assumed simulation time.
+
+        :returns: the maximum simulation time'''
+        return self._maxTime
+
+
+   # ---------- Termination and results ----------
+
+    def atEquilibrium(self, t):
+        '''Test whether the process is an equilibrium. The default simply checks whether
+        the simulation time exceeds the maximum given by :meth:`setMaximumTime`, which
+        defaults to an arbitrary value given by :attr:`DEFAULT_MAX_TIME`.
+        Sub-classes may override this to provide a more sensible definition: in many
+        cases it makes sense to keep calling this method as part of any more advanced
+        test, so as to cut-off runaway processes.
+
+        :param t: the current simulation time
+        :returns: True if the proceess is now at equilibrium'''
+        return (t >= self.maximumTime())
+
+    def results(self):
+       '''Create  and return an empty dict to be filled with experimental results.
+       Sub-classes should extend this method to add results to the dict.
+
+       :returns: an empty dict for experimental results'''
+       return dict()
+
+
+   # ---------- Loci for events ----------
 
     def addLocus(self, n, l = None):
         '''Add a named locus.
@@ -111,6 +143,20 @@ class Process(object):
         :returns: the locus'''
         return self.addLocus(n, l)
 
+    def locus(self, n):
+        '''Return the named locus.
+
+        :param n: the locus name
+        :returns: the locus'''
+        return self._loci[n]
+
+    def __getitem__(self, n):
+        '''Return the given locus. Equivalent to :meth:`locus`.
+
+        :param n: the locus name
+        :returns: the locus'''
+        return self.locus(n)
+
     def __contains__(self, l):
         '''Check whether the given locus is defined for the process.
 
@@ -123,13 +169,16 @@ class Process(object):
         :returns: an iterator'''
         return iter(self._loci.keys())
 
-    def addPerElementEvent( self, l, p, ef ):
+
+    # ---------- Probabilistic events (occurring with some probability, either per-locus or per-element) ----------
+
+    def addEventPerElement( self, l, p, ef ):
         '''Add a probabilistic event at a locus, occurring with a particular (fixed)
         probability for each element of the locus, and calling the :term:`event function`
         when it is selected. The locus may be a :class:`Locus` object or a string, which
         is taken to be a locus of this process.
 
-        Unlike fixed probability events added by :meth:`addFixedRateEvent`, a fixed rate
+        Unlike fixed probability events added by :meth:`addFixedRateEvent`, a per-element
         event happens with the same probability to each element in the locus. This leads to
         larger loci giving rise to a higher rate of events.
 
@@ -144,9 +193,9 @@ class Process(object):
         '''Add a probabilistic event at a locus, occurring with a particular (fixed)
         probability, and calling the :term:`event function`
         when it is selected. The locus may be a :class:`Locus` object or a string, which
-        is taken to be a locus of this process.
+        is taken to be the name of a locus of this process.
 
-        Unlike fixed rate events added by :meth:`addPerElementEvent`, a fixed probability
+        Unlike fixed rate events added by :meth:`addEventPerElement`, a fixed probability
         event happens with the same probability regardless of how many elements are in
         the locus.
 
@@ -189,10 +238,19 @@ class Process(object):
         :param t: current time
         :returns: a list of (locus, rate, event function) triples"""
         rates = []
-        for (l, p, ef) in self._perElementEvents:
+
+        # convert per-element events to rates
+        for (l, p, ef) in self.perElementEventDistribution(t):
             rates.append((l, p * len(l), ef))
-        rates.extend(self._perLocusEvents)
+
+        # add fixed-rate events for non-empty loci
+        for (l, p, ef) in self.fixedRateEventDistribution(t):
+            if len(l) > 0:
+                rates.append((l, p, ef))
         return rates
+
+
+    # ---------- Posted events (ocurring at a fixed time ----------
 
     def postEvent(self, t, g, e, ef):
         '''Post an event to happen at time t. The :term:`event function` should
