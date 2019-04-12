@@ -73,7 +73,6 @@ SOURCES_DOC_SOURCES = \
 	doc/networkdynamics.rst \
 	doc/synchronousdynamics.rst \
 	doc/stochasticdynamics.rst \
-	doc/compartmenteddynamics.rst \
 	doc/loci.rst \
 	doc/compartmentedmodel.rst \
 	doc/sir.rst \
