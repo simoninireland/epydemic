@@ -1,6 +1,6 @@
 # Setup for epydemic
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -34,6 +34,8 @@ setup(name = 'epydemic',
                       'Intended Audience :: Science/Research',
                       'Intended Audience :: Developers',
                       'Programming Language :: Python :: 2.7',
+                      'Programming Language :: Python :: 3.5',
+                      'Programming Language :: Python :: 3.7',
                       'Topic :: Scientific/Engineering' ],
       packages = [ 'epydemic' ],
       zip_safe = True,
