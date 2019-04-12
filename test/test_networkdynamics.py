@@ -37,10 +37,10 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
         
         # post some events at different times
-        p.postEvent(1, None, None, make_ef(1))
-        p.postEvent(2, None, None, make_ef(20))
-        p.postEvent(3, None, None, make_ef(100))
-        p.postEvent(4, None, None, make_ef(200))
+        p.postEvent(1, None, make_ef(1))
+        p.postEvent(2, None, make_ef(20))
+        p.postEvent(3, None, make_ef(100))
+        p.postEvent(4, None, make_ef(200))
 
         # check no events before the first one posted
         six.assertCountEqual(self, p.pendingEvents(0.5), [])
@@ -75,19 +75,19 @@ class NetworkDynamicsTest(unittest.TestCase):
         # event function builder, will increment the shared
         # value when fired and also post a further event
         self._v = 0
-        def make_ef( dyn, dt ):
-            def ef( t, g, e ):
+        def make_ef(dt):
+            def ef(t, e):
                 self._v = self._v + 1
-                p.postEvent(t + dt, None, None, make_ef(dyn, dt))
+                p.postEvent(t + dt, None, make_ef(dt))
             return ef
         
         # post the first of the events
-        p.postEvent(1, None, None, make_ef(dyn, 5))
+        p.postEvent(1, None, make_ef(5))
 
         # post an intermediate event that should be fired alongside a regular one
-        def inter( t, g, e ):
+        def inter(t, e):
             self._v = self._v + 1000
-        p.postEvent(12, None, None, inter)
+        p.postEvent(12, None, inter)
 
         # carefully run the event sequence for a while
         for t in range(1, 25, 5):

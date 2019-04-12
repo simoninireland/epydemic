@@ -1,6 +1,11 @@
-Version 0.99.2 (v1.0 mrelease candidate 2)
+Version 0.99.2 (v1.0 release candidate 2)
 
    - Fully merged process-refactor branch
+   - Updated library dependencies
+   - Added an interface to evolve and interact with the network, which means that
+     things compose more cleanly
+   - Removed a lot of unnecessary parameter-passing after the refactoring, including
+     simplifying event functions and compartment management
 
 Version 0.99.1 (v1.0 release candidate 1) 2019-04-11
 

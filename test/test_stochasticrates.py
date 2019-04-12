@@ -44,9 +44,9 @@ class FixedRatesCounter(Process):
         self._eventCount = [ 0 ] * len(ecr)
         for i in range(len(ecr)):
             l = self.addLocus(i, DummyLocus(i))
-            self.addFixedRateEvent(l, ecr[i], lambda t, g, e: self.happened(i, t, g, e))
+            self.addFixedRateEvent(l, ecr[i], lambda t, e: self.happened(i, t, e))
 
-    def happened( self, i, t, g, e ):
+    def happened( self, i, t, e ):
         self._eventCount[i] = self._eventCount[i] + 1
 
     def results(self):

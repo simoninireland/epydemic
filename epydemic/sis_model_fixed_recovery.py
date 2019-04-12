@@ -54,7 +54,6 @@ class SIS_FixedRecovery(SIS):
         '''After setting up as normal, post recovery events for any nodes that are
         initially infected.
 
-        :param dyn: the dynamics
         :param params: the simulation parameters'''
         super(SIS_FixedRecovery, self).setUp(params)
 
@@ -66,25 +65,24 @@ class SIS_FixedRecovery(SIS):
             g.node[n][self.INFECTION_TIME] = 0.0
         
             # post the corresponding removal event
-            dyn.postEvent(tInfected, g, n, self.remove)
+            self.postEvent(tInfected, n, self.remove)
 
-    def infect( self, t, g, e ):
+    def infect( self, t, e ):
         '''Perform the normal infection event, and then post an event to recover
         the infected node back to susceptible at the appropriate time.
 
         :param t: the simulation time
-        :param g: the network
         :param e: the edge transmitting the infection, susceptible-infected'''
         (n, m) = e
 
         # infect as normal
-        super(SIS_FixedRecovery, self).infect(dyn, t, g, e)
+        super(SIS_FixedRecovery, self).infect(t, e)
 
         # record the infection time
-        g.node[n][self.INFECTION_TIME] = t
+        self.network().node[n][self.INFECTION_TIME] = t
         
         # post the removal event for the appropriate time in the future
-        dyn.postEvent(t + self._tInfected, g, n, self.remove)
+        self.postEvent(t + self._tInfected, n, self.remove)
                 
                 
                 

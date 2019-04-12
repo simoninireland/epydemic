@@ -28,8 +28,10 @@ class Dynamics(epyc.Experiment, object):
     suitable for running under `epyc`. Sub-classes provide synchronous and stochastic
     (Gillespie) simulation dynamics.
 
-    The dynamics actually runs a network process provides as a :class:`Process`
-    object. It optionally takes a prototype network over which the process runs.
+    The dynamics runs a network process provided as a :class:`Process`
+    object. It optionally takes a prototype network over which the process runs, which
+    is copied for every run. If not provided atconstruction, the prototype should be
+    proivided by calling :methg:`setPrototypeNetwork` beefore trying to run a simulation.
 
     :param p: network process to run
     :param g: prototype network (optional)'''
@@ -70,6 +72,15 @@ class Dynamics(epyc.Experiment, object):
         :returns: the process'''
         return self._process
 
+    def experimentalResults(self):
+        '''Report the process' experimental results.
+
+        :returns: the results of the process'''
+        return self._process.results()
+
+
+    # ---------- Set-up and tear-down ----------
+
     def setUp(self, params):
         '''Set up the experiment for a run. This performs the default action, then
         copies the prototype network and builds the network process that the dynamics is to run.
@@ -89,7 +100,7 @@ class Dynamics(epyc.Experiment, object):
         self._process.setUp(params)
 
     def tearDown(self):
-        '''At the end of each experiment, throw away the copy.'''
+        '''At the end of each experiment, throw away the copy and any posted by un-executed evants.'''
 
         # perform the default tear-down
         super(Dynamics, self).tearDown()
@@ -98,11 +109,8 @@ class Dynamics(epyc.Experiment, object):
         self._graph = None
         self._posted = []
 
-    def experimentalResults(self):
-        '''Report the process' experimental results.
 
-        :returns: the results of the process'''
-        return self._process.results()
+    # ---------- Pending event handling ----------
 
     def runPendingEvents(self, t):
         '''Retrieve and fire any pending events at time t. This method handles

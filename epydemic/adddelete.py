@@ -30,16 +30,19 @@ class AddDelete(Process):
     The default behaviour has fixed addition and removal probabilities, independent
     of the size of the network, and a fixed degree for added nodes.'''
 
+    # parameters
     P_ADD = "pAdd"  #: Parameter for the node addition probability
     P_DELETE = "pDelete"  #: Parameter for the node deletion probability
     DEGREE = "addDegree"  #: Degree of newly-added nodes
 
+    # loci
     NODES = "allnodes"       #: Name of the locus holding all nodes in the network
-    EDGES = "alledges"       #: Name of the locus holding all edgesin the network
 
     def __init__(self):
         super(AddDelete, self).__init__()
-        self.reset()
+
+
+    # ---------- Setup and initialisation ----------
 
     def build(self, params):
         '''Build the model. This method expects parameters for the node addition
@@ -54,7 +57,6 @@ class AddDelete(Process):
 
         # keep track of all the nodes and edges
         self.addLocus(self.NODES)
-        self.addLocus(self.EDGES)
 
         # add events occurring at constant probability regardless of the network size
         self.addFixedRateEvent(self.NODES, pAdd, self.add)
@@ -63,56 +65,63 @@ class AddDelete(Process):
     def setUp(self, params):
         super(AddDelete, self).setUp(params)
 
+        # add all nodes to the all-nodes locus
         g = self.network()
         for n in g.nodes():
             self[self.NODES].enterHandler(g, n)
 
-    def addNode(self):
-        '''Add a new node to the network.
 
-        :returns: the node'''
+    # ---------- Accessing and evolving the network ----------
+
+    def addNode(self, n, **kwds):
+        '''Add a node to the working network. Any keyword arguments added as node attributes.
+
+        :param n: the new node
+        :param kwds: (optional) node attributes'''
+        super(AddDelete, self).addNode(n, **kwds)
+        self[self.NODES].enterHandler(self.network(), n)
+
+    def newNodeName(self):
+        '''Generate a new name for a node to be added. This is guaranteed not to be
+        the name of another node in the network (although it might possibly re-use
+        a name of a node that's been removed).
+
+        :returns: the generated name'''
+        # sd: might be faster to generate a random name?
         g = self.network()
-
-        # create a new name for the new node
         i = g.order() + 1
         while i in g.nodes():
             i = i + 1
-
-        # add the node to the network
-        g.add_node(i)
-
-        # add the new node to the all-nodes locus
-        self[self.NODES].enterHandler(g, i)
-
         return i
 
-    def addEdge(self, n, m):
-        '''Add an edge between the two nodes.
+    def addNewNode(self, **kwds):
+        '''Add a new node to the network with a new, unused name. Any keyword arguments added as node attributes.
 
-        :param n: one node
-        :param m: the other node'''
-        g = self.network()
-        g.add_edge(n, m)
+        :returns: the generated name of the new node'''
+        i = self.newNodeName()
+        self.addNode(i, **kwds)
+        return i
 
     def removeNode(self, n):
-        '''Remove the given node and all its incident edges
+        '''Remove a node from the working network.
 
-        :param n: the node to remove'''
-        g = self.network()
-        g.remove_node(n)
-        self[self.NODES].leaveHandler(g, n)
+        :param n: the node'''
+        super(AddDelete, self).removeNode(n)
+        self[self.NODES].leaveHandler(self.network(), n)
 
-    def add(self, t, g, e):
+
+    # ---------- Events ----------
+
+    def add(self, t, e):
         '''Add a node to the network, connecting it at random to
         other nodes. The degree of the new node is given by the :attr:`DEGREE` parameter,
         with the nodes being selected at random from the entire network.
 
         :param t: the current simulation time (not used)
-        :param g: the network
         :param e: the element (not used)'''
 
         # create a new node
-        i = self.addNode()
+        i = self.addNewNode()
 
         # link to c other nodes (not including i) with uniform probability
         ns = self[self.NODES]
@@ -127,10 +136,9 @@ class AddDelete(Process):
         for j in es:
             self.addEdge(i, j)
 
-    def remove(self, t, g, n):
+    def remove(self, t, n):
         '''Remove a node from the network.
 
         :param t: the current simulation time (not used)
-        :param g: the network
         :param n: the node to be removed'''
         self.removeNode(n)

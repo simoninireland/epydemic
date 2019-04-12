@@ -120,7 +120,81 @@ class Process(object):
        return dict()
 
 
-   # ---------- Loci for events ----------
+    # ---------- Accessing and evolving the network ----------
+
+    def addNode(self, n, **kwds):
+        '''Add a node to the working network. Any keyword arguments added as node attributes
+
+        :param n: the new node
+        :param kwds: (optional) node attributes'''
+        self.network().add_node(n, **kwds)
+
+    def addNodesFrom(self, ns, **kwds):
+        '''Add all the nodes in the given iterable to the working network. Any keyword arguments are
+        added as node attributes. This works by calling :meth:`addNode` for each
+        element of the iterable.
+
+        :param ns: an iterable collection of nodes
+        :param kwds: (optional) node attributes'''
+        for n in ns:
+            self.addNode(n, **kwds)
+
+    def removeNode(self, n):
+        '''Remove a node from the working network.
+
+        :param n: the node'''
+        self.network().remove_node(n)
+
+    def removeNodesFrom(self, ns):
+        '''Remove all the nodes in the given iterable froim the working network. This works by
+        iteratively calling :meth:`removeNode` for each element of the iterable collection.
+
+        :param ns: an iterable collection of nodes'''
+        for n in ns:
+            self.removeNode(n)
+
+    def addEdge(self, n, m, **kwds):
+        '''Add an edge between nodes. If the nodes do not exist, they are created by calling
+        :meth:`addNode`. Any keyword arguments are addaed as edge attributes.
+
+        :param n: the start node
+        :param m the end node
+        :param kwds: (optional) edge attributes'''
+        g = self.network()
+        if n not in g:
+            self.addNode(n)
+        if m not in g:
+            self.addNode(m)
+        g.add_edge(n, m, **kwds)
+
+    def addEdgesFrom(self, es, **kwds):
+        '''Add all the edges in the given iterable to the working network. Any keyword arguments are
+        added as node attributes. This works by calling :meth:`addEdge` for each
+        element of the iterable.
+
+        :param es: an iterable collection of edges
+        :param kwds: (optional) node attributes'''
+        for e in es:
+            (n, m) = e
+            self.addEdge(n, m, **kwds)
+
+    def removeEdge(self, n, m):
+        '''Remove an edge from the working network.,
+
+        :param n: the start node
+        :param m: the end node'''
+        self.network().remove_edge(n, m)
+
+    def removeEdgesFrom(self, es):
+        '''Remove all the edges in the given iterable collection from the working network. This works
+        by iteratively calling :meth:`removeEdge` for each edge in the iterable.
+
+        :param es: an iterable collection of edges'''
+        for e in es:
+            self.removeEdge(*e)
+
+
+    # ---------- Loci for events ----------
 
     def addLocus(self, n, l = None):
         '''Add a named locus.
@@ -250,18 +324,17 @@ class Process(object):
         return rates
 
 
-    # ---------- Posted events (ocurring at a fixed time ----------
+    # ---------- Posted events (occurring at a fixed time) ----------
 
-    def postEvent(self, t, g, e, ef):
+    def postEvent(self, t, e, ef):
         '''Post an event to happen at time t. The :term:`event function` should
         take the dynamics, simulation time, network, and element for the event.
         At time t it is called with the given network and element.
 
         :param t: the current time
-        :param g: the network
         :param e: the element (node or edge) on which the event occurs
         :param ef: the event function'''
-        heappush(self._posted, (t, (lambda: ef(t, g, e))))
+        heappush(self._posted, (t, (lambda: ef(t, e))))
 
     def nextPendingEventBefore(self, t):
         '''Return the next pending event to occur at or before time t.

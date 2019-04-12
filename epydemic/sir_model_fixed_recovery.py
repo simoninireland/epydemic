@@ -66,23 +66,22 @@ class SIR_FixedRecovery(SIR):
             g.node[n][self.INFECTION_TIME] = 0.0
         
             # post the corresponding removal event
-            self.postEvent(tInfected, g, n, self.remove)
+            self.postEvent(tInfected, n, self.remove)
         
-    def infect( self, t, g, e ):
+    def infect( self, t, e ):
         '''Perform the normal infection event, and then post an event to remove the
         infected node at the appropriate time.
 
         :param t: the simulation time
-        :param g: the network
         :param e: the edge transmitting the infection, susceptible-infected'''
 
         # infect as normal
-        super(SIR_FixedRecovery, self).infect(t, g, e)
+        super(SIR_FixedRecovery, self).infect(t, e)
 
         # record the infection time
         (n, m) = e
-        g.node[n][self.INFECTION_TIME] = t
+        self.network().node[n][self.INFECTION_TIME] = t
         
         # post the removal event for the appropriate time in the future
-        self.postEvent(t + self._tInfected, g, n, self.remove)
+        self.postEvent(t + self._tInfected, n, self.remove)
    

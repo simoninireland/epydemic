@@ -1,6 +1,6 @@
 # Test compartmented model basic functions
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -69,7 +69,7 @@ class CompartmentedModelTest(unittest.TestCase):
     def testLoci( self ):
         '''Test we can populate loci correctly.'''
         g = networkx.Graph()
-        g.add_edges_from([ (1, 2), (2, 3), (1, 4), (3, 4) ])
+        g.add_edges_from([(1, 2), (2, 3), (1, 4), (3, 4)])
         m = SIR()
         e = StochasticDynamics(m, g)
         params = dict(pInfect = 0.1,
@@ -82,33 +82,81 @@ class CompartmentedModelTest(unittest.TestCase):
         m.trackNodesInCompartment(SIR.REMOVED)
         
         # all nodes in I
-        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [ 1, 2, 3, 4 ])
+        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [1, 2, 3, 4])
 
         # one node from I into S, two edges into SI
-        m.changeCompartment(e.network(), 1, SIR.SUSCEPTIBLE)
-        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
-        six.assertCountEqual(self, m._loci[SIR.SUSCEPTIBLE].elements(), [ 1 ])
-        six.assertCountEqual(self, m._loci[SIR.SI].elements(), [ (1, 2), (1, 4) ])
+        m.changeCompartment(1, SIR.SUSCEPTIBLE)
+        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [2, 3, 4])
+        six.assertCountEqual(self, m._loci[SIR.SUSCEPTIBLE].elements(), [1])
+        six.assertCountEqual(self, m._loci[SIR.SI].elements(), [(1, 2), (1, 4)])
 
         # recover the infected node
-        m.changeCompartment(e.network(), 1, SIR.REMOVED)
-        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [ 2, 3, 4 ])
+        m.changeCompartment(1, SIR.REMOVED)
+        six.assertCountEqual(self, m._loci[SIR.INFECTED].elements(), [2, 3, 4])
         six.assertCountEqual(self, m._loci[SIR.SUSCEPTIBLE].elements(), [])
-        six.assertCountEqual(self, m._loci[SIR.REMOVED].elements(), [ 1 ])
-        six.assertCountEqual(self, m._loci[SIR.SI].elements(), [ ])
+        six.assertCountEqual(self, m._loci[SIR.REMOVED].elements(), [1])
+        six.assertCountEqual(self, m._loci[SIR.SI].elements(), [])
 
     def testSkeletonise( self ):
         '''Test that a network skeletonises correctly'''
         m = SIR()
         g = networkx.Graph()
+        m.setNetwork(g)
         g.add_edges_from([ (1, 2), (2, 3), (1, 4), (3, 4) ])
 
         # mark some edges as occupied
-        m.markOccupied(g, (1, 2))
-        m.markOccupied(g, (1, 4))
+        m.markOccupied((1, 2))
+        m.markOccupied((1, 4))
 
         # check skeletonisation
-        m.setNetwork(g)
         g2 = m.skeletonise()
         six.assertCountEqual(self, g2.edges(), [(1, 2), (1, 4)])
         six.assertCountEqual(self, g2.nodes(), [ 1, 2, 3, 4])
+
+    def testAddNode(self):
+        '''Test that a node can be added and land in the right compartment.'''
+        m = SIR()
+        g = networkx.Graph()
+        m.setNetwork(g)
+
+        m.addNode(1, compartment = SIR.INFECTED)
+        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [1])
+
+        m.addNode(2, compartment = SIR.INFECTED, h = "test")
+        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [1, 2])
+        self.assertEqual(g.node[2]['h'], "test")
+
+    def testAddNodeDefault(self):
+        '''Test that a node doesn't enter the wrong compartment.'''
+        m = SIR()
+        g = networkx.Graph()
+        m.setNetwork(g)
+
+        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [])
+        six.assertCountEqual(self, m.compartment(SIR.SI), [])
+        m.addNode(1)
+        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [])
+        six.assertCountEqual(self, m.compartment(SIR.SI), [])
+
+    def testAddNodes(self):
+        '''Test that nodes can be added and land in the right compartment.'''
+        m = SIR()
+        g = networkx.Graph()
+        m.setNetwork(g)
+
+        ns = [1,2,3]
+        m.addNodesFrom(ns, compartment = SIR.INFECTED, h = 'test')
+        six.assertCountEqual(self, m.compartment(SIR.INFECTED), ns)
+        for n in ns:
+            self.assertEqual(g.node[n]['h'], "test")
+
+    def testRemoveNode(self):
+        '''Test that a node can be removed.'''
+        m = SIR()
+        g = networkx.Graph()
+        m.setNetwork(g)
+
+        m.addNode(1, compartment = SIR.INFECTED)
+        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [1])
+        m.removeNode(1)
+        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [])

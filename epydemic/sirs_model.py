@@ -47,15 +47,13 @@ class SIRS(SIR):
 
         self.addEvent(self.REMOVED, pResuscept, self.resuscept)
 
-    def resuscept(self, dyn, t, g, n):
+    def resuscept(self, t, n):
         '''Perform a re-susceptibility event. This changes the compartment of
         the node from :attr:`REMOVED` to :attr:`SUSCEPTIBLE`.
 
-        :param dyn: the dynamics
         :param t: the simulation time (unused)
-        :param g: the network
         :param n: the node'''
-        self.changeCompartment(g, n, self.SUSCEPTIBLE)
+        self.changeCompartment(n, self.SUSCEPTIBLE)
 
 
 

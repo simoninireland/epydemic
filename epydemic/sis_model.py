@@ -57,26 +57,24 @@ class SIS(CompartmentedModel):
         self.addEventPerElement(self.INFECTED, pRecover, self.recover)
         self.addEventPerElement(self.SI, pInfect, self.infect)
 
-    def infect( self, t, g, e ):
+    def infect( self, t, e ):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
 
         :param t: the simulation time (unused)
-        :param g: the network
         :param e: the edge transmitting the infection, susceptible-infected'''
         (n, m) = e
-        self.changeCompartment(g, n, self.INFECTED)
-        self.markOccupied(g, e)
+        self.changeCompartment(n, self.INFECTED)
+        self.markOccupied(e)
 
-    def recover( self, t, g, n ):
+    def recover( self, t, n ):
         '''Perform a recovery event. This changes the compartment of
         the node back to :attr:`SUSCEPTIBLE`, allowing re-infection.
 
         :param t: the simulation time (unused)
-        :param g: the network
         :param n: the node'''
-        self.changeCompartment(g, n, self.SUSCEPTIBLE)
+        self.changeCompartment(n, self.SUSCEPTIBLE)
     
                 
    

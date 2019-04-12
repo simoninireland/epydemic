@@ -42,7 +42,6 @@ class StochasticDynamics(Dynamics):
         :returns: the experimental results dict'''
         
         # run the dynamics
-        g = self.network()
         proc = self.process()
         t = 0
         events = 0
@@ -97,7 +96,7 @@ class StochasticDynamics(Dynamics):
             
                 # perform the event by calling the event function,
                 # passing the dynamics, event time, network, and element
-                ef(t, g, e)
+                ef(t, e)
             
                 # increment the event counter    
                 events = events + 1

@@ -46,7 +46,6 @@ class SynchronousDynamics(Dynamics):
         :returns: a dict of experimental results'''
         
         # run the dynamics
-        g = self.network()
         proc = self.process()
         t = 0
         events = 0
@@ -64,7 +63,7 @@ class SynchronousDynamics(Dynamics):
                         # test for occurrance of the event on this element
                         if numpy.random.random() <= p:
                             # yes, perform the event
-                            ef(t, g, e)
+                            ef(t, e)
                             nev = nev + 1
 
             # run through all the fixed-rate events for this timestep
@@ -74,7 +73,7 @@ class SynchronousDynamics(Dynamics):
                     if numpy.random.random() <= p:
                         # yes, perform the event on an element drawn at random
                         e = l.draw()
-                        ef(t, g, e)
+                        ef(t, e)
                         nev = nev + 1
 
             # add the events to the count
