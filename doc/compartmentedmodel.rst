@@ -25,23 +25,9 @@ Attributes
 
 .. autoattribute:: CompartmentedModel.OCCUPIED
 
+.. autoattribute:: CompartmentedModel.DEFAULT_COMPARTMENT
 
-Building the model
-------------------
 
-Building a model means specifying the various compartments, loci, and
-events, and their associated probabilities. These methods are
-typically called from the :meth:`CompartmentedModel.build` method,
-which is called during set-up to build the model using the
-experiment's simulation parameters.
-
-.. automethod:: CompartmentedModel.addCompartment
-
-.. automethod:: CompartmentedModel.addLocus
-
-.. automethod:: CompartmentedModel.addEvent
-
-		
 Model setup
 -----------
 
@@ -59,35 +45,41 @@ nodes into compartments. All edges are also marked as unoccupied.
 .. automethod:: CompartmentedModel.initialCompartments
 
 
-Running the model
------------------
+Building the model
+------------------
 
-The main mechanism for running a compartmented model is to change the
-compartment of an individual node. This generally happens in event
-functions. The events are triggered according to a probability
-distribution that allows the dynamics to pick an event. Edges can also
-be marked as "occupied" by the dynamics, meaning that they were
-included in the spread of the disease.
+Building a model (within :meth:`CompartmentedModelbuild`) means specifying
+the various compartments, loci, and events, and their associated probabilities.
+
+.. automethod:: CompartmentedModel.addCompartment
+
+.. automethod:: CompartmentedModel.trackNodesInCompartment
+
+.. automethod:: CompartmentedModel.trackEdgesBetweenCompartments
+
+
+Evolving the network
+--------------------
+
+Events in compartmented models need an interafce to change the compartment of nodes
+and to mark edges used in transmitting the epidemic.
+
+.. automethod:: CompartmentedModel.setCompartment
 
 .. automethod:: CompartmentedModel.changeCompartment
 
-.. automethod:: CompartmentedModel.eventDistribution
-
 .. automethod:: CompartmentedModel.markOccupied
 
- 
-Extracting basic results
-------------------------
+The network access interface of :class:`Process` is extended with methods that
+understand the mappings between nodes, edges, and compartments.
 
-Once an experiment is run we will need to summarise the results. How
-this is done depends on the dynamics and the simulation method, but
-the :class:`CompartmentedModel` class provides some basic operations that can be
-used.
+.. automethod:: CompartmentedModel.addNode
 
-.. automethod:: CompartmentedModel.compartment
+.. automethod:: CompartmentedModel.removeNode
 
-.. automethod:: CompartmentedModel.results
+.. automethod:: CompartmentedModel.addEdge
 
-.. automethod:: CompartmentedModel.skeletonise
+.. automethod:: CompartmentedModel.removeEdge
 
-		
+
+

@@ -47,10 +47,12 @@ an experiment management package that handles running different simulations, eit
 Current features
 ----------------
 
-* Compatible with both Python 2.7 and Python 3.7 and later
+* Compatible with both Python 2.7 and Python 3.7 and later, as well as with PyPy
 
 * Supports both discrete-time :term:`synchronous dynamics` and continuous-time
   :term:`stochastic dynamics` (Gillespie simulation)
+
+* All details of network processes encapsulated in a single class
 
 * Uses ``networkx`` for representing disease networks, allowing random networks to be generated easily and
   real networks to be imported from outside sources
@@ -58,15 +60,13 @@ Current features
 * Support for a generic :term:`compartmented model of disease`, allowing
   more complex diseases to be described
 
-* A single model description drives all dynamics -- no re-writing
-
 * Susceptible-Infected-Removed (:term:`SIR`) and Susceptible-Infected-Susceptible (:term:`SIS`) models
   built-in, with either stochastic or fixed recovery times
 
 * Addition-deletion process to model natural birth and death
 
 * Integrated with ``epyc``'s labs and experiments, including execution in parallel
-  on compute clusters
+  on compute clusters for doing simulations at scale
 
 
 .. toctree::

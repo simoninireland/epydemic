@@ -1,6 +1,6 @@
 # Synchronous dynamics base class
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -40,7 +40,7 @@ class SynchronousDynamics(Dynamics):
         super(SynchronousDynamics, self).__init__(p, g)
 
     def do( self, params ):
-        '''Synchronous dynamics.
+        '''Execute the process under synchronous dynamics.
         
         :param params: the parameters of the simulation
         :returns: a dict of experimental results'''

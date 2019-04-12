@@ -27,11 +27,18 @@ class Process(object):
     It provides the essential routines to build, set-up, run, and extract results from a
     process. Sub-classes provide the actual behaviour by defining simulation events and
     attaching them to the network in different ways.
+
+    A process defines is largely declarative, in the sense that it sets up event handlers
+    and their probabilities. These are used by a process dynamics (a sub-class of :class:`Dynamics`)
+    to actually run a simulation of the process.
+
+    The process class includes an interface for interacting with the working network. The basic
+    interface is extended and overridden in different sub-classes that interact with the network
+    in different ways.
     '''
 
     # defaults
     DEFAULT_MAX_TIME = 20000      #: Default maximum simulation time.
-
 
     def __init__( self ):
         super(Process, self).__init__()
@@ -46,7 +53,9 @@ class Process(object):
     # ---------- Setup and initialisation ----------
 
     def reset( self ):
-        '''Reset the process ready to be built.'''
+        '''Reset the process ready to be built. This resets all the internal process state
+        variables. Sub-classes should call the base method to make sure that the event
+        sub-system is properly reset.'''
         self._loci = dict()                          # loci for events
         self._g = None                               # working network
         self._perElementEvents = []                  # events that occur per-element
@@ -55,8 +64,7 @@ class Process(object):
 
     def build( self, params ):
         '''Build the process model. This must be overridden by sub-classes, and should
-        call methods such as :meth:`addCompartment`, :meth:`addLocus`, and
-        :meth:`addEvent` to create the various elements of the model.
+        create the various elements of the model.
 
         :param params: the model parameters'''
         raise NotImplementedError('build')
@@ -158,7 +166,7 @@ class Process(object):
         :meth:`addNode`. Any keyword arguments are addaed as edge attributes.
 
         :param n: the start node
-        :param m the end node
+        :param m: the end node
         :param kwds: (optional) edge attributes'''
         g = self.network()
         if n not in g:

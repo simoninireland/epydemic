@@ -41,7 +41,10 @@ simulation time.
 .. automethod:: SIS_FixedRecovery.setUp
 
 
-Only a single event method is needed, with :meth:`SIS.remove` being
+Events
+------
+
+Only a single event method is overridden, with :meth:`SIS.remove` being
 inherited.
 
 .. automethod:: SIS_FixedRecovery.infect

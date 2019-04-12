@@ -55,7 +55,8 @@ class Locus(object):
     
     def draw(self):
         '''Draw a random element from the locus. The default performs a simple
-        draw that is equiprobable across all the elements.
+        draw that is equiprobable across all the elements. The locus remains unchanged:
+        drawing simply selects ans returns an element at random.
 
         :returns: a random element at the locus'''
         if len(self) == 0:

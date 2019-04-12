@@ -48,15 +48,15 @@ Select a process dynamics
 -------------------------
 
 We now need to run the epidemic over the network. To do this we need to select a process dynamics. Generally speaking
-it is best to use the :class:`CompartmentedStochasticDynamics` class, which will run the epidemic in
-continuous time. (We could alternatively use the :class:`CompartmentedSynchronousDynamics` class and
+it is best to use the :class:`StochasticDynamics` class, which will run the epidemic in
+continuous time. (We could alternatively use the :class:`SynchronousDynamics` class and
 run the epidemic in discrete time.)
 
 .. code-block:: python
 
-   e = epydemic.CompartmentedStochasticDynamics(m, g)
+   e = epydemic.StochasticDynamics(m, g)
 
-The dynamics object ``e`` binds the disease model to the network ready to be run.
+The dynamics object ``e`` binds the disease model to the network ready to be simulated.
 
 
 Run the epidemic
@@ -90,7 +90,7 @@ and then call the ``run()`` method:
 
    rc = e.set(params).run()
 
-Time then passes....
+Time passes....
 
 
 Get the results
@@ -178,6 +178,8 @@ and import them directly into ``pandas`` for analysis:
 
    df = lab.dataframe()
 
+You'll see the results of the experiments loaded into this DataFrame, including the sizes of compartments, along with
+the experimental parameters that gave rise to those results anmd some other metadata about the simulation.
 
 
 

@@ -1,6 +1,6 @@
 # Gillespie dynamics base class
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -34,9 +34,7 @@ class StochasticDynamics(Dynamics):
         super(StochasticDynamics, self).__init__(p, g)
 
     def do( self, params ):
-        '''Run the simulation using Gillespie dynamics. The process terminates
-        when either there are no events with zero rates or when :meth:`at_equilibrium`
-        returns True.
+        '''Run the simulation using Gillespie dynamics.
 
         :param params: the experimental parameters
         :returns: the experimental results dict'''

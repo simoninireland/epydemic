@@ -4,11 +4,11 @@ Installation
 In a nutshell
 -------------
 
-**Pythons**: 2.7 and 3.7 or later
+**Pythons**: 2.7 and 3.7 or later, either CPython or `PyPy <https://pypy.org>`_
 
 **Operating systems**: Linux, OS X
 
-**License**: `GNU General Public License v3 <http://www.gnu.org/licenses/gpl.html>`_
+**License**: `GNU General Public License v2 or later <http://www.gnu.org/licenses/gpl.html>`_
 
 **Repository**: https://github.com/simoninireland/epydemic
 

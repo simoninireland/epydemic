@@ -9,7 +9,7 @@ Glossary
 
    addition-deletion process
       A process that adds and removes nodes from a network. The usual
-      model (due to :ref:`Moore *et alia* <MGN06>`) adds nodes at a
+      model (due to :ref:`Moore et alia <MGN06>`) adds nodes at a
       constant rate and with constant degree, removes nodes randomly
       at a constant rate, and connects new nodes to existing nodes according
       to some probabilistic attachment kernel.
@@ -52,7 +52,7 @@ Glossary
    event function
       A function called when an :term:`event` fires to perform the
       action required. Event functions take three arguments: the
-      current simulation time, the network, and the element at which
+      current simulation time and the element at which
       the event occurs (which will be selected by the chosen
       :term:`process dynamics`). Elements are typically either nodes
       or edges, depending in the :term:`locus` at which the event

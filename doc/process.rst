@@ -6,29 +6,65 @@
 .. autoclass:: Process
 
 
-Getting ready to run
---------------------
+Core methods
+------------
 
-A process is provided by the simulation dynamics with the network over which it is
-running. This can then be accessed from the main methods.
-
-.. automethod:: Process.setNetwork
-
-.. automethod:: Process.network
+Five methods provide the core API for defining new processes, and are typically overridden by sub-classes.
 
 .. automethod:: Process.reset
-
-
-Important methods for sub-classes
----------------------------------
-
-Three methods proivide the core API for defining new processes.
 
 .. automethod:: Process.build
 
 .. automethod:: Process.setUp
 
+.. automethod:: Process.atEquilibrium
+
 .. automethod:: Process.results
+
+
+Getting ready to run
+--------------------
+
+Several other methods provide information for the process.
+
+.. automethod:: Process.setNetwork
+
+.. automethod:: Process.network
+
+.. automethod:: Process.setMaximumTime
+
+.. automethod:: Process.maximumTime
+
+
+Accessing and evolving the network
+----------------------------------
+
+A process will generally want to access the working network in the course of its execution,
+mainly in event functions. Accessing the network can be done directly, through :meth:`network`:
+however, processes often need to track changes made to the network, and for this reason the
+class provides an interface for evolving the network, paralleling the methods available
+in `networkx`.
+
+The interface may be overridden and extended by sub-classes. Three methods form the general core.
+
+.. automethod:: Process.addNode
+
+.. automethod:: Process.removeNode
+
+.. automethod:: Process.addEdge
+
+.. automethod:: Process.removeEdge
+
+four other "bulk" methods are deinfed in terms of the basic methods, and so don't typically
+need to be overridden specifically.
+
+.. automethod:: Process.addNodesFrom
+
+.. automethod:: Process.removeNodesFrom
+
+.. automethod:: Process.addEdgesFrom
+
+.. automethod:: Process.removeEdgesFrom
 
 
 Loci
@@ -52,24 +88,56 @@ Loci also provide an operator interface.
 
 .. automethod:: Process.__iter__
 
-Loci are generally transparent to to process-writers, however, as the following helper
-methods provide standard ways to create them.
-
-.. automethod:: Process.trackNetwork
-
-.. automethod:: Process.trackAllNodes
-
-.. automethod:: Process.trackAllEdges
-
 
 Events
 ------
 
 Events are the code fragments that run as part of the simulation. The collection
 of events defined by a process form all the possible actions that the simulation
-will perform. Events are stochastic, being equipped with a probability of
-occurrance that the dynamics uses when selecting when and what event to fire.
+will perform.
 
-.. automethod:: Process.addEvent
+There are three broad classes of events. *Per-element* events occur with a probability
+on each element of a locis. This means that loci with more elements will generate a higher
+rate of events.
 
-.. automethod:: Process.eventDistribution
+.. automethod:: Process.addEventPerElement
+
+*Fixed-rate* events, by contrast, occur with a probability that's independent of the
+number of elements in a locus, as long as it's not empty. This means that the rate at
+which such events fire is independent of the size of the locus.
+
+.. automethod:: Process.addFixedRateEvent
+
+These two kinds of events are both stochastic, in the sense that they are generated according
+to an exponential probability distribution. Finally, *posted* events are set to occur at a
+particular simulation time. As the simulation proceeds it will execute posted events in the
+correct time sequence relative to the different stochastic events that are generated.
+
+.. automethod:: Process.postEvent
+
+
+Accessing event distributions
+-----------------------------
+
+The different sets of events can be accessed procedurally. This is typically only needed
+if writing a new :class:`Dynamics` sub-class.
+
+.. automethod:: Process.perElementEventDistribution
+
+.. automethod:: Process.fixedRateEventDistribution
+
+.. automethod:: Process.eventRateDistribution
+
+For posted events, there is similarly an interface to access the events needing to be fired.
+
+.. automethod:: Process.nextPendingEventBefore
+
+.. automethod:: Process.pendingEvents
+
+
+
+
+
+
+
+

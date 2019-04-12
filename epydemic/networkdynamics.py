@@ -30,8 +30,8 @@ class Dynamics(epyc.Experiment, object):
 
     The dynamics runs a network process provided as a :class:`Process`
     object. It optionally takes a prototype network over which the process runs, which
-    is copied for every run. If not provided atconstruction, the prototype should be
-    proivided by calling :methg:`setPrototypeNetwork` beefore trying to run a simulation.
+    is copied for every run. If not provided at construction, the prototype should be
+    proivided by calling :meth:`setPrototypeNetwork` beefore trying to run a simulation.
 
     :param p: network process to run
     :param g: prototype network (optional)'''
@@ -45,6 +45,9 @@ class Dynamics(epyc.Experiment, object):
         self._graphPrototype = g                 # prototype copied for each run
         self._graph = None                       # working copy of prototype
         self._process = p                        # network process to run
+
+
+    # ---------- Configuration ----------
 
     def network( self ):
         '''Return the network this dynamics is running over.
@@ -72,8 +75,12 @@ class Dynamics(epyc.Experiment, object):
         :returns: the process'''
         return self._process
 
+
+    # ---------- Results ----------
+
     def experimentalResults(self):
-        '''Report the process' experimental results.
+        '''Report the process' experimental results. This simply calls through to
+        the :meth:`Process.results` method of the process being simulated.
 
         :returns: the results of the process'''
         return self._process.results()

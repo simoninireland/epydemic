@@ -391,7 +391,7 @@ class CompartmentedModel(Process):
         '''Add an edge between nodes, adding the edge to any appropriate compartments.
 
         :param n: the start node
-        :param m the end node
+        :param m: the end node
         :param kwds: (optional) edge attributes'''
         super(CompartmentedModel, self).addEdge(n, m, **kwds)
 

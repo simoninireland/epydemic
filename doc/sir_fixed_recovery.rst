@@ -31,10 +31,6 @@ Building the model
 ------------------
 
 .. automethod:: SIR_FixedRecovery.build
-		
-		   
-Setup and events
-----------------
 
 In setting up the model, we need an additional step to make sure that
 any nodes initially infected are set to be removed at the appropriate
@@ -42,7 +38,11 @@ simulation time.
 
 .. automethod:: SIR_FixedRecovery.setUp
 
-Only a single event method is needed, with :meth:`SIR.remove` being
+
+Events
+------
+
+Only a single event method needs overriding, with :meth:`SIR.remove` being
 inherited.
 
 .. automethod:: SIR_FixedRecovery.infect

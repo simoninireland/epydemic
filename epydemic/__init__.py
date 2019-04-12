@@ -49,7 +49,7 @@ from .synchronousdynamics import SynchronousDynamics
 from .stochasticdynamics import StochasticDynamics
 
 # compartmented models
-from .compartmentedmodel import CompartmentedModel, CompartmentedNodeLocus, CompartmentedNodeLocus
+from .compartmentedmodel import CompartmentedModel, CompartmentedNodeLocus, CompartmentedEdgeLocus
 
 # reference disease models
 from .sir_model import SIR

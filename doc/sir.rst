@@ -21,8 +21,7 @@ SIR is a :term:`compartmented model of disease` with three :term:`compartments`:
 * *Removed (R)*, when an individual has recovered from the infection and
   neither infects nor can be infected.
 
-Essentially a removed individual takes no further part in the
-dynamics.
+Essentially a removed individual takes no further part in the dynamics.
 
 
 Dynamical states
@@ -53,8 +52,8 @@ that are initially placed into the :attr:`SIR.INFECTED` compartment, with
 all other nodes being placed into the :attr:`SIR.SUSCEPTIBLE` compartment.
 
 
-Dynamics
---------
+Loci
+----
 
 Dynamics in SIR occurs in two places:
 
@@ -85,7 +84,7 @@ Event methods
 -------------
 
 Event methods are defined for each of the two dynamical rules for the
-process: infection and removal (recovery).
+process: infection and removal.
 
 .. automethod:: SIR.infect
 		
