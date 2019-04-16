@@ -90,6 +90,7 @@ SOURCES_DOC_COOKBOOK = \
 	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/powerlaw-cutoff.png
+SOURCES_DOC_JOSS = paper.md
 SOURCES_DOCUMENTATION = \
 	$(SOURCES_DOC_GENERAL) \
 	$(SOURCES_DOC_SOURCES) \
