@@ -64,7 +64,6 @@ SOURCES_DOC_ZIP = epydemic-doc-$(VERSION).zip
 SOURCES_DOC_GENERAL = \
 	doc/index.rst \
 	doc/install.rst \
-	doc/start.rst \
 	doc/reference.rst \
 	doc/simulation.rst \
 	doc/bibliography.rst \
@@ -80,15 +79,20 @@ SOURCES_DOC_SOURCES = \
 	doc/sir_fixed_recovery.rst \
 	doc/sis_fixed_recovery.rst \
 	doc/adddelete.rst
+SOURCES_DOC_TUTORIAL = \
+	doc/tutorial.rst \
+	doc/tutorial/use-standard-model.rst \
+	doc/tutorial/build-sir.rst \
+	doc/tutorial/run-at-scale.rst
 SOURCES_DOC_COOKBOOK = \
 	doc/cookbook.rst \
-	doc/cookbook/use-standard-model.rst \
 	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/powerlaw-cutoff.png
 SOURCES_DOCUMENTATION = \
 	$(SOURCES_DOC_GENERAL) \
 	$(SOURCES_DOC_SOURCES) \
+	$(SOURCES_DOC_TUTORIAL) \
 	$(SOURCES_DOC_COOKBOOK)
 
 SOURCES_UTILS = \

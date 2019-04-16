@@ -1,62 +1,16 @@
-Getting started
-===============
+Running a simulation at scale
+=============================
 
 .. currentmodule:: epydemic
 
-Select a disease model
------------------------
-
-``epydemic`` comes with several disease models built-in. We'll start with the :term:`SIR` model
-with probabilistic recovery, as this is one of the most common in the literature and models
-diseases such as measles ort flus: once you've been infected, you can't be re-infected.
-
-.. code-block:: python
-
-   import epydemic
-   import epyc
-
-   model = epydemic.SIR()
-
-
-Create a network
-----------------
-
-The epidemic needs a network to run over. While it's not a very accurate model of a real population, we'll
-use the Erdos-Renyi network with a given number of nodes and mean degree. ``networkx`` can create such networks
-using a random process. Since we want the epidemic to potentially be able to infect the whole network, we're only
-interested in the largest connected component. And since we don't let people infect themselves, we don't want
-any self-loops. This leads to:
-
-.. code-block:: python
-
-   import networkx
-
-   # create the network
-   N = 10000                               # number of nodes in the network
-   kmean = 5                               # mean degree of a node
-   phi = (kmean + 0.0) / N                 # probability of two nodes being connected
-   g = networkx.erdos_renyi_graph(N, phi)
-
-   # clean the network
-   g = g.subgraph(max(networkx.connected_components(g), key = len)).copy()
-   g.remove_edges_from(list(g.selfloop_edges()))
-
-We now have a "simple" network, connected and without self-loops, over which to run the epidemic.
-
-
-Select a process dynamics
--------------------------
-
-We now need to run the epidemic over the network. To do this we need to select a process dynamics. Generally speaking
-it is best to use the :class:`StochasticDynamics` class, which will run the epidemic in
-continuous time. (We could alternatively use the :class:`SynchronousDynamics` class and
-run the epidemic in discrete time.)
-
-.. code-block:: python
-
-   e = epydemic.StochasticDynamics(m, g)
-
-The dynamics object ``e`` binds the disease model to the network ready to be simulated.
+On important thing about epidemic simulation is that both the networks and the processes that run
+across them are typically stochastic: they have components that are inherently random. To study the
+structure of these processes we therefore typically need to perform multiple repetitions of simulations
+with the same parameter values so as to squeeze-out variance in the results that comes from chance
+interactions between processes and network. (As a simple, if unlikely, example, consider the case
+where the network consists of two components with only a single edge between them and all the infected
+nodes start in one of the components. It's likely that the epidemic will die out without crossing
+into the other component. A less extreme example of the same thing is studied by :ref:`Shai and Dobson <SD13>`.
 
 
 Run the epidemic

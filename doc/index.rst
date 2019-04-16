@@ -36,7 +36,7 @@ epidemic behaves.
 
 
 What is ``epydemic``?
--------------------
+---------------------
 
 ``epydemic`` is a simulation framework for epidemic processes. It aims to provide the common simulation
 approaches used in the scientific literature, together with a small set of "common epidemics" that can
@@ -73,7 +73,7 @@ Current features
    :hidden:
 
    install
-   start
+   tutorial
    reference
    cookbook
    glossary

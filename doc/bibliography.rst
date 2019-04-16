@@ -46,3 +46,8 @@ Physical Review E **74**. September 2006.
 M.E.J. Newman. `Spread of epidemic disease on networks
 <http://dx.doi.org/10.1103/PhysRevE.66.016128>`_. Physical Review E
 **66**. July 2002.
+
+.. _SD13:
+
+Saray Shai and Simon Dobson. `Coupled adaptive complex networks
+<http://dx.doi.org/10.1103/PhysRevE.87.042812>`_. Physical Review E **87** (4). April 2013.
