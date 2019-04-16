@@ -1,7 +1,9 @@
-Running a simulation at scale
-=============================
+.. _run-at-scale:
 
 .. currentmodule:: epydemic
+
+Running a simulation at scale
+=============================
 
 On important thing about epidemic simulation is that both the networks and the processes that run
 across them are typically stochastic: they have components that are inherently random. To study the
@@ -10,7 +12,7 @@ with the same parameter values so as to squeeze-out variance in the results that
 interactions between processes and network. (As a simple, if unlikely, example, consider the case
 where the network consists of two components with only a single edge between them and all the infected
 nodes start in one of the components. It's likely that the epidemic will die out without crossing
-into the other component. A less extreme example of the same thing is studied by :ref:`Shai and Dobson <SD13>`.
+into the other component. (A less extreme example of the same thing is studied by :ref:`Shai and Dobson <SD13>`.)
 
 
 Run the epidemic
@@ -18,15 +20,6 @@ Run the epidemic
 
 To run the epidemic, we need to provide the dynamics with the parameters that the disease model needs. The dynakics
 is actually an ``epyc`` experiment, so we provide the parameters as a dict.
-
-What parameters does the SIR model take? Looking at its documentation (:class:`SIR`) it takes three
-parameters with the following keys and meanings:
-
-* :attr:`SIR.P_INFECTED`: the probability of a node initially being infected
-
-* :attr:`SIR.P_INFECT`: the probability of an infected node infecting a neighbouring susceptible node
-
-* :attr:`SIR.P_REMOVE`: the probability of a node recovering
 
 We can build a dict giving values to these three parameters:
 

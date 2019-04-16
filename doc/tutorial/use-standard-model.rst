@@ -18,6 +18,10 @@ the removal probability, and the initial seeding probability.
     param[SIR.P_REMOVE] = 0.5
     param[SIR.P_INFECTED] = 0.01
 
+
+Providing a network
+-------------------
+
 We can run the simulation over any appropriate network. A network whose degree distribution
 followed a :ref:`powerlaw with cutoff <model-human-population>` would probably be most
 realistic, but for now we'll just use an ER random graph model.
@@ -32,6 +36,10 @@ realistic, but for now we'll just use an ER random graph model.
 
     # create the network
     g = networkx.erdos_renyi_graph(N, phi)
+
+
+Running the simulation
+----------------------
 
 We can now perform a single run of the simulation, using :term:`stochastic dynamics`.
 
@@ -61,7 +69,7 @@ We can re-run the simulation, with or without changing the parameters.
 
     # change something and re-run
     param[SIR.P_REMOVE] = 1.0
-    e.set(param).run()
+    rc = e.set(param).run()
 
 We can also change the network.
 
@@ -69,6 +77,24 @@ We can also change the network.
 
     h = networkx.erdos_renyi_graph(N * 2, (kmean + 0.0) / (N * 2))
     e.setNetwork(h)
-    e.run()
+    rc = e.run()
+
+
+Retrieving results
+------------------
+
+The ``run`` method returns a dict of results. The structure of this dict is defined by ``epyc``, and you can refer to
+`that package's documentation for more details <https://epyc.readthedocs.io/en/latest/>`_: for our purposes, we
+will focus simply on the experimental results, which are held as anpthjer dict under the ``epyc.Experiment.RESULTS``
+key.
+
+The experimental resuilts are constructed by the :meth:`Process.results` method. This is overridden by
+:meth:`CompartmentedModel.results` to contain a mapping from compartments to the number of nodes in that compartment
+at the end of the simulation. Sub-classes can override the method further to add more results.
+
+This is all that's needed to define a run individual simulations of networked processes. There are additional methods
+and event types that can be used in other circumstances, which we explore in :ref:`advanced-topics`. It is also common
+to want to run simulations that explore the ways in which a process changes across a range of parameters, which we
+discuss under :ref:`run-at-scale`.
 
 
