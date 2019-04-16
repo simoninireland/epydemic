@@ -1,7 +1,7 @@
 Tutorial
 ========
 
-This page is a tutorial intreoduction to `epydemic`.
+This page is a tutorial intreoduction to ``epydemic``.
 
 .. toctree::
     :maxdepth: 2
@@ -9,4 +9,5 @@ This page is a tutorial intreoduction to `epydemic`.
     tutorial/build-sir.rst
     tutorial/use-standard-model.rst
     tutorial/run-at-scale.rst
+    tutorial/advanced-topics.rst
 
