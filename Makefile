@@ -83,7 +83,8 @@ SOURCES_DOC_TUTORIAL = \
 	doc/tutorial.rst \
 	doc/tutorial/use-standard-model.rst \
 	doc/tutorial/build-sir.rst \
-	doc/tutorial/run-at-scale.rst
+	doc/tutorial/run-at-scale.rst  \
+	doc/tutorial/advanced-topics.rst
 SOURCES_DOC_COOKBOOK = \
 	doc/cookbook.rst \
 	doc/cookbook/build-network-in-experiment.rst \
