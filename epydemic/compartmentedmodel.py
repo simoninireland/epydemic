@@ -135,6 +135,7 @@ class CompartmentedModel(Process):
         '''Set up the initial population of nodes into compartments.
 
         :param params: the simulation parameters'''
+        super(CompartmentedModel, self).setUp(params)
 
         # initialise all nodes to an empty compartment
         # (so we can assume all nodes have a compartment attribute)
