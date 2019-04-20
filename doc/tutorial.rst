@@ -1,7 +1,7 @@
 Tutorial
 ========
 
-This page is a tutorial intreoduction to ``epydemic``.
+This page is a tutorial introduction to ``epydemic``.
 
 .. toctree::
     :maxdepth: 2

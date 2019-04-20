@@ -3,9 +3,9 @@
 .. currentmodule:: epydemic
 
 Creating random networks in the experiment
-------------------------------------------
+==========================================
 
-*Problem*: Rather than create a random network and pass it into the experimental dynamics,
+**Problem**: Rather than create a random network and pass it into the experimental dynamics,
 you want to create it as part of the experiment itself. This will typically happen for one
 of two reasons:
 
@@ -14,20 +14,23 @@ of two reasons:
 2. You're running experiments on an ``epyc`` distributed cluster, and you want to
    create the network worker-side to avoid passing it over the network.
 
-*Solution*: To solve this problem we need to understand how ``epyc`` experiments work. When
+**Solution**: To solve this problem we need to understand how ``epyc`` experiments work. When
 an experiment is created, it has no parameters on which to work. before the experiment is run,
 its parameters are set by calling the ``set`` method. If this is the first time parameters
 have been set, the ``configure`` method gets called to configure the experiment with the
 given paraneters. If this *isn't* the first time parameters have been set, the ``deconfigure`` method
 gets called first to tear-down the current configuration, followed by a call to ``configure``.
 
-To generate a network from a given set of parameters, then, we simply sub-class the dynamics
-class and override its ``configure`` method to create a network and store it using
-:meth:`Dynamics.setNetworkPrototype`. For example,
+The correct palce to create the network is in the :ckass:`Dynamics` class that runs the experiment.
+Rather than pass a prototype network to the dynamics (as we would normally do, either at
+construction or by calling :meth:`Dynamics.setPrototypeNetwork`) we instead provide code
+to create (and delete) a network at appropriate points in the experimental lifecycle.
+We sub-class the dynamics class we want to use and override its ``configure`` method.
+For example, for a :class:`StochasticDynamics`:
 
 .. code-block:: python
 
-    class ERPopulation(epydemic.CompartmentedStochasticDynamics):
+    class StochasticDynamicsOverER(epydemic.StochasticDynamics):
 
         def configure(self, params):
             '''Create a prototype ER network when parameters are set. This expects a
@@ -35,7 +38,7 @@ class and override its ``configure`` method to create a network and store it usi
             kmean (average degree) or phi (connection probability).
 
             :param params: the experimental parameters'''
-            super(ERPopulation, self).configure(params)
+            super(StochasticDynamicsOverER, self).configure(params)
 
             # extract ER network parameters
             N = params['N']
@@ -54,7 +57,7 @@ class and override its ``configure`` method to create a network and store it usi
 
          def deconfigure(self):
             '''Undo the current experimental configuration.'''
-            super(ERPopulation, self).deconfigure()
+            super(StochasticDynamicsOverER, self).deconfigure()
             self.setNetworkPrototype(None)
 
 What we've done here is add a ``configure`` method that creates a network based on values provided
