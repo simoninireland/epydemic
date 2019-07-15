@@ -335,14 +335,28 @@ class Process(object):
     # ---------- Posted events (occurring at a fixed time) ----------
 
     def postEvent(self, t, e, ef):
-        '''Post an event to happen at time t. The :term:`event function` should
-        take the dynamics, simulation time, network, and element for the event.
-        At time t it is called with the given network and element.
+        '''Post an event to happen at time t, calling the :term:`event function`
+        at time t.
 
         :param t: the current time
         :param e: the element (node or edge) on which the event occurs
         :param ef: the event function'''
         heappush(self._posted, (t, (lambda: ef(t, e))))
+
+    def postRepeatingEvent(self, t, dt, e, ef):
+        '''Post an event that re-occurs at interval dt, taken from now.
+
+        :param t: the start time
+        :param dt: the interval
+        :param e: the element (node or edge) on which the event occurs
+        :param ef: the element function'''
+
+        def repeat(tc, e):
+            ef(tc, e)
+            tp = tc + dt
+            heappush(self._posted, (tp, (lambda: repeat(tp, e))))
+
+        heappush(self._posted, (t, (lambda: repeat(t, e))))
 
     def nextPendingEventBefore(self, t):
         '''Return the next pending event to occur at or before time t.

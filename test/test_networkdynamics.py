@@ -112,3 +112,27 @@ class NetworkDynamicsTest(unittest.TestCase):
         # should be one event left
         self.assertEqual(len(p.pendingEvents(100)), 1)
         
+    def testRepeating(self):
+        '''Test that repeating events repeat properly.'''
+        p = Process()
+        dyn = Dynamics(p)
+
+        # event function builder to count the times
+        self._ps = []
+        def make_ef():
+            def ef(t, e):
+                self._ps.append((t))
+            return ef
+
+        # post a repeating event
+        p.postRepeatingEvent(1, 3, None, make_ef())
+        for t in range(20):
+            dyn.runPendingEvents(t)
+
+        # should be one event left
+        self.assertEqual(len(p.pendingEvents(100)), 1)
+
+        # check list of times
+        self.assertEqual(self._ps, [1, 4, 7, 10, 13, 16, 19])
+
+
