@@ -89,7 +89,11 @@ SOURCES_DOC_COOKBOOK = \
 	doc/cookbook.rst \
 	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
-	doc/cookbook/powerlaw-cutoff.png
+	doc/cookbook/monitoring-progress.rst \
+	doc/cookbook/powerlaw-cutoff.png \
+	doc/cookbook/sir-progress-dt.png \
+	doc/cookbook/sir-progress-er.png \
+	doc/cookbook/sir-progress-plc.png
 SOURCES_DOC_JOSS = paper.md
 SOURCES_DOCUMENTATION = \
 	$(SOURCES_DOC_GENERAL) \
@@ -98,7 +102,8 @@ SOURCES_DOCUMENTATION = \
 	$(SOURCES_DOC_COOKBOOK)
 
 SOURCES_UTILS = \
-    utils/make-powerlaw-cutoff.py
+    utils/make-powerlaw-cutoff.py \
+    utils/make-monitor-progress.py
 
 SOURCES_EXTRA = \
 	README.rst \
@@ -121,6 +126,7 @@ PY_REQUIREMENTS = \
 PY_DEV_REQUIREMENTS = \
 	ipython \
 	jupyter \
+	mpmath \
 	matplotlib \
 	seaborn \
 	nose \
@@ -137,7 +143,7 @@ PY_NON_REQUIREMENTS = \
 	functools32 \
 	subprocess32 \
 	futures
-VENV = venv
+VENV = venv3
 REQUIREMENTS = requirements.txt
 DEV_REQUIREMENTS = dev-requirements.txt
 
@@ -154,7 +160,7 @@ COVERAGE = coverage
 PIP = pip
 TWINE = twine
 GPG = gpg
-VIRTUALENV = virtualenv
+VIRTUALENV = python3 -m venv
 ACTIVATE = . $(VENV)/bin/activate
 TR = tr
 CAT = cat

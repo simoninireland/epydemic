@@ -21,7 +21,7 @@ have been set, the ``configure`` method gets called to configure the experiment 
 given paraneters. If this *isn't* the first time parameters have been set, the ``deconfigure`` method
 gets called first to tear-down the current configuration, followed by a call to ``configure``.
 
-The correct palce to create the network is in the :ckass:`Dynamics` class that runs the experiment.
+The correct palce to create the network is in the :class:`Dynamics` class that runs the experiment.
 Rather than pass a prototype network to the dynamics (as we would normally do, either at
 construction or by calling :meth:`Dynamics.setPrototypeNetwork`) we instead provide code
 to create (and delete) a network at appropriate points in the experimental lifecycle.

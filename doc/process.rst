@@ -108,12 +108,16 @@ which such events fire is independent of the size of the locus.
 
 .. automethod:: Process.addFixedRateEvent
 
-These two kinds of events are both stochastic, in the sense that they are generated according
-to an exponential probability distribution. Finally, *posted* events are set to occur at a
-particular simulation time. As the simulation proceeds it will execute posted events in the
-correct time sequence relative to the different stochastic events that are generated.
+These two kinds of events are both *stochastic*, in the sense that they are generated according
+to an exponential probability distribution.
+
+In contrast, *posted* events are set to occur at a particular simulation time. As the
+simulation proceeds it will execute posted events in the correct time sequence relative
+to the different stochastic events that are generated.
 
 .. automethod:: Process.postEvent
+
+.. automethod:: Process.postRepeatingEvent
 
 
 Accessing event distributions

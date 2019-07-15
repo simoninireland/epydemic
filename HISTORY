@@ -1,16 +1,19 @@
 Version 0.99.2 (v1.0 release candidate 2)
 
+   - Moved development to Python3.7
    - Fully merged process-refactor branch
    - Updated library dependencies
    - Added an interface to evolve and interact with the network, which means that
      things compose more cleanly
    - Removed a lot of unnecessary parameter-passing after the refactoring, including
      simplifying event functions and compartment management
+   - Added posting of repeated events
+   - Added cookbook article on monitoring processes
 
 Version 0.99.1 (v1.0 release candidate 1) 2019-04-11
 
    - Added SIRS model of partial-in-time immunity
-   - Seperated process form dynamics
+   - Seperated process from dynamics
    - Fixed rates
    - Added cookbook of recipes for use
 
@@ -19,7 +22,7 @@ Version 0.5.1 2018-07-27
    - Fixed bug in the event selection routine for Gillespie dynamics
    - Added shuffling of events to avoid anomalies in event selection
    - Syntax changes to be Python3 compatible
-   - Made test.CompartmentedDynamicsTest a mixin to avoid incorrect test calls
+   - Made test/CompartmentedDynamicsTest a mixin to avoid incorrect test calls
    - Introduced nose and tox for testing against multiple Python versions
    - Changed compartmented models to return a flat dict of results with just
      the final sizes of each compartment
