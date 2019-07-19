@@ -18,8 +18,6 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-import networkx
-import numpy
 
 
 class AddDelete(Process):
@@ -95,7 +93,8 @@ class AddDelete(Process):
         return i
 
     def addNewNode(self, **kwds):
-        '''Add a new node to the network with a new, unused name. Any keyword arguments added as node attributes.
+        '''Add a new node to the network with a new, unused name. Any keyword arguments are
+        added as node attributes.
 
         :returns: the generated name of the new node'''
         i = self.newNodeName()
@@ -128,9 +127,9 @@ class AddDelete(Process):
         es = set()
         for m in range(self._c):
             # a probably unnecessary test for parallel edges and self-loops
-            while (True):
+            while True:
                 j = ns.draw()
-                if (i != j) and (j not in es):
+                if (j not in es) and (i != j):
                     break
             es.add(j)
         for j in es:

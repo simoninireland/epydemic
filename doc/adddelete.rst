@@ -10,11 +10,16 @@ random process. They can be used for a number of purposes, perhaps most obviousl
 model births and deaths, They can be combined (with care) with disease processes to model
 situations where the underlying network is changing independently of the disease itself.
 
-The canonical work on addition-deletion networks is due to :ref:`Moore, Ghosal, and Newman
+The canonical work on addition-deletion networks is :ref:`Moore, Ghosal, and Newman
 <MGN06>`, which also showed that the process is very complex in its most general case.
-Specific solutions are solvable, however: most notably, in the case where newly-added nodes
-are connected to a fixed number of neighbours selected randomly. (There are more cases
-of interest that will be defined in future versions of this class.)
+Specific solutions are analytically solvable, however: most notably the case where
+newly-added nodes are connected to a fixed number of neighbours selected randomly, which
+is the default behaviour of this class. Other behaviours can be implemented by overriding
+the :meth:`AddDelete.add` method (and, less commonly, the :meth:`AddDelete.remove` method).
+Note that this is a slightly different formulation to that in the paper, which defines
+an "addition kernel" as a function independent of the actions of the process:
+implementationally it seems to make more sense to provide this functionality by
+sub-classing rather than through a separate object.
 
 
 Parameters
@@ -69,6 +74,8 @@ Events
 ------
 
 There are two events that can be triggered: one to add a node, and one to remove a node.
+These two events provide the "kernel" of the addiiton-deletion process and can be specialised
+to explore new behaviours.
 
 .. automethod:: AddDelete.add
 
