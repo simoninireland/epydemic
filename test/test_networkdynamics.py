@@ -32,7 +32,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         # value when fired
         self._v = 0
         def make_ef( w ):
-            def ef( t, g, e ):
+            def ef( t, e ):
                 self._v = self._v + w
             return ef
         
