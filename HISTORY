@@ -1,6 +1,7 @@
 Version 0.99.2 (v1.0 release candidate 2)
 
    - Moved development to Python3.7
+   - Added "wheel" distribution format, updated to simpler build system
    - Fully merged process-refactor branch
    - Updated library dependencies
    - Added an interface to evolve and interact with the network, which means that
@@ -9,6 +10,8 @@ Version 0.99.2 (v1.0 release candidate 2)
      simplifying event functions and compartment management
    - Added posting of repeated events
    - Added cookbook article on monitoring processes
+   - Added recording time an edge became occupied
+   - Added some badges to README.rst
 
 Version 0.99.1 (v1.0 release candidate 1) 2019-04-11
 

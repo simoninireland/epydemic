@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -29,6 +29,7 @@ VERSION = 0.99.2
 # Source code
 SOURCES_SETUP_IN = setup.py.in
 SOURCES_SDIST = dist/$(PACKAGENAME)-$(VERSION).tar.gz
+SOURCES_WHEEL = dist/$(PACKAGENAME)-$(VERSION)-py2-py3-none-any.whl
 SOURCES_CODE = \
 	epydemic/__init__.py \
 	epydemic/networkdynamics.py \
@@ -60,15 +61,14 @@ SOURCES_TUTORIAL = doc/epydemic.ipynb
 SOURCES_DOC_CONF = doc/conf.py
 SOURCES_DOC_BUILD_DIR = doc/_build
 SOURCES_DOC_BUILD_HTML_DIR = $(SOURCES_DOC_BUILD_DIR)/html
-SOURCES_DOC_ZIP = epydemic-doc-$(VERSION).zip
-SOURCES_DOC_GENERAL = \
+SOURCES_DOC_ZIP = $(PACKAGENAME)-doc-$(VERSION).zip
+SOURCES_DOCUMENTATION = \
 	doc/index.rst \
 	doc/install.rst \
 	doc/reference.rst \
 	doc/simulation.rst \
 	doc/bibliography.rst \
-	doc/glossary.rst
-SOURCES_DOC_SOURCES = \
+	doc/glossary.rst \
 	doc/networkdynamics.rst \
 	doc/synchronousdynamics.rst \
 	doc/stochasticdynamics.rst \
@@ -78,14 +78,12 @@ SOURCES_DOC_SOURCES = \
 	doc/sis.rst \
 	doc/sir_fixed_recovery.rst \
 	doc/sis_fixed_recovery.rst \
-	doc/adddelete.rst
-SOURCES_DOC_TUTORIAL = \
+	doc/adddelete.rst \
 	doc/tutorial.rst \
 	doc/tutorial/use-standard-model.rst \
 	doc/tutorial/build-sir.rst \
 	doc/tutorial/run-at-scale.rst  \
-	doc/tutorial/advanced-topics.rst
-SOURCES_DOC_COOKBOOK = \
+	doc/tutorial/advanced-topics.rst \
 	doc/cookbook.rst \
 	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
@@ -94,17 +92,16 @@ SOURCES_DOC_COOKBOOK = \
 	doc/cookbook/sir-progress-dt.png \
 	doc/cookbook/sir-progress-er.png \
 	doc/cookbook/sir-progress-plc.png
-SOURCES_DOC_JOSS = paper.md
-SOURCES_DOCUMENTATION = \
-	$(SOURCES_DOC_GENERAL) \
-	$(SOURCES_DOC_SOURCES) \
-	$(SOURCES_DOC_TUTORIAL) \
-	$(SOURCES_DOC_COOKBOOK)
+SOURCES_PAPER = \
+	paper.md \
+	paper.bib
 
+# Extras for building diagrams etc
 SOURCES_UTILS = \
     utils/make-powerlaw-cutoff.py \
     utils/make-monitor-progress.py
 
+# Extras for the build and packaging system
 SOURCES_EXTRA = \
 	README.rst \
 	LICENSE \
@@ -114,44 +111,11 @@ SOURCES_GENERATED = \
 	MANIFEST \
 	setup.py
 
-# Python packages needed
-# For the system to install and run
-PY_REQUIREMENTS = \
-    six \
-	numpy \
-	networkx \
-	future \
-	epyc
-# For the documentation and development venv
-PY_DEV_REQUIREMENTS = \
-	ipython \
-	jupyter \
-	mpmath \
-	matplotlib \
-	seaborn \
-	nose \
-	tox \
-	coverage \
-	sphinx \
-	twine
-
-# Packages that shouldn't be saved as requirements (because they're
-# OS-specific, in this case OS X, and screw up Linux compute servers,
-# or because of Python 2.7 vs 3.7 incompatibilities)
-PY_NON_REQUIREMENTS = \
-	appnope \
-	functools32 \
-	subprocess32 \
-	futures
-VENV = venv3
-REQUIREMENTS = requirements.txt
-DEV_REQUIREMENTS = dev-requirements.txt
-
 
 # ----- Tools -----
 
 # Base commands
-PYTHON = python
+PYTHON = python3
 IPYTHON = ipython
 JUPYTER = jupyter
 IPCLUSTER = ipcluster
@@ -160,7 +124,7 @@ COVERAGE = coverage
 PIP = pip
 TWINE = twine
 GPG = gpg
-VIRTUALENV = python3 -m venv
+VIRTUALENV = $(PYTHON) -m venv
 ACTIVATE = . $(VENV)/bin/activate
 TR = tr
 CAT = cat
@@ -173,14 +137,18 @@ ZIP = zip -r
 # Root directory
 ROOT = $(shell pwd)
 
+# Requirements for running the library and for the development venv needed to build it
+VENV = venv3
+REQUIREMENTS = requirements.txt
+DEV_REQUIREMENTS = dev-requirements.txt
+
 # Constructed commands
 RUN_TESTS = $(TOX)
 RUN_COVERAGE = $(COVERAGE) erase && $(COVERAGE) run -a setup.py test && $(COVERAGE) report -m --include '$(PACKAGENAME)*'
 RUN_NOTEBOOK = $(JUPYTER) notebook
 RUN_SETUP = $(PYTHON) setup.py
 RUN_SPHINX_HTML = PYTHONPATH=$(ROOT) make html
-RUN_TWINE = $(TWINE) upload dist/$(PACKAGENAME)-$(VERSION).tar.gz dist/$(PACKAGENAME)-$(VERSION).tar.gz.asc
-NON_REQUIREMENTS = $(SED) $(patsubst %, -e '/^%*/d', $(PY_NON_REQUIREMENTS))
+RUN_TWINE = $(TWINE) upload dist/*
 
 
 # ----- Top-level targets -----
@@ -207,31 +175,20 @@ doc: $(SOURCES_DOCUMENTATION) $(SOURCES_DOC_CONF)
 docserver:
 	$(ACTIVATE) && $(CHDIR) doc && PYTHONPATH=.. $(RUN_NOTEBOOK)
 
-# Build a development venv from the known-good requirements in the repo
+# Build a development venv from the requirements in the repo
 .PHONY: env
 env: $(VENV)
 
 $(VENV):
 	$(VIRTUALENV) $(VENV)
-	$(CP) $(DEV_REQUIREMENTS) $(VENV)/requirements.txt
+	$(CAT) $(REQUIREMENTS) $(DEV_REQUIREMENTS) >$(VENV)/requirements.txt
 	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
-
-# Build a development venv from the latest versions of the required packages,
-# creating a new requirements.txt ready for committing to the repo. Make sure
-# things actually work in this venv before committing!
-.PHONY: newenv
-newenv:
-	$(RM) $(VENV)
-	$(VIRTUALENV) $(VENV)
-	echo $(PY_REQUIREMENTS) | $(TR) ' ' '\n' >$(VENV)/$(REQUIREMENTS)
-	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
-	$(NON_REQUIREMENTS) $(VENV)/requirements.txt >$(REQUIREMENTS)
-	echo $(PY_DEV_REQUIREMENTS) | $(TR) ' ' '\n' >$(VENV)/$(REQUIREMENTS)
-	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt && $(PIP) freeze >requirements.txt
-	$(NON_REQUIREMENTS) $(VENV)/requirements.txt >$(DEV_REQUIREMENTS)
 
 # Build a source distribution
 sdist: $(SOURCES_SDIST)
+
+# Build a wheel distribution
+wheel: $(SOURCES_WHEEL)
 
 # Upload a source distribution to PyPi
 upload: $(SOURCES_SDIST)
@@ -240,7 +197,7 @@ upload: $(SOURCES_SDIST)
 
 # Clean up the distribution build 
 clean:
-	$(RM) $(SOURCES_GENERATED) epyc.egg-info dist $(SOURCES_DOC_BUILD_DIR) $(SOURCES_DOC_ZIP)
+	$(RM) $(SOURCES_GENERATED) $(SOURCES_DIST_DIR) epyc.egg-info dist $(SOURCES_DOC_BUILD_DIR) $(SOURCES_DOC_ZIP) dist build
 
 # Clean up everything, including the computational environment (which is expensive to rebuild)
 reallyclean: clean
@@ -261,6 +218,10 @@ setup.py: $(SOURCES_SETUP_IN) Makefile
 $(SOURCES_SDIST): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
 	$(ACTIVATE) && $(RUN_SETUP) sdist
 
+# The binary (wheel) distribution
+$(SOURCES_WHEEL): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
+	$(ACTIVATE) && $(RUN_SETUP) bdist_wheel
+
 
 # ----- Usage -----
 
@@ -269,7 +230,9 @@ Available targets:
    make test         run the test suite for all Python versions we support
    make coverage     run coverage checks of the test suite
    make doc          build the API documentation using Sphinx
-   make dist         create a source distribution
+   make env          create a known-good development virtual environment
+   make sdist        create a source distribution
+   make wheel	     create binary (wheel) distribution
    make upload       upload distribution to PyPi
    make clean        clean-up the build
    make reallyclean  clean up the virtualenv as well
