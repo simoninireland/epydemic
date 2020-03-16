@@ -1,4 +1,4 @@
-Version 0.99.2 (v1.0 release candidate 2)
+Version 0.99.2 (v1.0 release candidate 2) 2020-03-16
 
    - Moved development to Python3.7
    - Added "wheel" distribution format, updated to simpler build system
