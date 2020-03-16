@@ -1,6 +1,6 @@
 # Mixin class containing common tests for compartmented models
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -33,18 +33,12 @@ class CompartmentedDynamicsTest():
         '''Test a single run of a stochastic dynamics.'''
         e = StochasticDynamics(self._model, self._network)
         rc = e.set(self._params).run()
-        if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
-            print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
-    
+
     def testRunSingleSynchronous( self ):
         '''Test a single run of a synchronous dynamics.'''
         e = SynchronousDynamics(self._model, self._network)
         rc = e.set(self._params).run()
-        if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
-            print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
-        
+
     def testRunMultipleStochastic( self ):
         '''Test a stochastic dynamics run of a model over a (small) parameter space.'''
         e = StochasticDynamics(self._model, self._network)

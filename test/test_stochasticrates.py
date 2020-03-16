@@ -59,7 +59,8 @@ class StochasticRatesTest(unittest.TestCase):
 
     def setUp(self):
         self._dyn = StochasticDynamics(FixedRatesCounter(), networkx.erdos_renyi_graph(100, 0.01))
-        self._maxTime = 20000
+        self._maxTime = 5000
+        self._dyn.process().setMaximumTime(self._maxTime)
 
     def _checkRates(self, rc):
         eps = self._maxTime * 0.01                                # allow 1% deviation
@@ -101,4 +102,4 @@ class StochasticRatesTest(unittest.TestCase):
 
     def testLotsOfRates(self):
         '''Test that things still work when there are a lot of low-rate events.'''
-        self._checkRates(self._dyn.set(dict(eventCountRate = [ 1 ] * 100)).run())
+        self._checkRates(self._dyn.set(dict(eventCountRate = [ 1 ] * 50)).run())

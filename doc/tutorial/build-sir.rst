@@ -116,14 +116,14 @@ needs to be given a name.
 Building the model
 ------------------
 
-We can now build the model ready for simulation.  There are tfour elements to this:
+We can now build the model ready for simulation.  There are four elements to this:
 
 1. Collect the parameters we need, which are passed to us in a dict.
 2. Create the compartments.
 3. Create the loci that track the nodes and edges we need to perform actions on.
 4. Define the events we want to happen to nodes or edges at these loci.
 
-The code to do this:
+The code to do this is:
 
 .. code-block:: python
 
@@ -142,11 +142,11 @@ The code to do this:
         self.addEventPerElement(self.SI, pInfect, self.infect)
         self.addEventPerElement(self.INFECTED, pRemove, self.remove)
 
-We first grab the parameters by name from the parameters dict. We then declare the three compartments by calliong
+We first grab the parameters by name from the parameters dict. We then declare the three compartments by calling
 :meth:`CompartmentedModel.addCompartment`, which takes a compartment name and the initial probability that a node
 will randomly be placed in that compartment. The parameter ``pInfected`` (named ``SIR.P_INFECTED``) gives the
 probability of a node initially being infected (in the ``SIR.INFECTED`` compartment, and since no nodes start off
-in the ``SIR.REMOVED`` (probability ``0.0``), the probability of nodes being in ``SIR.SUSCEPTIBLE`` is ``1 - pInfected``.
+in the ``SIR.REMOVED`` compartment (probability ``0.0``), the probability of nodes being ``SIR.SUSCEPTIBLE`` is ``1 - pInfected``.
 
 We then declare that we want to track the I nodes and the SI edges, and create two loci to do this. The first
 gets named ``SIR.INFECTED`` by default; the second is given an explicit name. ``SIR.SI`` (a name will be created
@@ -171,13 +171,13 @@ Finally, we define the events that happen as part of the process.
     def infect( self, t, e ):
         (n, m) = e
         self.changeCompartment(n, self.INFECTED)
-        self.markOccupied(e)
+        self.markOccupied(e, t)
 
     def remove( self, t, n ):
         self.changeCompartment(n, self.REMOVED)
 
-Both event functions are passed the current simulation time (which neither of them use, as it happens) and
-the element on which the event should occur, drawen from the locus to which the event is attached.
+Both event functions are passed the current simulation time and
+the element on which the event should occur, drawn from the locus to which the event is attached.
 
 For the ``infect`` event, the element is an edge (because the event occurs on SI edges). We extract the endpoints
 of the edge by pattern-matching. Since the locus is defined as holding edges between a node in the ``SIR.SUSCEPTIBLE``

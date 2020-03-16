@@ -48,24 +48,25 @@ class AddDeleteTest(unittest.TestCase):
         kmean = 10
         phi = (kmean + 0.0) / N
         self._network = networkx.erdos_renyi_graph(N, phi)
+        self._maxTime = 5000
 
         self._params = dict()
         self._params[AddDelete.DEGREE] = 10
         self._process = AddDeleteRecorder()
-        self._process.setMaximumTime(10000)
+        self._process.setMaximumTime(self._maxTime)
+        self._e = StochasticDynamics(self._process, self._network)
 
     def testRun(self):
         '''Test that the process runs and adds and deletes at roughly equal rates.'''
         self._params[AddDelete.P_ADD] = 1
         self._params[AddDelete.P_DELETE] = 1
-        e = StochasticDynamics(self._process, self._network)
-        rc = e.set(self._params).run()
+        rc = self._e.set(self._params).run()
         self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order(), delta = int((self._network.order() + 0.0) * 0.1))
 
     def testRunFaster(self):
         '''Test that the process runs and adds faster than it deletes.'''
         self._params[AddDelete.P_ADD] = 1
         self._params[AddDelete.P_DELETE] = 0.5
-        e = StochasticDynamics(self._process, self._network)
-        rc = e.set(self._params).run()
-        self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order() * 2, delta = int((self._network.order() + 0.0) * 2 * 0.1))
+        rc = self._e.set(self._params).run()
+        dn = self._maxTime * (self._params[AddDelete.P_ADD] - self._params[AddDelete.P_DELETE])
+        self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order() + dn, delta = int((self._network.order() + 0.0) * 2 * 0.1))

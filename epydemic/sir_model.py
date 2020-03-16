@@ -63,11 +63,11 @@ class SIR(CompartmentedModel):
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
 
-        :param t: the simulation time (unused)
+        :param t: the simulation time
         :param e: the edge transmitting the infection, susceptible-infected'''
         (n, m) = e
         self.changeCompartment(n, self.INFECTED)
-        self.markOccupied(e)
+        self.markOccupied(e, t)
 
     def remove( self, t, n ):
         '''Perform a removal event. This changes the compartment of

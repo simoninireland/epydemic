@@ -1,6 +1,6 @@
 # SIRS as a compartmented model
 #
-# Copyright (C) 2017--18 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -45,7 +45,7 @@ class SIRS(SIR):
         pResuscept = params[self.P_RESUSCEPT]
         self.trackNodesInCompartment(self.REMOVED)
 
-        self.addEvent(self.REMOVED, pResuscept, self.resuscept)
+        self.addEventPerElement(self.REMOVED, pResuscept, self.resuscept)
 
     def resuscept(self, t, n):
         '''Perform a re-susceptibility event. This changes the compartment of

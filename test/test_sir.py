@@ -1,6 +1,6 @@
 # Test SIR under different dynamics
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #

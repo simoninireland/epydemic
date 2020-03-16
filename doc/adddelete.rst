@@ -39,7 +39,7 @@ Loci
 
 The addition-deletion process works independently of the size of the network: it
 simply adds and delete nodes according to the probabilities given by the
-:attr:`AddDelete.P_ADD` and :attr:`AddDelete.P_DELETE` parameters. Sincve it's
+:attr:`AddDelete.P_ADD` and :attr:`AddDelete.P_DELETE` parameters. Since it's
 expensive in `networkx` to draw a random node, we keep track of them in a locus.
 
 .. autoattribute:: AddDelete.NODES
