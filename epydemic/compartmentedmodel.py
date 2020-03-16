@@ -56,10 +56,10 @@ class CompartmentedEdgeLocus(Locus):
         :param n: the first node
         :param m: the second node
         :returns: match status -1, 0, or 1'''
-        if (g.node[n][CompartmentedModel.COMPARTMENT] == self._right) and (g.node[m][CompartmentedModel.COMPARTMENT] == self._left):
+        if (g.nodes[n][CompartmentedModel.COMPARTMENT] == self._right) and (g.nodes[m][CompartmentedModel.COMPARTMENT] == self._left):
             return -1
         else:
-            if (g.node[n][CompartmentedModel.COMPARTMENT] == self._left) and (g.node[m][CompartmentedModel.COMPARTMENT] == self._right):
+            if (g.nodes[n][CompartmentedModel.COMPARTMENT] == self._left) and (g.nodes[m][CompartmentedModel.COMPARTMENT] == self._right):
                 return 1
             else:
                 return 0
@@ -114,6 +114,7 @@ class CompartmentedModel(Process):
     # model state variables
     COMPARTMENT = 'compartment'                 #: Node attribute holding the node's compartment.
     OCCUPIED = 'occupied'                       #: Edge attribute, True if infection travelled along the edge.
+    T_OCCUPIED = 'occupationTime'               #: Edge attribute holding the time the infection crossed the edge.
 
     # default compartment
     DEFAULT_COMPARTMENT = 'defaultCompartment'  #: Default compartment label for new nodes
@@ -141,7 +142,7 @@ class CompartmentedModel(Process):
         # (so we can assume all nodes have a compartment attribute)
         g = self.network()
         for n in g.nodes():
-            g.node[n][self.COMPARTMENT] = None
+            g.nodes[n][self.COMPARTMENT] = None
 
         # mark edges as unoccupied
         for (_, _, data) in g.edges(data=True):
@@ -194,7 +195,7 @@ class CompartmentedModel(Process):
         :param c: the compartment
         :returns: a collection of nodes'''
         g = self.network()
-        return [ n for n in g.nodes() if g.node[n][self.COMPARTMENT] == c]
+        return [ n for n in g.nodes() if g.nodes[n][self.COMPARTMENT] == c]
 
     def results(self):
         '''Create a dict of experimental results for the experiment, consisting of the final
@@ -207,7 +208,7 @@ class CompartmentedModel(Process):
             rc[c] = 0
         g = self.network()
         for n in g.nodes():
-            c = g.node[n][self.COMPARTMENT]
+            c = g.nodes[n][self.COMPARTMENT]
             rc[c] = rc[c] + 1
         return rc
 
@@ -334,7 +335,7 @@ class CompartmentedModel(Process):
         g = self.network()
 
         # set the correct node attribute
-        g.node[n][self.COMPARTMENT] = c
+        g.nodes[n][self.COMPARTMENT] = c
 
         # propagate the change to any other compartments
         self._callEnterHandlers(n, c)
@@ -347,23 +348,25 @@ class CompartmentedModel(Process):
         g = self.network()
 
         # propagate effects of leaving the current compartment
-        self._callLeaveHandlers(n, g.node[n][self.COMPARTMENT])
+        self._callLeaveHandlers(n, g.nodes[n][self.COMPARTMENT])
 
         # record new compartment on node
-        g.node[n][self.COMPARTMENT] = c
+        g.nodes[n][self.COMPARTMENT] = c
 
         # propagate effects of entering new compartment
         self._callEnterHandlers(n, c)
 
-    def markOccupied( self, e ):
+    def markOccupied( self, e, t ):
         '''Mark the given edge as having been occupied by the dynamics, i.e., to
-        have been traversed in transmitting the disease.
+        have been traversed in transmitting the disease, at time t.
 
-        :param e: the edge'''
+        :param e: the edge
+        :param t: the time at which it was occupied'''
         g = self.network()
         (n, m) = e
         data = g.get_edge_data(n, m)
         data[self.OCCUPIED] = True
+        data[self.T_OCCUPIED] = t
         
     def addNode(self, n, compartment = None, **kwds):
         '''Add a node to the working network, adding it to the appropriate compartment.
@@ -383,7 +386,7 @@ class CompartmentedModel(Process):
 
         # propagate effects of leaving the current compartment
         g = self.network()
-        self._callLeaveHandlers(n, g.node[n][self.COMPARTMENT])
+        self._callLeaveHandlers(n, g.nodes[n][self.COMPARTMENT])
 
         # remove the node
         super(CompartmentedModel, self).removeNode(n)
@@ -398,8 +401,8 @@ class CompartmentedModel(Process):
 
         # add edge to any compartments it should be in
         g = self.network()
-        self._callEnterHandlers(n, g.node[n][self.COMPARTMENT])
-        self._callEnterHandlers(m, g.node[m][self.COMPARTMENT])
+        self._callEnterHandlers(n, g.nodes[n][self.COMPARTMENT])
+        self._callEnterHandlers(m, g.nodes[m][self.COMPARTMENT])
 
 
     def removeEdge(self, n, m):
@@ -411,5 +414,5 @@ class CompartmentedModel(Process):
 
         # add edge to any compartments it should be in
         g = self.network()
-        self._callLeaveandlers(n, g.node[n][self.COMPARTMENT])
-        self._callLeaveHandlers(m, g.node[m][self.COMPARTMENT])
+        self._callLeaveandlers(n, g.nodes[n][self.COMPARTMENT])
+        self._callLeaveHandlers(m, g.nodes[m][self.COMPARTMENT])

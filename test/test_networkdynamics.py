@@ -1,6 +1,6 @@
 # Test network dynamics
 #
-# Copyright (C) 2017--2018 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #

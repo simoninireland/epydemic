@@ -1,6 +1,6 @@
 # Test the SIR and SIS fixed-time recovery variants
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2019 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -19,10 +19,10 @@
 
 from __future__ import print_function
 from epydemic import *
-from test.compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
+import six
 
 class FixedRecoveryTest(unittest.TestCase):
 
@@ -41,14 +41,26 @@ class FixedRecoveryTest(unittest.TestCase):
         e = SynchronousDynamics(SIR_FixedRecovery(), self._network)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
             print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
+            self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
+        else:
+            six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], ['S', 'I', 'R'])
+            self.assertTrue(rc[epyc.Experiment.RESULTS]['S'] > 0)
+            self.assertTrue(rc[epyc.Experiment.RESULTS]['I'] == 0)
+            self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
+            self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())
 
     def testRunSingleSIRStochastic( self ):
         '''Test a single run of a fixed-period SIR under stochastic dynamics.'''
         e = StochasticDynamics(SIR_FixedRecovery(), self._network)
         rc = e.set(self._params).run()
         if not rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS]:
-            print(rc[epyc.Experiment.METADATA][epyc.Experiment.EXCEPTION])
             print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
+            self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
+        else:
+            six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [ 'S', 'I', 'R' ])
+            self.assertTrue(rc[epyc.Experiment.RESULTS]['S'] > 0)
+            self.assertTrue(rc[epyc.Experiment.RESULTS]['I'] == 0)
+            self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
+            self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())
   

@@ -61,9 +61,9 @@ class SIR_FixedRecovery(SIR):
         # traverse the set of initially-infected nodes
         tInfected = params[self.T_INFECTED]
         g = self.network()
-        for n in self.compartment(g, self.INFECTED):
+        for n in self.compartment(self.INFECTED):
             # record that the node was initially infected
-            g.node[n][self.INFECTION_TIME] = 0.0
+            g.nodes[n][self.INFECTION_TIME] = 0.0
         
             # post the corresponding removal event
             self.postEvent(tInfected, n, self.remove)
@@ -80,7 +80,7 @@ class SIR_FixedRecovery(SIR):
 
         # record the infection time
         (n, m) = e
-        self.network().node[n][self.INFECTION_TIME] = t
+        self.network().nodes[n][self.INFECTION_TIME] = t
         
         # post the removal event for the appropriate time in the future
         self.postEvent(t + self._tInfected, n, self.remove)

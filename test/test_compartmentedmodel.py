@@ -105,8 +105,8 @@ class CompartmentedModelTest(unittest.TestCase):
         g.add_edges_from([ (1, 2), (2, 3), (1, 4), (3, 4) ])
 
         # mark some edges as occupied
-        m.markOccupied((1, 2))
-        m.markOccupied((1, 4))
+        m.markOccupied((1, 2), 0)
+        m.markOccupied((1, 4), 0)
 
         # check skeletonisation
         g2 = m.skeletonise()
@@ -124,7 +124,7 @@ class CompartmentedModelTest(unittest.TestCase):
 
         m.addNode(2, compartment = SIR.INFECTED, h = "test")
         six.assertCountEqual(self, m.compartment(SIR.INFECTED), [1, 2])
-        self.assertEqual(g.node[2]['h'], "test")
+        self.assertEqual(g.nodes[2]['h'], "test")
 
     def testAddNodeDefault(self):
         '''Test that a node doesn't enter the wrong compartment.'''
@@ -148,7 +148,7 @@ class CompartmentedModelTest(unittest.TestCase):
         m.addNodesFrom(ns, compartment = SIR.INFECTED, h = 'test')
         six.assertCountEqual(self, m.compartment(SIR.INFECTED), ns)
         for n in ns:
-            self.assertEqual(g.node[n]['h'], "test")
+            self.assertEqual(g.nodes[n]['h'], "test")
 
     def testRemoveNode(self):
         '''Test that a node can be removed.'''
