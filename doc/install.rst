@@ -4,7 +4,7 @@ Installation
 In a nutshell
 -------------
 
-**Pythons**: 2.7 and 3.7 or later, either CPython or `PyPy <https://pypy.org>`_
+**Pythons**: 2.7 and 3.7 or later
 
 **Operating systems**: Linux, OS X
 

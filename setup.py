@@ -39,4 +39,4 @@ setup(name = 'epydemic',
                       'Topic :: Scientific/Engineering' ],
       packages = [ 'epydemic' ],
       zip_safe = True,
-      install_requires = [ "six", "numpy", "networkx", "future", "epyc", ])
+      install_requires = [  ])
