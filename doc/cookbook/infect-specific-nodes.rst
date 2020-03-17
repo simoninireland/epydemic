@@ -16,7 +16,7 @@ two things need to happen:
 1. Inhibit random infections
 2. Decide on and infect the specific nodes of interest
 
-The first is easy: set the parameter :attr:`P_INFECTED` to 0 and no nodes will be
+The first is easy: set the parameter :attr:`SIR.P_INFECTED` to 0 and no nodes will be
 randomly infected.
 
 The second involves choosing nodes and then placing them into the :attr:`SIR.INFECTED`
@@ -32,3 +32,6 @@ will do the trick, and will keep track of the numbers of nodes in the various co
 This is probably best done by extending :meth:`SIR.setUp` so that, after the initial setup
 has been done, we change the compartments of the selected nodes and then proceeds with
 the simulation.
+
+(The parameters you use depend on the model you're using: if you were working with an SIS model
+then substitute :attr:`SIS.P_INFECTED` and so forth as appropriate.)
