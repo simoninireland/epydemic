@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.99.2
+VERSION = 1.0.1
 
 
 # ----- Sources -----
@@ -57,7 +57,6 @@ SOURCES_TESTS = \
 	test/test_adddelete.py
 TESTSUITE = test
 
-SOURCES_TUTORIAL = doc/epydemic.ipynb
 SOURCES_DOC_CONF = doc/conf.py
 SOURCES_DOC_BUILD_DIR = doc/_build
 SOURCES_DOC_BUILD_HTML_DIR = $(SOURCES_DOC_BUILD_DIR)/html
@@ -88,6 +87,7 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/monitoring-progress.rst \
+	doc/cookbook/infect-specific-nodes.rst \
 	doc/cookbook/powerlaw-cutoff.png \
 	doc/cookbook/sir-progress-dt.png \
 	doc/cookbook/sir-progress-er.png \
@@ -116,9 +116,6 @@ SOURCES_GENERATED = \
 
 # Base commands
 PYTHON = python3
-IPYTHON = ipython
-JUPYTER = jupyter
-IPCLUSTER = ipcluster
 TOX = tox
 COVERAGE = coverage
 PIP = pip
@@ -145,7 +142,6 @@ DEV_REQUIREMENTS = dev-requirements.txt
 # Constructed commands
 RUN_TESTS = $(TOX)
 RUN_COVERAGE = $(COVERAGE) erase && $(COVERAGE) run -a setup.py test && $(COVERAGE) report -m --include '$(PACKAGENAME)*'
-RUN_NOTEBOOK = $(JUPYTER) notebook
 RUN_SETUP = $(PYTHON) setup.py
 RUN_SPHINX_HTML = PYTHONPATH=$(ROOT) make html
 RUN_TWINE = $(TWINE) upload dist/*
@@ -158,7 +154,7 @@ help:
 	@make usage
 
 # Run tests for all versions of Python we're interested in
-test: env setup.py
+test: env Makefile setup.py
 	$(ACTIVATE) && $(RUN_TESTS)
 
 # Run coverage checks over the test suite
@@ -169,11 +165,6 @@ coverage: env
 .PHONY: doc
 doc: $(SOURCES_DOCUMENTATION) $(SOURCES_DOC_CONF)
 	$(ACTIVATE) && $(CHDIR) doc && $(RUN_SPHINX_HTML)
-
-# Run a server for writing the documentation
-.PHONY: docserver
-docserver:
-	$(ACTIVATE) && $(CHDIR) doc && PYTHONPATH=.. $(RUN_NOTEBOOK)
 
 # Build a development venv from the requirements in the repo
 .PHONY: env
@@ -191,7 +182,7 @@ sdist: $(SOURCES_SDIST)
 wheel: $(SOURCES_WHEEL)
 
 # Upload a source distribution to PyPi
-upload: $(SOURCES_SDIST)
+upload: sdist wheel
 	$(GPG) --detach-sign -a dist/$(PACKAGENAME)-$(VERSION).tar.gz
 	$(ACTIVATE) && $(RUN_TWINE)
 

@@ -1,10 +1,5 @@
 setuptools
 wheel
-matplotlib
-ipython
-jupyter
-mpmath
-seaborn
 tox
 nose
 coverage
