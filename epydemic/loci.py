@@ -64,31 +64,35 @@ class Locus(object):
         e = (random.sample(self.elements(), 1))[0]
         return e
 
+    # ---------- Handlers ----------
+
     def addHandler(self, g, e):
-        '''Handler called when an element is added to the network. 
+        '''Handler called when an element is added to the network. This is used to indicate
+        the the population of nodes or edges has changed.
 
         :param g: the network
         :param e: the element'''
         self._elements.add(e)
 
     def leaveHandler( self, g, e ):
-        '''Handler for when an element leaves the locus. The default simply removes the
-        element from the set.
+        '''Handler for when an element leaves the locus due to changes in circumstances,
+        not changes in population.
 
         :param g: the network
         :param e: the element'''
         self._elements.remove(e)
 
     def enterHandler( self, g, e ):
-        '''Handler for when an element enters the locus. The default simply adds the
-        element to the set.
+        '''Handler for when an element enters the locus due to changes in circumstances,
+        not changes in population. 
 
         :param g: the network
         :param e: the element'''
         self._elements.add(e)
 
     def removeHandler(self, g, e):
-        '''Handler called when an element is removed from the network. 
+        '''Handler called when an element is removed from the network.  This is used to indicate
+        the the population of nodes or edges has changed.
 
         :param g: the network
         :param e: the element'''
