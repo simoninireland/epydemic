@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from __future__ import print_function
 from epydemic import *
 
 
@@ -66,7 +67,7 @@ class AddDelete(Process):
         # add all nodes to the all-nodes locus
         g = self.network()
         for n in g.nodes():
-            self[self.NODES].enterHandler(g, n)
+            self[self.NODES].addHandler(g, n)
 
 
     # ---------- Accessing and evolving the network ----------
@@ -77,7 +78,8 @@ class AddDelete(Process):
         :param n: the new node
         :param kwds: (optional) node attributes'''
         super(AddDelete, self).addNode(n, **kwds)
-        self[self.NODES].enterHandler(self.network(), n)
+        self[self.NODES].addHandler(self.network(), n)
+        #print('Added {n}'.format(n=n))
 
     def newNodeName(self):
         '''Generate a new name for a node to be added. This is guaranteed not to be
@@ -105,8 +107,9 @@ class AddDelete(Process):
         '''Remove a node from the working network.
 
         :param n: the node'''
+        self[self.NODES].removeHandler(self.network(), n)
         super(AddDelete, self).removeNode(n)
-        self[self.NODES].leaveHandler(self.network(), n)
+        #print('removed {n}'.format(n=n))
 
 
     # ---------- Events ----------

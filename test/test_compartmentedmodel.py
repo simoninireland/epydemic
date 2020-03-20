@@ -126,18 +126,6 @@ class CompartmentedModelTest(unittest.TestCase):
         six.assertCountEqual(self, m.compartment(SIR.INFECTED), [1, 2])
         self.assertEqual(g.nodes[2]['h'], "test")
 
-    def testAddNodeDefault(self):
-        '''Test that a node doesn't enter the wrong compartment.'''
-        m = SIR()
-        g = networkx.Graph()
-        m.setNetwork(g)
-
-        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [])
-        six.assertCountEqual(self, m.compartment(SIR.SI), [])
-        m.addNode(1)
-        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [])
-        six.assertCountEqual(self, m.compartment(SIR.SI), [])
-
     def testAddNodes(self):
         '''Test that nodes can be added and land in the right compartment.'''
         m = SIR()
@@ -160,3 +148,39 @@ class CompartmentedModelTest(unittest.TestCase):
         six.assertCountEqual(self, m.compartment(SIR.INFECTED), [1])
         m.removeNode(1)
         six.assertCountEqual(self, m.compartment(SIR.INFECTED), [])
+
+    def testAddEdge(self):
+        '''Test we can add an edge, keeping all the data straight.'''
+        m = SIR()
+        g = networkx.Graph()
+        m.setNetwork(g)
+        m.trackEdgesBetweenCompartments(SIR.INFECTED, SIR.SUSCEPTIBLE, name = SIR.SI)
+        m.addNode(1, compartment = SIR.INFECTED)
+        m.addNode(2, compartment = SIR.SUSCEPTIBLE)
+        six.assertCountEqual(self, m.compartment(SIR.INFECTED), [1])
+        six.assertCountEqual(self, m.compartment(SIR.SUSCEPTIBLE), [2])
+        m.addEdge(1, 2)
+        self.assertEqual(len(m[SIR.SI]), 1)
+
+    def testRemoveEdge(self):
+        '''Test we can remove an edge, keeping all the data straight.'''
+        m = SIR()
+        g = networkx.Graph()
+        m.setNetwork(g)
+        m.trackEdgesBetweenCompartments(SIR.INFECTED, SIR.SUSCEPTIBLE, name = SIR.SI)
+        m.addNode(1, compartment = SIR.INFECTED)
+        m.addNode(2, compartment = SIR.SUSCEPTIBLE)
+        m.addNode(3, compartment = SIR.SUSCEPTIBLE)
+        m.addEdge(1, 2)
+        m.addEdge(1, 3)
+        m.addEdge(3, 2)
+        self.assertEqual(len(m[SIR.SI]), 2)
+        m.removeEdge(1, 2)
+        self.assertEqual(len(m[SIR.SI]), 1)
+        print(list(g.edges()))
+        m.removeEdge(2, 3)
+        print(list(g.edges()))
+        self.assertEqual(len(m[SIR.SI]), 1)
+
+
+

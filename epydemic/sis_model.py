@@ -64,7 +64,7 @@ class SIS(CompartmentedModel):
 
         :param t: the simulation time
         :param e: the edge transmitting the infection, susceptible-infected'''
-        (n, m) = e
+        (n, _) = e
         self.changeCompartment(n, self.INFECTED)
         self.markOccupied(e, t)
 

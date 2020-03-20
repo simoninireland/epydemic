@@ -73,7 +73,7 @@ class SIS_FixedRecovery(SIS):
 
         :param t: the simulation time
         :param e: the edge transmitting the infection, susceptible-infected'''
-        (n, m) = e
+        (n, _) = e
 
         # infect as normal
         super(SIS_FixedRecovery, self).infect(t, e)

@@ -1,3 +1,7 @@
+Version 1.0.1
+
+   - Fixed behaviour when network is adaptive (add/remove nodes/edges)
+   
 Version 0.99.2 (v1.0 release candidate 2) 2020-03-16
 
    - Moved development to Python3.7

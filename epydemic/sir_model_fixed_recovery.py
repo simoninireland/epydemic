@@ -79,7 +79,7 @@ class SIR_FixedRecovery(SIR):
         super(SIR_FixedRecovery, self).infect(t, e)
 
         # record the infection time
-        (n, m) = e
+        (n, _) = e
         self.network().nodes[n][self.INFECTION_TIME] = t
         
         # post the removal event for the appropriate time in the future

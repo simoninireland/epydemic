@@ -188,7 +188,7 @@ class Process(object):
             self.addEdge(n, m, **kwds)
 
     def removeEdge(self, n, m):
-        """Remove an edge from the working network.,
+        """Remove an edge from the working network.
 
         :param n: the start node
         :param m: the end node"""
