@@ -180,9 +180,6 @@ class CompartmentedModel(Process):
     OCCUPIED = 'occupied'                       #: Edge attribute, True if infection travelled along the edge.
     T_OCCUPIED = 'occupationTime'               #: Edge attribute holding the time the infection crossed the edge.
 
-    # default compartment
-    DEFAULT_COMPARTMENT = 'defaultCompartment'  #: Default compartment label for new nodes
-
     def __init__( self ):
         super(CompartmentedModel, self).__init__()
 
@@ -445,6 +442,13 @@ class CompartmentedModel(Process):
 
         # propagate the change to any other compartments
         self._callEnterHandlers(n, c)
+
+    def getCompartment(self, n):
+        '''Return the compartment of a node.
+
+        :parak n: the node
+        :returns: its compartment'''
+        return self.network().nodes[n][self.COMPARTMENT]
 
     def changeCompartment( self, n, c ):
         '''Change the compartment of a node.
