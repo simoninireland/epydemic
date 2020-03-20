@@ -25,8 +25,6 @@ Attributes
 
 .. autoattribute:: CompartmentedModel.OCCUPIED
 
-.. autoattribute:: CompartmentedModel.DEFAULT_COMPARTMENT
-
 
 Model setup
 -----------
@@ -48,7 +46,7 @@ nodes into compartments. All edges are also marked as unoccupied.
 Building the model
 ------------------
 
-Building a model (within :meth:`CompartmentedModelbuild`) means specifying
+Building a model (within :meth:`CompartmentedModel.build`) means specifying
 the various compartments, loci, and events, and their associated probabilities.
 
 .. automethod:: CompartmentedModel.addCompartment
@@ -65,6 +63,8 @@ Events in compartmented models need an interafce to change the compartment of no
 and to mark edges used in transmitting the epidemic.
 
 .. automethod:: CompartmentedModel.setCompartment
+
+.. automethod:: CompartmentedModel.getCompartment
 
 .. automethod:: CompartmentedModel.changeCompartment
 
