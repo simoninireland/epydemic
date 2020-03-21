@@ -62,7 +62,7 @@ the experiment caries out are torn down before the next run.
 
 .. automethod:: Dynamics.setNetworkPrototype
 
-.. automethod:: Dynamics.setNetworkPrototype
+.. automethod:: Dynamics.networkPrototype
 
 .. automethod:: Dynamics.network
 

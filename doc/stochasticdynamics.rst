@@ -34,7 +34,7 @@ The dynamics works as follows:
   of all the available events.
 * The simulation time is updated by the time offset.
 * Any events posted for before this time are run by calling :meth:`Dynamics.runPendingEvents`.
-* An element is drawn randomly from the evenmt locus, and the corresponding event is fired.
+* An element is drawn randomly from the event locus, and the corresponding event is fired.
 * This process continues until the process is at equilibrium, as indicated
   by its :meth:`Process.atEquilibrium` method.
 

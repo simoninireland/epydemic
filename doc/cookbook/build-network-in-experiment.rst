@@ -21,18 +21,21 @@ have been set, the ``configure`` method gets called to configure the experiment 
 given paraneters. If this *isn't* the first time parameters have been set, the ``deconfigure`` method
 gets called first to tear-down the current configuration, followed by a call to ``configure``.
 
-The correct palce to create the network is in the :class:`Dynamics` class that runs the experiment.
+The correct place to create the network is in the :class:`Dynamics` class that runs the experiment.
 Rather than pass a prototype network to the dynamics (as we would normally do, either at
-construction or by calling :meth:`Dynamics.setPrototypeNetwork`) we instead provide code
+construction or by calling :meth:`Dynamics.setPrototypeNetwork`), we instead provide code
 to create (and delete) a network at appropriate points in the experimental lifecycle.
 We sub-class the dynamics class we want to use and override its ``configure`` method.
-For example, for a :class:`StochasticDynamics`:
+For example, using :class:`StochasticDynamics` we would have:
 
 .. code-block:: python
 
     class StochasticDynamicsOverER(epydemic.StochasticDynamics):
 
-        def configure(self, params):
+         def __init__(self, p):
+            super(StochasticDynamicsOverER, self).__init__(p)
+
+         def configure(self, params):
             '''Create a prototype ER network when parameters are set. This expects a
             parameter N for the number of nodes in the network, and one of
             kmean (average degree) or phi (connection probability).
@@ -43,16 +46,16 @@ For example, for a :class:`StochasticDynamics`:
             # extract ER network parameters
             N = params['N']
             kmean = params['kmean']
-            phi = params['phi']
-            if phi is None:
-                phi = (kmean + 0.0) / N
+            if 'phi' in params.keys():
+               phi = params['phi']
+            else:
+               phi = (kmean + 0.0) / N
 
-            # create a connected network with no self-loops
+            # create a network with no self-loops
             g = networkx.erdos_renyi_graph(N, phi)
-            g = g.subgraph(max(networkx.connected_components(g), key = len)).copy()
-            g.remove_edges_from(list(g.selfloop_edges()))
+            g.remove_edges_from(list(networkx.selfloop_edges(g)))
 
-            # store the network for use
+            # store the network as the prototype for experiments
             self.setNetworkPrototype(g)
 
          def deconfigure(self):
@@ -63,7 +66,8 @@ For example, for a :class:`StochasticDynamics`:
 What we've done here is add a ``configure`` method that creates a network based on values provided
 as experimental parameters -- additional to those that the experiment expects anyway. In this case
 we expect a parameter "N" for the network size and either a mean degree "kmean" or a link probability
-"phi", from which we construct an ER network as the prototype.
+"phi", from which we construct an ER network as the prototype. (In practice you'd probably want to name
+these parameters using constants, just for good practice.)
 
 Notice that both the ``configure`` and the ``deconfigure`` method call the underlying method
 that they override, to make sure that the basic (de)configuration behaviour is still done.
