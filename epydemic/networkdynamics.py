@@ -25,7 +25,7 @@ class Dynamics(epyc.Experiment, object):
     '''An abstract simulation framework for running a process over a network.
     This is the abstract base class
     for implementing different kinds of dynamics as computational experiments
-    suitable for running under `epyc`. Sub-classes provide synchronous and stochastic
+    suitable for running under ``epyc``. Sub-classes provide synchronous and stochastic
     (Gillespie) simulation dynamics.
 
     The dynamics runs a network process provided as a :class:`Process`
@@ -50,7 +50,8 @@ class Dynamics(epyc.Experiment, object):
     # ---------- Configuration ----------
 
     def network( self ):
-        '''Return the network this dynamics is running over.
+        '''Return the network this dynamics is running over. This will return None
+        unless we're actually running a simulation.
 
         :returns: the network'''
         return self._graph
@@ -89,12 +90,10 @@ class Dynamics(epyc.Experiment, object):
     # ---------- Set-up and tear-down ----------
 
     def setUp(self, params):
-        '''Set up the experiment for a run. This performs the default action, then
+        '''Set up the experiment for a run. This performs the inherited actions, then
         copies the prototype network and builds the network process that the dynamics is to run.
 
         :params params: the experimental parameters'''
-
-        # perform the default setup
         super(Dynamics, self).setUp(params)
 
         # make a copy of the network prototype
@@ -107,12 +106,10 @@ class Dynamics(epyc.Experiment, object):
         self._process.setUp(params)
 
     def tearDown(self):
-        '''At the end of each experiment, throw away the copy and any posted by un-executed evants.'''
-
-        # perform the default tear-down
+        '''At the end of each experiment, throw away the copy and any posted by un-executed events.'''
         super(Dynamics, self).tearDown()
 
-        # throw away the worked-on model
+        # throw away the worked-on model and any posted events that weren't run
         self._graph = None
         self._posted = []
 
@@ -136,5 +133,5 @@ class Dynamics(epyc.Experiment, object):
             else:
                 # fire the event
                 pef()
-                n = n + 1
+                n += 1
 
