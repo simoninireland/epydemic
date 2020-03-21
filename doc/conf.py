@@ -19,6 +19,9 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- General configuration ------------------------------------------------
@@ -47,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'epydemic'
-copyright = u'2017--2018, Simon Dobson'
+copyright = u'2017--2020, Simon Dobson'
 author = u'Simon Dobson'
 
 # The version info for the project you're documenting, acts as replacement for
