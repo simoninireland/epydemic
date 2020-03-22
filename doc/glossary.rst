@@ -24,6 +24,18 @@ Glossary
       probability, which might be fixed or might vary across the
       course of the simulation. See :ref:`Hethcote <Het00>` for a survey,
    
+   contact tree
+      The way in which individuals were infected during thhe infection.
+      Each node is an infected individual, with edges representing the 
+      individuals that individual infected.
+      
+      While it's common talk of a
+      contact *tree*, this will only be the case if there is an identifiable
+      "patient zero" from whom all infections arise. In the more general case
+      of multiple people initially infected, the contact tree will actually
+      be a contact *forest* of multiple independent trees, each one rooted
+      at an initially-infected individual. 
+
    continuous time
       A simulation mode in which events occur at unique times
       represented by real numbers. No two events ever happen
@@ -78,12 +90,12 @@ Glossary
       any :term:`posted event` that has been scheduled.
 
    SIS
-      A :term:`compartmened model of disease` where nodes go from being
+      A :term:`compartmented model of disease` where nodes go from being
       Susceptible to the disease, to Infected and able to infect others,
       and then recover back to Susceptible.
 
    SIR
-      A :term:`compartmened model of disease` where nodes go from being
+      A :term:`compartmented model of disease` where nodes go from being
       Susceptible to the disease, to Infected and able to infect others,
       and are then Removed and take no further part in the dynamics.
 
