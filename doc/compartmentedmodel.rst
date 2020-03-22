@@ -43,8 +43,8 @@ nodes into compartments. All edges are also marked as unoccupied.
 .. automethod:: CompartmentedModel.initialCompartments
 
 
-Building the model
-------------------
+Building and querying the model
+-------------------------------
 
 Building a model (within :meth:`CompartmentedModel.build`) means specifying
 the various compartments, loci, and events, and their associated probabilities.
@@ -54,6 +54,13 @@ the various compartments, loci, and events, and their associated probabilities.
 .. automethod:: CompartmentedModel.trackNodesInCompartment
 
 .. automethod:: CompartmentedModel.trackEdgesBetweenCompartments
+
+We can also query the model, which is especially useful within event functions
+and when generating results in :meth:`CompartmentedModel.results`
+
+.. automethod:: CompartmentedModel.compartments
+
+.. automethod:: CompartmentedModel.compartment
 
 
 Evolving the network
@@ -80,6 +87,17 @@ understand the mappings between nodes, edges, and compartments.
 .. automethod:: CompartmentedModel.addEdge
 
 .. automethod:: CompartmentedModel.removeEdge
+
+
+Generating results
+------------------
+
+The experiment needs to define a results dict to return when it completes.
+
+.. automethod:: CompartmentedModel.results
+
+.. automethod:: CompartmentedModel.skeletonise
+
 
 
 

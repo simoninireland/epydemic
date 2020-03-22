@@ -249,6 +249,12 @@ class CompartmentedModel(Process):
 
     # ---------- Termination and results ----------
 
+    def compartments(self):
+        '''Return the set of compartments.
+
+        :returns: the compartments'''
+        return self._compartments
+
     def compartment( self, c ):
         '''Return all the nodes currently in a particular compartment in a network. This works
         for all compartments, not just those that are loci for dynamics.
@@ -265,7 +271,7 @@ class CompartmentedModel(Process):
         :returns: a dict of experimental results'''
         rc = super(CompartmentedModel, self).results()
 
-        for (c, _) in self._compartments:
+        for (c, _) in self.compartments():
             rc[c] = 0
         g = self.network()
         for n in g.nodes():
@@ -276,9 +282,10 @@ class CompartmentedModel(Process):
     def skeletonise(self):
         '''Remove unoccupied edges from the network. This leaves the network
         consisting of only "occupied" edges that were used to transmit the
-        infection between nodes. Note that this process means that further
-        dynamics over the network probably don't make sense, unless you're
-        actually wanting to run on the residual network post-infection.
+        infection between nodes, also known as the :term:`contact tree`. Note
+        that this process means that further dynamics over the network probably
+        don't make sense, unless you're actually wanting to run on the residual
+        network post-infection.
 
         :returns: the network with unoccupied edges removed'''
 
