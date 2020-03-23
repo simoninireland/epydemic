@@ -1,3 +1,8 @@
+Version 0.99.4 2020-03-23
+
+   - Fixed problem removing edges, removed some debugging messages
+     that'd stayed in somehow
+
 Version 0.99.3 2020-03-22
 
    - Fixed behaviour when network is adaptive (add/remove nodes/edges)

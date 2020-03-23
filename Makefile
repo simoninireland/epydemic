@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.99.3
+VERSION = 0.99.4
 
 
 # ----- Sources -----
@@ -135,7 +135,7 @@ ZIP = zip -r
 ROOT = $(shell pwd)
 
 # Requirements for running the library and for the development venv needed to build it
-VENV = venv3
+VENV = .venv
 REQUIREMENTS = requirements.txt
 DEV_REQUIREMENTS = dev-requirements.txt
 
