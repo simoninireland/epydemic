@@ -155,11 +155,11 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
         es = self.elements()
         match = self.matches(g, n, m)
         if match == -1:
-            print('edge ({m}, {n}) removed from {l}'.format(n = n, m = m, l = self._name))
+            #print('edge ({m}, {n}) removed from {l}'.format(n = n, m = m, l = self._name))
             es.discard((m, n))
         else:
             if match == 1:
-                print('edge ({n}, {m}) removed from {l}'.format(n = n, m = m, l = self._name))
+                #print('edge ({n}, {m}) removed from {l}'.format(n = n, m = m, l = self._name))
                 es.discard((n, m))
 
 

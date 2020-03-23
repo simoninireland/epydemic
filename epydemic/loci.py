@@ -80,7 +80,7 @@ class Locus(object):
 
         :param g: the network
         :param e: the element'''
-        self._elements.remove(e)
+        self._elements.discard(e)
 
     def enterHandler( self, g, e ):
         '''Handler for when an element enters the locus due to changes in circumstances,
@@ -96,5 +96,5 @@ class Locus(object):
 
         :param g: the network
         :param e: the element'''
-        self._elements.remove(e)
+        self._elements.discard(e)
 
