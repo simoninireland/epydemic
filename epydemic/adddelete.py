@@ -79,7 +79,7 @@ class AddDelete(Process):
         :param kwds: (optional) node attributes'''
         super(AddDelete, self).addNode(n, **kwds)
         self[self.NODES].addHandler(self.network(), n)
-        #print('Added {n}'.format(n=n))
+        #print('added {n}'.format(n=n))
 
     def newNodeName(self):
         '''Generate a new name for a node to be added. This is guaranteed not to be
@@ -99,9 +99,9 @@ class AddDelete(Process):
         added as node attributes.
 
         :returns: the generated name of the new node'''
-        i = self.newNodeName()
-        self.addNode(i, **kwds)
-        return i
+        n = self.newNodeName()
+        self.addNode(n, **kwds)
+        return n
 
     def removeNode(self, n):
         '''Remove a node from the working network.
@@ -128,7 +128,7 @@ class AddDelete(Process):
         # link to c other nodes (not including i) with uniform probability
         ns = self[self.NODES]
         es = set()
-        for m in range(self._c):
+        for _ in range(self._c):
             # a probably unnecessary test for parallel edges and self-loops
             while True:
                 j = ns.draw()
