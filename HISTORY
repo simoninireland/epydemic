@@ -1,3 +1,8 @@
+Version 0.99.5 2020-03-27
+
+   - Started maintaining lists of nodes in different compartments to 
+     remove a bottleneck for adaptive networks
+
 Version 0.99.4 2020-03-23
 
    - Fixed problem removing edges, removed some debugging messages
