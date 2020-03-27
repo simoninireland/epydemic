@@ -18,7 +18,8 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from __future__ import print_function
-from epydemic import *
+from epydemic import Locus, Process
+import random
 import numpy
 import collections
 
@@ -189,15 +190,19 @@ class CompartmentedModel(Process):
     def reset( self ):
         '''Reset the model ready to be built.'''
         super(CompartmentedModel, self).reset()
-        self._compartments = []
-        self._effects = dict()
-        self._eventDistribution = None
-
+        self._compartments = dict()            # compartment -> initial probability
+        self._contents = dict()                # compartment -> list of ndoes
+        self._effects = dict()                 # compartment -> event handlert 
+ 
     def setUp(self, params):
         '''Set up the initial population of nodes into compartments.
 
         :param params: the simulation parameters'''
         super(CompartmentedModel, self).setUp(params)
+
+        # initialise all compartments as empty
+        for c in self._compartments.keys():
+            self._contents[c] = set()
 
         # initialise all nodes to an empty compartment
         # (so we can assume all nodes have a compartment attribute)
@@ -219,7 +224,10 @@ class CompartmentedModel(Process):
         compartment of each node.
 
         :returns: a list of (compartment, probability) pairs'''
-        return self._compartments
+        dist = []
+        for cp in self._compartments.items():
+            dist.append(cp)
+        return dist
 
     def initialCompartments( self ):
         '''Place each node in the network into its initial compartment. The default
@@ -235,7 +243,7 @@ class CompartmentedModel(Process):
         g = self.network()
         for n in g.nodes():
             # select a compartment according to the initial distribution
-            r = numpy.random.random()
+            r = random.random()
             a = 0.0
             for (c, p) in dist:
                 a = a + p
@@ -253,7 +261,7 @@ class CompartmentedModel(Process):
         '''Return the set of compartments.
 
         :returns: the compartments'''
-        return self._compartments
+        return self._compartments.keys()
 
     def compartment( self, c ):
         '''Return all the nodes currently in a particular compartment in a network. This works
@@ -261,8 +269,7 @@ class CompartmentedModel(Process):
 
         :param c: the compartment
         :returns: a collection of nodes'''
-        g = self.network()
-        return [ n for n in g.nodes() if g.nodes[n][self.COMPARTMENT] == c]
+        return self._contents[c]
 
     def results(self):
         '''Create a dict of experimental results for the experiment, consisting of the final
@@ -271,12 +278,9 @@ class CompartmentedModel(Process):
         :returns: a dict of experimental results'''
         rc = super(CompartmentedModel, self).results()
 
-        for (c, _) in self.compartments():
-            rc[c] = 0
-        g = self.network()
-        for n in g.nodes():
-            c = g.nodes[n][self.COMPARTMENT]
-            rc[c] = rc[c] + 1
+        # add size of each compartment
+        for c in self._contents.keys():
+            rc[c] = len(self._contents[c])
         return rc
 
     def skeletonise(self):
@@ -313,7 +317,8 @@ class CompartmentedModel(Process):
 
         :param c: the compartment name
         :param p: the initial occupancy probability (defaults to  0.0)'''
-        self._compartments.append((c, p))
+        self._compartments[c] = p
+        self._contents[c] = set()
 
     def trackNodesInCompartment(self, c, name = None):
         '''Add a locus tracking nodes in a given compartment.
@@ -358,22 +363,6 @@ class CompartmentedModel(Process):
             if c not in self._effects.keys():
                 self._effects[c] = []
             self._effects[c].append((locus.addHandler, locus.leaveHandler, locus.enterHandler, locus.removeHandler))
-
-    def _addHandlers( self, c, lh, eh ):
-        '''Add handler functions for a compartment, to be called whenever the contents
-        of that compartment change. This links compartments to loci.
-
-        Handlers are functions that take a network and a node
-        and provide the appropriate behaviour for when the node
-        enters (or leaves) the compartment.
-        
-        :param c: the compartment
-        :param lh: the leave handler
-        :param eh: the enter handler'''
-        if c not in self._effects.keys():
-            self._effects[c] = [ (lh, eh) ]
-        else:
-            self._effects[c].append((lh, eh))
 
     def _handlerCompartments(self, e):
         '''Return the compartments that a given element's change might affect.
@@ -450,6 +439,9 @@ class CompartmentedModel(Process):
         # propagate the change to any other compartments
         self._callEnterHandlers(n, c)
 
+        # add the node to the compartment contents
+        self._contents[c].add(n)
+
     def getCompartment(self, n):
         '''Return the compartment of a node.
 
@@ -463,15 +455,22 @@ class CompartmentedModel(Process):
         :param n: the node
         :param c: the new compartment for the node'''
         g = self.network()
+        oc = g.nodes[n][self.COMPARTMENT]
 
         # propagate effects of leaving the current compartment
-        self._callLeaveHandlers(n, g.nodes[n][self.COMPARTMENT])
+        if oc is not None:
+            self._callLeaveHandlers(n, oc)
 
         # record new compartment on node
         g.nodes[n][self.COMPARTMENT] = c
 
         # propagate effects of entering new compartment
         self._callEnterHandlers(n, c)
+
+        # change the contents of the two compartments
+        if oc is not None:
+            self._contents[oc].discard(n)
+        self._contents[c].add(n)
 
     def markOccupied( self, e, t ):
         '''Mark the given edge as having been occupied by the dynamics, i.e., to
@@ -485,22 +484,24 @@ class CompartmentedModel(Process):
         data[self.OCCUPIED] = True
         data[self.T_OCCUPIED] = t
         
-    def addNode(self, n, compartment, **kwds):
+    def addNode(self, n, c, **kwds):
         '''Add a node to the working network, adding it to the appropriate compartment.
 
         :param n: the new node
-        :param compartment: compartment for the node
+        :param c: compartment for the node
         :param kwds: (optional) node attributes'''
         super(CompartmentedModel, self).addNode(n, **kwds)
-        self.setCompartment(n, compartment)
+        self.setCompartment(n, c)
+        self._contents[c].add(n)
 
     def removeNode(self, n):
         '''Remove a node from the working network, updating any affected compartments.
 
         :param n: the node'''
 
-        # remove node from any compartments
+        # remove node from any loci, and from its compartment
         self._callRemoveHandlers(n)
+        self._contents[self.getCompartment(n)].discard(n)
 
         # remove the node
         super(CompartmentedModel, self).removeNode(n)
