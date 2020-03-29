@@ -69,6 +69,10 @@ Glossary
       :term:`process dynamics`). Elements are typically either nodes
       or edges, depending in the :term:`locus` at which the event
       occurs.
+
+   Gillespie simulation
+      A simulation technique developed initially for *ab initio*
+      chemistry simulations ref:`Gil76`ref:`Gil77`
       
    locus
       A "place" at which dynamics can occur, that is to say, where

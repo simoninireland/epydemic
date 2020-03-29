@@ -184,7 +184,7 @@ of the edge by pattern-matching. Since the locus is defined as holding edges bet
 compartment and a node in the ``SIR.INFECTED`` compartment, we will be passed edges with this orientation: we can
 assume that ``n`` above is a susceptible node. We use :meth:`CompartmentedModel.changeCompartment` to change the
 compartment of ``n`` to ``SIR.INFECTED``: the compartment of ``m`` doesn't change (it stays infected). We also
-mark the edge as one that the infection travsersed using :meth:`CompartmentedModel.markOccupied`` (the "occupied"
+mark the edge as one that the infection travsersed using :meth:`CompartmentedModel.markOccupied` (the "occupied"
 terminology is slightly unfortunate, but it's standard in the literature, coming from percolation theory).
 
 For the ``remove`` event, which happens at infected nodes, the element will be a node, and we simply change
