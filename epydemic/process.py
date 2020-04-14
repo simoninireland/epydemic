@@ -1,6 +1,6 @@
 # Networks process base class
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,9 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
+from epydemic import Locus
 from heapq import *
-import six
 
 
 class Process(object):
@@ -76,6 +75,11 @@ class Process(object):
         or establish other properties ready for the experiment.
 
         :param params: the simulation parameters"""
+        pass
+
+    def tearDown(self):
+        """Tear down any structures built for this run of the process. The default does
+        nothing."""
         pass
 
     def setNetwork(self, g):
@@ -163,17 +167,17 @@ class Process(object):
             self.removeNode(n)
 
     def addEdge(self, n, m, **kwds):
-        """Add an edge between nodes. If the nodes do not exist, they are created by calling
-        :meth:`addNode`. Any keyword arguments are addaed as edge attributes.
+        """Add an edge between nodes. Any keyword arguments are added as edge attributes.
+        If the endpoint nodes do not already exist then an exception is raised.
 
         :param n: the start node
         :param m: the end node
         :param kwds: (optional) edge attributes"""
         g = self.network()
         if n not in g:
-            self.addNode(n)
+            raise Exception('No node {n} in network'.format(n = n))
         if m not in g:
-            self.addNode(m)
+            raise Exception('No node {n} in network'.format(n = m))
         g.add_edge(n, m, **kwds)
 
     def addEdgesFrom(self, es, **kwds):
@@ -268,7 +272,7 @@ class Process(object):
         :param l: the locus or locus name
         :param p: the event probability
         :param ef: the event function"""
-        if isinstance(l, six.string_types):
+        if isinstance(l, str):
             l = self.locus(l)
         self._perElementEvents.append((l, p, ef))
 
@@ -285,7 +289,7 @@ class Process(object):
         :param l: the locus or locus name
         :param p: the event probability
         :param ef: the event function"""
-        if isinstance(l, six.string_types):
+        if isinstance(l, str):
             l = self.locus(l)
         self._perLocusEvents.append((l, p, ef))
 
