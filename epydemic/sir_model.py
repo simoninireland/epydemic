@@ -17,24 +17,24 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
+from epydemic import CompartmentedModel
 
 class SIR(CompartmentedModel):
     '''The Susceptible-Infected-Removed :term:`compartmented model of disease`.
     Susceptible nodes are infected by infected neighbours, and recover to
     removed.'''
     
-    # the model parameters
+    # Model parameters
     P_INFECTED = 'pInfected'  #: Parameter for probability of initially being infected.
     P_INFECT = 'pInfect'      #: Parameter for probability of infection on contact.
     P_REMOVE = 'pRemove'      #: Parameter for probability of removal (recovery).
     
-    # the possible dynamics states of a node for SIR dynamics
+    # Possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE = 'S'         #: Compartment for nodes susceptible to infection.
     INFECTED = 'I'            #: Compartment for nodes infected.
     REMOVED = 'R'             #: Compartment for nodes recovered/removed.
 
-    # the edges at which dynamics can occur
+    # Locus containing the edges at which dynamics can occur
     SI = 'SI'                 #: Edge able to transmit infection.
 
     def __init__( self ):

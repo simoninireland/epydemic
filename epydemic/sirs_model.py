@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
+from epydemic import SIR
 
 
 class SIRS(SIR):
@@ -27,7 +27,7 @@ class SIRS(SIR):
     disease exposure confers partial immunity in time, rather than full (SIR) or no (SIS)
     immunity.'''
 
-    # the extra model parameter
+    # Extra model parameter
     P_RESUSCEPT = 'pResuscept' #: Parameter for probability of losing immunity
 
     def __init__(self):

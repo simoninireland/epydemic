@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
+from epydemic import CompartmentedModel
 
 class SIS(CompartmentedModel):
     '''The Susceptible-Infected-Susceptible :term:`compartmented model of disease`.
@@ -25,16 +25,16 @@ class SIS(CompartmentedModel):
     to the susceptible state (which allows future re-infection, unlike for
     :class:`SIR`.'''
 
-    # the model parameters
+    # Model  parameters
     P_INFECTED = 'pInfected'  #: Parameter for probability of initially being infected.
     P_INFECT = 'pInfect'      #: Parameter for probability of infection on contact.
-    P_RECOVER = 'pRecover'    #: Parameter for probability of recovery (reeturning to susceptible).
+    P_RECOVER = 'pRecover'    #: Parameter for probability of recovery (returning to susceptible).
 
-    # the possible dynamics states of a node for SIR dynamics
+    # Possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE = 'S'         #: Compartment for nodes susceptible to infection.
     INFECTED = 'I'            #: Compartment for nodes infected.
 
-    # the edges at which dynamics can occur
+    # Locus containing the edges at which dynamics can occur
     SI = 'SI'                 #: Edge able to transmit infection.
 
     def __init__( self ):
