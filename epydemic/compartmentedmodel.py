@@ -1,6 +1,6 @@
 # Compartmented models base class
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from __future__ import print_function
 from epydemic import Locus, Process
 import random
 import numpy
@@ -25,7 +24,7 @@ import collections
 
 
 class CompartmentedLocus(Locus):
-    '''A locus based on the compar6tments that nodes reside in.
+    '''A locus based on the compartments that nodes reside in.
 
     :param name: the locus' name'''
 
@@ -57,11 +56,43 @@ class CompartmentedNodeLocus(CompartmentedLocus):
         :returns: the compartment'''
         return [ self._compartment ]
 
+    def addHandler(self, g, n):
+        '''A nodeis added to the network. 
+
+        :param, g: the network
+        :param n: the node'''
+        if not isinstance(n, tuple):
+            super(CompartmentedNodeLocus, self).addHandler(g, n)
+
+    def leaveHandler(self, g, n):
+        '''A node changes compartment. 
+
+        :param, g: the network
+        :param n: the node'''
+        if not isinstance(n, tuple):
+            super(CompartmentedNodeLocus, self).leaveHandler(g, n)
+
+    def enterHandler(self, g, n):
+        '''A node enters a compartment. 
+
+        :param, g: the network
+        :param n: the node'''
+        if not isinstance(n, tuple):
+            super(CompartmentedNodeLocus, self).enterHandler(g, n)
+
+    def removeHandler(self, g, n):
+        '''A node is removed from the network. 
+
+        :param, g: the network
+        :param n: the node'''
+        if not isinstance(n, tuple):
+            super(CompartmentedNodeLocus, self).removeHandler(g, n)
+
 
 class CompartmentedEdgeLocus(CompartmentedLocus):
     '''A locus for dynamics occurring at an edge, where the locus tracks all
     edges whose endpoint nodes are in specified compartments. Since the network may
-    also be adaptive, we need to track additionals and removals of edges too.
+    also be adaptive, we need to track additions and removals of edges too.
 
     :param name: the locus' name
     :param l: the left compartment
@@ -101,16 +132,17 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
 
         :param, g: the network
         :param e: the edge'''
-        (n, m) = e
-        es = self.elements()
-        match = self.matches(g, n, m)
-        if match == -1:
-            #print('edge ({m}, {n}) added to {l}'.format(n = n, m = m, l = self._name))
-            es.add((m, n))
-        else:
-            if match == 1:
-                #print('edge ({n}, {m}) added {l}'.format(n = n, m = m, l = self._name))
-                es.add((n, m))
+        if isinstance(e, tuple):
+            (n, m) = e
+            es = self.elements()
+            match = self.matches(g, n, m)
+            if match == -1:
+                #print('edge ({m}, {n}) added to {l}'.format(n = n, m = m, l = self._name))
+                es.add((m, n))
+            else:
+                if match == 1:
+                    #print('edge ({n}, {m}) added {l}'.format(n = n, m = m, l = self._name))
+                    es.add((n, m))
 
     def leaveHandler(self, g, n):
         '''Node leaves one of the edge's compartments, remove any incident edges
@@ -152,16 +184,17 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
 
         :param, g: the network
         :param e: the edge'''
-        (n, m) = e
-        es = self.elements()
-        match = self.matches(g, n, m)
-        if match == -1:
-            #print('edge ({m}, {n}) removed from {l}'.format(n = n, m = m, l = self._name))
-            es.discard((m, n))
-        else:
-            if match == 1:
-                #print('edge ({n}, {m}) removed from {l}'.format(n = n, m = m, l = self._name))
-                es.discard((n, m))
+        if isinstance(e, tuple):
+            (n, m) = e
+            es = self.elements()
+            match = self.matches(g, n, m)
+            if match == -1:
+                #print('edge ({m}, {n}) removed from {l}'.format(n = n, m = m, l = self._name))
+                es.discard((m, n))
+            else:
+                if match == 1:
+                    #print('edge ({n}, {m}) removed from {l}'.format(n = n, m = m, l = self._name))
+                    es.discard((n, m))
 
 
 class CompartmentedModel(Process):
@@ -191,18 +224,13 @@ class CompartmentedModel(Process):
         '''Reset the model ready to be built.'''
         super(CompartmentedModel, self).reset()
         self._compartments = dict()            # compartment -> initial probability
-        self._contents = dict()                # compartment -> list of ndoes
-        self._effects = dict()                 # compartment -> event handlert 
- 
+        self._effects = dict()                 # compartment -> event handlers
+
     def setUp(self, params):
         '''Set up the initial population of nodes into compartments.
 
         :param params: the simulation parameters'''
         super(CompartmentedModel, self).setUp(params)
-
-        # initialise all compartments as empty
-        for c in self._compartments.keys():
-            self._contents[c] = set()
 
         # initialise all nodes to an empty compartment
         # (so we can assume all nodes have a compartment attribute)
@@ -265,11 +293,12 @@ class CompartmentedModel(Process):
 
     def compartment( self, c ):
         '''Return all the nodes currently in a particular compartment in a network. This works
-        for all compartments, not just those that are loci for dynamics.
+        for all compartments, not just those that are loci for dynamics -- but is a *lot*
+        slower, so it's better to create a :term:`locus` is you're going to access a compartment frequently.
 
         :param c: the compartment
         :returns: a collection of nodes'''
-        return self._contents[c]
+        return [ n for n in self.network().nodes() if self.getCompartment(n) == c ]
 
     def results(self):
         '''Create a dict of experimental results for the experiment, consisting of the final
@@ -279,8 +308,8 @@ class CompartmentedModel(Process):
         rc = super(CompartmentedModel, self).results()
 
         # add size of each compartment
-        for c in self._contents.keys():
-            rc[c] = len(self._contents[c])
+        for c in self.compartments():
+            rc[c] = len(self.compartment(c))
         return rc
 
     def skeletonise(self):
@@ -318,7 +347,6 @@ class CompartmentedModel(Process):
         :param c: the compartment name
         :param p: the initial occupancy probability (defaults to  0.0)'''
         self._compartments[c] = p
-        self._contents[c] = set()
 
     def trackNodesInCompartment(self, c, name = None):
         '''Add a locus tracking nodes in a given compartment.
@@ -380,7 +408,7 @@ class CompartmentedModel(Process):
         return cs
 
     def _callAddHandlers( self, e ):
-        '''Call all handlers affected by a mnode or edge being added to the network.
+        '''Call all handlers affected by a node or edge being added to the network.
 
         :param e the node or edge'''
         g = self.network()
@@ -409,7 +437,7 @@ class CompartmentedModel(Process):
         for c in self._handlerCompartments(e):
             if c in self._effects.keys():
                 for (_, _, eh, _) in self._effects[c]:
-                    eh(g, e)
+                    eh(g, e) 
 
     def _callRemoveHandlers( self, e ):
         '''Call all handlers affected by a node or edge being removed from the network.
@@ -439,9 +467,6 @@ class CompartmentedModel(Process):
         # propagate the change to any other compartments
         self._callEnterHandlers(n, c)
 
-        # add the node to the compartment contents
-        self._contents[c].add(n)
-
     def getCompartment(self, n):
         '''Return the compartment of a node.
 
@@ -467,11 +492,6 @@ class CompartmentedModel(Process):
         # propagate effects of entering new compartment
         self._callEnterHandlers(n, c)
 
-        # change the contents of the two compartments
-        if oc is not None:
-            self._contents[oc].discard(n)
-        self._contents[c].add(n)
-
     def markOccupied( self, e, t ):
         '''Mark the given edge as having been occupied by the dynamics, i.e., to
         have been traversed in transmitting the disease, at time t.
@@ -492,7 +512,6 @@ class CompartmentedModel(Process):
         :param kwds: (optional) node attributes'''
         super(CompartmentedModel, self).addNode(n, **kwds)
         self.setCompartment(n, c)
-        self._contents[c].add(n)
 
     def removeNode(self, n):
         '''Remove a node from the working network, updating any affected compartments.
@@ -501,7 +520,6 @@ class CompartmentedModel(Process):
 
         # remove node from any loci, and from its compartment
         self._callRemoveHandlers(n)
-        self._contents[self.getCompartment(n)].discard(n)
 
         # remove the node
         super(CompartmentedModel, self).removeNode(n)

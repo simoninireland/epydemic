@@ -1,6 +1,6 @@
 # Loci for dynamics epidemic model
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
 import random
 
 class Locus(object):
@@ -56,13 +55,14 @@ class Locus(object):
     def draw(self):
         '''Draw a random element from the locus. The default performs a simple
         draw that is equiprobable across all the elements. The locus remains unchanged:
-        drawing simply selects ans returns an element at random.
+        drawing simply selects and returns an element at random.
 
         :returns: a random element at the locus'''
         if len(self) == 0:
             raise ValueError('Trying to draw element from empty locus {n}'.format(n = self.name()))
-        e = (random.sample(self.elements(), 1))[0]
+        e = random.choice(list(self.elements()))
         return e
+
 
     # ---------- Handlers ----------
 
