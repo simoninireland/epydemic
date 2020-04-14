@@ -1,3 +1,13 @@
+Version 0.99.6 2020-04-14
+
+   - Removed Python2.7 compatibility, since NetworkX v.2.4 doesn't support it anyway
+   - Fixed compartmented loci for adaptive networks
+   - Adding an edge where the endpoint nodes don't exist now throws an exception rather
+     then creating the nodes automatically, since there's no sensible general default
+     behaviour
+   - Removed the maintenance of nodes in different compartments, since the
+     same effect can be had just as easily (and with less space) using loci
+
 Version 0.99.5 2020-03-27
 
    - Started maintaining lists of nodes in different compartments to 
