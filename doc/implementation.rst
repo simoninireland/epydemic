@@ -1,7 +1,7 @@
 Implementation notes
 ====================
 
-Some notes on the design and internal implementation shoices of ``epydemic``,
+Some notes on the design and internal implementation choices of ``epydemic``,
 for those who are interested. 
 
 .. toctree::

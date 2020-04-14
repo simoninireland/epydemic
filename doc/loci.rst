@@ -49,9 +49,14 @@ behaviour of node and edge loci.
 Locus sub-classes
 -----------------
 
-The two main locus sub-classes are used when modelling a :term:`compartmented model of disease`, to
+The main locus sub-classes are used when modelling a :term:`compartmented model of disease`, to
 capture the nodes and edges in the various compartments where dynamics occurs. These compartments
 are used by :class:`CompartmentedModel`.
+
+.. autoclass:: CompartmentedLocus
+   :show-inheritance:
+
+.. automethod:: CompartmentedLocus.compartments
 
 .. autoclass:: CompartmentedNodeLocus
    :show-inheritance:

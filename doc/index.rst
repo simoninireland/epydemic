@@ -47,7 +47,7 @@ an experiment management package that handles running different simulations, eit
 Current features
 ----------------
 
-* Compatible with both Python 2.7 and Python 3.7 and later, as well as with PyPy
+* Compatible with Python 3.7 and later, as well as with PyPy
 
 * Supports both discrete-time :term:`synchronous dynamics` and continuous-time
   :term:`stochastic dynamics` (Gillespie simulation)
@@ -76,7 +76,6 @@ Current features
    tutorial
    reference
    cookbook
-   implementation
    glossary
    bibliography
 

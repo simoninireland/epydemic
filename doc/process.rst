@@ -17,6 +17,8 @@ Five methods provide the core API for defining new processes, and are typically 
 
 .. automethod:: Process.setUp
 
+.. automethod:: Process.tearDown
+
 .. automethod:: Process.atEquilibrium
 
 .. automethod:: Process.results
