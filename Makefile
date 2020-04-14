@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.99.5
+VERSION = 0.99.6
 
 
 # ----- Sources -----
@@ -29,7 +29,7 @@ VERSION = 0.99.5
 # Source code
 SOURCES_SETUP_IN = setup.py.in
 SOURCES_SDIST = dist/$(PACKAGENAME)-$(VERSION).tar.gz
-SOURCES_WHEEL = dist/$(PACKAGENAME)-$(VERSION)-py2-py3-none-any.whl
+SOURCES_WHEEL = dist/$(PACKAGENAME)-$(VERSION)-py3-none-any.whl
 SOURCES_CODE = \
 	epydemic/__init__.py \
 	epydemic/networkdynamics.py \
@@ -65,7 +65,6 @@ SOURCES_DOCUMENTATION = \
 	doc/index.rst \
 	doc/install.rst \
 	doc/reference.rst \
-	doc/simulation.rst \
 	doc/bibliography.rst \
 	doc/glossary.rst \
 	doc/networkdynamics.rst \
@@ -79,15 +78,19 @@ SOURCES_DOCUMENTATION = \
 	doc/sis_fixed_recovery.rst \
 	doc/adddelete.rst \
 	doc/tutorial.rst \
+	doc/tutorial/simulation.rst \
 	doc/tutorial/use-standard-model.rst \
 	doc/tutorial/build-sir.rst \
 	doc/tutorial/run-at-scale.rst  \
 	doc/tutorial/advanced-topics.rst \
+	doc/implementation.rst \
+	doc/implementation/challenges.rst \
 	doc/cookbook.rst \
 	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/monitoring-progress.rst \
 	doc/cookbook/infect-specific-nodes.rst \
+	doc/cookbook/speed.rst \
 	doc/cookbook/powerlaw-cutoff.png \
 	doc/cookbook/sir-progress-dt.png \
 	doc/cookbook/sir-progress-er.png \
