@@ -107,8 +107,9 @@ class Dynamics(epyc.Experiment, object):
 
     def tearDown(self):
         '''At the end of each experiment, throw away the copy and any posted by un-executed events.'''
+        self._process.tearDown()
         super(Dynamics, self).tearDown()
-
+        
         # throw away the worked-on model and any posted events that weren't run
         self._graph = None
         self._posted = []
