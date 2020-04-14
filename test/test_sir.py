@@ -54,6 +54,7 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         e = StochasticDynamics(self._model, self._network)
         self._lab.runExperiment(e)
         rc = (self._lab.results())[0]
+
         six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [ 'S', 'I', 'R' ])
         self.assertTrue(rc[epyc.Experiment.RESULTS]['S'] > 0)
         self.assertTrue(rc[epyc.Experiment.RESULTS]['I'] == 0)
