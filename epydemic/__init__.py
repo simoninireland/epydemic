@@ -1,6 +1,6 @@
 # Initialisation for epydemic
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -49,7 +49,7 @@ from .synchronousdynamics import SynchronousDynamics
 from .stochasticdynamics import StochasticDynamics
 
 # compartmented models
-from .compartmentedmodel import CompartmentedModel, CompartmentedNodeLocus, CompartmentedEdgeLocus
+from .compartmentedmodel import CompartmentedModel, CompartmentedLocus, CompartmentedNodeLocus, CompartmentedEdgeLocus
 
 # reference disease models
 from .sir_model import SIR
