@@ -5,6 +5,7 @@ python:
 
 install:
   - pip install -r requirements.txt
+  - pip install codecov
 
 matrix:
   include:
@@ -19,4 +20,7 @@ matrix:
 
 script:
   - python setup.py install
-  - python test/test_${TEST_SUITE}.py
+  - coverage run test/test_${TEST_SUITE}.py
+
+after_success:
+  - codecov
