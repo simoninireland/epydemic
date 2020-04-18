@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-from test.compartmenteddynamics import CompartmentedDynamicsTest
+from compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
@@ -60,3 +60,6 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         self.assertTrue(rc[epyc.Experiment.RESULTS]['I'] == 0)
         self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
         self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())
+
+if __name__ == '__main__':
+    unittest.main()

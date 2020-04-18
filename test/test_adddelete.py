@@ -19,7 +19,7 @@
 
 from __future__ import print_function
 from epydemic import *
-from test.compartmenteddynamics import CompartmentedDynamicsTest
+from compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
@@ -71,3 +71,6 @@ class AddDeleteTest(unittest.TestCase):
         dn = self._maxTime * (self._params[AddDelete.P_ADD] - self._params[AddDelete.P_DELETE])
         print(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order(), dn)
         self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order() + dn, delta = int((self._network.order() + 0.0) * 2 * 0.1))
+
+if __name__ == '__main__':
+    unittest.main()

@@ -199,5 +199,5 @@ class CompartmentedModelTest(unittest.TestCase):
         print(list(g.edges()))
         self.assertEqual(len(m[SIR.SI]), 1)
 
-
-
+if __name__ == '__main__':
+    unittest.main()

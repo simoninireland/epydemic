@@ -64,3 +64,5 @@ class FixedRecoveryTest(unittest.TestCase):
             self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
             self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())
   
+if __name__ == '__main__':
+    unittest.main()

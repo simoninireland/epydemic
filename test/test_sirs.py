@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-from test.compartmenteddynamics import CompartmentedDynamicsTest
+from compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
@@ -50,3 +50,6 @@ class SIRSTest(unittest.TestCase, CompartmentedDynamicsTest):
 
         # maximum time needed as disease may be endemic
         self._model.setMaximumTime(200)
+
+if __name__ == '__main__':
+    unittest.main()
