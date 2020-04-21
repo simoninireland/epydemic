@@ -103,3 +103,6 @@ class StochasticRatesTest(unittest.TestCase):
     def testLotsOfRates(self):
         '''Test that things still work when there are a lot of low-rate events.'''
         self._checkRates(self._dyn.set(dict(eventCountRate = [ 1 ] * 50)).run())
+
+if __name__ == '__main__':
+    unittest.main()
