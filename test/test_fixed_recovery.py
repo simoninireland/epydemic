@@ -43,11 +43,11 @@ class FixedRecoveryTest(unittest.TestCase):
             print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
             self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
         else:
-            six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], ['S', 'I', 'R'])
-            self.assertTrue(rc[epyc.Experiment.RESULTS]['S'] > 0)
-            self.assertTrue(rc[epyc.Experiment.RESULTS]['I'] == 0)
-            self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
-            self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())
+            six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [SIR_FixedRecovery.SUSCEPTIBLE, SIR_FixedRecovery.INFECTED, SIR_FixedRecovery.REMOVED])
+            self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.SUSCEPTIBLE] > 0)
+            self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.INFECTED] == 0)
+            self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.REMOVED] > 0)
+            self.assertEqual(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.SUSCEPTIBLE] + rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.REMOVED], self._network.order())
 
     def testRunSingleSIRStochastic( self ):
         '''Test a single run of a fixed-period SIR under stochastic dynamics.'''
@@ -57,11 +57,11 @@ class FixedRecoveryTest(unittest.TestCase):
             print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
             self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
         else:
-            six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [ 'S', 'I', 'R' ])
-            self.assertTrue(rc[epyc.Experiment.RESULTS]['S'] > 0)
-            self.assertTrue(rc[epyc.Experiment.RESULTS]['I'] == 0)
-            self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
-            self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())
+            six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [SIR_FixedRecovery.SUSCEPTIBLE, SIR_FixedRecovery.INFECTED, SIR_FixedRecovery.REMOVED])
+            self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.SUSCEPTIBLE] > 0)
+            self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.INFECTED] == 0)
+            self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.REMOVED] > 0)
+            self.assertEqual(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.SUSCEPTIBLE] + rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.REMOVED], self._network.order())
   
 if __name__ == '__main__':
     unittest.main()

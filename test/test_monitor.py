@@ -58,4 +58,5 @@ class MonitorTest(unittest.TestCase):
         for k in [SIR.SI, SIR.INFECTED]:
             self.assertEqual(len(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES][k]), n)
 
-
+if __name__ == '__main__':
+    unittest.main()

@@ -27,9 +27,10 @@ class CompartmentedModelTest(unittest.TestCase):
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''
         self._er = networkx.erdos_renyi_graph(1000, 0.005)
-        self._params = dict(pInfect = 0.1,
-                            pInfected = 0.01,
-                            pRemove = 0.05)
+        self._params = dict()
+        self._params[SIR.P_INFECT] = 0.1
+        self._params[SIR.P_INFECTED] = 0.01
+        self._params[SIR.P_REMOVE] = 0.05
        
     def testPopulation( self ):
         '''Test populating a model.'''
@@ -39,9 +40,10 @@ class CompartmentedModelTest(unittest.TestCase):
     def testDuplicateNodeLocus( self ):
         '''Test we can't duplicate node-loci names'''
         m = SIR()
-        params = dict(pInfect = 0.1,
-                      pInfected = 1.0,    # infect all nodes initially
-                      pRemove = 0.05)
+        params = dict()
+        params[SIR.P_INFECT] = 0.1
+        params[SIR.P_INFECTED] = 1.0    # infect all nodes initially
+        params[SIR.P_REMOVE] = 0.05
         m.build(params)
         with self.assertRaises(Exception):
             m.trackNodesInCompartment(SIR.INFECTED)      # part of SIR already
@@ -49,9 +51,10 @@ class CompartmentedModelTest(unittest.TestCase):
     def testDuplicateEdgeLocus( self ):
         '''Test we can't duplicate edge-loci names'''
         m = SIR()
-        params = dict(pInfect = 0.1,
-                      pInfected = 1.0,    # infect all nodes initially
-                      pRemove = 0.05)
+        params = dict()
+        params[SIR.P_INFECT] = 0.1
+        params[SIR.P_INFECTED] =  1.0    # infect all nodes initially
+        params[SIR.P_REMOVE] = 0.05
         m.build(params)
         with self.assertRaises(Exception):
             m.trackEdgesBetweenCompartments(SIR.SUSCEPTIBLE, SIR.INFECTED, name = SIR.SI)      # part of SIR already
@@ -72,9 +75,10 @@ class CompartmentedModelTest(unittest.TestCase):
         g.add_edges_from([(1, 2), (2, 3), (1, 4), (3, 4)])
         m = SIR()
         e = StochasticDynamics(m, g)
-        params = dict(pInfect = 0.1,
-                      pInfected = 1.0,    # infect all nodes initially
-                      pRemove = 0.05)
+        params = dict()
+        params[SIR.P_INFECT] = 0.1
+        params[SIR.P_INFECTED] =  1.0    # infect all nodes initially
+        params[SIR.P_REMOVE] = 0.05
         e.setUp(params)
 
         # keep track of the other compartments as well
