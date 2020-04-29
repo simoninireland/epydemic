@@ -50,3 +50,6 @@ class SIRSTest(unittest.TestCase, CompartmentedDynamicsTest):
 
         # maximum time needed as disease may be endemic
         self._model.setMaximumTime(200)
+
+if __name__ == '__main__':
+    unittest.main()

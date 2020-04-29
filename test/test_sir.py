@@ -1,6 +1,6 @@
 # Test SIR under different dynamics
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -60,3 +60,6 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         self.assertTrue(rc[epyc.Experiment.RESULTS]['I'] == 0)
         self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
         self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())
+
+if __name__ == '__main__':
+    unittest.main()

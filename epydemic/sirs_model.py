@@ -1,6 +1,6 @@
 # SIRS as a compartmented model
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -37,8 +37,6 @@ class SIRS(SIR):
         '''Build the SIRS model.
 
         :param params: the model parameters'''
-
-        # build SIR
         super(SIRS, self).build(params)
 
         # add components needed for SIRS

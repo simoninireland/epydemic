@@ -1,3 +1,8 @@
+Version 0.99.7
+
+   - Added superclass calls in models that were preventing multiuple inheritance from
+     working properly
+     
 Version 0.99.6 2020-04-14
 
    - Removed Python2.7 compatibility, since NetworkX v.2.4 doesn't support it anyway

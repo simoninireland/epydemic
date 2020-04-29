@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from __future__ import print_function
 from epydemic import *
 import epyc
 import unittest
@@ -64,3 +63,5 @@ class FixedRecoveryTest(unittest.TestCase):
             self.assertTrue(rc[epyc.Experiment.RESULTS]['R'] > 0)
             self.assertEqual(rc[epyc.Experiment.RESULTS]['S'] + rc[epyc.Experiment.RESULTS]['R'], self._network.order())
   
+if __name__ == '__main__':
+    unittest.main()

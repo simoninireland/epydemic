@@ -135,4 +135,5 @@ class NetworkDynamicsTest(unittest.TestCase):
         # check list of times
         self.assertEqual(self._ps, [1, 4, 7, 10, 13, 16, 19])
 
-
+if __name__ == '__main__':
+    unittest.main()

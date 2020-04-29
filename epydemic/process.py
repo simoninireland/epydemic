@@ -63,11 +63,11 @@ class Process(object):
         self._eventId = 0                            # counter for posted events
 
     def build(self, params):
-        """Build the process model. This must be overridden by sub-classes, and should
+        """Build the process model. This should be overridden by sub-classes, and should
         create the various elements of the model.
 
         :param params: the model parameters"""
-        raise NotImplementedError('build')
+        pass
 
     def setUp(self, params):
         """Set up the network under the given dynamics. The default does

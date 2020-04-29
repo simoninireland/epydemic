@@ -47,8 +47,7 @@ class AddDelete(Process):
         and deletion probabilities, and for the degree of newly-created nodes.
 
         :param params: the model parameters'''
-        pAdd = params[self.P_ADD]
-        pDelete = params[self.P_DELETE]
+        super(AddDelete, self).build(params)
 
         # stash the degree of new nodes for the events
         self._c = params[self.DEGREE]
@@ -57,6 +56,8 @@ class AddDelete(Process):
         self.addLocus(self.NODES)
 
         # add events occurring at constant probability regardless of the network size
+        pAdd = params[self.P_ADD]
+        pDelete = params[self.P_DELETE]
         self.addFixedRateEvent(self.NODES, pAdd, self.add)
         self.addFixedRateEvent(self.NODES, pDelete, self.remove)
 
