@@ -79,7 +79,8 @@ Glossary
       nodes can change compartments and any other tasks can happen.
       Each :term:`event` is associated with a particular locus: the 
       locus contains the set of nodes or edges to which the event may
-      be applied, while the event defines chat happens.
+      be applied, while the event defines what happens. ALl loci
+      are derived from the :class:`Locus` class.
 
    posted event
       An :term:`event` posted for a definite future time. The
