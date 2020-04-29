@@ -18,7 +18,6 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import Locus
-from heapq import *
 
 
 class Process(object):
@@ -59,8 +58,6 @@ class Process(object):
         self._g = None                               # working network
         self._perElementEvents = []                  # events that occur per-element
         self._perLocusEvents = []                    # events that occur per-locus
-        self._postedEvents = []                      # pri-queue of fixed-time events
-        self._eventId = 0                            # counter for posted events
 
     def build(self, params):
         """Build the process model. This should be overridden by sub-classes, and should
@@ -94,9 +91,23 @@ class Process(object):
         :returns: the network"""
         return self._g
 
+    def setDynamics(self, d):
+        '''Set the instance of :class:`Dynamics` that runs the process.
+
+        :param d: the dynamics'''
+        self._dynamics = d
+
+    def dynamics(self):
+        '''Return the instance of :class:`Dynamics` running this process.
+
+        :returns: the dynamics'''
+        return self._dynamics
+
     def setMaximumTime(self, t):
         """Set the maximum default simulation time. The default is given by :attr:`DEFAULT_MAX_TIME`.
         This is used by :meth:`atEquilibrium` as the default way to determine equilibrium.
+
+        The maximum time may be slightly exceeded due to the ways in which events are drawn. 
 
         Setting the maximum time persists across runs of the process, and isn't reset to its
         default by calling :meth:`reset`.
@@ -257,7 +268,7 @@ class Process(object):
         return iter(self._loci.keys())
 
 
-    # ---------- Probabilistic events (occurring with some probability, either per-locus or per-element) ----------
+    # ---------- Probabilistic and posted events ----------
 
     def addEventPerElement(self, l, p, ef):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
@@ -292,6 +303,26 @@ class Process(object):
         if isinstance(l, str):
             l = self.locus(l)
         self._perLocusEvents.append((l, p, ef))
+
+    def postEvent(self, t, e, ef):
+        """Post an event that calls the :term:`event function` at time t.
+
+        :param t: the current time
+        :param e: the element (node or edge) on which the event occurs
+        :param ef: the event function"""
+        self._dynamics.postEvent(t, e, ef)
+
+    def postRepeatingEvent(self, t, dt, e, ef):
+        """Post an event that starts at time t and re-occurs at interval dt.
+
+        :param t: the start time
+        :param dt: the interval
+        :param e: the element (node or edge) on which the event occurs
+        :param ef: the element function"""
+        self._dynamics.postRepeatingEvent(t, dt, e, ef)
+
+
+    # ---------- Event distributions ----------
 
     def perElementEventDistribution(self, t):
         """Return the distribution of per-element events at time t.
@@ -336,86 +367,6 @@ class Process(object):
                 rates.append((l, p, ef))
         return rates
 
-
-    # ---------- Posted events (occurring at a fixed time) ----------
-
-    def _nextEventId(self):
-        """Generate a sequence number for a posted event. This is used to ensure that
-        all event triples pushed onto the priqueue are unique in their first two elements,
-        and therefore never try to do comparisons with functions (the third element).
-
-        :returns: a sequence number"""
-        id = self._eventId
-        self._eventId += 1
-        return id
-
-    def postEvent(self, t, e, ef):
-        """Post an event to happen at time t, calling the :term:`event function`
-        at time t.
-
-        :param t: the current time
-        :param e: the element (node or edge) on which the event occurs
-        :param ef: the event function"""
-        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: ef(t, e))))
-
-    def postRepeatingEvent(self, t, dt, e, ef):
-        """Post an event that re-occurs at interval dt, taken from now.
-
-        :param t: the start time
-        :param dt: the interval
-        :param e: the element (node or edge) on which the event occurs
-        :param ef: the element function"""
-
-        def repeat(tc, e):
-            ef(tc, e)
-            tp = tc + dt
-            heappush(self._postedEvents, (tp, self._nextEventId(), (lambda: repeat(tp, e))))
-
-        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: repeat(t, e))))
-
-    def nextPendingEventBefore(self, t):
-        """Return the next pending event to occur at or before time t.
-
-        :param t: the current time
-        :returns: a pending event function or None"""
-        if len(self._postedEvents) > 0:
-            # we have events, grab the soonest
-            (et, id, pef) = heappop(self._postedEvents)
-            if et <= t:
-                # event should have occurred, return it
-                return pef
-            else:
-                # this (and therefore all further events) are in the future, put it back
-                heappush(self._postedEvents, (et, id, pef))
-                return None
-        else:
-            # we don't have any events
-            return None
-
-    def pendingEvents(self, t):
-        """Retrieve any :term:`posted event` scheduled to be fired at or
-        before time t. The pending events are returned in the form of
-        zero-argument functions that can simply be called to fire
-        the corresponding event. The events are returned as a list with the
-        earliest-posted event first.
-
-        Be aware that running the returned events in order may not be enough to
-        accurately run the simulation in the case where firing an
-        event causes another event to be posted before t. It may be
-        easier to use :meth:`Dynamics.runPendingEvents` to run all pending
-        events, which handles this case automatically.
-
-        :param t: the current time
-        :returns: a (possibly empty) list of pending event functions"""
-        pending = []
-        while True:
-            pef = self.nextPendingEventBefore(t)
-            if pef is None:
-                # no more events pending, return those we've got
-                return pending
-            else:
-                # store the pending event function
-                pending.append(pef)
 
 
 

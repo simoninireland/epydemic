@@ -23,6 +23,21 @@ import six
 
 class NetworkDynamicsTest(unittest.TestCase):
 
+    def pendingEvents(self, dyn, t):
+        '''Return all the events posted to occur at or before time t.
+
+        :param dyn: the dynamics
+        :param t: the time
+        :returns: the events'''
+        evs = []
+        while True:
+            ev = dyn.nextPendingEventBefore(t)
+            if ev is None:
+                break
+            else:
+                evs.append(ev)
+        return evs
+
     def testPosting( self ):
         '''Test posting events.'''
         p = Process()
@@ -37,35 +52,35 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
         
         # post some events at different times
-        p.postEvent(1, None, make_ef(1))
-        p.postEvent(2, None, make_ef(20))
-        p.postEvent(3, None, make_ef(100))
-        p.postEvent(4, None, make_ef(200))
+        dyn.postEvent(1, None, make_ef(1))
+        dyn.postEvent(2, None, make_ef(20))
+        dyn.postEvent(3, None, make_ef(100))
+        dyn.postEvent(4, None, make_ef(200))
 
         # check no events before the first one posted
-        six.assertCountEqual(self, p.pendingEvents(0.5), [])
+        six.assertCountEqual(self, self.pendingEvents(dyn, 0.5), [])
 
         # check firing of earliest event
-        pefs = p.pendingEvents(1)
+        pefs = self.pendingEvents(dyn, 1)
         self.assertTrue(len(pefs), 1)
         (pefs[0])()                # fire the event
         self.assertTrue(self._v, 1)
-        six.assertCountEqual(self, p.pendingEvents(1), [])
+        six.assertCountEqual(self, self.pendingEvents(dyn, 1), [])
 
         # check multiple events coming off in the right order
-        pefs = p.pendingEvents(3)
+        pefs = self.pendingEvents(dyn, 3)
         self.assertTrue(len(pefs), 2)
         (pefs[0])()
         self.assertTrue(self._v, 21)
         (pefs[1])()
         self.assertTrue(self._v, 121)
-        six.assertCountEqual(self, p.pendingEvents(3), [])
+        six.assertCountEqual(self, self.pendingEvents(dyn, 3), [])
 
         # check we can run all remaining events
         dyn.runPendingEvents(10)       # a long time in the future
         self.assertTrue(self._v, 321)
-        six.assertCountEqual(self, p.pendingEvents(10), [])
-        six.assertCountEqual(self, p.pendingEvents(20), [])
+        six.assertCountEqual(self, self.pendingEvents(dyn, 10), [])
+        six.assertCountEqual(self, self.pendingEvents(dyn, 20), [])
         
     def testPostedPosting( self ):
         '''Test the case when a posted event itself posts an event.'''
@@ -110,7 +125,7 @@ class NetworkDynamicsTest(unittest.TestCase):
                 self.assertEqual(nev, 1)
 
         # should be one event left
-        self.assertEqual(len(p.pendingEvents(100)), 1)
+        self.assertEqual(len(self.pendingEvents(dyn, 100)), 1)
         
     def testRepeating(self):
         '''Test that repeating events repeat properly.'''
@@ -130,7 +145,7 @@ class NetworkDynamicsTest(unittest.TestCase):
             dyn.runPendingEvents(t)
 
         # should be one event left
-        self.assertEqual(len(p.pendingEvents(100)), 1)
+        self.assertEqual(len(self.pendingEvents(dyn, 100)), 1)
 
         # check list of times
         self.assertEqual(self._ps, [1, 4, 7, 10, 13, 16, 19])

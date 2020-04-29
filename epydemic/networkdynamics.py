@@ -19,6 +19,7 @@
 
 import epyc
 import networkx
+from heapq import heappush, heappop
 
 
 class Dynamics(epyc.Experiment, object):
@@ -44,7 +45,10 @@ class Dynamics(epyc.Experiment, object):
         super(Dynamics, self).__init__()
         self._graphPrototype = g                 # prototype copied for each run
         self._graph = None                       # working copy of prototype
+        self._postedEvents = []                  # pri-queue of fixed-time events
+        self._eventId = 0                        # counter for posted events
         self._process = p                        # network process to run
+        self._process.setDynamics(self)          # back-link from process to dynamics (for events)
 
 
     # ---------- Configuration ----------
@@ -99,6 +103,10 @@ class Dynamics(epyc.Experiment, object):
         # make a copy of the network prototype
         self._graph = self.networkPrototype().copy()
 
+        # set up the event stream
+        self._postedEvents = [] 
+        self._eventId = 0
+
         # build the process
         self._process.reset()
         self._process.setNetwork(self.network())
@@ -112,13 +120,65 @@ class Dynamics(epyc.Experiment, object):
         
         # throw away the worked-on model and any posted events that weren't run
         self._graph = None
-        self._posted = []
+        self._postedEvents= []
 
 
-    # ---------- Pending event handling ----------
+    # ---------- Posted events (occurring at a fixed time) ----------
+
+    def _nextEventId(self):
+        """Generate a sequence number for a posted event. This is used to ensure that
+        all event triples pushed onto the priqueue are unique in their first two elements,
+        and therefore never try to do comparisons with functions (the third element).
+
+        :returns: a sequence number"""
+        id = self._eventId
+        self._eventId += 1
+        return id
+
+    def postEvent(self, t, e, ef):
+        """Post an event that calls the :term:`event function` at time t.
+
+        :param t: the current time
+        :param e: the element (node or edge) on which the event occurs
+        :param ef: the event function"""
+        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: ef(t, e))))
+
+    def postRepeatingEvent(self, t, dt, e, ef):
+        """Post an event that starts at time t and re-occurs at interval dt.
+
+        :param t: the start time
+        :param dt: the interval
+        :param e: the element (node or edge) on which the event occurs
+        :param ef: the element function"""
+
+        def repeat(tc, e):
+            ef(tc, e)
+            tp = tc + dt
+            heappush(self._postedEvents, (tp, self._nextEventId(), (lambda: repeat(tp, e))))
+
+        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: repeat(t, e))))
+
+    def nextPendingEventBefore(self, t):
+        """Return the next pending event to occur at or before time t.
+
+        :param t: the current time
+        :returns: a pending event function or None"""
+        if len(self._postedEvents) > 0:
+            # we have events, grab the soonest
+            (et, id, pef) = heappop(self._postedEvents)
+            if et <= t:
+                # event should have occurred, return 
+                return pef
+            else:
+                # this (and therefore all further events) are in the future, put it back
+                heappush(self._postedEvents, (et, id, pef))
+                return None
+        else:
+            # we don't have any events
+            return None
 
     def runPendingEvents(self, t):
-        '''Retrieve and fire any pending events at time t. This method handles
+        '''Retrieve and fire any pending events at time t. This handles
         the case where firing an event posts another event that needs to be run
         before other already-posted events coming before time t: in other words,
         it ensures that the simulation order is respected.
@@ -127,7 +187,7 @@ class Dynamics(epyc.Experiment, object):
         :returns: the number of events fired'''
         n = 0
         while True:
-            pef = self._process.nextPendingEventBefore(t)
+            pef = self.nextPendingEventBefore(t)
             if pef is None:
                 # no more pending events, return however many we've fired already
                 return n
@@ -135,4 +195,3 @@ class Dynamics(epyc.Experiment, object):
                 # fire the event
                 pef()
                 n += 1
-

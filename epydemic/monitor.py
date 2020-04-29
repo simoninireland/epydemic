@@ -28,6 +28,7 @@ class Monitor(Process):
     DELTA = "time_delta"                #: Parameter for the time interval for observations.
     
     # Results
+    OBSERVATIONS = 'loci_observations'  #: Result holding the times of the observations.
     TIMESERIES = "loci_timeseries"      #: Result holding a dict mapping locus names to a dict of sample time and size.
  
 
@@ -37,7 +38,6 @@ class Monitor(Process):
     def reset(self):
         '''Reset the process.'''
         super(Monitor, self).reset()
-        print('reset')
         self._timeSeries = None
         
     def build(self, params):
@@ -45,28 +45,29 @@ class Monitor(Process):
         
         :param params: the experimental parameters'''
         super(Monitor, self).build(params)
-        print('build')
-
+ 
         # post a repeating event to observe the process
         delta = params[self.DELTA]
-        self.postRepeatingEvent(delta, delta, None, self.observe)
+        self.postRepeatingEvent(0.0, delta, None, self.observe)
         
     def observe(self, t, e):
         '''Observe the network.
         
         :param t: the current simulation time
         :param e: the element (ignored)'''
-        print('observe')
-
-        # if this is the first run, build the initial dicts per locus
+ 
+        # if this is the first run, build the initial dicts: one
+        # per locus and one for the observation times
         if self._timeSeries is None:
             self._timeSeries = dict()
+            self._timeSeries[self.OBSERVATIONS] = []
             for l in self:
-                self._timeSeries[l.name()] = dict()
+                self._timeSeries[l] = []
 
         # make the observation
+        self._timeSeries[self.OBSERVATIONS].append(t)
         for l in self:
-            self._timeSeries[l.name()][t] = len(l)
+            self._timeSeries[l].append(len(self[l]))
         
     def results(self):
         '''Return the time series.

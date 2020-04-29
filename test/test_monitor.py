@@ -28,21 +28,34 @@ class MonitoredSIR(SIR, Monitor):
         super(MonitoredSIR, self).__init__()
 
 
+class MonitoredSimple(Monitor):
+
+    def __init__(self):
+        super(MonitoredSimple, self).__init__()
+
+
 class MonitorTest(unittest.TestCase):
 
-    def testNoInfection( self ):
-        '''Test we capture an empty time series when there's no infection.'''
+    def testSimple( self ):
+        '''Test we capture the right time series.'''
         m = MonitoredSIR()
-        m.setMaximumTime(500)
+        m.setMaximumTime(100)
         e = StochasticDynamics(m, networkx.erdos_renyi_graph(1000, 5.0 / 1000))
 
         param = dict()
-        param[SIR.P_INFECTED] = 0.0
+        param[SIR.P_INFECTED] = 0.01
         param[SIR.P_INFECT] = 0.002
         param[SIR.P_REMOVE] = 0.002
-        param[Monitor.DELTA] = 0.001
+        param[Monitor.DELTA] = 1.0
 
         rc = e.set(param).run()
-        print(rc)
-        self.assertTrue(len([ l for (_, l) in rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES][SIR.INFECTED] if l > 0 ]), 0)
+        self.assertIn(Monitor.TIMESERIES, rc[epyc.Experiment.RESULTS])
+        self.assertSetEqual(set(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES].keys()), set([Monitor.OBSERVATIONS, SIR.SI, SIR.INFECTED]))
+        # the next test is >=, not =, because some events may be drawn after the maxiumum time,
+        # but the time is short enough that the number of infecteds won't be exhausted beforehand
+        self.assertGreaterEqual(len(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES][Monitor.OBSERVATIONS]), 100)
+        n = len(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES][Monitor.OBSERVATIONS])
+        for k in [SIR.SI, SIR.INFECTED]:
+            self.assertEqual(len(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES][k]), n)
+
 
