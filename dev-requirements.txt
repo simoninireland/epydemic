@@ -3,6 +3,7 @@ wheel
 tox
 nose
 coverage
+pylint
 rope
 sphinx
 sphinx-autobuild
