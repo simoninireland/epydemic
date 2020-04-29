@@ -28,7 +28,7 @@ class SIRS(SIR):
     immunity.'''
 
     # Extra model parameter
-    P_RESUSCEPT = 'pResuscept' #: Parameter for probability of losing immunity
+    P_RESUSCEPT = 'epydemic.SIRS.pResuscept'    #: Parameter for probability of losing immunity
 
     def __init__(self):
         super(SIRS, self).__init__()

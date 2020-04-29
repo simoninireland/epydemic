@@ -26,16 +26,16 @@ class SIS(CompartmentedModel):
     :class:`SIR`.'''
 
     # Model  parameters
-    P_INFECTED = 'pInfected'  #: Parameter for probability of initially being infected.
-    P_INFECT = 'pInfect'      #: Parameter for probability of infection on contact.
-    P_RECOVER = 'pRecover'    #: Parameter for probability of recovery (returning to susceptible).
+    P_INFECTED = 'epydemic.SIS.pInfected'  #: Parameter for probability of initially being infected.
+    P_INFECT = 'epydemic.SIS.pInfect'      #: Parameter for probability of infection on contact.
+    P_RECOVER = 'epydemic.SIS.pRecover'    #: Parameter for probability of recovery (returning to susceptible).
 
     # Possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE = 'S'         #: Compartment for nodes susceptible to infection.
-    INFECTED = 'I'            #: Compartment for nodes infected.
+    SUSCEPTIBLE = 'epydemic.SIS.S'         #: Compartment for nodes susceptible to infection.
+    INFECTED = 'epydemic.SIS.I'            #: Compartment for nodes infected.
 
     # Locus containing the edges at which dynamics can occur
-    SI = 'SI'                 #: Edge able to transmit infection.
+    SI = 'epydemic.SIS.SI'                 #: Edge able to transmit infection.
 
     def __init__( self ):
         super(SIS, self).__init__()

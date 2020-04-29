@@ -25,11 +25,11 @@ class Monitor(Process):
     them as time series.'''
     
     # Experimental parameters
-    DELTA = "time_delta"                #: Parameter for the time interval for observations.
+    DELTA = "epydemic.Monitor.time_delta"           #: Parameter for the time interval for observations.
     
     # Results
-    OBSERVATIONS = 'loci_observations'  #: Result holding the times of the observations.
-    TIMESERIES = "loci_timeseries"      #: Result holding a dict mapping locus names to a dict of sample time and size.
+    OBSERVATIONS = 'epydemic.Monitor.observations'  #: Result holding the times of the observations.
+    TIMESERIES = "epydemic.Monitor.timeseries"      #: Result holding a dict mapping locus names to a dict of sample time and size.
  
 
     def __init__(self):
