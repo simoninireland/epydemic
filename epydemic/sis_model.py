@@ -1,6 +1,6 @@
 # SIS as a compartmented model
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -44,6 +44,8 @@ class SIS(CompartmentedModel):
         '''Build the SIS model.
 
         :param params: the model parameters'''
+        super(SIS, self).build(params)
+        
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
         pRecover = params[self.P_RECOVER]

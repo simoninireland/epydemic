@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.99.6
+VERSION = 0.99.7
 
 
 # ----- Sources -----
@@ -43,7 +43,8 @@ SOURCES_CODE = \
 	epydemic/sis_model.py \
 	epydemic/sis_model_fixed_recovery.py \
 	epydemic/sirs_model.py \
-	epydemic/adddelete.py
+	epydemic/adddelete.py \
+	epydemic/monitor.py
 
 SOURCES_TESTS = \
 	test/__init__.py \

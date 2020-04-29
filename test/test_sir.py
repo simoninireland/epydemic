@@ -1,6 +1,6 @@
 # Test SIR under different dynamics
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-from compartmenteddynamics import CompartmentedDynamicsTest
+from test.compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx

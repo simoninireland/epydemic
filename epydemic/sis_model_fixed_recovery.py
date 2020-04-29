@@ -1,6 +1,6 @@
 # SIS with a fixed recovery time
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
+from epydemic import SIS
 
 class SIS_FixedRecovery(SIS):
     '''The Susceptible-Infected-Susceptible :term:`compartmented model of disease`,
@@ -40,6 +40,8 @@ class SIS_FixedRecovery(SIS):
         depending on the :attr:`T_INFECTED` parameter.
 
         :param params: the model parameters'''
+        super(SIS_FixedRecovery, self).build(params)
+
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
         self._tInfected = params[self.T_INFECTED]

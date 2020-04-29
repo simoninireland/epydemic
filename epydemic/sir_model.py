@@ -1,6 +1,6 @@
 # SIR as a compartmented model
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -44,6 +44,8 @@ class SIR(CompartmentedModel):
         '''Build the SIR model.
 
         :param params: the model parameters'''
+        super(SIR, self).build(params)
+
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
         pRemove = params[self.P_REMOVE]
