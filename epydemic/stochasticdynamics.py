@@ -99,6 +99,9 @@ class StochasticDynamics(Dynamics):
                 # increment the event counter    
                 events = events + 1
 
+        # when we get here there may still be posted events that haven't
+        # been run, and these are ignored: equilibrium overrides posting
+
         # add some more metadata
         (self.metadata())[self.TIME] = t
         (self.metadata())[self.EVENTS] = events
