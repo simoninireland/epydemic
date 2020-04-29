@@ -62,12 +62,12 @@ class SIS_FixedRecovery(SIS):
         # traverse the set of initially-infected nodes
         tInfected = params[self.T_INFECTED]
         g = self.network()
-        for n in self.compartment(g, self.INFECTED):
+        for n in self.compartment(self.INFECTED):
             # record that the node was initially infected
             g.nodes[n][self.INFECTION_TIME] = 0.0
         
             # post the corresponding removal event
-            self.postEvent(tInfected, n, self.remove)
+            self.postEvent(tInfected, n, self.recover)
 
     def infect( self, t, e ):
         '''Perform the normal infection event, and then post an event to recover
@@ -84,7 +84,7 @@ class SIS_FixedRecovery(SIS):
         self.network().nodes[n][self.INFECTION_TIME] = t
         
         # post the removal event for the appropriate time in the future
-        self.postEvent(t + self._tInfected, n, self.remove)
+        self.postEvent(t + self._tInfected, n, self.recover)
                 
                 
                 
