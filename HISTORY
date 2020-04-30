@@ -1,7 +1,11 @@
-Version 0.99.7
+Version 0.99.7 2020-04-30
 
-   - Added superclass calls in models that were preventing multiuple inheritance from
+   - Added superclass calls in models that were preventing multiple inheritance from
      working properly
+   - Refactored events and loci into Dynamics rather than Process
+   - Defined a monitor process to capture the sizes of all loci as time series
+   - Changed names of parameters and results to be more structured, to avoid conflicts
+   - Added some implementation notes
      
 Version 0.99.6 2020-04-14
 
