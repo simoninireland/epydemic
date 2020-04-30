@@ -27,48 +27,32 @@ We need to run an SIR simulation *and at the same time* extract the sizes of its
 *not* simply wait until equilibrium as is the default. In other words, we need to add *monitoring*
 code that will extract this information as the simulation progresses.
 
-We can do this by sub-classing trhe buyilt-in :class:`SIR` model, defining a monitoring event
-that performs the monitoring(storing the result in the process object), and then schedule it
-to run repeatedly at some time interval by calling :meth:`Process.postRepeatingEvent`:
+We can observe that there are two processes here -- SIR and observation -- which are essentially 
+independent: the events observing the progress of the epidemic aren't affected by the epidemic
+itself. ``epydemic`` includes a :class:`Monitor` class that provides regular monitoring,
+so we can simply define a new class that sub-classes :class:`SIR` *and* :class:`Monitor`.
+
+The :class:`Monitor` class records the sizes of loci. :class:`SIR` has loci for infected
+nodes and susceptible-infected edges: if we want to capture the other compartments, we need
+to create loci for them too. The resulting class is:
 
 .. code-block:: python
 
-   class MonitoredSIR(epydemic.SIR):
+   class MonitoredSIR(epydemic.SIR, epydemic.Monitor):
 
-       INTERVAL = 'interval'
-       PROGRESS = 'progress'
+        def __init__(self):
+            super(MonitoredSIR, self).__init__()
 
-       def setUp(self, params):
-           '''Schedule the monitoring event.
+        def build(self, params):
+            '''Build the process, adding additional loci
+            to be monitored.
+           
+            :param params: the parameters'''
+            super(MonitoredSIR, self).setUp(params)
 
-           :param params: the simulation parameters'''
-           super(MonitoredSIR, self).setUp(params)
-
-           # add a monitoring event to fill-in the evolution of the process
-           self._series = []
-           self.postRepeatingEvent(0, params[self.INTERVAL], None, self.monitor)
-
-       def monitor(self, t, e):
-           '''Record the sizes of each compartment.
-
-           :param t: the simulation time
-           :param e: the element (ignored)'''
-           s = dict()
-           for k in [epydemic.SIR.SUSCEPTIBLE, epydemic.SIR.INFECTED, epydemic.SIR.REMOVED]:
-               s[k] = len(self.compartment(k))
-           self._series.append((t, s))
-
-       def results(self):
-           '''Add the time series to the experiment's results.
-
-           :returns: a results dict including the monitored time series'''
-           rc = super(MonitoredSIR, self).results()
-
-           rc[self.PROGRESS] = self._series
-           return rc
-
-To keep things clean we've also moved the resulting time series of compartment sizes into the results
-of the process so that we access it in the same way as any other results.
+            # add loci for the other compartments 
+            self.trackNodesInCompartment(epydemic.SIR.SUSCEPTIBLE)
+            self.trackNodesInCompartment(epydemic.SIR.REMOVED)
 
 We can then use ``epydemic`` to run this process using the same parameters as we used for the
 continuous-domain experiment:
@@ -87,12 +71,17 @@ continuous-domain experiment:
    params[epydemic.SIR.P_REMOVE] = 0.002   # recovery probability
    params[epydemic.SIR.P_INFECTED] = 0.01  # initial fraction infected
 
-   # capture every 10s
-   params[MonitoredSIR.INTERVAL] = 10
+   # capture every 10 timesteps
+   params[epydemic.Monitor.DELTA] = 10
 
    e = epydemic.StochasticDynamics(MonitoredSIR(), g = g)
    e.process().setMaximumTime(1000)
    rc = e.set(params).run()
+
+The monitor adds a result tagged :attr:`Monitor.TIMESERIES`, which contains a dict keyed
+by locus names and containing the size of the locus at each observation. For convenience
+there is also a time series keyed by :attr:`Monitor.OBSERVATIONS` that holds the simulation
+times at which the observations were made. 
 
 Plotting the results yields:
 
