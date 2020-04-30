@@ -66,5 +66,5 @@ plt.plot(xs, [ powerlaw(x) for x in xs ], 'g-', label='powerlaw')
 plt.plot(xs, [ powerlaw_cutoff(x) for x in xs ], 'r-',
          label='powerlaw with cutoff at $\\kappa = {k}$'.format(k = kappa))
 plt.loglog()
-plt.legend()
+plt.legend(loc='lower left')
 plt.savefig('doc/cookbook/powerlaw-cutoff.png')

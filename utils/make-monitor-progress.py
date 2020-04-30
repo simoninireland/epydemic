@@ -1,6 +1,6 @@
 # Create the doc/cookbook/sir-progress-*.png graphs
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -66,6 +66,7 @@ fig = plt.figure(figsize = (5, 5))
 ax = fig.gca()
 plt.title('Progress of an infection $(\\alpha = {a}, \\beta = {b})$'.format(a = pRecover, b = pInfect))
 plt.xlabel('time')
+ax.set_xlim([0, T])
 plt.ylabel('fraction of population that is...')
 ax.set_ylim([0.0, 1.0])
 plt.plot(sss, 'y', label = 'susceptible')
@@ -74,38 +75,20 @@ plt.plot(rrs, 'g', label = 'removed')
 plt.legend(loc = 'upper right')
 plt.savefig('doc/cookbook/sir-progress-dt.png')
 
-class MonitoredSIR(epydemic.SIR):
-    INTERVAL = 'interval'
-    PROGRESS = 'progress'
+class MonitoredSIR(epydemic.SIR, epydemic.Monitor):
 
-    def setUp(self, params):
-        '''Schedule the monitoring event.
+    def __init__(self):
+        super(MonitoredSIR, self).__init__()
 
-        :param params: the simulation parameters'''
-        super(MonitoredSIR, self).setUp(params)
+    def build(self, params):
+        '''Build the process, adding additional loci to be monitored.
+           
+        :param params: the parameters'''
+        super(MonitoredSIR, self).build(params)
 
-        # add a monitoring event to fill-in the evolution of the process
-        self._series = []
-        self.postRepeatingEvent(0, params[self.INTERVAL], None, self.monitor)
-
-    def monitor(self, t, e):
-        '''Record the sizes of each compartment.
-
-        :param t: the simulation time
-        :param e: the element (ignored)'''
-        s = dict()
-        for k in [epydemic.SIR.SUSCEPTIBLE, epydemic.SIR.INFECTED, epydemic.SIR.REMOVED]:
-            s[k] = len(self.compartment(k))
-        self._series.append((t, s))
-
-    def results(self):
-        '''Add the time series to the results.
-
-        :returns: a results dict including the monitored time series'''
-        rc = super(MonitoredSIR, self).results()
-
-        rc[self.PROGRESS] = self._series
-        return rc
+        # add loci for the other compartments 
+        self.trackNodesInCompartment(epydemic.SIR.SUSCEPTIBLE)
+        self.trackNodesInCompartment(epydemic.SIR.REMOVED)
 
 N = 10000
 
@@ -117,22 +100,24 @@ params = dict()
 params[epydemic.SIR.P_INFECT] = pInfect
 params[epydemic.SIR.P_REMOVE] = pRecover
 params[epydemic.SIR.P_INFECTED] = pInfected
-params[MonitoredSIR.INTERVAL] = 10
+params[epydemic.Monitor.DELTA] = 10
 
 e = epydemic.StochasticDynamics(MonitoredSIR(), g = er_g)
-e.process().setMaximumTime(1000)
+e.process().setMaximumTime(T)
 rc = e.set(params).run()
 
 fig = plt.figure(figsize = (5, 5))
 ax = fig.gca()
 plt.title('Progress over an ER network \n $(N = {n}, \\langle k \\rangle = {k}, \\alpha = {a}, \\beta = {b})$'.format(n = N, k = kmean, a = pRecover, b = pInfect))
 plt.xlabel('time')
+ax.set_xlim([0, T])
 plt.ylabel('fraction of population that is...')
 ax.set_ylim([0.0, 1.0])
-ts = list(map(lambda tp: tp[0], rc[epyc.Experiment.RESULTS][MonitoredSIR.PROGRESS]))
-er_sss = list(map(lambda tp: tp[1][epydemic.SIR.SUSCEPTIBLE] / er_g.order(), rc[epyc.Experiment.RESULTS][MonitoredSIR.PROGRESS]))
-er_iis = list(map(lambda tp: tp[1][epydemic.SIR.INFECTED] / er_g.order(), rc[epyc.Experiment.RESULTS][MonitoredSIR.PROGRESS]))
-er_rrs = list(map(lambda tp: tp[1][epydemic.SIR.REMOVED] / er_g.order(), rc[epyc.Experiment.RESULTS][MonitoredSIR.PROGRESS]))
+timeseries = rc[epyc.Experiment.RESULTS][epydemic.Monitor.TIMESERIES]
+ts = timeseries[epydemic.Monitor.OBSERVATIONS]
+er_sss = list(map(lambda v: v / er_g.order(), timeseries[epydemic.SIR.SUSCEPTIBLE]))
+er_iis = list(map(lambda v: v / er_g.order(), timeseries[epydemic.SIR.INFECTED]))
+er_rrs = list(map(lambda v: v / er_g.order(), timeseries[epydemic.SIR.REMOVED]))
 plt.plot(ts, er_sss, 'y', label = 'susceptible')
 plt.plot(ts, er_iis, 'r', label = 'infected')
 plt.plot(ts, er_rrs, 'g', label = 'removed')
@@ -182,7 +167,7 @@ def generateFrom(N, p, maxdeg = 100):
     # model with the given degree distribution
     g = networkx.configuration_model(ns, create_using = networkx.Graph())
     g = g.subgraph(max(networkx.connected_components(g), key = len)).copy()
-    g.remove_edges_from(list(g.selfloop_edges()))
+    g.remove_edges_from(list(networkx.selfloop_edges(g)))
     return g
 
 kappa = 10
@@ -190,19 +175,21 @@ alpha = 2
 plc_g = generateFrom(N, makePowerlawWithCutoff(alpha, kappa))
 
 e = epydemic.StochasticDynamics(MonitoredSIR(), g = plc_g)
-e.process().setMaximumTime(1000)
+e.process().setMaximumTime(T)
 rc = e.set(params).run()
 
 fig = plt.figure(figsize = (5, 5))
 ax = fig.gca()
 plt.title('Progress over a human contact network \n $(N = {n}, \\kappa = {k}, \\alpha = {a}, \\beta = {b})$'.format(n = N, k = kappa, a = pRecover, b = pInfect))
 plt.xlabel('time')
+ax.set_xlim([0, T])
 plt.ylabel('fraction of population that is...')
 ax.set_ylim([0.0, 1.0])
-ts = list(map(lambda tp: tp[0], rc[epyc.Experiment.RESULTS][MonitoredSIR.PROGRESS]))
-plc_sss = list(map(lambda tp: tp[1][epydemic.SIR.SUSCEPTIBLE] / plc_g.order(), rc[epyc.Experiment.RESULTS][MonitoredSIR.PROGRESS]))
-plc_iis = list(map(lambda tp: tp[1][epydemic.SIR.INFECTED] / plc_g.order(), rc[epyc.Experiment.RESULTS][MonitoredSIR.PROGRESS]))
-plc_rrs = list(map(lambda tp: tp[1][epydemic.SIR.REMOVED] / plc_g.order(), rc[epyc.Experiment.RESULTS][MonitoredSIR.PROGRESS]))
+timeseries = rc[epyc.Experiment.RESULTS][epydemic.Monitor.TIMESERIES]
+ts = timeseries[epydemic.Monitor.OBSERVATIONS]
+plc_sss = list(map(lambda v: v / er_g.order(), timeseries[epydemic.SIR.SUSCEPTIBLE]))
+plc_iis = list(map(lambda v: v / er_g.order(), timeseries[epydemic.SIR.INFECTED]))
+plc_rrs = list(map(lambda v: v / er_g.order(), timeseries[epydemic.SIR.REMOVED]))
 plt.plot(ts, plc_sss, 'y', label = 'susceptible')
 plt.plot(ts, plc_iis, 'r', label = 'infected')
 plt.plot(ts, plc_rrs, 'g', label = 'removed')
