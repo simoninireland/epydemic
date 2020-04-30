@@ -33,6 +33,10 @@ Several other methods provide information for the process.
 
 .. automethod:: Process.network
 
+.. automethod:: Process.setDynamics
+
+.. automethod:: Process.dynamics
+
 .. automethod:: Process.setMaximumTime
 
 .. automethod:: Process.maximumTime
@@ -57,7 +61,7 @@ The interface may be overridden and extended by sub-classes. Three methods form 
 
 .. automethod:: Process.removeEdge
 
-four other "bulk" methods are deinfed in terms of the basic methods, and so don't typically
+Four other "bulk" methods are deinfed in terms of the basic methods, and so don't typically
 need to be overridden specifically.
 
 .. automethod:: Process.addNodesFrom
@@ -78,17 +82,9 @@ simulation can proceed efficiently.
 
 .. automethod:: Process.addLocus
 
+.. automethod:: Process.loci
+
 .. automethod:: Process.locus
-
-Loci also provide an operator interface.
-
-.. automethod:: Process.__getitem__
-
-.. automethod:: Process.__setitem__
-
-.. automethod:: Process.__contains__
-
-.. automethod:: Process.__iter__
 
 
 Events
@@ -125,7 +121,7 @@ to the different stochastic events that are generated.
 Accessing event distributions
 -----------------------------
 
-The different sets of events can be accessed procedurally. This is typically only needed
+The different sets of events can be accessed procedurally. This interface is typically only needed
 if writing a new :class:`Dynamics` sub-class.
 
 .. automethod:: Process.perElementEventDistribution
@@ -133,13 +129,6 @@ if writing a new :class:`Dynamics` sub-class.
 .. automethod:: Process.fixedRateEventDistribution
 
 .. automethod:: Process.eventRateDistribution
-
-For posted events, there is similarly an interface to access the events needing to be fired.
-
-.. automethod:: Process.nextPendingEventBefore
-
-.. automethod:: Process.pendingEvents
-
 
 
 

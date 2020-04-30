@@ -77,6 +77,7 @@ Current features
    reference
    cookbook
    glossary
+   implementation
    bibliography
 
 

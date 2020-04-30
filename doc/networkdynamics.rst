@@ -39,7 +39,7 @@ a prototype network as a parameter to its construction and copies it
 for every run.
 
 Note the division of labour. A :class:`Dynamics` object provides the scheduling
-for evenets, which are themselves sapecified and defined in a :class:`Process`
+for events, which are themselves sapecified and defined in a :class:`Process`
 object. There is seldom any need to interact directly with a :class:`Dynamics` object
 other than through its execution interface.
 
@@ -82,17 +82,53 @@ execution, and tear-down phases.
 .. automethod:: Dynamics.experimentalResults
 
 
+Loci
+----
+
+Loci for stochastic events are craeted by :class:`Process` instances.
+
+.. automethod:: Dynamics.addLocus
+
+.. automethod:: Dynamics.locus
+
+.. automethod:: Dynamics.loci
+
+.. automethod:: Dynamics.lociForProcess
+
 
 Probabilistic events
 --------------------
 
-The way in which stochastic events are run depends on the :class:`Dynamics` sub-class.
+Stochastic events can be attached to each locus defined for the simulation.
+
+.. automethod:: Dynamics.addEventPerElement
+
+.. automethod:: Dynamics.addFixedRateEvent
+
+Thes events form a probability distribution from which events can be drawn
+in the course of the simulation.
+
+.. automethod:: Dynamics.perElementEventDistribution
+
+.. automethod:: Dynamics.fixedRateEventDistribution
 
 
 Posted events
 -------------
 
+A :class:`Dynamics` object also maintains a queue of posted event.
+
+.. automethod:: Dynamics.postEvent
+
+.. automethod:: Dynamics.postRepeatingEvent
+
+This queue is then accessed to extract the events that need to be fired
+up to a given simulation time.
+
+.. automethod:: Dynamics.nextPendingEventBefore
+
 .. automethod:: Dynamics.runPendingEvents
+
 
 
 
