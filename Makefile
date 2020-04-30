@@ -86,12 +86,14 @@ SOURCES_DOCUMENTATION = \
 	doc/tutorial/advanced-topics.rst \
 	doc/implementation.rst \
 	doc/implementation/challenges.rst \
+	doc/implementation/events.rst \
 	doc/cookbook.rst \
 	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/monitoring-progress.rst \
 	doc/cookbook/infect-specific-nodes.rst \
-	doc/cookbook/speed.rst \
+	doc/cookbook/speed.rst
+SOURCES_DIAGRAMS = \
 	doc/cookbook/powerlaw-cutoff.png \
 	doc/cookbook/sir-progress-dt.png \
 	doc/cookbook/sir-progress-er.png \
@@ -191,6 +193,11 @@ upload: sdist wheel
 	$(GPG) --detach-sign -a dist/$(PACKAGENAME)-$(VERSION).tar.gz
 	$(ACTIVATE) && $(RUN_TWINE)
 
+# Build the diagrams for the documentation
+diagrams:
+	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-monitor-progress.py
+	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-powerlaw-cutoff.py
+
 # Clean up the distribution build 
 clean:
 	$(RM) $(SOURCES_GENERATED) $(SOURCES_DIST_DIR) epyc.egg-info dist $(SOURCES_DOC_BUILD_DIR) $(SOURCES_DOC_ZIP) dist build
@@ -226,7 +233,8 @@ Available targets:
    make test         run the test suite for all Python versions we support
    make coverage     run coverage checks of the test suite
    make doc          build the API documentation using Sphinx
-   make env          create a known-good development virtual environment
+   make diagrams     create the diagrams for the API documentation
+   make env          create a development virtual environment
    make sdist        create a source distribution
    make wheel	     create binary (wheel) distribution
    make upload       upload distribution to PyPi
