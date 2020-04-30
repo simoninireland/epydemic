@@ -9,3 +9,6 @@ sphinx
 sphinx-autobuild
 doc8
 twine
+mpmath
+matplotlib
+seaborn
