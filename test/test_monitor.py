@@ -28,12 +28,6 @@ class MonitoredSIR(SIR, Monitor):
         super(MonitoredSIR, self).__init__()
 
 
-class MonitoredSimple(Monitor):
-
-    def __init__(self):
-        super(MonitoredSimple, self).__init__()
-
-
 class MonitorTest(unittest.TestCase):
 
     def testSimple( self ):
@@ -50,6 +44,7 @@ class MonitorTest(unittest.TestCase):
 
         rc = e.set(param).run()
         self.assertIn(Monitor.TIMESERIES, rc[epyc.Experiment.RESULTS])
+        self.assertSetEqual(set(rc[epyc.Experiment.RESULTS].keys()), set([Monitor.TIMESERIES, SIR.SUSCEPTIBLE, SIR.INFECTED, SIR.REMOVED]))
         self.assertSetEqual(set(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES].keys()), set([Monitor.OBSERVATIONS, SIR.SI, SIR.INFECTED]))
         # the next test is >=, not =, because some events may be drawn after the maxiumum time,
         # but the time is short enough that the number of infecteds won't be exhausted beforehand

@@ -1,6 +1,6 @@
 # Mixin class containing common tests for compartmented models
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from __future__ import print_function
 from epydemic import *
 import epyc
 
@@ -33,18 +32,24 @@ class CompartmentedDynamicsTest():
         '''Test a single run of a stochastic dynamics.'''
         e = StochasticDynamics(self._model, self._network)
         rc = e.set(self._params).run()
+        self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
 
     def testRunSingleSynchronous( self ):
         '''Test a single run of a synchronous dynamics.'''
         e = SynchronousDynamics(self._model, self._network)
         rc = e.set(self._params).run()
+        self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
 
     def testRunMultipleStochastic( self ):
         '''Test a stochastic dynamics run of a model over a (small) parameter space.'''
         e = StochasticDynamics(self._model, self._network)
         self._lab.runExperiment(e)
+        rc = self._lab.results()
+        self.assertTrue(rc[0][epyc.Experiment.METADATA][epyc.Experiment.STATUS])
 
     def testRunMultipleSynchronous( self ):
         '''Test a synchronous dynamics run of a model over a (small) parameter space.'''
         e = SynchronousDynamics(self._model, self._network)
         self._lab.runExperiment(e)
+        rc = self._lab.results()
+        self.assertTrue(rc[0][epyc.Experiment.METADATA][epyc.Experiment.STATUS])
