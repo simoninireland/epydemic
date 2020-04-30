@@ -356,12 +356,10 @@ class CompartmentedModel(Process):
         :returns: the locus used to track the nodes'''
         if name is None:
             name = c
-        if name in self:
-            raise NameError('Locus {c} already exists in model'.format(c = name))
-        else:
-            # add locus
-            locus = CompartmentedNodeLocus(name, c)
-            return self.addLocus(name, locus)
+
+        # add locus
+        locus = CompartmentedNodeLocus(name, c)
+        return self.addLocus(name, locus)
 
     def trackEdgesBetweenCompartments(self, l, r, name = None):
         '''Add a locus to track edges with endpoint nodes in the given compartments.
@@ -373,12 +371,10 @@ class CompartmentedModel(Process):
  
         if name is None:
             name = '{l}-{r}'.format(l = l, r = r)
-        if name in self:
-            raise NameError('Locus {c} already exists in model'.format(c = name))
-        else:
-            # add locus
-            locus = CompartmentedEdgeLocus(name, l, r)
-            return self.addLocus(name, locus)
+
+        # add locus
+        locus = CompartmentedEdgeLocus(name, l, r)
+        return self.addLocus(name, locus)
 
     def addLocus(self, n, l = None):
         '''Add a locus to the model, initialising the handler functions.

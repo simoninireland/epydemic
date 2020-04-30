@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from epydemic import Locus
 import epyc
 import networkx
 from heapq import heappush, heappop
@@ -38,17 +39,21 @@ class Dynamics(epyc.Experiment, object):
     :param g: prototype network (optional)'''
 
     # Additional metadata elements
-    TIME = 'simulation_time'      #: Metadata element holding the logical simulation end-time.
-    EVENTS = 'simulation_events'  #: Metadata element holding the number of events that happened.
+    TIME = 'epydemic.Dynamics.time'      #: Metadata element holding the logical simulation end-time.
+    EVENTS = 'epydemic.Dynamics.events'  #: Metadata element holding the number of events that happened.
 
     def __init__( self, p, g = None ):
         super(Dynamics, self).__init__()
         self._graphPrototype = g                 # prototype copied for each run
         self._graph = None                       # working copy of prototype
-        self._postedEvents = []                  # pri-queue of fixed-time events
         self._eventId = 0                        # counter for posted events
         self._process = p                        # network process to run
         self._process.setDynamics(self)          # back-link from process to dynamics (for events)
+        self._loci = dict()                      # dict from names to loci
+        self._processLoci = dict()               # dict from processes to loci for events
+        self._perElementEvents = dict()          # dict from processes to events that occur per-element
+        self._perLocusEvents = dict()            # dict from processes to events that occur per-locus
+        self._postedEvents = []                  # pri-queue of fixed-time events
 
 
     # ---------- Configuration ----------
@@ -104,6 +109,10 @@ class Dynamics(epyc.Experiment, object):
         self._graph = self.networkPrototype().copy()
 
         # set up the event stream
+        self._loci = dict()
+        self._processLoci = dict()
+        self._perElementEvents = dict()
+        self._perLocusEvents = dict()
         self._postedEvents = [] 
         self._eventId = 0
 
@@ -121,6 +130,94 @@ class Dynamics(epyc.Experiment, object):
         # throw away the worked-on model and any posted events that weren't run
         self._graph = None
         self._postedEvents= []
+
+
+    # ---------- Stochastic events (drawn from a distribution) ----------
+
+    def addLocus(self, p, n, l=None):
+        """Add a named locus associated with the given process.
+
+        :param p: the process
+        :param n: the locus name
+        :param l: the locus (defaults to a simple set-based locus)
+        :returns: the locus"""
+        if n in self._loci.keys():
+            raise Exception("Locus {n} already exists in the simulation".format(n = n))
+
+        # store locus by name
+        if l is None:
+            l = Locus(n)
+        self._loci[n] = l
+
+        # update process record
+        if p not in self._processLoci:
+            # new process, add loci and event lists
+            self._processLoci[p] = dict()
+            self._perElementEvents[p] = []
+            self._perLocusEvents[p] = []
+        self._processLoci[p][n] = l
+
+        # return the locus
+        return l
+
+    def locus(self, n):
+        '''Retrieve a locus by name.
+
+        :param n: the locus name
+        :returns: the locus'''
+        return self._loci[n]
+
+    def loci(self):
+        '''Return all the loci in the simulation.
+
+        :returns: a dict from names to loci'''
+        return self._loci
+
+    def lociForProcess(self, p):
+        '''Return all the loci defined for a specific process.
+
+        :param p: the process
+        :returns: a dict from names to loci'''
+        return self._processLoci[p]
+
+    def addEventPerElement(self, p, l, pr, ef):
+        """Add a probabilistic event at a locus, occurring with a particular (fixed)
+        probability for each element of the locus, and calling the :term:`event function`
+        when it is selected.
+
+        :param p: the process
+        :param l: the locus or locus name
+        :param pr: the event probability
+        :param ef: the event function"""
+        if isinstance(l, str):
+            l = self.locus(l)
+        self._perElementEvents[p].append((l, pr, ef))
+
+    def perElementEventDistribution(self, p):
+        """Return the distribution of per-element events for the given process' loci.
+
+        :param p: the process
+        :returns: a list of (locus, probability, event function) triples"""
+        return self._perElementEvents[p]
+
+    def addFixedRateEvent(self, p, l, pr, ef):
+        """Add a probabilistic event at a locus, occurring with a particular (fixed)
+        probability, and calling the :term:`event function` when it is selected. 
+
+        :param p: the process
+        :param l: the locus or locus name
+        :param pr: the event probability
+        :param ef: the event function"""
+        if isinstance(l, str):
+            l = self.locus(l)
+        self._perLocusEvents[p].append((l, pr, ef))
+
+    def fixedRateEventDistribution(self, p):
+        """Return the distribution of fixed-rate events for the given process' loci.
+
+        :param p: the process
+        :returns: a list of (locus, probability, event function) triples"""
+        return self._perLocusEvents[p]
 
 
     # ---------- Posted events (occurring at a fixed time) ----------

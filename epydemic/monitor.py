@@ -51,26 +51,33 @@ class Monitor(Process):
         self.postRepeatingEvent(0.0, delta, None, self.observe)
         
     def observe(self, t, e):
-        '''Observe the network.
+        '''Observe the network, capturing the sizes of all loci which are then
+        stored into individual time series. Another time series, tagged 
+        :attr:`OBSERVATIONS`, is created to store the sequence of times at which observations
+        were made.
         
         :param t: the current simulation time
         :param e: the element (ignored)'''
  
         # if this is the first run, build the initial dicts: one
         # per locus and one for the observation times
+        # (We can't do this as part of build() as it depends on which
+        # other processes we're composed with, and in what order)
         if self._timeSeries is None:
             self._timeSeries = dict()
             self._timeSeries[self.OBSERVATIONS] = []
-            for l in self:
-                self._timeSeries[l] = []
+            for n in self.dynamics().loci().keys():   # loci for all processes in this experiment
+                self._timeSeries[n] = []
 
         # make the observation
         self._timeSeries[self.OBSERVATIONS].append(t)
-        for l in self:
-            self._timeSeries[l].append(len(self[l]))
+        for (n, l) in self.loci().items():
+            self._timeSeries[n].append(len(l))
         
     def results(self):
-        '''Return the time series.
+        '''Return the time series as a dict tagged :attr:`TIMESERIES`. There is
+        one time series *per* locus, plus one for the sequence of times at which the
+        observations were made.
         
         :returns: the results'''
         rc = super(Monitor, self).results()

@@ -65,9 +65,10 @@ class AddDelete(Process):
         super(AddDelete, self).setUp(params)
 
         # add all nodes to the all-nodes locus
+        l = self.locus(self.NODES)
         g = self.network()
         for n in g.nodes():
-            self[self.NODES].addHandler(g, n)
+            l.addHandler(g, n)
 
 
     # ---------- Accessing and evolving the network ----------
@@ -78,7 +79,7 @@ class AddDelete(Process):
         :param n: the new node
         :param kwds: (optional) node attributes'''
         super(AddDelete, self).addNode(n, **kwds)
-        self[self.NODES].addHandler(self.network(), n)
+        self.locus(self.NODES).addHandler(self.network(), n)
         #print('added {n}'.format(n=n))
 
     def newNodeName(self):
@@ -107,7 +108,7 @@ class AddDelete(Process):
         '''Remove a node from the working network.
 
         :param n: the node'''
-        self[self.NODES].removeHandler(self.network(), n)
+        self.locus(self.NODES).removeHandler(self.network(), n)
         super(AddDelete, self).removeNode(n)
         #print('removed {n}'.format(n=n))
 
@@ -126,7 +127,7 @@ class AddDelete(Process):
         i = self.addNewNode()
 
         # link to c other nodes (not including i) with uniform probability
-        ns = self[self.NODES]
+        ns = self.locus(self.NODES)
         es = set()
         for _ in range(self._c):
             # a probably unnecessary test for parallel edges and self-loops

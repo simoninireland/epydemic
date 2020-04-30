@@ -19,7 +19,6 @@
 
 from epydemic import Locus
 
-
 class Process(object):
     """A process that runs over a network. This is the abstract base class for all network processes.
     It provides the essential routines to build, set-up, run, and extract results from a
@@ -54,10 +53,7 @@ class Process(object):
         """Reset the process ready to be built. This resets all the internal process state
         variables. Sub-classes should call the base method to make sure that the event
         sub-system is properly reset."""
-        self._loci = dict()                          # loci for events
-        self._g = None                               # working network
-        self._perElementEvents = []                  # events that occur per-element
-        self._perLocusEvents = []                    # events that occur per-locus
+        self._g = None
 
     def build(self, params):
         """Build the process model. This should be overridden by sub-classes, and should
@@ -218,7 +214,8 @@ class Process(object):
             self.removeEdge(*e)
 
 
-    # ---------- Loci for events ----------
+    # ---------- Probabilistic and posted events ----------
+    # These are helper methods that delegate to the dynamics
 
     def addLocus(self, n, l=None):
         """Add a named locus.
@@ -226,49 +223,20 @@ class Process(object):
         :param n: the locus name
         :param l: the locus (defaults to a simple set-based locus)
         :returns: the locus"""
-        if n in self._loci.keys():
-            raise Exception("Trying to overwrite existing locus {n}".format(n = n))
-        if l is None:
-            l = Locus(n)
-        self._loci[n] = l
-        return l
+        return self._dynamics.addLocus(self, n, l)
 
-    def __setitem__(self, n, l):
-        """Add a named locus. Equivalent to :meth:`addLocus`
+    def loci(self):
+        '''Return the names of the loci that this process added.
 
-        :param n: the locus name
-        :param l: the locus
-        :returns: the locus"""
-        return self.addLocus(n, l)
+        :returns: a dict from names to loci'''
+        return self._dynamics.lociForProcess(self)
 
     def locus(self, n):
-        """Return the named locus.
+        '''Return the named locus.
 
         :param n: the locus name
-        :returns: the locus"""
-        return self._loci[n]
-
-    def __getitem__(self, n):
-        """Return the given locus. Equivalent to :meth:`locus`.
-
-        :param n: the locus name
-        :returns: the locus"""
-        return self.locus(n)
-
-    def __contains__(self, l):
-        """Check whether the given locus is defined for the process.
-
-        :returns: the name of the loci"""
-        return l in self._loci.keys()
-
-    def __iter__(self):
-        """Return an iterator over the loci in the process.
-
-        :returns: an iterator"""
-        return iter(self._loci.keys())
-
-
-    # ---------- Probabilistic and posted events ----------
+        :returns: the locus'''
+        return self.loci()[n]
 
     def addEventPerElement(self, l, p, ef):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
@@ -283,9 +251,7 @@ class Process(object):
         :param l: the locus or locus name
         :param p: the event probability
         :param ef: the event function"""
-        if isinstance(l, str):
-            l = self.locus(l)
-        self._perElementEvents.append((l, p, ef))
+        self._dynamics.addEventPerElement(self, l, p, ef)
 
     def addFixedRateEvent(self, l, p, ef):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
@@ -300,9 +266,7 @@ class Process(object):
         :param l: the locus or locus name
         :param p: the event probability
         :param ef: the event function"""
-        if isinstance(l, str):
-            l = self.locus(l)
-        self._perLocusEvents.append((l, p, ef))
+        self._dynamics.addFixedRateEvent(self, l, p, ef)
 
     def postEvent(self, t, e, ef):
         """Post an event that calls the :term:`event function` at time t.
@@ -325,18 +289,28 @@ class Process(object):
     # ---------- Event distributions ----------
 
     def perElementEventDistribution(self, t):
-        """Return the distribution of per-element events at time t.
+        """Return the distribution of per-element events at time t relevant to
+        this process. The list only contains those loci that this process defined.
+
+        The default is to use the distribution directly from the dynamics, which is
+        time-independent. Sub-classes can extend this method to provide time dependency
+        if needed.
 
         :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
-        return self._perElementEvents
+        return self._dynamics.perElementEventDistribution(self)
 
     def fixedRateEventDistribution(self, t):
-        """Return the distribution of fixed-rate events at time t.
+        """Return the distribution of fixed-rate events at time t. relevant to
+        this process. The list only contains those loci that this process defined.
+
+        The default is to use the distribution directly from the dynamics, which is
+        time-independent. Sub-classes can extend this method to provide time dependency
+        if needed.
 
         :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
-        return self._perLocusEvents
+        return self._dynamics.fixedRateEventDistribution(self)
 
     def eventRateDistribution(self, t):
         """Return the event distribution, a sequence of (l, r, f) triples
@@ -347,8 +321,8 @@ class Process(object):
         Note the distinction between a *rate* and a *probability*:
         the former can be obtained from the latter simply by
         multiplying the event probability by the number of times it's
-        possible in the current network, which is the population
-        of nodes or edges in a given state.
+        possible in the current network, which for per-element events
+        is the population of nodes or edges in a given state.
 
         It is perfectly fine for an event to have a zero rate. The process
         is assumed to have reached equilibrium if all events have zero rates.
@@ -358,13 +332,13 @@ class Process(object):
         rates = []
 
         # convert per-element events to rates
-        for (l, p, ef) in self.perElementEventDistribution(t):
-            rates.append((l, p * len(l), ef))
+        for (l, pr, ef) in self.perElementEventDistribution(t):
+            rates.append((l, pr * len(l), ef))
 
         # add fixed-rate events for non-empty loci
-        for (l, p, ef) in self.fixedRateEventDistribution(t):
+        for (l, pr, ef) in self.fixedRateEventDistribution(t):
             if len(l) > 0:
-                rates.append((l, p, ef))
+                rates.append((l, pr, ef))
         return rates
 
 
