@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import Locus, Process
-import random
+import math
 import numpy
 import collections
 
@@ -255,6 +255,14 @@ class CompartmentedModel(Process):
         dist = []
         for cp in self._compartments.items():
             dist.append(cp)
+ 
+        # sanity-check the distribution
+        a = 0.0
+        for (_, p) in dist:
+            a += p
+        if not math.isclose(a, 1.0):
+            raise Exception('Bad initial compartment distribution')
+
         return dist
 
     def initialCompartments( self ):
@@ -269,12 +277,13 @@ class CompartmentedModel(Process):
 
         # assign nodes to compartments
         g = self.network()
+        rng = numpy.random.default_rng()
         for n in g.nodes():
             # select a compartment according to the initial distribution
-            r = random.random()
+            r = rng.random()
             a = 0.0
             for (c, p) in dist:
-                a = a + p
+                a += p
                 if r <= a:
                     # change node's compartment
                     self.changeCompartment(n, c)
@@ -346,6 +355,18 @@ class CompartmentedModel(Process):
 
         :param c: the compartment name
         :param p: the initial occupancy probability (defaults to  0.0)'''
+        self._compartments[c] = p
+
+    def changeCompartmentInitialOccupancy(self, c, p):
+        '''Change the initial cocupancy probability for a compartment. This method
+        is used when sub-classing an existing model: it only makes sense during the
+        build process (see :meth:`build`) before the model is initialised in
+        :meth:`setUp`.
+
+        @param c: the compartment
+        :param p: the new initial occupation probability'''
+        if c not in self.compartments():
+            raise Exception('Compartment {c} not defined in model'.format(c=c))
         self._compartments[c] = p
 
     def trackNodesInCompartment(self, c, name = None):
