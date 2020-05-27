@@ -48,8 +48,12 @@ Building and querying the model
 
 Building a model (within :meth:`CompartmentedModel.build`) means specifying
 the various compartments, loci, and events, and their associated probabilities.
+The initial occupancy of compartments can be set to allow for random initialisation,
+and the occupancy of existing components changed to allow better sub-classing. 
 
 .. automethod:: CompartmentedModel.addCompartment
+
+. automethod:: CompartmentedModel.changeCompartmentInitialOccupancy
 
 .. automethod:: CompartmentedModel.trackNodesInCompartment
 
