@@ -63,6 +63,19 @@ class CompartmentedModelTest(unittest.TestCase):
         self.assertAlmostEqual(len(m.compartment(SIR.INFECTED)) / self._er.order(), pInfected, places=2)
         self.assertAlmostEqual(len(m.compartment(SIR.SUSCEPTIBLE)) / self._er.order(), (1.0 - pInfected), places=2)
 
+    def testSanityCheckDistribution(self):
+        '''Check that we detect a bad distribution in initial comaprtment occupancy.'''
+        m = SIR()
+        e = StochasticDynamics(m)
+        m.reset()
+        m.setNetwork(self._er)
+        m.build(self._params)
+        pInfected = 0.1       # new infection seed
+        m.changeCompartmentInitialOccupancy(SIR.INFECTED, pInfected)
+        # don't update other compartment's probability to compensate
+        with self.assertRaises(Exception):
+            m.setUp(self._params)
+
     def testDuplicateNodeLocus( self ):
         '''Test we can't duplicate node-loci names'''
         m = SIR()
