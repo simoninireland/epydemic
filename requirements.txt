@@ -3,4 +3,4 @@ epyc
 pandas
 future
 six
-numpy
+numpy >= 1.18
