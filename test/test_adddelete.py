@@ -59,7 +59,6 @@ class AddDeleteTest(unittest.TestCase):
         self._params[AddDelete.P_ADD] = 1
         self._params[AddDelete.P_DELETE] = 1
         rc = self._e.set(self._params).run()
-        print(rc)
         self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order(), delta = int((self._network.order() + 0.0) * 0.1))
 
     def testRunFaster(self):
@@ -67,7 +66,6 @@ class AddDeleteTest(unittest.TestCase):
         self._params[AddDelete.P_ADD] = 1
         self._params[AddDelete.P_DELETE] = 0.5
         rc = self._e.set(self._params).run()
-        print(rc)
         dn = self._maxTime * (self._params[AddDelete.P_ADD] - self._params[AddDelete.P_DELETE])
         print(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order(), dn)
         self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order() + dn, delta = int((self._network.order() + 0.0) * 2 * 0.1))
