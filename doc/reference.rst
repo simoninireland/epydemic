@@ -11,6 +11,8 @@ Basic concepts and classes
 
    process
    loci
+   networkdynamics
+   compartmentedmodel
 
 
 Dynamics: how processes are simulated
@@ -19,7 +21,6 @@ Dynamics: how processes are simulated
 .. toctree::
    :maxdepth: 2
 
-   networkdynamics
    synchronousdynamics
    stochasticdynamics
 
@@ -30,9 +31,9 @@ Reference epidemic disease processes
 .. toctree::
    :maxdepth: 2
 
-   compartmentedmodel
    sir
    sis
+   seir
 
 
 Epidemic disease process variants
@@ -43,6 +44,7 @@ Epidemic disease process variants
 
    sir_fixed_recovery
    sis_fixed_recovery
+   sirs
 
 
 Other network processes
