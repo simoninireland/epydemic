@@ -23,7 +23,7 @@ This having been said, there are definitely ways of speeding-up your use of ``ep
 
 *Don't be too ambitious*. ``epydemic`` will happily deal with processes over networks of the order
 of :math:`10^5` nodes. However, bear in mind that a lot of network algorithms are of
-polynomial-time complexity, meaning that the mopved to :math:`10^6` nodes may be painful,
+polynomial-time complexity, meaning that the move to :math:`10^6` nodes may be painful,
 especially if you also want to do lots of repetitions.
 
 *Use PyPy*. The `PyPy project <https://pypy.org>`_ describes itself as "a fast, compliant
