@@ -18,7 +18,7 @@ of two reasons:
 an experiment is created, it has no parameters on which to work. before the experiment is run,
 its parameters are set by calling the ``set`` method. If this is the first time parameters
 have been set, the ``configure`` method gets called to configure the experiment with the
-given paraneters. If this *isn't* the first time parameters have been set, the ``deconfigure`` method
+given parameters. If this *isn't* the first time parameters have been set, the ``deconfigure`` method
 gets called first to tear-down the current configuration, followed by a call to ``configure``.
 
 The correct place to create the network is in the :class:`Dynamics` class that runs the experiment.
@@ -52,7 +52,7 @@ For example, using :class:`StochasticDynamics` we would have:
                phi = (kmean + 0.0) / N
 
             # create a network with no self-loops
-            g = networkx.erdos_renyi_graph(N, phi)
+            g = networkx.gnp_random_graph(N, phi)
             g.remove_edges_from(list(networkx.selfloop_edges(g)))
 
             # store the network as the prototype for experiments
