@@ -29,7 +29,7 @@ a number of situations where these sorts of trade-offs occur. A good example
 is the use of the :class:`Locus` to keep running track of sets of nodes or edges,
 rather than extracting them from the network at each timestep (or event).
 
-The cost of running multiple simulations reduced by using parallelism, and thisis why
+The cost of running multiple simulations reduced by using parallelism, and this is why
 ``epydemic`` is built on top of ``epyc``, a library for managing computational
 experiments on multicore systems and workstaion clusters. ``epyc`` handles a lot
 of the housekeeping needed in starting, monitoring, and collating the results of
