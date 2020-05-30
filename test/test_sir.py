@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
-from test.compartmenteddynamics import CompartmentedDynamicsTest
+from .compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
