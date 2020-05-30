@@ -1,7 +1,7 @@
 # Create the doc/cookbook-powerlaw-cutoff.png diagram comparing the two
 # different degree distributions
 #
-# Copyright (C) 2017--2018 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #

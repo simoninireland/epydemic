@@ -27,6 +27,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import seaborn
 
+rng = numpy.random.default_rng()
+
 def make_sir(alpha, beta):
     '''Return functions for changes in the susceptible, infected, and recovered
     sub-populations for particular rates of recovery and infection.
@@ -135,39 +137,44 @@ def makePowerlawWithCutoff(alpha, kappa):
         return (pow((k + 0.0), -alpha) * math.exp(-(k + 0.0) / kappa)) / C
     return p
 
-def generateFrom(N, p, maxdeg = 100):
-    '''Generate a random graph with degree distribution described
-    by a model function.
-
-    :param N: number of numbers to generate
-    :param p: model function
-    :param maxdeg: maximum node degree we'll consider (defaults to 100)
-    :returns: a network with the given degree distribution'''
-
+def generateFrom(N, p, maxdeg=100):
     # construct degrees according to the distribution given
     # by the model function
+    rng = numpy.random.default_rng()
     ns = []
     t = 0
     for i in range(N):
         while True:
-            k = 1 + int (numpy.random.random() * (maxdeg - 1))
+            k = rng.integers(1, maxdeg)
             if numpy.random.random() < p(k):
-                ns = ns + [ k ]
-                t = t + k
+                ns.append(k)
+                t += k
                 break
 
-    # if the sequence is odd, choose a random element
-    # and increment it by 1 (this doesn't change the
-    # distribution significantly, and so is safe)
-    if t % 2 != 0:
-        i = int(numpy.random.random() * len(ns))
-        ns[i] = ns[i] + 1
+    # the final sequence of degrees has to sum to an even number, as
+    # each edge has two endpoints
+    # if the sequence is odd, remove an element and draw another from
+    # the distribution, repeating until the overall sequence is even
+    while t % 2 != 0:
+        # pick a node at random
+        i = rng.integers(0, len(ns) - 1)
+
+        # remove it from the sequence and from the total
+        t -= ns[i]
+        del ns[i]
+            
+        # draw a new degree from the distribution
+        while True:
+            k = rng.integers(1, maxdeg)
+            if rng.random() < p(k):
+                # add new node to the sequence
+                ns.append(k)
+                t += k
+                break
 
     # populate the network using the configuration
     # model with the given degree distribution
-    g = networkx.configuration_model(ns, create_using = networkx.Graph())
-    g = g.subgraph(max(networkx.connected_components(g), key = len)).copy()
-    g.remove_edges_from(list(networkx.selfloop_edges(g)))
+    g = networkx.configuration_model(ns, create_using=networkx.Graph())
     return g
 
 kappa = 10
