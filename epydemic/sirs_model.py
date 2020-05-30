@@ -24,8 +24,8 @@ class SIRS(SIR):
     '''The Susceptible-Infected-Removed-Susceptible :term:`compartmented model of disease`.
     Susceptible nodes are infected by infected neighbours, and recover to removed where
     they remain for a time before returning to susceptible models the situation in which
-    disease exposure confers partial immunity in time, rather than full (SIR) or no (SIS)
-    immunity.'''
+    disease exposure confers partial immunity in time, rather than full immunity
+    (as for :class:`SIR`) or no immunity ( as for :class:`SIS`).'''
 
     # Extra model parameter
     P_RESUSCEPT = 'epydemic.SIRS.pResuscept'    #: Parameter for probability of losing immunity
