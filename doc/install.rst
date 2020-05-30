@@ -4,7 +4,7 @@ Installation
 In a nutshell
 -------------
 
-**Pythons**: 2.7 and 3.7 or later
+**Pythons**: 3.6 or later
 
 **Operating systems**: Linux, OS X
 
