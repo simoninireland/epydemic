@@ -140,13 +140,12 @@ def makePowerlawWithCutoff(alpha, kappa):
 def generateFrom(N, p, maxdeg=100):
     # construct degrees according to the distribution given
     # by the model function
-    rng = numpy.random.default_rng()
     ns = []
     t = 0
     for i in range(N):
         while True:
             k = rng.integers(1, maxdeg)
-            if numpy.random.random() < p(k):
+            if rng.random() < p(k):
                 ns.append(k)
                 t += k
                 break
