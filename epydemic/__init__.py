@@ -55,6 +55,7 @@ from .compartmentedmodel import CompartmentedModel, CompartmentedLocus, Compartm
 from .sir_model import SIR
 from .sis_model import SIS
 from .sirs_model import SIRS
+from .seir_model import SEIR
 
 # variant disease models
 from .sir_model_fixed_recovery import SIR_FixedRecovery
