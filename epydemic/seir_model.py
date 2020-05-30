@@ -86,7 +86,7 @@ class SEIR(CompartmentedModel):
 
     def infectAsymptomatic( self, t, e ):
         '''Perform an infection event when an :attr:`EXPOSED` individual infects
-        a neighbouring :attrr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.  
+        a neighbouring :attr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.  
         The default calls :meth:`infect` so that infections by way of exposed ir
         symptomatic individuals are treated in the same way. Sub-classes can override this
         to, for example, record that the infection was passed asymptomatically.
@@ -97,7 +97,7 @@ class SEIR(CompartmentedModel):
 
     def infect( self, t, e ):
         '''Perform an infection event when an :attr:`INFECTED` individual infects
-        a neighbouring :attrr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.  
+        a neighbouring :attr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.  
         
         :param t: the simulation time
         :param e: the edge transmitting the infection'''
