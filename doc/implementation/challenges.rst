@@ -23,7 +23,7 @@ write an debug).
 
 Making single simulations as fast as possible involves avoiding those operations
 which are inherently slower. Many network operations have computational complexities
-of :math:`O(n)` or :math:`O(n^2)` when done neively: careful design can sometimes
+of :math:`O(n)` or :math:`O(n^2)` when done naively: careful design can sometimes
 reduce this to :math:`O(1)` or :math:`O(\langle k \rangle)`. ``epydemic`` has
 a number of situations where these sorts of trade-offs occur. A good example
 is the use of the :class:`Locus` to keep running track of sets of nodes or edges,
