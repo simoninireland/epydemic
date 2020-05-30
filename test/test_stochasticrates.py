@@ -21,7 +21,6 @@ import epyc
 from epydemic import *
 import networkx
 import unittest
-import six
 
 class DummyLocus(Locus):
     def __init__(self, name):

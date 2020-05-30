@@ -22,8 +22,6 @@ from test.compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
-import six
-
 
 class SIRSTest(unittest.TestCase, CompartmentedDynamicsTest):
 

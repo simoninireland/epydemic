@@ -21,7 +21,6 @@ from epydemic import *
 import epyc
 import unittest
 import networkx
-import six
 
 class FixedRecoveryTest(unittest.TestCase):
 
@@ -43,7 +42,7 @@ class FixedRecoveryTest(unittest.TestCase):
             print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
             self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
         else:
-            six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [SIR_FixedRecovery.SUSCEPTIBLE, SIR_FixedRecovery.INFECTED, SIR_FixedRecovery.REMOVED])
+            self.assertCountEqual(rc[epyc.Experiment.RESULTS], [SIR_FixedRecovery.SUSCEPTIBLE, SIR_FixedRecovery.INFECTED, SIR_FixedRecovery.REMOVED])
             self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.SUSCEPTIBLE] > 0)
             self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.INFECTED] == 0)
             self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.REMOVED] > 0)
@@ -57,7 +56,7 @@ class FixedRecoveryTest(unittest.TestCase):
             print(rc[epyc.Experiment.METADATA][epyc.Experiment.TRACEBACK])
             self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
         else:
-            six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [SIR_FixedRecovery.SUSCEPTIBLE, SIR_FixedRecovery.INFECTED, SIR_FixedRecovery.REMOVED])
+            self.assertCountEqual(rc[epyc.Experiment.RESULTS], [SIR_FixedRecovery.SUSCEPTIBLE, SIR_FixedRecovery.INFECTED, SIR_FixedRecovery.REMOVED])
             self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.SUSCEPTIBLE] > 0)
             self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.INFECTED] == 0)
             self.assertTrue(rc[epyc.Experiment.RESULTS][SIR_FixedRecovery.REMOVED] > 0)

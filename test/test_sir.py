@@ -22,7 +22,6 @@ from test.compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
 import unittest
 import networkx
-import six
 
 class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
 
@@ -55,7 +54,7 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         self._lab.runExperiment(e)
         rc = (self._lab.results())[0]
 
-        six.assertCountEqual(self, rc[epyc.Experiment.RESULTS], [SIR.SUSCEPTIBLE, SIR.INFECTED, SIR.REMOVED])
+        self.assertCountEqual(rc[epyc.Experiment.RESULTS], [SIR.SUSCEPTIBLE, SIR.INFECTED, SIR.REMOVED])
         self.assertTrue(rc[epyc.Experiment.RESULTS][SIR.SUSCEPTIBLE] > 0)
         self.assertTrue(rc[epyc.Experiment.RESULTS][SIR.INFECTED] == 0)
         self.assertTrue(rc[epyc.Experiment.RESULTS][SIR.REMOVED] > 0)

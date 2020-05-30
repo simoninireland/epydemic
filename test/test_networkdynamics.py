@@ -19,7 +19,6 @@
 
 from epydemic import *
 import unittest
-import six
 
 class NetworkDynamicsTest(unittest.TestCase):
 
@@ -58,14 +57,14 @@ class NetworkDynamicsTest(unittest.TestCase):
         dyn.postEvent(4, None, make_ef(200))
 
         # check no events before the first one posted
-        six.assertCountEqual(self, self.pendingEvents(dyn, 0.5), [])
+        self.assertCountEqual(self.pendingEvents(dyn, 0.5), [])
 
         # check firing of earliest event
         pefs = self.pendingEvents(dyn, 1)
         self.assertTrue(len(pefs), 1)
         (pefs[0])()                # fire the event
         self.assertTrue(self._v, 1)
-        six.assertCountEqual(self, self.pendingEvents(dyn, 1), [])
+        self.assertCountEqual(self.pendingEvents(dyn, 1), [])
 
         # check multiple events coming off in the right order
         pefs = self.pendingEvents(dyn, 3)
@@ -74,13 +73,13 @@ class NetworkDynamicsTest(unittest.TestCase):
         self.assertTrue(self._v, 21)
         (pefs[1])()
         self.assertTrue(self._v, 121)
-        six.assertCountEqual(self, self.pendingEvents(dyn, 3), [])
+        self.assertCountEqual(self.pendingEvents(dyn, 3), [])
 
         # check we can run all remaining events
         dyn.runPendingEvents(10)       # a long time in the future
         self.assertTrue(self._v, 321)
-        six.assertCountEqual(self, self.pendingEvents(dyn, 10), [])
-        six.assertCountEqual(self, self.pendingEvents(dyn, 20), [])
+        self.assertCountEqual(self.pendingEvents(dyn, 10), [])
+        self.assertCountEqual(self.pendingEvents(dyn, 20), [])
         
     def testPostedPosting( self ):
         '''Test the case when a posted event itself posts an event.'''
