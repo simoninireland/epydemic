@@ -23,7 +23,7 @@ with open('README.rst') as f:
     longDescription = f.read()
 
 setup(name = 'epydemic',
-      version = '0.99.7',
+      version = '0.99.8',
       description = 'Epidemic network simulations in Python',
       long_description = longDescription,
       url = 'http://github.com/simoninireland/epydemic',
@@ -38,4 +38,4 @@ setup(name = 'epydemic',
                       'Topic :: Scientific/Engineering' ],
       packages = [ 'epydemic' ],
       zip_safe = True,
-      install_requires = [ "networkx >= 2.4", "epyc", "pandas", "future", "six", "numpy",  ])
+      install_requires = [ "networkx >= 2.4", "epyc", "pandas", "numpy >= 1.18",  ])

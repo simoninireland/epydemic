@@ -1,3 +1,12 @@
+Version 0.99.8 2020-05-30
+   - Removed use of six, since we're no longer supporting Python 2.7
+   - Removed six and future from requirements
+   - Replaced standard Python random number generation with the new numpy
+     generator class
+   - Added SEIR model
+   - Documented SIRS model
+   - Slightly re-structured the presentation of the API documentation
+
 Version 0.99.7 2020-04-30
 
    - Added superclass calls in models that were preventing multiple inheritance from
