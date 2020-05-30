@@ -47,9 +47,9 @@ which is itself a sub-class of :class:`Process`, the class of network processes.
 
 .. code-block:: python
 
-    from epydemic import *
+    from epydemic import CompartmentedModel
 
-    class SIR(CompartmentedModel):
+    class SIR(epydemic.CompartmentedModel):
 
 We then need to populate this class with the  elements needed to define a compartmented model.
 
