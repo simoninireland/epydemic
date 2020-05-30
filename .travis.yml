@@ -16,7 +16,9 @@ matrix:
     - env: TEST_SUITE="sir"
     - env: TEST_SUITE="sirs"
     - env: TEST_SUITE="sis"
+    - env: TEST_SUITE="seir"
     - env: TEST_SUITE="stochasticrates"
+    - env: TEST_SUITE="monitor"
 
 script:
   - python setup.py install
