@@ -5,7 +5,7 @@
 
 .. autoclass:: SIR
 
-The Synchronous-Infected-Recovered or SIR process is one of the oldest
+The Susceptible-Infected-Recovered or SIR process is one of the oldest
 models of disease, first arising in a paper by :ref:`Kermack and
 McKendrick <KMcK27>` in 1927.
 
