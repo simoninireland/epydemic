@@ -1,5 +1,5 @@
 :class:`SIRS`: The SIRS process
-=======================--======
+===============================
 
 .. currentmodule:: epydemic
 
@@ -10,7 +10,7 @@ Parameters
 ----------
 
 As weel as the usual :class:`SIR` parameters, SIRS also includes the
-probability or becoming susceptible again.  
+probability of becoming susceptible again.  
 
 .. autoattribute:: SIRS.P_RESUSCEPT
 
