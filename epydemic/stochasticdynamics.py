@@ -41,6 +41,7 @@ class StochasticDynamics(Dynamics):
         
         # run the dynamics
         proc = self.process()
+        rng = numpy.random.default_rng()
         t = 0
         events = 0
         while not proc.atEquilibrium(t):
@@ -58,14 +59,14 @@ class StochasticDynamics(Dynamics):
             #random.shuffle(transitions)
             
             # calculate the timestep delta
-            r1 = numpy.random.random()
+            r1 = rng.random()
             dt = (1.0 / a) * math.log(1.0 / r1)
             
             # calculate which event happens
             (l, _, ef) = transitions[0]
             if len(transitions) > 1:
                 # choose the rate threshold
-                r2 = numpy.random.random()
+                r2 = rng.random()
                 xc = r2 * a
 
                 # find the largest event for which the cumulative rates

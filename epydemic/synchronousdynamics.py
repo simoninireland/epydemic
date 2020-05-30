@@ -45,7 +45,8 @@ class SynchronousDynamics(Dynamics):
         :param params: the parameters of the simulation
         :returns: a dict of experimental results'''
         
-        # run the dynamics
+        # run the 
+        rng = numpy.random.default_rng()
         proc = self.process()
         t = 0
         events = 0
@@ -61,7 +62,7 @@ class SynchronousDynamics(Dynamics):
                     # run through every possible element on which this event may occur
                     for e in copy(l.elements()):
                         # test for occurrance of the event on this element
-                        if numpy.random.random() <= p:
+                        if rng.random() <= p:
                             # yes, perform the event
                             ef(t, e)
                             nev = nev + 1
@@ -70,7 +71,7 @@ class SynchronousDynamics(Dynamics):
             dist = proc.fixedRateEventDistribution(t)
             for (l, p, ef) in dist:
                 if (len(l) > 0) and (p > 0.0):
-                    if numpy.random.random() <= p:
+                    if rng.random() <= p:
                         # yes, perform the event on an element drawn at random
                         e = l.draw()
                         ef(t, e)
