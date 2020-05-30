@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.99.7
+VERSION = 0.99.8
 
 
 # ----- Sources -----
@@ -43,6 +43,7 @@ SOURCES_CODE = \
 	epydemic/sis_model.py \
 	epydemic/sis_model_fixed_recovery.py \
 	epydemic/sirs_model.py \
+	epydemic/seir_model.py \
 	epydemic/adddelete.py \
 	epydemic/monitor.py
 
@@ -55,6 +56,8 @@ SOURCES_TESTS = \
 	test/test_sir.py \
 	test/test_sis.py \
 	test/test_fixed_recovery.py \
+	test/test_sirs.py \
+	test/test_seir.py \
 	test/test_adddelete.py
 TESTSUITE = test
 
@@ -77,6 +80,8 @@ SOURCES_DOCUMENTATION = \
 	doc/sis.rst \
 	doc/sir_fixed_recovery.rst \
 	doc/sis_fixed_recovery.rst \
+	doc/sirs.rst \
+	doc/seir.rst \
 	doc/adddelete.rst \
 	doc/tutorial.rst \
 	doc/tutorial/simulation.rst \
