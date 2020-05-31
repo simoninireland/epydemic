@@ -22,7 +22,7 @@ matrix:
 
 script:
   - python setup.py install
-  - coverage run test/test_${TEST_SUITE}.py
+  - coverage run -m nose test/test_${TEST_SUITE}.py
 
 after_success:
   - codecov
