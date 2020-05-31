@@ -4,6 +4,12 @@ epydemic: Epidemic simulations on networks in Python
 .. image:: https://badge.fury.io/py/epydemic.svg
     :target: https://badge.fury.io/py/epydemic
 
+.. image:: https://secure.travis-ci.org/simoninireland/epydemic.png
+    :target: http://travis-ci.org/github/simoninireland/epydemic
+
+.. image:: https://coveralls.io/repos/simoninireland/epydemic/badge.png?branch=master 
+    :target: https://coveralls.io/r/simoninireland/epydemic?branch=master 
+
 
 Overview
 --------
