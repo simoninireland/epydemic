@@ -9,7 +9,7 @@
 Parameters
 ----------
 
-As weel as the usual :class:`SIR` parameters, SIRS also includes the
+As well as the usual :class:`SIR` parameters, SIRS also includes the
 probability of becoming susceptible again.  
 
 .. autoattribute:: SIRS.P_RESUSCEPT
