@@ -8,7 +8,7 @@ epydemic: Epidemic simulations on networks in Python
     :target: http://travis-ci.org/github/simoninireland/epydemic
 
 .. image:: https://coveralls.io/repos/github/simoninireland/epydemic/badge.svg?branch=master
-:target: https://coveralls.io/github/simoninireland/epydemic?branch=master
+    :target: https://coveralls.io/github/simoninireland/epydemic?branch=master
 
 
 Overview
