@@ -25,4 +25,4 @@ script:
   - coverage run -m nose test/test_${TEST_SUITE}.py
 
 after_success:
-  - codecov
+  - coveralls
