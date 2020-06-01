@@ -261,7 +261,7 @@ class CompartmentedModel(Process):
         for (_, p) in dist:
             a += p
         if not math.isclose(a, 1.0):
-            raise Exception('Bad initial compartment distribution')
+            raise Exception('Bad initial compartment distribution (probabilities don\'t sum to one')
 
         return dist
 
@@ -358,12 +358,12 @@ class CompartmentedModel(Process):
         self._compartments[c] = p
 
     def changeCompartmentInitialOccupancy(self, c, p):
-        '''Change the initial cocupancy probability for a compartment. This method
+        '''Change the initial occupancy probability for a compartment. This method
         is used when sub-classing an existing model: it only makes sense during the
         build process (see :meth:`build`) before the model is initialised in
         :meth:`setUp`.
 
-        @param c: the compartment
+        :param c: the compartment
         :param p: the new initial occupation probability'''
         if c not in self.compartments():
             raise Exception('Compartment {c} not defined in model'.format(c=c))
