@@ -5,23 +5,22 @@ python:
   - "3.7"
   - "pypy3"
 
+env:
+  - TEST_SUITE="adddelete"
+  - TEST_SUITE="compartmentedmodel"
+  - TEST_SUITE="fixed_recovery"
+  - TEST_SUITE="networkdynamics"
+  - TEST_SUITE="sir"
+  - TEST_SUITE="sirs"
+  - TEST_SUITE="sis"
+  - TEST_SUITE="seir"
+  - TEST_SUITE="stochasticrates"
+  - TEST_SUITE="monitor"
+
 install:
-  - pip install -r requirements.txt
-  - pip install coveralls
-
-matrix:
-  include:
-    - env: TEST_SUITE="adddelete"
-    - env: TEST_SUITE="compartmentedmodel"
-    - env: TEST_SUITE="fixed_recovery"
-    - env: TEST_SUITE="networkdynamics"
-    - env: TEST_SUITE="sir"
-    - env: TEST_SUITE="sirs"
-    - env: TEST_SUITE="sis"
-    - env: TEST_SUITE="seir"
-    - env: TEST_SUITE="stochasticrates"
-    - env: TEST_SUITE="monitor"
-
+    - pip install -r requirements.txt
+    - pip install coveralls
+  
 script:
   - python setup.py install
   - coverage run --include './epydemic/*' -m nose test/test_${TEST_SUITE}.py
