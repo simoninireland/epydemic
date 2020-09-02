@@ -1,3 +1,5 @@
+.. _standard-generators:
+
 Standard network generators
 ===========================
 

@@ -47,6 +47,14 @@ class ERNetwork(NetworkGenerator):
     probability (:attr:`PHI`) or a mean degree (:attr:`KMEAN`). These parameters are taken from the
     experimental parameters.
 
+    An ER network has nodes with Poisson-distributed independent degrees. The construction process
+    can be thought of as taking a set of :math:`N` nodes and then adding an edge between every pair
+    with independent probability :math:`\phi`. This process gives a discrete normal (Poisson) distribution
+    of the node degrees with mean degree :math:`\\langle k \\rangle = N \phi`. The node degrees will
+    be uncorrelated.
+
+    The actual construction of ER networks uses the `networkx.fast_gnp_random_graph()` function.
+
     :param params: (optional) experiment parameters
     :param limit: (optional) meximum  number of instances to generate'''
 
