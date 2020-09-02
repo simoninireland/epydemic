@@ -10,5 +10,8 @@
     "python.testing.nosetestsEnabled": false,
     "python.testing.unittestEnabled": true,
     "restructuredtext.confPath": "${workspaceFolder}/doc",
-    "python.pythonPath": ".venv/bin/python"
+    "python.pythonPath": ".venv/bin/python",
+    "python.testing.nosetestArgs": [
+        "test"
+    ]
 }
