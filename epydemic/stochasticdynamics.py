@@ -28,9 +28,9 @@ class StochasticDynamics(Dynamics):
     statistical properties of the events making up the process are known.
 
     :param p: the process to run
-    :param g: prototype network to run the dynamics over (optional, can be provided later)'''
+    :param g: network or network generator (optional, can be provided later)'''
 
-    def __init__( self, p, g = None ):
+    def __init__( self, p, g=None ):
         super(StochasticDynamics, self).__init__(p, g)
 
     def do( self, params ):

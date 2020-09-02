@@ -17,13 +17,12 @@ providing the parameters used to condition the simulation, typically
 providing event probabilities for the various events that may happen.
 
 In stand-alone mode, a simulation is run by calling the :meth:`run`
-method (inherited from `epyc.Experiment`), providing a dict of
+method (inherited from `epyc.Experiment`), passing a dict of
 parameters. The network dynamics then performs a single simulation
 according to the following process:
 
-* The :meth:`Dynamics.setUp` method creates a copy of the prototype
-  network that was supplied at construction time or by calling
-  :meth:`Dynamics.setNetworkPrototype`. It then lets the :class:`Process`
+* The :meth:`Dynamics.setUp` method uses the network generator to 
+  create a working network. It then lets the :class:`Process`
   configure the working copy: it calls :meth:`Process.reset` to reset
   the process, sets its working network by calling :meth:`Process.setNetwork`,
   then builds the process instance using :meth:`Process.build` and sets it
@@ -35,8 +34,10 @@ according to the following process:
   class, typically destroying the working network instance
 
 This decomposition is very flexible. At its simplest, a network takes
-a prototype network as a parameter to its construction and copies it
-for every run.
+a fixed prototype network as a parameter to its construction and copies it
+for every run. More complex use cases supply an instance of
+:class:`NetworkGenerator` that samples from a class of random networks defined
+by the experimental parameters.
 
 Note the division of labour. A :class:`Dynamics` object provides the scheduling
 for events, which are themselves sapecified and defined in a :class:`Process`
@@ -56,13 +57,10 @@ Configuring the simulation
 --------------------------
 
 A :class:`Dynamics` object runs the process it describes over a
-network. The network is treated as a prototype that is copied before
-the start of each experiment, so that any manipulations or labelling
+network. A new working network is created for each run so that any manipulations or labelling
 the experiment caries out are torn down before the next run.
 
-.. automethod:: Dynamics.setNetworkPrototype
-
-.. automethod:: Dynamics.networkPrototype
+.. automethod:: Dynamics.setNetworkGenerator
 
 .. automethod:: Dynamics.network
 

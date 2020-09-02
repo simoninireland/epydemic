@@ -82,6 +82,12 @@ Glossary
       be applied, while the event defines what happens. ALl loci
       are derived from the :class:`Locus` class.
 
+   network generator
+      A process that samples a class of random networks to create an
+      instance. A typical example is the class of networks with Poisson
+      degree distribution (the ER networks), defined by the order and
+      mean degree of the network.
+
    posted event
       An :term:`event` posted for a definite future time. The
       :term:`process dynamics` will execute the posted events at the

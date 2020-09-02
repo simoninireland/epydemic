@@ -43,6 +43,10 @@ specify).
 from .loci import Locus
 from .process import Process
 
+# network generators
+from .generator import NetworkGenerator
+from .standard_generators import FixedNetwork, ERNetwork
+
 # networks with dynamical processes
 from .networkdynamics import Dynamics
 from .synchronousdynamics import SynchronousDynamics

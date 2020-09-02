@@ -9,13 +9,14 @@ Basic concepts and classes
 .. toctree::
    :maxdepth: 2
 
+   generator
    process
    loci
    networkdynamics
    compartmentedmodel
 
 
-Dynamics: how processes are simulated
+Dynamics: How processes are simulated
 -------------------------------------
 
 .. toctree::
@@ -55,4 +56,13 @@ Other network processes
 
    adddelete
    monitor
+   
+
+Network generators
+------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   standard_generators
    

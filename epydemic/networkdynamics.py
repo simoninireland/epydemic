@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Locus
+from epydemic import Locus, FixedNetwork
 import epyc
 import networkx
 from heapq import heappush, heappop
@@ -31,21 +31,27 @@ class Dynamics(epyc.Experiment, object):
     (Gillespie) simulation dynamics.
 
     The dynamics runs a network process provided as a :class:`Process`
-    object. It optionally takes a prototype network over which the process runs, which
-    is copied for every run. If not provided at construction, the prototype should be
-    proivided by calling :meth:`setPrototypeNetwork` beefore trying to run a simulation.
-
+    object. It is provided with a network generator that is called to generate
+    a new experimental network instance for each run. The generator can be
+    any iterator but will typically be an instance of :class:`NetworkGenerator`.
+    
     :param p: network process to run
-    :param g: prototype network (optional)'''
+    :param g: (optional) prototype network or network generator'''
 
     # Additional metadata elements
     TIME = 'epydemic.Dynamics.time'      #: Metadata element holding the logical simulation end-time.
     EVENTS = 'epydemic.Dynamics.events'  #: Metadata element holding the number of events that happened.
 
-    def __init__( self, p, g = None ):
+    def __init__( self, p, g=None ):
         super(Dynamics, self).__init__()
-        self._graphPrototype = g                 # prototype copied for each run
-        self._graph = None                       # working copy of prototype
+
+        # turn a liuteral network into a network generator
+        if isinstance(g, networkx.Graph):
+            g = FixedNetwork(g)
+
+        # initialise fields
+        self._generator = g                      # network generator
+        self._graph = None                       # working network instance
         self._eventId = 0                        # counter for posted events
         self._process = p                        # network process to run
         self._process.setDynamics(self)          # back-link from process to dynamics (for events)
@@ -58,27 +64,26 @@ class Dynamics(epyc.Experiment, object):
 
     # ---------- Configuration ----------
 
-    def network( self ):
+    def network(self):
         '''Return the network this dynamics is running over. This will return None
         unless we're actually running a simulation.
 
         :returns: the network'''
         return self._graph
 
-    def setNetworkPrototype( self, g ):
-        '''Set the network the dynamics will run over. This will be
-        copied for each run of an individual experiment.
+    def setNetworkGenerator(self, g):
+        '''Set the network or generator for the networks the dynamics will run over. The generator
+        should be an instance of :class:`NetworkGenerator` and is sampled from :meth:`setUp` to
+        create a new network instance for each experiment.
+        
+        If a network is supplied rather than a generator it will be treated as an
+        instance of :class:`FixedNetwork`.
 
-        :param g: the network'''
-        self._graphPrototype = g
+        :param g: network or network generator'''
+        if isinstance(g, networkx.Graph):
+            g = FixedNetwork(g)
+        self._generator = g
 
-    def networkPrototype( self ):
-        '''Return the prototype network used to create the working
-        copy.
-
-        :returns: the prototype network'''
-        return self._graphPrototype
-    
     def process(self):
         '''Return the network process being run.
 
@@ -100,13 +105,13 @@ class Dynamics(epyc.Experiment, object):
 
     def setUp(self, params):
         '''Set up the experiment for a run. This performs the inherited actions, then
-        copies the prototype network and builds the network process that the dynamics is to run.
+        creates a working network and builds the network process that the dynamics is to run.
 
         :params params: the experimental parameters'''
         super(Dynamics, self).setUp(params)
 
-        # make a copy of the network prototype
-        self._graph = self.networkPrototype().copy()
+        # generate a working network instance
+        self._graph = self._generator.set(params).generate()
 
         # set up the event stream
         self._loci = dict()
@@ -127,7 +132,7 @@ class Dynamics(epyc.Experiment, object):
         self._process.tearDown()
         super(Dynamics, self).tearDown()
         
-        # throw away the worked-on model and any posted events that weren't run
+        # throw away the worked-on network and any posted events that weren't run
         self._graph = None
         self._postedEvents= []
 
