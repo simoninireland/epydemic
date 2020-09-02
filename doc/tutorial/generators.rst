@@ -75,7 +75,7 @@ Putting these two things together, we get:
         DEGREE = 'rrg.degree'  #: Experimental parameter for the degree of nodes
         N = 'rrg.N'            #: Experimental parameter for the number of nodes
 
-        def __init__(self, params=none, limit=None):
+        def __init__(self, params=None, limit=None):
             super(RandomRegularNetwork, self).__init__(params, limit)
 
         def _generate(self, params):
