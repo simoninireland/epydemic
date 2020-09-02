@@ -58,7 +58,8 @@ The engineering
 ---------------
 
 We can now simply code-up this mathematics, using parameters for the size :math:`N` of the network
-its exponent :math:`\alpha` and cutoff :math:`\kappa` to construct a random network:
+its exponent :math:`\alpha` and cutoff :math:`\kappa` to construct a :class:`NetworkGenerator` for
+this class of network:
 
 .. code-block:: python
 
@@ -66,63 +67,106 @@ its exponent :math:`\alpha` and cutoff :math:`\kappa` to construct a random netw
     import epydemic
     import math
     import numpy
-    from mpmath import polylog as Li   # use standard name
+    from mpmath import polylog
 
-    def makePowerlawWithCutoff( self, alpha, kappa ):
-        '''Create a model function for a powerlaw distribution with exponential cutoff.
+    def PowerLawWithCutoffNetwork(epydemic.NetworkGenerator):
 
-        :param alpha: the exponent of the distribution
-        :param kappa: the degree cutoff
-        :returns: a model function'''
-        C = Li(alpha, math.exp(-1.0 / kappa))
-        def p( k ):
-            return (pow((k + 0.0), -alpha) * math.exp(-(k + 0.0) / kappa)) / C
-        return p
+        N = 'hcn,n'           #: Experimental parameter for the order of the network
+        ALPHA = 'hcn,alpha'   #: Experimental parameter for the exponent of the distribution
+        KAPPA = 'hcn.kappa'   #: Experimewntal parameter for the cutoff of the distribution
 
-    def generateFrom( self, N, p, maxdeg = 100 ):
-        '''Generate a random graph with degree distribution described
-        by a model function.
+        def __init__(self, params=None, limit=None):
+            super(PowerLawWithCutoffNetwork, self).__init__(params, limit)
 
-        :param N: number of numbers to generate
-        :param p: model function
-        :param maxdeg: maximum node degree we'll consider (defaults to 100)
-        :returns: a network with the given degree distribution'''
+        def _makePowerlawWithCutoff( self, alpha, kappa ):
+            '''Create a model function for a powerlaw distribution with exponential cutoff.
 
-        # construct degrees according to the distribution given
-        # by the model function
-        ns = []
-        t = 0
-        for i in range(N):
-            while True:
-                k = 1 + int (numpy.random.random() * (maxdeg - 1))
-                if numpy.random.random() < p(k):
-                    ns = ns + [ k ]
-                    t = t + k
-                    break
+            :param alpha: the exponent of the distribution
+            :param kappa: the degree cutoff
+            :returns: a model function'''
+            C = polylog(alpha, math.exp(-1.0 / kappa))
+            def p( k ):
+                return (pow((k + 0.0), -alpha) * math.exp(-(k + 0.0) / kappa)) / C
+            return p
 
-        # if the sequence is odd, choose a random element
-        # and increment it by 1 (this doesn't change the
-        # distribution significantly, and so is safe)
-        if t % 2 != 0:
-            i = int(numpy.random.random() * len(ns))
-            ns[i] = ns[i] + 1
+        def _generateFrom( self, N, p, maxdeg = 100 ):
+            '''Generate a random graph with degree distribution described
+            by a model function.
 
-        # populate the network using the configuration
-        # model with the given degree distribution
-        g = networkx.configuration_model(ns, create_using = networkx.Graph())
-        g = g.subgraph(max(networkx.connected_components(g), key = len)).copy()
-        g.remove_edges_from(list(g.selfloop_edges()))
-        return g
+            :param N: number of numbers to generate
+            :param p: model function
+            :param maxdeg: maximum node degree we'll consider (defaults to 100)
+            :returns: a network with the given degree distribution'''
+            rng = numpy.random.default_rng()
+            ns = []
+            t = 0
+            for i in range(N):
+                while True:
+                    # draw a random degree
+                    k = rng.integers(1, maxdeg)
+            
+                    # do we include a node with this degree?
+                    if rng.random() < p(k):
+                        # yes, add it to the sequence; otherwise,
+                        # draw again
+                        ns.append(k)
+                        t += k
+                        break
 
-The ``makePowerlawWithCutoff`` function just transcribes the definition of the distribution from above, taking the
+            # the final sequence of degrees has to sum to an even
+            # number, as each edge has two endpoints
+            # if the sequence is odd, remove an element and draw
+            # another from the distribution, repeating until the
+            # overall sequence is even
+            while t % 2 != 0:
+                # pick a node at random
+                i = rng.integers(0, len(ns) - 1)
+
+                # remove it from the sequence and from the total
+                t -= ns[i]
+                del ns[i]
+            
+                # choose a new node to replace the one we removed
+                while True:
+                    # draw a new degree from the distribution
+                    k = rng.integers(1, maxdeg)
+            
+                    # do we include a node with this degree?
+                    if rng.random() < p(k):
+                        # yes, add it to the sequence; otherwise,
+                        # draw again
+                        ns.append(k)
+                        t += k
+                        break
+
+            # populate the network using the configuration
+            # model with the given degree distribution
+            g = networkx.configuration_model(ns,
+                                             create_using=networkx.Graph())
+            return g
+
+        def _generate(self, params):
+            '''Generate the human contact network.
+
+            :param params: the experimental parameters
+            :returns: a network'''
+            N = params[self.N]
+            alpha = paramns[self.ALPHA]
+            kappa = params[self.KAPPA]
+
+            return self._generateFrom(N, self._makePowerlawWithCutoff(alpha, kappa))
+
+The ``_makePowerlawWithCutoff()`` method just transcribes the definition of the distribution from above, taking the
 distribution parameters :math:`\alpha` and :math:`\kappa` and returning a model function that, for any
 degree :math:`k`, returns the probability :math:`p_k` of encountering a node of that degree.
 
-The actual construction of the network is done in the ``generateFrom`` function using the configuration model, where we
-first build a list of :math:`N` node degrees by repeatedly drawing from the powerlaw-with-cutoff distribution. Actually
+The actual construction of the network is done in the ``_generateFrom()`` method using the configuration model, where we
+first build a list of :math:`N` node degrees by repeatedly drawing from the powerlaw-with-cutoff distribution. (Actually
 this function will construct a network with *any* desired degree distribution by defining an appropriate model
-function.
+function.)
+
+The ``_generate()`` method unpacks the order, exponent, and cutoff parameters and passes them to the methods that
+actually do the work.
 
 You can use this code to create human population models that you then pass to an experiment (an instance of :class:`Dynamics`)
-that runs the appropriate network process over the network. You can also embed the code into a class for use in larger-scale
-experiments: see :ref:`build-network-in-experiment` for an explanation of this approach.
+that runs the appropriate network process over the network.

@@ -5,7 +5,7 @@
 Building a compartmented model
 ==============================
 
-The easiest way tro understand how ``epydemic`` works is to build an epidemic model
+The easiest way to understand how ``epydemic`` works is to build an epidemic model
 from scratch, which is what we'll do here. We'll build the SIR process, the most commonly-used
 experimental starting point for epidemic spreading processes: if you're inteersted in ``epydemic`` you're
 almost certainly acquainted with SIR.

@@ -21,20 +21,20 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.99.8
+VERSION = 0.99.9
 
 
 # ----- Sources -----
 
 # Source code
 SOURCES_SETUP_IN = setup.py.in
-SOURCES_SDIST = dist/$(PACKAGENAME)-$(VERSION).tar.gz
-SOURCES_WHEEL = dist/$(PACKAGENAME)-$(VERSION)-py3-none-any.whl
 SOURCES_CODE = \
 	epydemic/__init__.py \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
 	epydemic/stochasticdynamics.py \
+	epydemic/generator.py \
+	epydemic/standard_generators.py \
 	epydemic/loci.py \
 	epydemic/process.py \
 	epydemic/compartmentedmodel.py \
@@ -76,6 +76,8 @@ SOURCES_DOCUMENTATION = \
 	doc/stochasticdynamics.rst \
 	doc/loci.rst \
 	doc/compartmentedmodel.rst \
+	doc/generator.rst \
+	doc/standard_generators.rst \
 	doc/sir.rst \
 	doc/sis.rst \
 	doc/sir_fixed_recovery.rst \
@@ -89,11 +91,11 @@ SOURCES_DOCUMENTATION = \
 	doc/tutorial/build-sir.rst \
 	doc/tutorial/run-at-scale.rst  \
 	doc/tutorial/advanced-topics.rst \
+	doc/tutorial/generators.rst \
 	doc/implementation.rst \
 	doc/implementation/challenges.rst \
 	doc/implementation/events.rst \
 	doc/cookbook.rst \
-	doc/cookbook/build-network-in-experiment.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/monitoring-progress.rst \
 	doc/cookbook/infect-specific-nodes.rst \
@@ -122,6 +124,9 @@ SOURCES_GENERATED = \
 	MANIFEST \
 	setup.py
 
+# Distribution files
+DIST_SDIST = dist/$(PACKAGENAME)-$(VERSION).tar.gz
+DIST_WHEEL = dist/$(PACKAGENAME)-$(VERSION)-py3-none-any.whl
 
 # ----- Tools -----
 
@@ -188,10 +193,10 @@ $(VENV):
 	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
 
 # Build a source distribution
-sdist: $(SOURCES_SDIST)
+sdist: $(DIST_SDIST)
 
 # Build a wheel distribution
-wheel: $(SOURCES_WHEEL)
+wheel: $(DIST_WHEEL)
 
 # Upload a source distribution to PyPi
 upload: sdist wheel
@@ -223,11 +228,11 @@ setup.py: $(SOURCES_SETUP_IN) Makefile
 	$(CAT) $(SOURCES_SETUP_IN) | $(SED) -e 's|VERSION|$(VERSION)|g' -e 's|REQUIREMENTS|$(PY_REQUIREMENTS)|g' >$@
 
 # The source distribution tarball
-$(SOURCES_SDIST): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
+$(DIST_SDIST): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
 	$(ACTIVATE) && $(RUN_SETUP) sdist
 
 # The binary (wheel) distribution
-$(SOURCES_WHEEL): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
+$(DIST_WHEEL): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
 	$(ACTIVATE) && $(RUN_SETUP) bdist_wheel
 
 
