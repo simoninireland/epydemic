@@ -53,6 +53,10 @@ which is itself a sub-class of :class:`Process`, the class of network processes.
 
 We then need to populate this class with the  elements needed to define a compartmented model.
 
+.. note ::
+
+    The rest of the code on this page is part of this `SIR` class, and so needs to
+    be indented within the scope of the ``class`` definition in proper Python style.
 
 The compartments
 ----------------
@@ -185,9 +189,14 @@ compartment and a node in the ``SIR.INFECTED`` compartment, we will be passed ed
 assume that ``n`` above is a susceptible node. We use :meth:`CompartmentedModel.changeCompartment` to change the
 compartment of ``n`` to ``SIR.INFECTED``: the compartment of ``m`` doesn't change (it stays infected). We also
 mark the edge as one that the infection travsersed using :meth:`CompartmentedModel.markOccupied` (the "occupied"
-terminology is slightly unfortunate, but it's standard in the literature, coming from percolation theory).
+terminology is slightly uninformative but is standard in the literature, coming from percolation theory).
 
 For the ``remove`` event, which happens at infected nodes, the element will be a node, and we simply change
 its compartment to ``SIR.REMOVED``.
+
+.. note ::
+
+    This code is the same as ``epydemic``'s built-in SIR process. You can see the code
+    `here <https://raw.githubusercontent.com/simoninireland/epydemic/master/epydemic/sir_model.py>`_.
 
 This finishes the definition of the disease process. We can now move on to :ref:`use-standard-model`.
