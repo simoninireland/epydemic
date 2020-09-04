@@ -1,4 +1,4 @@
-.. _generators:
+.. _build-generators:
 
 .. currentmodule:: epydemic
 
@@ -50,16 +50,16 @@ large networks to a compute cluster.
 All these disadvantages are solved immediately by writing a custom generator.
 
 
-The correct way: Writing a custom network generator
----------------------------------------------------
+The flexible way: Writing a custom network generator
+----------------------------------------------------
 
-Let's build a generator for the *class* or random regular graphs. We need to do two things:
+Let's build a generator for the *class* of random regular graphs. We need to do two things:
 
 1. We need to decide what parameters will control the creation of the network; and
 2. We need to provide the code to build the network.
 
 The first is straightforward in this case. The parameters are stated in the ``networkx``
-documentation as the degree `d` anmd the number of ndoes `n`. We define keys for use
+documentation as the degree `d` and the number of ndoes `n`. We define keys for use
 in experimental parameter dicts for both these values.
 
 The second is straightforward too in this case. We simply unpack the parameters and
@@ -103,7 +103,11 @@ We then pass this generator to the the experiment:
 
 If we were to examine the `rc` results dict we'd find, recorded in the experimental parameters, the
 parameters describing the network over which the process was run. Furthermore if we decided
-to make use of :ref:`a compute cluster and a cluster lab <run-at-scale>` we would use
-*exactly the same code*, whcih would then generate the networks needed by the experiment
-alongside the experiment itself, minimising the use of bandwidth.
+to make use of a compute cluster we would use *exactly the same code*, whcih would then generate
+the networks needed by the experiment alongside the experiment itself, minimising the use of bandwidth.
+
+.. note ::
+
+    For a larger example of a network generator that doesn't simply call an existing function,
+    see the cookbook recipe on :ref:`model-human-population`.
 

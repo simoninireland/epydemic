@@ -45,7 +45,7 @@ from .process import Process
 
 # network generators
 from .generator import NetworkGenerator
-from .standard_generators import FixedNetwork, ERNetwork
+from .standard_generators import FixedNetwork, ERNetwork, BANetwork
 
 # networks with dynamical processes
 from .networkdynamics import Dynamics

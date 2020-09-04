@@ -43,7 +43,7 @@ class FixedNetwork(NetworkGenerator):
 
 
 class ERNetwork(NetworkGenerator):
-    '''Generate ER networks from a given order (:attr:`N`) and one of an edge occupation
+    '''Generate Erdos-Renyi (ER) networks from a given order (:attr:`N`) and one of an edge occupation
     probability (:attr:`PHI`) or a mean degree (:attr:`KMEAN`). These parameters are taken from the
     experimental parameters.
 
@@ -59,9 +59,9 @@ class ERNetwork(NetworkGenerator):
     :param limit: (optional) meximum  number of instances to generate'''
 
     # Experimental parameters
-    N = 'epydemic.generators.ERNetwork.N'         #: Experimental parameter for the size (order) of the network
-    PHI = 'epydemic.generators.ERNetwork.PHI'     #: Experimental parameter for the occupation probability of edges
-    KMEAN = 'epydemic.generators.ERNetwork.KMEAN' #: Experimental parameter for the mean degree of the network
+    N = 'epydemic.generators.ERNetwork.N'         #: Experimental parameter for the size (order) of the network.
+    PHI = 'epydemic.generators.ERNetwork.PHI'     #: Experimental parameter for the occupation probability of edges.
+    KMEAN = 'epydemic.generators.ERNetwork.KMEAN' #: Experimental parameter for the mean degree of the network.
 
     def __init__(self, params=None, limit=None):
         super(ERNetwork, self).__init__(params, limit)
@@ -85,4 +85,43 @@ class ERNetwork(NetworkGenerator):
 
         # build the network
         g = networkx.fast_gnp_random_graph(N, phi)
+        return g
+
+
+class BANetwork(NetworkGenerator):
+    '''Generate Barabasi-Albert (BA) networks from a given order (:attr:`N`) and rate of attachment
+    (:attr:`M`)taken from the experimental parameters.
+
+    A BA network has node degrees distributed according to a powerlaw distribution. The construction process
+    can be thought of as taking an initial set of :math:`M` nodes and then adding additional nodes
+    one at a time, adding adges between the new node and :math:`M` other nodes chosen at random. This
+    continues until the network has :math:`N` nodes. This process favours attachment to nodes that are 
+    in the network early, leading to "hubs" with very high degree. The node degrees will
+    be uncorrelated.
+
+    The actual construction of BA networks uses the `networkx.barabasi_albert_graph()` function.
+
+    :param params: (optional) experiment parameters
+    :param limit: (optional) meximum  number of instances to generate'''
+
+    # Experimental parameters
+    N = 'epydemic.generators.BANetwork.N'         #: Experimental parameter for the size (order) of the network.
+    M = 'epydemic.generators.BANetwork.M'         #: Experimental parameter for the number of edges added per node.
+
+    def __init__(self, params=None, limit=None):
+        super(BANetwork, self).__init__(params, limit)
+
+    def _generate( self, params ):
+        '''Generate a BA network from an order (represented by the parameter :attr:`N`)
+        and attachment rate (:attr:`M`).
+
+        :param params: experimental parameters
+        :returns: the ER network'''
+
+        # extract the parameters
+        N = params[self.N]
+        M = params[self.M]
+
+        # build the network
+        g = networkx.barabasi_albert_graph(N, M)
         return g
