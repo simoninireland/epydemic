@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import FixedNetwork
+from epydemic import FixedNetwork, ERNetwork, BANetwork
 import unittest
 import networkx
 
@@ -25,7 +25,7 @@ class GeneratorTest(unittest.TestCase):
     
     def assertGraphsEqual( self, g1, g2 ):
         '''Test two graphs for equality.
-        sd: should check for attributes as well
+        sd: should check for attributes as well?
 
         :param g1: the first graph
         :param g2: the second graph'''
@@ -58,4 +58,39 @@ class GeneratorTest(unittest.TestCase):
             n += 1
         self.assertEqual(n, 10)
 
+    def testER(self):
+        '''Test we can generate ER networks with all parameter combinations.'''
+        param = dict()
+        param[ERNetwork.N] = 1000
+
+        # test using <k>
+        param[ERNetwork.KMEAN] = 20
+        gen = ERNetwork(param)
+        g = gen.generate()
+
+        # test using phi
+        del param[ERNetwork.KMEAN]
+        param[ERNetwork.PHI] = 0.02
+        gen = ERNetwork(param)
+        g = gen.generate()
+
+        # test working with both
+        param[ERNetwork.KMEAN] = 20
+        gen = ERNetwork(param)
+        g = gen.generate()
        
+        # test failing with neither
+        del param[ERNetwork.KMEAN]
+        del param[ERNetwork.PHI]
+        gen = ERNetwork(param)
+        with self.assertRaises(AttributeError):
+            g = gen.generate()
+
+    def testBA(self):
+        '''Test we can generate BA networks.'''
+        param = dict()
+        param[BANetwork.N] = 1000
+        param[BANetwork.M] = 20
+        gen = BANetwork(param)
+        g = gen.generate()
+        
