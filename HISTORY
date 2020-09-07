@@ -1,3 +1,11 @@
+Version 0.99.9
+   - Refactored to add network generators
+   - Removed tutorial on building networks at experiments, since generators solve that
+   - Added generators for the common network science network classes
+   - Added tutorial on building a new network generator
+   - Cross-referenced a lot of the documentation
+   - Added notes to tutorials where they seemed unclear
+
 Version 0.99.8 2020-05-30
    - Removed use of six, since we're no longer supporting Python 2.7
    - Removed six and future from requirements
