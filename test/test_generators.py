@@ -66,25 +66,25 @@ class GeneratorTest(unittest.TestCase):
         # test using <k>
         param[ERNetwork.KMEAN] = 20
         gen = ERNetwork(param)
-        g = gen.generate()
+        _ = gen.generate()
 
         # test using phi
         del param[ERNetwork.KMEAN]
         param[ERNetwork.PHI] = 0.02
         gen = ERNetwork(param)
-        g = gen.generate()
+        g_= gen.generate()
 
         # test working with both
         param[ERNetwork.KMEAN] = 20
         gen = ERNetwork(param)
-        g = gen.generate()
+        _ = gen.generate()
        
         # test failing with neither
         del param[ERNetwork.KMEAN]
         del param[ERNetwork.PHI]
         gen = ERNetwork(param)
         with self.assertRaises(AttributeError):
-            g = gen.generate()
+            _ = gen.generate()
 
     def testBA(self):
         '''Test we can generate BA networks.'''
@@ -92,5 +92,5 @@ class GeneratorTest(unittest.TestCase):
         param[BANetwork.N] = 1000
         param[BANetwork.M] = 20
         gen = BANetwork(param)
-        g = gen.generate()
+        _ = gen.generate()
         
