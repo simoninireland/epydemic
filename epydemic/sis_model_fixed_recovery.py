@@ -40,8 +40,6 @@ class SIS_FixedRecovery(SIS):
         depending on the :attr:`T_INFECTED` parameter.
 
         :param params: the model parameters'''
-        super(SIS_FixedRecovery, self).build(params)
-
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
         self._tInfected = params[self.T_INFECTED]
@@ -50,7 +48,7 @@ class SIS_FixedRecovery(SIS):
         self.addCompartment(self.INFECTED, pInfected)
 
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
-        self.addFixedRateEvent(self.SI, pInfect, self.infect)
+        self.addEventPerElement(self.SI, pInfect, self.infect)
 
     def setUp( self, params ):
         '''After setting up as normal, post recovery events for any nodes that are
