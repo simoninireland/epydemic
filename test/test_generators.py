@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import FixedNetwork, ERNetwork, BANetwork
+from epydemic import Process, Dynamics,FixedNetwork, ERNetwork, BANetwork
 import unittest
 import networkx
 
@@ -58,6 +58,16 @@ class GeneratorTest(unittest.TestCase):
             n += 1
         self.assertEqual(n, 10)
 
+    def testFixedNetworkGenerator(self):
+        '''Test that adding a network creates the right generator.'''
+        g = networkx.diamond_graph()
+        p = Process()
+        dyn = Dynamics(p)
+
+        dyn.setNetworkGenerator(g)
+        self.assertIsInstance(dyn.networkGenerator(), FixedNetwork)
+        self.assertGraphsEqual(g, dyn.networkGenerator().generate())
+        
     def testER(self):
         '''Test we can generate ER networks with all parameter combinations.'''
         param = dict()
@@ -94,3 +104,5 @@ class GeneratorTest(unittest.TestCase):
         gen = BANetwork(param)
         _ = gen.generate()
         
+if __name__ == '__main__':
+    unittest.main()

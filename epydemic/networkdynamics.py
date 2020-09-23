@@ -84,6 +84,12 @@ class Dynamics(epyc.Experiment, object):
             g = FixedNetwork(g)
         self._generator = g
 
+    def networkGenerator(self):
+        '''Return the generator used for this dynamics.
+
+        :returns: the generator'''
+        return self._generator
+
     def process(self):
         '''Return the network process being run.
 
@@ -111,7 +117,7 @@ class Dynamics(epyc.Experiment, object):
         super(Dynamics, self).setUp(params)
 
         # generate a working network instance
-        self._graph = self._generator.set(params).generate()
+        self._graph = self.networkGenerator().set(params).generate()
 
         # set up the event stream
         self._loci = dict()
