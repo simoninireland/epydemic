@@ -1,6 +1,6 @@
 # Test compartmented model basic functions
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -63,6 +63,16 @@ class CompartmentedModelTest(unittest.TestCase):
         self.assertAlmostEqual(len(m.compartment(SIR.INFECTED)) / self._er.order(), pInfected, places=2)
         self.assertAlmostEqual(len(m.compartment(SIR.SUSCEPTIBLE)) / self._er.order(), (1.0 - pInfected), places=2)
 
+    def testMissingCompartment(self):
+        '''Test we catch missing compartments when changing initial occupancy.'''
+        m = SIR()
+        e = StochasticDynamics(m)
+        m.reset()
+        m.setNetwork(self._er)
+        m.build(self._params)
+        with self.assertRaises(Exception):
+            m.changeCompartmentInitialOccupancy('missing', 1.0)
+         
     def testSanityCheckDistribution(self):
         '''Check that we detect a bad distribution in initial comaprtment occupancy.'''
         m = SIR()
@@ -216,6 +226,11 @@ class CompartmentedModelTest(unittest.TestCase):
         m.addEdge(1, 2)
         self.assertEqual(len(m.loci()[SIR.SI]), 1)
 
+        # add an edge with sense reversed
+        m.addNode(3, c = SIR.SUSCEPTIBLE)
+        m.addEdge(3, 1)
+        self.assertEqual(len(m.loci()[SIR.SI]), 2)
+
     def testRemoveEdge(self):
         '''Test we can remove an edge, keeping all the data straight.'''
         m = SIR()
@@ -236,10 +251,15 @@ class CompartmentedModelTest(unittest.TestCase):
         self.assertEqual(len(m.loci()[SIR.SI]), 2)
         m.removeEdge(1, 2)
         self.assertEqual(len(m.loci()[SIR.SI]), 1)
-        print(list(g.edges()))
+        #print(list(g.edges()))
         m.removeEdge(2, 3)
-        print(list(g.edges()))
+        #print(list(g.edges()))
         self.assertEqual(len(m.loci()[SIR.SI]), 1)
+
+        # remove edge with the oppposite sense
+        m.removeEdge(3, 1)
+        #print(list(g.edges()))
+        self.assertEqual(len(m.loci()[SIR.SI]), 0)
 
 if __name__ == '__main__':
     unittest.main()

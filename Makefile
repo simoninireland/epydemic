@@ -53,9 +53,11 @@ SOURCES_TESTS = \
 	test/test_stochasticrates.py \
 	test/test_compartmentedmodel.py \
 	test/compartmenteddynamics.py \
+	test/test_loci.py \
 	test/test_sir.py \
+	test/test_sir_fixed_recovery.py \
 	test/test_sis.py \
-	test/test_fixed_recovery.py \
+	test/test_sis_fixed_recovery.py \
 	test/test_sirs.py \
 	test/test_seir.py \
 	test/test_adddelete.py
