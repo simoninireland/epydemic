@@ -2,20 +2,22 @@ language: python
 
 python:
   - "3.6"
-  - "3.7"
+  - "3.8"
 
 env:
   - TEST_SUITE="adddelete"
   - TEST_SUITE="compartmentedmodel"
-  - TEST_SUITE="fixed_recovery"
   - TEST_SUITE="networkdynamics"
   - TEST_SUITE="sir"
   - TEST_SUITE="sirs"
+  - TEST_SUITE="sir_fixedrecovery"
   - TEST_SUITE="sis"
+  - TEST_SUITE="sis_fixedrecovery"
   - TEST_SUITE="seir"
   - TEST_SUITE="stochasticrates"
   - TEST_SUITE="monitor"
   - TEST_SUITE="generators"
+  - TEST_SUITE="loci"
 
 install:
     - pip install -r requirements.txt
