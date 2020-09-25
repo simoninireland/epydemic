@@ -59,25 +59,29 @@ Evolving the network
 --------------------
 
 Addition-deletion networks are intrinsically dynamic, so we override some methods from the
-:class:`Process` evolution interface to keep track of the nodes added and deleted.
+:class:`Process` evolution interface and add a couple of helper methods to keep track
+of the nodes added and deleted.
 
 .. automethod:: AddDelete.addNode
+
+.. automethod:: AddDelete.removeNode
 
 .. automethod:: AddDelete.addNewNode
 
 .. automethod:: AddDelete.newNodeName
-
-.. automethod:: AddDelete.removeNode
 
 
 Events
 ------
 
 There are two events that can be triggered: one to add a node, and one to remove a node.
-These two events provide the "kernel" of the addiiton-deletion process and can be specialised
+These two events provide the "kernel" of the addition-deletion process and can be specialised
 to explore new behaviours.
 
 .. automethod:: AddDelete.add
 
 .. automethod:: AddDelete.delete
 
+.. versionchanged :: 1.0.0
+   This method was called ``remove`` until version 1.0.0, when it was changed to
+   avoid a clash with the event function of the same name in :class:`SIR`.

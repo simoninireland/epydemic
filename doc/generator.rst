@@ -3,6 +3,11 @@
 
 .. currentmodule:: epydemic
 
+.. versionadded :: 1.0.0
+   Generators remove the need for sub-classing the dynamics classes in order
+   to build instances of particular types of network, and also improve
+   experiment reproducibility.
+
 .. autoclass:: NetworkGenerator
    :show-inheritance:
 
@@ -18,6 +23,10 @@ in which the network is used.
 .. automethod :: NetworkGenerator.set
 
 .. automethod :: NetworkGenerator._generate
+
+See :ref:`standard-generators` for the built-in generators that create the most common
+kinds of network. See :ref:`build-generators`  for an example of how to define
+a new generator.
 
 
 Single instance generation
