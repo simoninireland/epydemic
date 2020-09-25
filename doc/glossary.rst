@@ -72,7 +72,8 @@ Glossary
 
    Gillespie simulation
       A simulation technique developed initially for *ab initio*
-      chemistry simulations ref:`Gil76`ref:`Gil77`
+      chemistry simulations. See :ref:`Gillespie 1976 <Gil76>`
+      and :ref:`Gillespie 1977 <Gil77>`.
       
    locus
       A "place" at which dynamics can occur, that is to say, where
