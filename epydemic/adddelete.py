@@ -1,6 +1,6 @@
 # Canonical addition-deletion process
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -59,7 +59,7 @@ class AddDelete(Process):
         pAdd = params[self.P_ADD]
         pDelete = params[self.P_DELETE]
         self.addFixedRateEvent(self.NODES, pAdd, self.add)
-        self.addFixedRateEvent(self.NODES, pDelete, self.remove)
+        self.addFixedRateEvent(self.NODES, pDelete, self.delete)
 
     def setUp(self, params):
         super(AddDelete, self).setUp(params)
@@ -99,6 +99,7 @@ class AddDelete(Process):
         '''Add a new node to the network with a new, unused name. Any keyword arguments are
         added as node attributes.
 
+        :param kwds: (optional) node attributes
         :returns: the generated name of the new node'''
         n = self.newNodeName()
         self.addNode(n, **kwds)
@@ -120,6 +121,8 @@ class AddDelete(Process):
         other nodes. The degree of the new node is given by the :attr:`DEGREE` parameter,
         with the nodes being selected at random from the entire network.
 
+        The node is added to the network by calling :meth:`addNewNode`.
+
         :param t: the current simulation time (not used)
         :param e: the element (not used)'''
 
@@ -139,8 +142,9 @@ class AddDelete(Process):
         for j in es:
             self.addEdge(i, j)
 
-    def remove(self, t, n):
-        '''Remove a node from the network.
+    def delete(self, t, n):
+        '''Delete a node from the network. The node is
+        deleted from the network by calling :meth:`removeNode`.
 
         :param t: the current simulation time (not used)
         :param n: the node to be removed'''
