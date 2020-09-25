@@ -1,6 +1,6 @@
 # Test the behaviour of the addition-deletion process
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #

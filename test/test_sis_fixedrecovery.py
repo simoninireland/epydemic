@@ -27,8 +27,23 @@ class SISFixedRecoveryTest(unittest.TestCase, CompartmentedDynamicsTest):
 
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''        
+
+        # single experiment
+        self._params = dict()
+        self._params[SIS.P_INFECT] = 0.1
+        self._params[SIS.P_INFECTED] = 0.01
+        self._params[SIS_FixedRecovery.T_INFECTED] = 1.0
         self._network = networkx.erdos_renyi_graph(1000, 0.02)
+
+        # lab run
+        self._lab = epyc.Lab()
+        self._lab[SIS.P_INFECT] = [ 0.1,  0.3 ]
+        self._lab[SIS.P_INFECTED] = 0.01
+        self._lab[SIS_FixedRecovery.T_INFECTED] = [ 1.0, 2.0 ]
+
+        # model
         self._model = SIS_FixedRecovery()
+        self._model.setMaximumTime(100)
 
     def testEpidemic( self ):
         '''Test we get an epidemic'''
@@ -36,11 +51,10 @@ class SISFixedRecoveryTest(unittest.TestCase, CompartmentedDynamicsTest):
         self._lab[SIS.P_INFECT] = 0.1
         self._lab[SIS.P_INFECTED] = 0.01
         self._lab[SIS_FixedRecovery.T_INFECTED] = 1.0
-        self._model.setMaximumTime(100)
         e = StochasticDynamics(self._model, self._network)
         self._lab.runExperiment(e)
         rc = (self._lab.results())[0]
-        print(rc)
+        #print(rc)
 
         self.assertCountEqual(rc[epyc.Experiment.RESULTS], [SIS.SUSCEPTIBLE, SIS.INFECTED])
         self.assertTrue(rc[epyc.Experiment.RESULTS][SIS.SUSCEPTIBLE] > 0)
