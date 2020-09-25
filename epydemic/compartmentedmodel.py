@@ -57,7 +57,7 @@ class CompartmentedNodeLocus(CompartmentedLocus):
         return [ self._compartment ]
 
     def addHandler(self, g, n):
-        '''A nodeis added to the network. 
+        '''A node is added to the network. 
 
         :param, g: the network
         :param n: the node'''
@@ -404,10 +404,14 @@ class CompartmentedModel(Process):
         :param l: (optional) the locus
         :returns: the locus'''
         locus = super(CompartmentedModel,self).addLocus(n, l)
-        for c in locus.compartments():
-            if c not in self._effects.keys():
-                self._effects[c] = []
-            self._effects[c].append((locus.addHandler, locus.leaveHandler, locus.enterHandler, locus.removeHandler))
+
+        # if we've added a compartmented locus, add handler functions for
+        # when its population changes
+        if isinstance(locus, CompartmentedLocus):
+            for c in locus.compartments():
+                if c not in self._effects.keys():
+                    self._effects[c] = []
+                self._effects[c].append((locus.addHandler, locus.leaveHandler, locus.enterHandler, locus.removeHandler))
 
     def _handlerCompartments(self, e):
         '''Return the compartments that a given element's change might affect.
@@ -521,14 +525,16 @@ class CompartmentedModel(Process):
         data[self.OCCUPIED] = True
         data[self.T_OCCUPIED] = t
         
-    def addNode(self, n, c, **kwds):
-        '''Add a node to the working network, adding it to the appropriate compartment.
+    def addNode(self, n, c=None, **kwds):
+        '''Add a node to the working network, adding it to the appropriate compartment
+        if one is provided].
 
         :param n: the new node
-        :param c: compartment for the node
+        :param c: (optional) compartment for the node
         :param kwds: (optional) node attributes'''
         super(CompartmentedModel, self).addNode(n, **kwds)
-        self.setCompartment(n, c)
+        if c is not None:
+            self.setCompartment(n, c)
 
     def removeNode(self, n):
         '''Remove a node from the working network, updating any affected compartments.
@@ -541,7 +547,7 @@ class CompartmentedModel(Process):
         # remove the node
         super(CompartmentedModel, self).removeNode(n)
 
-    def addEdge(self, n, m,  **kwds):
+    def addEdge(self, n, m, **kwds):
         '''Add an edge between nodes, adding the edge to any appropriate compartments.
 
         :param n: the start node
