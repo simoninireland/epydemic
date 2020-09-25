@@ -15,7 +15,7 @@ The canonical work on addition-deletion networks is :ref:`Moore, Ghosal, and New
 Specific solutions are analytically solvable, however: most notably the case where
 newly-added nodes are connected to a fixed number of neighbours selected randomly, which
 is the default behaviour of this class. Other behaviours can be implemented by overriding
-the :meth:`AddDelete.add` method (and, less commonly, the :meth:`AddDelete.remove` method).
+the :meth:`AddDelete.add` method (and, less commonly, the :meth:`AddDelete.delete` method).
 Note that this is a slightly different formulation to that in the paper, which defines
 an "addition kernel" as a function independent of the actions of the process:
 implementationally it seems to make more sense to provide this functionality by
@@ -79,5 +79,5 @@ to explore new behaviours.
 
 .. automethod:: AddDelete.add
 
-.. automethod:: AddDelete.remove
+.. automethod:: AddDelete.delete
 
