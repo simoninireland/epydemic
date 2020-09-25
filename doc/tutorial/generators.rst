@@ -20,7 +20,7 @@ in network science -- primarily ER networks and BA networks -- and ``epydemic`` 
 built-in generators for these: see :ref:`standard-generators` for a list.
 
 However, there are a huge range of network classes that ``epydemic`` *doesn't* include,
-and there are two basica ways to include such networks in your simulations.
+and there are two basic ways to use such networks in your simulations.
 
 
 The easy way: Create the network you need
@@ -42,7 +42,7 @@ do the following:
 
 The advantages of this approach are simplicity and flexibility: you can use all the
 features of ``networkx``, in a small amount of code. The disadvantages are that the
-parameters that you used to create the network are unrecorded, and you need to structure
+parameters that you used to create the network are unrecorded, and you need to restructure
 your code if you want to re-use the same class of network. You also have to be careful
 if you decided to :ref:`run your experiments at scale <run-at-scale>` to avoid passing
 large networks to a compute cluster.
@@ -103,7 +103,7 @@ We then pass this generator to the the experiment:
 
 If we were to examine the `rc` results dict we'd find, recorded in the experimental parameters, the
 parameters describing the network over which the process was run. Furthermore if we decided
-to make use of a compute cluster we would use *exactly the same code*, whcih would then generate
+to make use of a compute cluster we would use *exactly the same code*, which would then generate
 the networks needed by the experiment alongside the experiment itself, minimising the use of bandwidth.
 
 .. note ::
