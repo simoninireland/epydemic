@@ -60,7 +60,8 @@ SOURCES_TESTS = \
 	test/test_sis_fixed_recovery.py \
 	test/test_sirs.py \
 	test/test_seir.py \
-	test/test_adddelete.py
+	test/test_adddelete.py \
+	test/test_adddeletesir.py
 TESTSUITE = test
 
 SOURCES_DOC_CONF = doc/conf.py
@@ -101,6 +102,7 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/monitoring-progress.rst \
 	doc/cookbook/infect-specific-nodes.rst \
+	doc/cookbook/dynamic-population.rst \
 	doc/cookbook/speed.rst
 SOURCES_DIAGRAMS = \
 	doc/cookbook/powerlaw-cutoff.png \
