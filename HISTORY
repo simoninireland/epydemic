@@ -1,10 +1,14 @@
-Version 0.99.9
+Version 1.0.0
    - Refactored to add network generators
    - Removed tutorial on building networks at experiments, since generators solve that
    - Added generators for the common network science network classes
    - Added tutorial on building a new network generator
    - Cross-referenced a lot of the documentation
    - Added notes to tutorials where they seemed unclear
+   - Renamed AddDelete.remove() event to delete()
+   - Added cookbook recipe on dynamic population simulations
+   - Added discussion of clustered networks to cookbook recipe on human contact networks
+   - Added more references to bibliography
 
 Version 0.99.8 2020-05-30
    - Removed use of six, since we're no longer supporting Python 2.7

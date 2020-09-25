@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 0.99.9
+VERSION = 1.0.0
 
 
 # ----- Sources -----
