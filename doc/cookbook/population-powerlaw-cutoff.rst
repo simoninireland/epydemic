@@ -8,7 +8,7 @@ Modelling human contact networks
 **Problem**: You want to work with a realistic model of a human contact network. What is the appropriate topology?
 
 **Solution**: This is an active area of research, but a common answer is to use the approach given by
-:ref:`Newman <New02>`, which is to use a powerlaw network with exponential cut-off.
+:ref:`Newman <New02>`, which is to use a powerlaw network with exponential cut-off. 
 
 
 The theory
@@ -170,3 +170,41 @@ actually do the work.
 
 You can use this code to create human population models that you then pass to an experiment (an instance of :class:`Dynamics`)
 that runs the appropriate network process over the network.
+
+
+The limitations
+---------------
+
+The reason for the lack of agreement on the structure of human contact networks is due to a
+detailed feature of the above formulation. If you're interested, read on....
+
+If you think about your own friends, two of them chosen at random are more likely to be
+friends of each other than are two people chosen from the population at large: there's a
+*conditional probability* at work that makes people with a mutual friend more likely
+to be friends of each other. This isn't always the case -- lots of people have largely disjoint
+sets of friends -- but in general the conditional probability is significantly higher than
+the general population probability.
+
+In a network, this phenomenon manifests itself as clusters in the network: groups of individuals
+who are more connected than you might expect to each other. Often this manifests itself as
+triangles of three friends, or even larger clusters for family groups or school classes, where
+everyone is in contact with everyone else.
+
+The problem that arises is that the configuration model, which we use above to create the network
+from the degree probabilities, *almost never* generates these sorts of clusters. The networks it
+generates are referred to as *locally tree-like* and don't have triangles or higher-order
+clusters. (In fact they don't have cycles either, which are weaker than clusters.)
+
+This wouldn't matter except that clustering is now known to affect the spread of epidemic
+diseases through a population. In a clustered network, if a neighbour of a node becomes infected,
+then it can infect the node directly (as one would expect) *or* it can infect one of its
+other neighbours who *then* (because of clustering) infects the node -- and there might be
+multiple opportunities for this to happen in a large cluster. The net result is an epidemic
+that's larger and faster in the preesence of clustering: not radically different, but
+definitely observable.
+
+There is a substantial more recent literature on clustered networks that is essential
+for handling this problem: :ref:`Miller <M09>` is a good starting point.
+:ref:`Dobson <D20>` presents a method for creating networks that mimic physical distancing
+countermeasures to epidemics. 
+Also see :ref:`Melnik <MHP10>` *et alia* for a discussion of why clustering often *doesn't* matter.
