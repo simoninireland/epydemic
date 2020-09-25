@@ -90,7 +90,7 @@ class ERNetwork(NetworkGenerator):
 
 class BANetwork(NetworkGenerator):
     '''Generate Barabasi-Albert (BA) networks from a given order (:attr:`N`) and rate of attachment
-    (:attr:`M`)taken from the experimental parameters.
+    (:attr:`M`) taken from the experimental parameters.
 
     A BA network has node degrees distributed according to a powerlaw distribution. The construction process
     can be thought of as taking an initial set of :math:`M` nodes and then adding additional nodes
