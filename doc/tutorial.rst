@@ -3,7 +3,10 @@ Tutorial
 
 This page is a tutorial introduction to ``epydemic``. It begins with an overview of the
 class class structure of the library, and then uses it to build and run a simulation
-of an epidemic. 
+of an epidemic.
+
+If you want more examples of ``epydemic`` in action, it forms the basis for a
+:ref:`book <D20>` on epidemic modelling. 
 
 .. toctree::
     :maxdepth: 2
