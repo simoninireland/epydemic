@@ -149,5 +149,11 @@ class NetworkDynamicsTest(unittest.TestCase):
         # check list of times
         self.assertEqual(self._ps, [1, 4, 7, 10, 13, 16, 19])
 
+    def testNoLoci(self):
+        '''Test we can handle processes without loci.'''
+        p = Process()
+        dyn = Dynamics(p)
+        self.assertCountEqual(dyn.lociForProcess(p), dict())
+
 if __name__ == '__main__':
     unittest.main()

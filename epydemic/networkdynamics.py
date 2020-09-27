@@ -189,7 +189,12 @@ class Dynamics(epyc.Experiment, object):
 
         :param p: the process
         :returns: a dict from names to loci'''
-        return self._processLoci[p]
+        if p in self._processLoci:
+            # process has loci, return them
+            return self._processLoci[p]
+        else:
+            # process doesn't have loci, return an empty dict
+            return dict()
 
     def addEventPerElement(self, p, l, pr, ef):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
