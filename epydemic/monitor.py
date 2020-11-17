@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import Process
+from typing import Final, Dict, Any
 
 class Monitor(Process):
     '''Add progress monitoring to a process. This class captures the
@@ -25,11 +26,11 @@ class Monitor(Process):
     them as time series.'''
     
     # Experimental parameters
-    DELTA = "epydemic.Monitor.time_delta"           #: Parameter for the time interval for observations.
+    DELTA : Final[str] = "epydemic.Monitor.time_delta"           #: Parameter for the time interval for observations.
     
     # Results
-    OBSERVATIONS = 'epydemic.Monitor.observations'  #: Result holding the times of the observations.
-    TIMESERIES = "epydemic.Monitor.timeseries"      #: Result holding a dict mapping locus names to a dict of sample time and size.
+    OBSERVATIONS : Final[str] = 'epydemic.Monitor.observations'  #: Result holding the times of the observations.
+    TIMESERIES : Final[str] = "epydemic.Monitor.timeseries"      #: Result holding a dict mapping locus names to a dict of sample time and size.
  
 
     def __init__(self):
@@ -40,7 +41,7 @@ class Monitor(Process):
         super(Monitor, self).reset()
         self._timeSeries = None
         
-    def build(self, params):
+    def build(self, params : Dict[str, Any]):
         '''Build the observation process.
         
         :param params: the experimental parameters'''
@@ -50,7 +51,7 @@ class Monitor(Process):
         delta = params[self.DELTA]
         self.postRepeatingEvent(0.0, delta, None, self.observe)
         
-    def observe(self, t, e):
+    def observe(self, t : float, e : Any):
         '''Observe the network, capturing the sizes of all loci which are then
         stored into individual time series. Another time series, tagged 
         :attr:`OBSERVATIONS`, is created to store the sequence of times at which observations
@@ -74,7 +75,7 @@ class Monitor(Process):
         for (n, l) in self.loci().items():
             self._timeSeries[n].append(len(l))
         
-    def results(self):
+    def results(self) -> Dict[str, Any]:
         '''Return the time series as a dict tagged :attr:`TIMESERIES`. There is
         one time series *per* locus, plus one for the sequence of times at which the
         observations were made.

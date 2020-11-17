@@ -18,6 +18,8 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import CompartmentedModel
+from typing import Dict, Any, Final
+
 
 class SIS(CompartmentedModel):
     '''The Susceptible-Infected-Susceptible :term:`compartmented model of disease`.
@@ -26,21 +28,21 @@ class SIS(CompartmentedModel):
     :class:`SIR`.'''
 
     # Model  parameters
-    P_INFECTED = 'epydemic.SIS.pInfected'  #: Parameter for probability of initially being infected.
-    P_INFECT = 'epydemic.SIS.pInfect'      #: Parameter for probability of infection on contact.
-    P_RECOVER = 'epydemic.SIS.pRecover'    #: Parameter for probability of recovery (returning to susceptible).
+    P_INFECTED : Final[str] = 'epydemic.SIS.pInfected'  #: Parameter for probability of initially being infected.
+    P_INFECT : Final[str] = 'epydemic.SIS.pInfect'      #: Parameter for probability of infection on contact.
+    P_RECOVER : Final[str] = 'epydemic.SIS.pRecover'    #: Parameter for probability of recovery (returning to susceptible).
 
     # Possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE = 'epydemic.SIS.S'         #: Compartment for nodes susceptible to infection.
-    INFECTED = 'epydemic.SIS.I'            #: Compartment for nodes infected.
+    SUSCEPTIBLE : Final[str] = 'epydemic.SIS.S'         #: Compartment for nodes susceptible to infection.
+    INFECTED : Final[str] = 'epydemic.SIS.I'            #: Compartment for nodes infected.
 
     # Locus containing the edges at which dynamics can occur
-    SI = 'epydemic.SIS.SI'                 #: Edge able to transmit infection.
+    SI : Final[str] = 'epydemic.SIS.SI'                 #: Edge able to transmit infection.
 
-    def __init__( self ):
+    def __init__(self):
         super(SIS, self).__init__()
 
-    def build( self, params ):
+    def build(self, params :Dict[str, Any]):
         '''Build the SIS model.
 
         :param params: the model parameters'''
@@ -59,7 +61,7 @@ class SIS(CompartmentedModel):
         self.addEventPerElement(self.INFECTED, pRecover, self.recover)
         self.addEventPerElement(self.SI, pInfect, self.infect)
 
-    def infect( self, t, e ):
+    def infect(self, t : float, e : Any):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
@@ -70,7 +72,7 @@ class SIS(CompartmentedModel):
         self.changeCompartment(n, self.INFECTED)
         self.markOccupied(e, t)
 
-    def recover( self, t, n ):
+    def recover(self, t : float, n : Any):
         '''Perform a recovery event. This changes the compartment of
         the node back to :attr:`SUSCEPTIBLE`, allowing re-infection.
 

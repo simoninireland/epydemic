@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import SIR
+from typing import Dict, Any, Final
 
 
 class SIRS(SIR):
@@ -28,12 +29,12 @@ class SIRS(SIR):
     (as for :class:`SIR`) or no immunity ( as for :class:`SIS`).'''
 
     # Extra model parameter
-    P_RESUSCEPT = 'epydemic.SIRS.pResuscept'    #: Parameter for probability of losing immunity
+    P_RESUSCEPT : Final[str] = 'epydemic.SIRS.pResuscept'    #: Parameter for probability of losing immunity
 
     def __init__(self):
         super(SIRS, self).__init__()
 
-    def build(self, params):
+    def build(self, params : Dict[str, Any]):
         '''Build the SIRS model.
 
         :param params: the model parameters'''
@@ -45,7 +46,7 @@ class SIRS(SIR):
 
         self.addEventPerElement(self.REMOVED, pResuscept, self.resuscept)
 
-    def resuscept(self, t, n):
+    def resuscept(self, t : float, n : Any):
         '''Perform a re-susceptibility event. This changes the compartment of
         the node from :attr:`REMOVED` to :attr:`SUSCEPTIBLE`.
 

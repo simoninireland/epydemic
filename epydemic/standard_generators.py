@@ -18,11 +18,8 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import NetworkGenerator
-import networkx
-import math
-import numpy
-import collections
-
+from networkx import Graph, fast_gnp_random_graph, barabasi_albert_graph
+from typing import Any, Dict, Optional, Final
 
 class FixedNetwork(NetworkGenerator):
     '''A network generator that always returns a copy of the same network.
@@ -30,11 +27,11 @@ class FixedNetwork(NetworkGenerator):
     :param g: the prototype network
     :param limit: (optional) maximum number of identical instances to generate'''
 
-    def __init__(self, g, limit=None):
+    def __init__(self, g : Graph, limit : Optional[int] =None):
         super(FixedNetwork, self).__init__(limit=limit)
-        self._graphPrototype = g
+        self._graphPrototype : Graph = g
     
-    def _generate(self, params):
+    def _generate(self, params : Dict[str, Any]) -> Graph:
         '''Return a copy of the prototype network.
 
         :param params: experimental parameters (ignored)
@@ -59,14 +56,14 @@ class ERNetwork(NetworkGenerator):
     :param limit: (optional) meximum  number of instances to generate'''
 
     # Experimental parameters
-    N = 'epydemic.generators.ERNetwork.N'         #: Experimental parameter for the size (order) of the network.
-    PHI = 'epydemic.generators.ERNetwork.PHI'     #: Experimental parameter for the occupation probability of edges.
-    KMEAN = 'epydemic.generators.ERNetwork.KMEAN' #: Experimental parameter for the mean degree of the network.
+    N : Final[str] = 'epydemic.generators.ERNetwork.N'         #: Experimental parameter for the size (order) of the network.
+    PHI : Final[str] = 'epydemic.generators.ERNetwork.PHI'     #: Experimental parameter for the occupation probability of edges.
+    KMEAN : Final[str] = 'epydemic.generators.ERNetwork.KMEAN' #: Experimental parameter for the mean degree of the network.
 
-    def __init__(self, params=None, limit=None):
+    def __init__(self, params : Dict[str, Any] =None, limit : Optional[int] =None):
         super(ERNetwork, self).__init__(params, limit)
 
-    def _generate( self, params ):
+    def _generate(self, params : Dict[str, Any]) -> Graph:
         '''Generate an ER network from an order (represented by the parameter :attr:`N`)
         and one of an edge occupation probability (:attr:`PHI`) or mean degree (:attr:`KMEAN`).
 
@@ -84,7 +81,7 @@ class ERNetwork(NetworkGenerator):
             raise AttributeError('Need one of occupation probability or mean degree')
 
         # build the network
-        g = networkx.fast_gnp_random_graph(N, phi)
+        g = fast_gnp_random_graph(N, phi)
         return g
 
 
@@ -105,13 +102,13 @@ class BANetwork(NetworkGenerator):
     :param limit: (optional) meximum  number of instances to generate'''
 
     # Experimental parameters
-    N = 'epydemic.generators.BANetwork.N'         #: Experimental parameter for the size (order) of the network.
-    M = 'epydemic.generators.BANetwork.M'         #: Experimental parameter for the number of edges added per node.
+    N : Final[str] = 'epydemic.generators.BANetwork.N'         #: Experimental parameter for the size (order) of the network.
+    M : Final[str] = 'epydemic.generators.BANetwork.M'         #: Experimental parameter for the number of edges added per node.
 
-    def __init__(self, params=None, limit=None):
+    def __init__(self, params : Dict[str, Any] =None, limit : Optional[int] =None):
         super(BANetwork, self).__init__(params, limit)
 
-    def _generate( self, params ):
+    def _generate(self, params : Dict[str, Any]) -> Graph:
         '''Generate a BA network from an order (represented by the parameter :attr:`N`)
         and attachment rate (:attr:`M`).
 
@@ -123,5 +120,5 @@ class BANetwork(NetworkGenerator):
         M = params[self.M]
 
         # build the network
-        g = networkx.barabasi_albert_graph(N, M)
+        g = barabasi_albert_graph(N, M)
         return g

@@ -17,7 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Locus
+from __future__ import annotations            # needed to solve circular imports
+from epydemic import Locus, Node, Edge, Element
+from networkx import Graph
+from typing import Dict, List, Tuple, Any, Callable, Iterable, Union
+
+# There is a circular import between Process and Dynamics at the typing level
+# (but not at the execution level). To deal with this we only import Dynamics in
+# order to type-check Process, and not for execution.
+# (See https://www.stefaanlippens.net/circular-imports-type-hints-python.html)
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from epydemic import Dynamics
+
+# Types for handling events
+EventFunction = Callable[[float, Element], None]              #: Type of event-handler functions.
+EventDistribution = List[Tuple[Locus, float, EventFunction]]  #: Type of event distributions.
 
 class Process(object):
     """A process that runs over a network. This is the abstract base class for all network processes.
@@ -55,14 +70,14 @@ class Process(object):
         sub-system is properly reset."""
         self._g = None
 
-    def build(self, params):
+    def build(self, params : Dict[str, Any]):
         """Build the process model. This should be overridden by sub-classes, and should
         create the various elements of the model.
 
         :param params: the model parameters"""
         pass
 
-    def setUp(self, params):
+    def setUp(self, params : Dict[str, Any]):
         """Set up the network under the given dynamics. The default does
         nothing: sub-classes should override it to initialise node states
         or establish other properties ready for the experiment.
@@ -75,31 +90,31 @@ class Process(object):
         nothing."""
         pass
 
-    def setNetwork(self, g):
+    def setNetwork(self, g : Graph):
         """Set the network the process is running over.
 
         :param g: the network"""
         self._g = g
 
-    def network(self):
+    def network(self) -> Graph:
         """Return the network the process is running over.
 
         :returns: the network"""
         return self._g
 
-    def setDynamics(self, d):
+    def setDynamics(self, d : Dynamics):
         '''Set the instance of :class:`Dynamics` that runs the process.
 
         :param d: the dynamics'''
         self._dynamics = d
 
-    def dynamics(self):
+    def dynamics(self) -> Dynamics:
         '''Return the instance of :class:`Dynamics` running this process.
 
         :returns: the dynamics'''
         return self._dynamics
 
-    def setMaximumTime(self, t):
+    def setMaximumTime(self, t : float):
         """Set the maximum default simulation time. The default is given by :attr:`DEFAULT_MAX_TIME`.
         This is used by :meth:`atEquilibrium` as the default way to determine equilibrium.
 
@@ -111,7 +126,7 @@ class Process(object):
         :param t: the maximum simulation time"""
         self._maxTime = t
 
-    def maximumTime(self):
+    def maximumTime(self) -> float:
         """Return the maximum assumed simulation time.
 
         :returns: the maximum simulation time"""
@@ -120,7 +135,7 @@ class Process(object):
 
    # ---------- Termination and results ----------
 
-    def atEquilibrium(self, t):
+    def atEquilibrium(self, t : float) -> bool:
         """Test whether the process is an equilibrium. The default simply checks whether
         the simulation time exceeds the maximum given by :meth:`setMaximumTime`, which
         defaults to an arbitrary value given by :attr:`DEFAULT_MAX_TIME`.
@@ -132,7 +147,7 @@ class Process(object):
         :returns: True if the proceess is now at equilibrium"""
         return (t >= self.maximumTime())
 
-    def results(self):
+    def results(self) -> Dict[str, Any]:
        """Create  and return an empty dict to be filled with experimental results.
        Sub-classes should extend this method to add results to the dict.
 
@@ -142,14 +157,14 @@ class Process(object):
 
     # ---------- Accessing and evolving the network ----------
 
-    def addNode(self, n, **kwds):
+    def addNode(self, n : Node, **kwds):
         """Add a node to the working network. Any keyword arguments added as node attributes
 
         :param n: the new node
         :param kwds: (optional) node attributes"""
         self.network().add_node(n, **kwds)
 
-    def addNodesFrom(self, ns, **kwds):
+    def addNodesFrom(self, ns : Iterable[Node], **kwds):
         """Add all the nodes in the given iterable to the working network. Any keyword arguments are
         added as node attributes. This works by calling :meth:`addNode` for each
         element of the iterable.
@@ -159,13 +174,13 @@ class Process(object):
         for n in ns:
             self.addNode(n, **kwds)
 
-    def removeNode(self, n):
+    def removeNode(self, n : Node):
         """Remove a node from the working network.
 
         :param n: the node"""
         self.network().remove_node(n)
 
-    def removeNodesFrom(self, ns):
+    def removeNodesFrom(self, ns : Iterable[Node]):
         """Remove all the nodes in the given iterable froim the working network. This works by
         iteratively calling :meth:`removeNode` for each element of the iterable collection.
 
@@ -173,7 +188,7 @@ class Process(object):
         for n in ns:
             self.removeNode(n)
 
-    def addEdge(self, n, m, **kwds):
+    def addEdge(self, n : Node, m : Node, **kwds):
         """Add an edge between nodes. Any keyword arguments are added as edge attributes.
         If the endpoint nodes do not already exist then an exception is raised.
 
@@ -187,7 +202,7 @@ class Process(object):
             raise Exception('No node {n} in network'.format(n = m))
         g.add_edge(n, m, **kwds)
 
-    def addEdgesFrom(self, es, **kwds):
+    def addEdgesFrom(self, es : Iterable[Edge], **kwds):
         """Add all the edges in the given iterable to the working network. Any keyword arguments are
         added as node attributes. This works by calling :meth:`addEdge` for each
         element of the iterable.
@@ -198,14 +213,14 @@ class Process(object):
             (n, m) = e
             self.addEdge(n, m, **kwds)
 
-    def removeEdge(self, n, m):
+    def removeEdge(self, n : Node, m : Node):
         """Remove an edge from the working network.
 
         :param n: the start node
         :param m: the end node"""
         self.network().remove_edge(n, m)
 
-    def removeEdgesFrom(self, es):
+    def removeEdgesFrom(self, es : Iterable[Edge]):
         """Remove all the edges in the given iterable collection from the working network. This works
         by iteratively calling :meth:`removeEdge` for each edge in the iterable.
 
@@ -217,7 +232,7 @@ class Process(object):
     # ---------- Probabilistic and posted events ----------
     # These are helper methods that delegate to the dynamics
 
-    def addLocus(self, n, l=None):
+    def addLocus(self, n : str, l : Locus =None) -> Locus:
         """Add a named locus.
 
         :param n: the locus name
@@ -225,20 +240,20 @@ class Process(object):
         :returns: the locus"""
         return self._dynamics.addLocus(self, n, l)
 
-    def loci(self):
+    def loci(self) -> Dict[str, Locus]:
         '''Return the names of the loci that this process added.
 
         :returns: a dict from names to loci'''
         return self._dynamics.lociForProcess(self)
 
-    def locus(self, n):
+    def locus(self, n : str) -> Locus:
         '''Return the named locus.
 
         :param n: the locus name
         :returns: the locus'''
         return self.loci()[n]
 
-    def addEventPerElement(self, l, p, ef):
+    def addEventPerElement(self, l : Union[str, Locus], p : float, ef : EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
         probability for each element of the locus, and calling the :term:`event function`
         when it is selected. The locus may be a :class:`Locus` object or a string, which
@@ -253,7 +268,7 @@ class Process(object):
         :param ef: the event function"""
         self._dynamics.addEventPerElement(self, l, p, ef)
 
-    def addFixedRateEvent(self, l, p, ef):
+    def addFixedRateEvent(self, l : Union[str, Locus], p : float, ef : EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
         probability, and calling the :term:`event function`
         when it is selected. The locus may be a :class:`Locus` object or a string, which
@@ -268,7 +283,7 @@ class Process(object):
         :param ef: the event function"""
         self._dynamics.addFixedRateEvent(self, l, p, ef)
 
-    def postEvent(self, t, e, ef):
+    def postEvent(self, t : float, e : Any, ef : EventFunction):
         """Post an event that calls the :term:`event function` at time t.
 
         :param t: the current time
@@ -276,7 +291,7 @@ class Process(object):
         :param ef: the event function"""
         self._dynamics.postEvent(t, e, ef)
 
-    def postRepeatingEvent(self, t, dt, e, ef):
+    def postRepeatingEvent(self, t : float, dt : float, e : Any, ef : EventFunction):
         """Post an event that starts at time t and re-occurs at interval dt.
 
         :param t: the start time
@@ -288,7 +303,7 @@ class Process(object):
 
     # ---------- Event distributions ----------
 
-    def perElementEventDistribution(self, t):
+    def perElementEventDistribution(self, t : float) -> EventDistribution:
         """Return the distribution of per-element events at time t relevant to
         this process. The list only contains those loci that this process defined.
 
@@ -300,7 +315,7 @@ class Process(object):
         :returns: a list of (locus, probability, event function) triples"""
         return self._dynamics.perElementEventDistribution(self)
 
-    def fixedRateEventDistribution(self, t):
+    def fixedRateEventDistribution(self, t : float) -> EventDistribution:
         """Return the distribution of fixed-rate events at time t. relevant to
         this process. The list only contains those loci that this process defined.
 
@@ -312,7 +327,7 @@ class Process(object):
         :returns: a list of (locus, probability, event function) triples"""
         return self._dynamics.fixedRateEventDistribution(self)
 
-    def eventRateDistribution(self, t):
+    def eventRateDistribution(self, t : float) -> EventDistribution:
         """Return the event distribution, a sequence of (l, r, f) triples
         where l is the locus where the event occurs, r is the rate at
         which an event occurs, and f is the event function called to

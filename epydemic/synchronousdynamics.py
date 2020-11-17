@@ -1,6 +1,6 @@
 # Synchronous dynamics base class
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,12 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Dynamics
-
-import epyc
-import networkx
-import numpy
+from epydemic import Dynamics, Process, NetworkGenerator
+from networkx import Graph
+import numpy                     # type: ignore
 from copy import copy
+from typing import Dict, Any, Final, Union
 
 class SynchronousDynamics(Dynamics):
     '''A dynamics that runs synchronously in discrete time, applying local
@@ -34,12 +33,12 @@ class SynchronousDynamics(Dynamics):
     :param g: prototype network to run over (optional)'''
 
     # additional metadata
-    TIMESTEPS_WITH_EVENTS = 'timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
+    TIMESTEPS_WITH_EVENTS : Final[str] = 'timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
 
-    def __init__( self, p, g = None ):
+    def __init__(self, p : Process, g : Union[Graph, NetworkGenerator] =None):
         super(SynchronousDynamics, self).__init__(p, g)
 
-    def do( self, params ):
+    def do(self, params : Dict[str, Any]) -> Dict[str, Any]:
         '''Execute the process under synchronous dynamics.
         
         :param params: the parameters of the simulation

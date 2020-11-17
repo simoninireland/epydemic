@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import CompartmentedModel
+from typing import Dict, Any, Final
 
 class SIR(CompartmentedModel):
     '''The Susceptible-Infected-Removed :term:`compartmented model of disease`.
@@ -25,22 +26,22 @@ class SIR(CompartmentedModel):
     removed.'''
     
     # Model parameters
-    P_INFECTED = 'epydemic.SIR.pInfected'  #: Parameter for probability of initially being infected.
-    P_INFECT = 'epydemic.SIR.pInfect'      #: Parameter for probability of infection on contact.
-    P_REMOVE = 'epydemic.SIR.pRemove'      #: Parameter for probability of removal (recovery).
+    P_INFECTED : Final[str] = 'epydemic.SIR.pInfected'  #: Parameter for probability of initially being infected.
+    P_INFECT : Final[str] = 'epydemic.SIR.pInfect'      #: Parameter for probability of infection on contact.
+    P_REMOVE : Final[str] = 'epydemic.SIR.pRemove'      #: Parameter for probability of removal (recovery).
     
     # Possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE = 'epydemic.SIR.S'         #: Compartment for nodes susceptible to infection.
-    INFECTED = 'epydemic.SIR.I'            #: Compartment for nodes infected.
-    REMOVED = 'epydemic.SIR.R'             #: Compartment for nodes recovered/removed.
+    SUSCEPTIBLE : Final[str] = 'epydemic.SIR.S'         #: Compartment for nodes susceptible to infection.
+    INFECTED : Final[str] = 'epydemic.SIR.I'            #: Compartment for nodes infected.
+    REMOVED : Final[str] = 'epydemic.SIR.R'             #: Compartment for nodes recovered/removed.
 
     # Locus containing the edges at which dynamics can occur
-    SI = 'epydemic.SIR.SI'                 #: Edge able to transmit infection.
+    SI : Final[str] = 'epydemic.SIR.SI'                 #: Edge able to transmit infection.
 
-    def __init__( self ):
+    def __init__(self):
         super(SIR, self).__init__()
 
-    def build( self, params ):
+    def build(self, params : Dict[str, Any]):
         '''Build the SIR model.
 
         :param params: the model parameters'''
@@ -60,7 +61,7 @@ class SIR(CompartmentedModel):
         self.addEventPerElement(self.SI, pInfect, self.infect)
         self.addEventPerElement(self.INFECTED, pRemove, self.remove)
 
-    def infect( self, t, e ):
+    def infect(self, t : float, e : Any):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
@@ -71,7 +72,7 @@ class SIR(CompartmentedModel):
         self.changeCompartment(n, self.INFECTED)
         self.markOccupied(e, t)
 
-    def remove( self, t, n ):
+    def remove(self, t : float, n : Any):
         '''Perform a removal event. This changes the compartment of
         the node to :attr:`REMOVED`.
 

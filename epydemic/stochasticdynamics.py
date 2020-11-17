@@ -17,10 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Dynamics
-
+from epydemic import Dynamics, Process, NetworkGenerator
+from networkx import Graph
 import math
-import numpy
+import numpy                     # type: ignore
+from typing import Dict, Any, Union
+
 
 class StochasticDynamics(Dynamics):
     '''A dynamics that runs stochastically in :term:`continuous time`. This is a
@@ -30,10 +32,10 @@ class StochasticDynamics(Dynamics):
     :param p: the process to run
     :param g: network or network generator (optional, can be provided later)'''
 
-    def __init__( self, p, g=None ):
+    def __init__(self, p : Process, g : Union[Graph, NetworkGenerator] =None):
         super(StochasticDynamics, self).__init__(p, g)
 
-    def do( self, params ):
+    def do(self, params : Dict[str, Any]) -> Dict[str, Any]:
         '''Run the simulation using Gillespie dynamics.
 
         :param params: the experimental parameters

@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import SIS
+from typing import Dict, Any, Final
 
 class SIS_FixedRecovery(SIS):
     '''The Susceptible-Infected-Susceptible :term:`compartmented model of disease`,
@@ -25,15 +26,15 @@ class SIS_FixedRecovery(SIS):
     with some probability.'''
     
     # the additional model parameter
-    T_INFECTED = 'epydemic.SIS_FR.tInfected'   #: Parameter for the time spent infected before becoming susceptible again.
+    T_INFECTED : Final[str] = 'epydemic.SIS_FR.tInfected'   #: Parameter for the time spent infected before becoming susceptible again.
 
     # node attribute for infection time
-    INFECTION_TIME = 'infection_time'          #: Attribute recording when a node became infected
+    INFECTION_TIME : Final[str] = 'infection_time'          #: Attribute recording when a node became infected
     
-    def __init__( self ):
+    def __init__(self):
         super(SIS_FixedRecovery, self).__init__()
 
-    def build( self, params ):
+    def build(self, params : Dict[str, Any]):
         '''Build the variant SIS model. The difference between this and the
         reference :class:`SIS` model is that only infection events happen
         probabilistically, with recovery events happening on a fixed schedule
@@ -50,7 +51,7 @@ class SIS_FixedRecovery(SIS):
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
         self.addEventPerElement(self.SI, pInfect, self.infect)
 
-    def setUp( self, params ):
+    def setUp(self, params : Dict[str, Any]):
         '''After setting up as normal, post recovery events for any nodes that are
         initially infected.
 
@@ -67,7 +68,7 @@ class SIS_FixedRecovery(SIS):
             # post the corresponding removal event
             self.postEvent(tInfected, n, self.recover)
 
-    def infect( self, t, e ):
+    def infect( self, t : float, e : Any):
         '''Perform the normal infection event, and then post an event to recover
         the infected node back to susceptible at the appropriate time.
 

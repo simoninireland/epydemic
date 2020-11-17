@@ -1,6 +1,6 @@
 # SIR with a fixed recovery time
 #
-# Copyright (C) 2017 Simon Dobson
+# Copyright (C) 2017--2020 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import SIR
+from typing import Final, Dict, Any
 
 class SIR_FixedRecovery(SIR):
     '''The Susceptible-Infected-Removed :term:`compartmented model of disease`,
@@ -25,15 +26,15 @@ class SIR_FixedRecovery(SIR):
     with some probability.'''
     
     # the additional model parameter
-    T_INFECTED = 'epydemic.SIR_FR.tInfected'    #: Parameter for the time spent infected before removal/recovery.
+    T_INFECTED : Final[str] = 'epydemic.SIR_FR.tInfected'    #: Parameter for the time spent infected before removal/recovery.
 
     # node attribute for infection time
-    INFECTION_TIME = 'infection_time'           #: Attribute recording when a node became infected
+    INFECTION_TIME : Final[str] = 'infection_time'           #: Attribute recording when a node became infected
     
-    def __init__( self ):
+    def __init__(self):
         super(SIR_FixedRecovery, self).__init__()
 
-    def build( self, params ):
+    def build(self, params : Dict[str, Any]):
         '''Build the variant SIR model. The difference between this and the
         reference :class:`SIR` model is that only infection events happen
         probabilistically, with removal events happening on a fixed schedule
@@ -51,7 +52,7 @@ class SIR_FixedRecovery(SIR):
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
         self.addFixedRateEvent(self.SI, pInfect, self.infect)
 
-    def setUp( self, params ):
+    def setUp(self, params : Dict[str, Any]):
         '''After setting up as normal, post remove events for any nodes that are
         initially infected.
 
@@ -68,7 +69,7 @@ class SIR_FixedRecovery(SIR):
             # post the corresponding removal event
             self.postEvent(tInfected, n, self.remove)
         
-    def infect( self, t, e ):
+    def infect(self, t : float, e : Any):
         '''Perform the normal infection event, and then post an event to remove the
         infected node at the appropriate time.
 
