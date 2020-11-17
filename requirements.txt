@@ -1,4 +1,4 @@
 networkx >= 2.4
-epyc
+epyc >= 1.0.1
 pandas
 numpy >= 1.18
