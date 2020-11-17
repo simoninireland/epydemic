@@ -36,12 +36,14 @@ discrete time intervals, and stochastic or Gillespie :term:`continuous
 time` simulations which are better for handling a wider range of
 :term:`event` probabilities (but which are slightly harder to
 specify).
-
 '''
+
+# helper types
+from .types import Node, Edge, Element
 
 # network processes
 from .loci import Locus
-from .process import Process
+from .process import Process, EventFunction, EventDistribution
 
 # network generators
 from .generator import NetworkGenerator
