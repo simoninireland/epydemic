@@ -35,8 +35,8 @@ having.
 The easiest way of using PyPy is to build a virtual environment and then run your ``epydemic``
 code in that.
 
-*Use ``epyc`` on a cluster*. The use of ``epyc`` means that ``epydemic`` can run the
-same experiment in parallel on a compute cluster.m This doesn't speed up each individual
+*Use a compute cluster*. The use of ``epyc`` means that ``epydemic`` can run the
+same experiment in parallel on a compute cluster. This doesn't speed up each individual
 experiment, but it allows multiple experiments to run simultaneously -- and since we're often
 doing lots of repetitions of experiments, this is a useful way of getting speedup overall.
 Of course using PyPy as well gets dual benefits: faster individual experimemts *and*
