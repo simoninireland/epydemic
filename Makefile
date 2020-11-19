@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.0.0
+VERSION = 1.1.0
 
 
 # ----- Sources -----
@@ -30,6 +30,7 @@ VERSION = 1.0.0
 SOURCES_SETUP_IN = setup.py.in
 SOURCES_CODE = \
 	epydemic/__init__.py \
+	epydemic/types.py \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
 	epydemic/stochasticdynamics.py \
@@ -214,7 +215,7 @@ diagrams:
 
 # Clean up the distribution build 
 clean:
-	$(RM) $(SOURCES_GENERATED) $(SOURCES_DIST_DIR) epyc.egg-info dist $(SOURCES_DOC_BUILD_DIR) $(SOURCES_DOC_ZIP) dist build
+	$(RM) $(SOURCES_GENERATED) $(SOURCES_DIST_DIR) epydemic.egg-info dist $(SOURCES_DOC_BUILD_DIR) $(SOURCES_DOC_ZIP) dist build
 
 # Clean up everything, including the computational environment (which is expensive to rebuild)
 reallyclean: clean

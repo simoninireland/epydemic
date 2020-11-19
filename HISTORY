@@ -1,3 +1,9 @@
+Version 1.1.0 2020-11-19
+
+   - Fixed behaviour for processes with no loci
+   - Added type annotations
+   - Re-configured to use epyc >= 1.0.1 API
+
 Version 1.0.0 2020-09-25
 
    - Refactored to add network generators
