@@ -1,4 +1,3 @@
-setuptools
 wheel
 tox
 nose
@@ -6,9 +5,9 @@ coverage
 pylint
 rope
 sphinx
-sphinx-autobuild
 doc8
 twine
 mpmath
 matplotlib
 seaborn
+mypy
