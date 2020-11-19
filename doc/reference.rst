@@ -9,6 +9,7 @@ Basic concepts and classes
 .. toctree::
    :maxdepth: 2
 
+   helper-types
    generator
    process
    loci
