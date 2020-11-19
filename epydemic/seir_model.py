@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import CompartmentedModel
+from epydemic import CompartmentedModel, Node, Edge
 from typing import Final, Dict, Any
 
 class SEIR(CompartmentedModel):
@@ -33,7 +33,7 @@ class SEIR(CompartmentedModel):
     and allowing countermeasures to be applied to symptomatic individuals whose presence
     could be more easily detected than those who are exposed by asymptomatic.
 
-    The SERI model in `epydemic` is very flexible, allowing different infection probabilities
+    The SEIR model in `epydemic` is very flexible, allowing different infection probabilities
     for susceptible-exposed or susceptible-infected interactions. The initial seed population
     is placed into :attr:`EXPOSED`, rather than into :attr:`INFECTED` as happens
     for :class:`SIR`.'''
@@ -51,7 +51,7 @@ class SEIR(CompartmentedModel):
     INFECTED : Final[str] = 'epydemic.SEIR.I'           #: Compartment for nodes symptomatic and infectious.
     REMOVED : Final[str] = 'epydemic.SEIR.R'            #: Compartment for nodes recovered/removed.
 
-    # Locus containing the edges at which dynamics can occur
+    # Loci containing the edges at which dynamics can occur
     SE : Final[str] = 'epydemic.SEIR.SE'                #: Edge able to transmit infection from an exposed individual.
     SI : Final[str] = 'epydemic.SEIR.SI'                #: Edge able to transmit infection from an infected individual.
 
@@ -85,10 +85,10 @@ class SEIR(CompartmentedModel):
         self.addEventPerElement(self.EXPOSED, pSymptoms, self.symptoms)
         self.addEventPerElement(self.INFECTED, pRemove, self.remove)
 
-    def infectAsymptomatic(self, t : float, e : Any):
+    def infectAsymptomatic(self, t : float, e : Node):
         '''Perform an infection event when an :attr:`EXPOSED` individual infects
         a neighbouring :attr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.  
-        The default calls :meth:`infect` so that infections by way of exposed ir
+        The default calls :meth:`infect` so that infections by way of exposed or
         symptomatic individuals are treated in the same way. Sub-classes can override this
         to, for example, record that the infection was passed asymptomatically.
 
@@ -96,7 +96,7 @@ class SEIR(CompartmentedModel):
         :param e: the edge transmitting the infection'''
         self.infect(t, e)
 
-    def infect(self, t : float, e : Any):
+    def infect(self, t : float, e : Edge):
         '''Perform an infection event when an :attr:`INFECTED` individual infects
         a neighbouring :attr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.  
         
@@ -106,7 +106,7 @@ class SEIR(CompartmentedModel):
         self.changeCompartment(n, self.EXPOSED)
         self.markOccupied(e, t)
 
-    def symptoms(self, t : float, n : Any):
+    def symptoms(self, t : float, n : Node):
         '''Perform the symptoms-developing event. This changes the compartment of
         the node to :attr:`INFECTED`.
 
@@ -114,7 +114,7 @@ class SEIR(CompartmentedModel):
         :param n: the node'''
         self.changeCompartment(n, self.INFECTED)
 
-    def remove(self, t : float, n : Any):
+    def remove(self, t : float, n : Node):
         '''Perform a removal event. This changes the compartment of
         the node to :attr:`REMOVED`.
 
