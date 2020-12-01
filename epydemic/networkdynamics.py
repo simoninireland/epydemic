@@ -219,7 +219,10 @@ class Dynamics(Experiment):
 
         :param p: the process
         :returns: a list of (locus, probability, event function) triples"""
-        return self._perElementEvents[p]
+        if p in self._perElementEvents:
+            return self._perElementEvents[p]
+        else:
+            return []
 
     def addFixedRateEvent(self, p : Process, l : Union[str, Locus], pr : float, ef : EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
@@ -238,7 +241,10 @@ class Dynamics(Experiment):
 
         :param p: the process
         :returns: a list of (locus, probability, event function) triples"""
-        return self._perLocusEvents[p]
+        if p in self._perElementEvents:
+            return self._perLocusEvents[p]
+        else:
+            return []
 
 
     # ---------- Posted events (occurring at a fixed time) ----------
