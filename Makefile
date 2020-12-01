@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.1.0
+VERSION = 1.1.1
 
 
 # ----- Sources -----
@@ -46,6 +46,7 @@ SOURCES_CODE = \
 	epydemic/sirs_model.py \
 	epydemic/seir_model.py \
 	epydemic/adddelete.py \
+	epydemic/percolate.py \
 	epydemic/monitor.py
 
 SOURCES_TESTS = \

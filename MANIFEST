@@ -21,4 +21,5 @@ epydemic/sis_model_fixed_recovery.py
 epydemic/sirs_model.py
 epydemic/seir_model.py
 epydemic/adddelete.py
+epydemic/percolate.py
 epydemic/monitor.py
