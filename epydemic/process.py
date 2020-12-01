@@ -23,8 +23,9 @@ from networkx import Graph
 from typing import Dict, List, Tuple, Any, Callable, Iterable, Union
 
 # There is a circular import between Process and Dynamics at the typing level
-# (but not at the execution level). To deal with this we only import Dynamics in
-# order to type-check Process, and not for execution.
+# (but not at the execution level), when providing types for dynamics() and
+# setDynamics(). To deal with this we only import Dynamics in order to
+# type-check Process, and not for execution.
 # (See https://www.stefaanlippens.net/circular-imports-type-hints-python.html)
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
