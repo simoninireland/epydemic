@@ -38,7 +38,9 @@ to create loci for them too. The resulting class is:
 
 .. code-block:: python
 
-   class MonitoredSIR(epydemic.SIR, epydemic.Monitor):
+    from epydemic import SIR, Monitor, ERNetwork, StochasticDynamics
+
+    class MonitoredSIR(SIR, Monitor):
 
         def __init__(self):
             super(MonitoredSIR, self).__init__()
@@ -51,30 +53,29 @@ to create loci for them too. The resulting class is:
             super(MonitoredSIR, self).setUp(params)
 
             # add loci for the other compartments 
-            self.trackNodesInCompartment(epydemic.SIR.SUSCEPTIBLE)
-            self.trackNodesInCompartment(epydemic.SIR.REMOVED)
+            self.trackNodesInCompartment(SIR.SUSCEPTIBLE)
+            self.trackNodesInCompartment(SIR.REMOVED)
 
 We can then use ``epydemic`` to run this process using the same parameters as we used for the
 continuous-domain experiment:
 
 .. code-block:: python
 
+   params = dict()
+
    # use an ER network as the substrate
-   N = 10000
-   kmean = 3
-   phi = kmean / N
-   g = networkx.erdos_renyi_graph(N, phi)
+   params[ERNetwork.N] = 10000
+   params[ERNetwork.KMEAN] = 3
 
    # set the parameters the same as above
-   params = dict()
-   params[epydemic.SIR.P_INFECT] = 0.02    # infection probability
-   params[epydemic.SIR.P_REMOVE] = 0.002   # recovery probability
-   params[epydemic.SIR.P_INFECTED] = 0.01  # initial fraction infected
+   params[SIR.P_INFECT] = 0.02    # infection probability
+   params[SIR.P_REMOVE] = 0.002   # recovery probability
+   params[epydic.SIR.P_INFECTED] = 0.01  # initial fraction infected
 
    # capture every 10 timesteps
-   params[epydemic.Monitor.DELTA] = 10
+   params[Monitor.DELTA] = 10
 
-   e = epydemic.StochasticDynamics(MonitoredSIR(), g = g)
+   e = StochasticDynamics(MonitoredSIR(), g=ERNetwork())
    e.process().setMaximumTime(1000)
    rc = e.set(params).run()
 
