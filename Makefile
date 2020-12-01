@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.1.1
+VERSION = 1.2.0
 
 
 # ----- Sources -----
@@ -63,7 +63,8 @@ SOURCES_TESTS = \
 	test/test_sirs.py \
 	test/test_seir.py \
 	test/test_adddelete.py \
-	test/test_adddeletesir.py
+	test/test_adddeletesir.py \
+	test/test_percolate.py
 TESTSUITE = test
 
 SOURCES_DOC_CONF = doc/conf.py
@@ -90,6 +91,7 @@ SOURCES_DOCUMENTATION = \
 	doc/sirs.rst \
 	doc/seir.rst \
 	doc/adddelete.rst \
+	doc/percolate.rst \
 	doc/tutorial.rst \
 	doc/tutorial/simulation.rst \
 	doc/tutorial/use-standard-model.rst \

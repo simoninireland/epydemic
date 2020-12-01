@@ -69,4 +69,5 @@ from .sis_model_fixed_recovery import SIS_FixedRecovery
 
 # other processes
 from .adddelete import AddDelete
+from .percolate import Percolate
 from .monitor import Monitor
