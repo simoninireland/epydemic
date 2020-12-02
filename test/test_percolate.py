@@ -38,7 +38,7 @@ class CaptureResidualNetwork(StochasticDynamics):
 class PercolationTest(unittest.TestCase):
 
     def testProduceER(self):
-        '''Test the a percolation process on a complete network creates an ER network.'''
+        '''Test that a percolation process on a complete network creates an ER network.'''
         N = 2000
         kmean = 15
         phi =  kmean / N
@@ -56,12 +56,6 @@ class PercolationTest(unittest.TestCase):
         self.assertEqual(rg.order(), g.order())
         rg_kmean = numpy.mean(list(map(lambda nd: nd[1], list(rg.degree()))))
         self.assertAlmostEqual(rg_kmean, kmean, places=0)
-
-
-    
-
-
-
 
 
 if __name__ == '__main__':
