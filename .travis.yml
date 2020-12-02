@@ -3,6 +3,10 @@ language: python
 python:
   - "3.8"
 
+branches:
+  only:
+    - master
+  
 env:
   - TEST_SUITE="adddelete"
   - TEST_SUITE="compartmentedmodel"
@@ -19,7 +23,6 @@ env:
   - TEST_SUITE="loci"
   - TEST_SUITE="adddelete"
   - TEST_SUITE="percolate"
-
 
 install:
     - pip install -r requirements.txt
