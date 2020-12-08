@@ -19,7 +19,13 @@
 
 from epydemic import Process, Edge
 import numpy                      # type: ignore
-from typing import Final, Dict, Any, List
+import sys
+if sys.version_info >= (3, 7):
+    from typing import Final, Dict, Any, List
+else:
+    # backport compatibility with older typing
+    from typing import Dict, Any, List
+    from typing_extensions import Final
 
 
 class Percolate(Process):

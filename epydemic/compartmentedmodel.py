@@ -22,6 +22,13 @@ from networkx import Graph
 import math
 import numpy
 from typing import Dict, Any, List, Final, Tuple, Callable
+import sys
+if sys.version_info >= (3, 7):
+    from typing import Dict, Any, List, Final, Tuple, Callable
+else:
+    # backport compatibility with older typing
+    from typing import Dict, Any, List, Tuple, Callable
+    from typing_extensions import Final
 
 # Helper types
 Handlers = Tuple[Callable[[Graph, Element], None],   # add handler

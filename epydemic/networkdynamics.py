@@ -21,7 +21,13 @@ from epydemic import Locus, Process, NetworkGenerator, FixedNetwork, EventFuncti
 from epyc import Experiment
 from networkx import Graph
 from heapq import heappush, heappop
-from typing import Union, Final, Dict, List, Any, Optional, Tuple, Callable, cast
+import sys
+if sys.version_info >= (3, 7):
+    from typing import Union, Final, Dict, List, Any, Optional, Tuple, Callable, cast
+else:
+    # backport compatibility with older typing
+    from typing import Union, Dict, List, Any, Optional, Tuple, Callable, cast
+    from typing_extensions import Final
 
 # Event types (not exported outside this file)
 PostedEventFunction = Callable[[], None]

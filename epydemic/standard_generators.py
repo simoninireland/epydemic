@@ -19,7 +19,13 @@
 
 from epydemic import NetworkGenerator
 from networkx import Graph, fast_gnp_random_graph, barabasi_albert_graph
-from typing import Any, Dict, Optional, Final
+import sys
+if sys.version_info >= (3, 7):
+    from typing import Any, Dict, Optional, Final
+else:
+    # backport compatibility with older typing
+    from typing import Any, Dict, Optional
+    from typing_extensions import Final
 
 class FixedNetwork(NetworkGenerator):
     '''A network generator that always returns a copy of the same network.

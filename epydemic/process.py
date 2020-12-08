@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from __future__ import annotations            # needed to solve circular imports
 from epydemic import Locus, Node, Edge, Element
 from networkx import Graph
 from typing import Dict, List, Tuple, Any, Callable, Iterable, Union
@@ -103,13 +102,13 @@ class Process(object):
         :returns: the network"""
         return self._g
 
-    def setDynamics(self, d : Dynamics):
+    def setDynamics(self, d : 'Dynamics'):
         '''Set the instance of :class:`Dynamics` that runs the process.
 
         :param d: the dynamics'''
         self._dynamics = d
 
-    def dynamics(self) -> Dynamics:
+    def dynamics(self) -> 'Dynamics':
         '''Return the instance of :class:`Dynamics` running this process.
 
         :returns: the dynamics'''

@@ -21,7 +21,13 @@ from epydemic import Dynamics, Process, NetworkGenerator
 from networkx import Graph
 import numpy                     # type: ignore
 from copy import copy
-from typing import Dict, Any, Final, Union
+import sys
+if sys.version_info >= (3, 7):
+    from typing import Any, Dict, Union, Final
+else:
+    # backport compatibility with older typing
+    from typing import Any, Dict, Union
+    from typing_extensions import Final
 
 class SynchronousDynamics(Dynamics):
     '''A dynamics that runs synchronously in discrete time, applying local

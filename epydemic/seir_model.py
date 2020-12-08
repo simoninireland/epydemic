@@ -18,7 +18,13 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import CompartmentedModel, Node, Edge
-from typing import Final, Dict, Any
+import sys
+if sys.version_info >= (3, 7):
+    from typing import Final, Dict, Any
+else:
+    # backport compatibility with older typing
+    from typing import Dict, Any
+    from typing_extensions import Final
 
 class SEIR(CompartmentedModel):
     '''The Susceptible-Exposed-Infected-Removed :term:`compartmented model of disease`.
