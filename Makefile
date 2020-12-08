@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.2.0
+VERSION = 1.2.1
 
 
 # ----- Sources -----
@@ -163,8 +163,11 @@ VENV = .venv
 REQUIREMENTS = requirements.txt
 DEV_REQUIREMENTS = dev-requirements.txt
 
+# Requirements for setup.py
+# Note we elide dependencies to do with backporting the type-checking
+PY_REQUIREMENTS = $(shell $(SED) -e '/^typing_extensions/d' -e 's/^\(.*\)/"\1",/g' $(REQUIREMENTS) | $(TR) '\n' ' ')
+
 # Constructed commands
-PY_REQUIREMENTS = $(shell $(SED) -e 's/^\(.*\)/"\1",/g' $(REQUIREMENTS) | $(TR) '\n' ' ')
 RUN_TESTS = $(TOX)
 RUN_COVERAGE = $(COVERAGE) erase && $(COVERAGE) run -a setup.py test && $(COVERAGE) report -m --include '$(PACKAGENAME)*'
 RUN_SETUP = $(PYTHON) setup.py
