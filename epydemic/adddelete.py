@@ -18,7 +18,14 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import Process, Node, Element
-from typing import Any, Dict, Any, Final
+import sys
+if sys.version_info >= (3, 7):
+    from typing import Any, Dict, Final
+else:
+    # backport compatibility with older typing
+    from typing import Any, Dict
+    from typing_extensions import Final
+
 
 class AddDelete(Process):
     '''A process to manage an addition-deletion network, in which nodes are added
