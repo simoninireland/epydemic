@@ -23,7 +23,7 @@ with open('README.rst') as f:
     longDescription = f.read()
 
 setup(name = 'epydemic',
-      version = '1.1.1',
+      version = '1.2.1',
       description = 'Epidemic network simulations in Python',
       long_description = longDescription,
       url = 'http://github.com/simoninireland/epydemic',
@@ -33,9 +33,15 @@ setup(name = 'epydemic',
       classifiers = [ 'Development Status :: 4 - Beta',
                       'Intended Audience :: Science/Research',
                       'Intended Audience :: Developers',
+                      'Programming Language :: Python :: 3.5',
+                      'Programming Language :: Python :: 3.6',
+                      'Programming Language :: Python :: 3.7',
                       'Programming Language :: Python :: 3.8',
                       'Topic :: Scientific/Engineering' ],
+      python_requires = '>=3.5',
       packages = [ 'epydemic' ],
       package_data = { 'epydemic': [ 'py.typed' ] },
       zip_safe = False,
-      install_requires = [ "networkx >= 2.4", "epyc >= 1.0.1", "pandas", "numpy >= 1.18",  ])
+      install_requires = [ "networkx >= 2.4", "epyc >= 1.2.1", "pandas", "numpy >= 1.18",  ],
+      extra_requires = { ':python_version < 3.7': [ 'typing_extensions' ] },
+)
