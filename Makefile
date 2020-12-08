@@ -235,7 +235,7 @@ MANIFEST: Makefile
 	echo  $(SOURCES_EXTRA) $(SOURCES_GENERATED) $(SOURCES_CODE) | $(TR) ' ' '\n' >$@
 
 # The setup.py script
-setup.py: $(SOURCES_SETUP_IN) Makefile
+setup.py: $(SOURCES_SETUP_IN) $(REQUIREMENTS) Makefile
 	$(CAT) $(SOURCES_SETUP_IN) | $(SED) -e 's|VERSION|$(VERSION)|g' -e 's|REQUIREMENTS|$(PY_REQUIREMENTS)|g' >$@
 
 # The source distribution tarball
