@@ -47,7 +47,7 @@ an experiment management package that handles running different simulations, eit
 Current features
 ----------------
 
-* Compatible with Python 3.7 and later, as well as with PyPy
+* Compatible with Python 3.5 and later, as well as with PyPy3
 
 * Supports both discrete-time :term:`synchronous dynamics` and continuous-time
   :term:`stochastic dynamics` (Gillespie simulation)
@@ -67,6 +67,10 @@ Current features
 
 * Integrated with ``epyc``'s labs and experiments, including execution in parallel
   on compute clusters for doing simulations at scale
+
+* Fully compatible with ``jupyter`` notebooks and labs
+
+* Annotated with ``typing`` type annotations
 
 
 .. toctree::
