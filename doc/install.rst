@@ -4,7 +4,7 @@ Installation
 In a nutshell
 -------------
 
-**Pythons**: 3.5 or later, and PyPy3
+**Pythons**: 3.6 or later, and PyPy3
 
 **Operating systems**: Linux, OS X
 
