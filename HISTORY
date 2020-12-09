@@ -1,12 +1,12 @@
 Version 1.2.1
 
    - Added percolation process
-   - Backported to support versions of Pythin from 3.5, and hence also PyPy3
+   - Backported to support versions of Python from 3.6, and hence also PyPy3
    
 Version 1.1.1 2020-12-01
 
    - Removed support for Python 3.6 and 3.7 (since we need the annotations
-     future and types features only supported fro Python 3.8)
+     future and types features only supported from Python 3.8)
 
 
 Version 1.1.0 2020-11-19
