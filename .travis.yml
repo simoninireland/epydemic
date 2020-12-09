@@ -9,6 +9,7 @@ python:
 branches:
   only:
     - master
+    - dev
   
 env:
   - TEST_SUITE="adddelete"
