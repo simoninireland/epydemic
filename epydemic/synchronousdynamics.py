@@ -22,7 +22,7 @@ from networkx import Graph
 import numpy                     # type: ignore
 from copy import copy
 import sys
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 8):
     from typing import Any, Dict, Union, Final
 else:
     # backport compatibility with older typing

@@ -19,7 +19,7 @@
 
 from epydemic import Process, Node, Element
 import sys
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 8):
     from typing import Any, Dict, Final
 else:
     # backport compatibility with older typing

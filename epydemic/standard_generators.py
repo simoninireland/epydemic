@@ -20,7 +20,7 @@
 from epydemic import NetworkGenerator
 from networkx import Graph, fast_gnp_random_graph, barabasi_albert_graph
 import sys
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 8):
     from typing import Any, Dict, Optional, Final
 else:
     # backport compatibility with older typing

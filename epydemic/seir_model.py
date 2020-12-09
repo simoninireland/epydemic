@@ -19,7 +19,7 @@
 
 from epydemic import CompartmentedModel, Node, Edge
 import sys
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 8):
     from typing import Final, Dict, Any
 else:
     # backport compatibility with older typing

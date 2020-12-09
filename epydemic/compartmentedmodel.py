@@ -17,13 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Locus, Process, Node, Edge, Element, EventFunction
+from epydemic import Locus, Process, Node, Edge, Element
 from networkx import Graph
 import math
 import numpy
-from typing import Dict, Any, List, Final, Tuple, Callable
 import sys
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 8):
     from typing import Dict, Any, List, Final, Tuple, Callable
 else:
     # backport compatibility with older typing

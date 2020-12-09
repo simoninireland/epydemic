@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-#from __future__ import annotations               # needed for self-returning types
 from networkx import Graph
 from typing import Dict, Any, Optional, cast
 

@@ -22,7 +22,7 @@ from epyc import Experiment
 from networkx import Graph
 from heapq import heappush, heappop
 import sys
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 8):
     from typing import Union, Final, Dict, List, Any, Optional, Tuple, Callable, cast
 else:
     # backport compatibility with older typing
