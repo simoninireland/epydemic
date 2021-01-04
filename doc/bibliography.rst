@@ -66,6 +66,12 @@ M.E.J. Newman. `Spread of epidemic disease on networks
 <http://dx.doi.org/10.1103/PhysRevE.66.016128>`_. Physical Review E
 **66**. July 2002.
 
+.. _NZ00:
+
+M.E.J. Newman and R.M. Ziff. `Efficient Monte Carlo algorithm and high-precision results
+for percolation <https://doi.org/10.1103/PhysRevLett.85.4104>`_. Physical Review Letters **85**.
+November 2000.
+
 .. _SD13:
 
 Saray Shai and Simon Dobson. `Coupled adaptive complex networks
