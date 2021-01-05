@@ -40,7 +40,7 @@ class Process(object):
     process. Sub-classes provide the actual behaviour by defining simulation events and
     attaching them to the network in different ways.
 
-    A process defines is largely declarative, in the sense that it sets up event handlers
+    A process definition is largely declarative, in the sense that it sets up event handlers
     and their probabilities. These are used by a process dynamics (a sub-class of :class:`Dynamics`)
     to actually run a simulation of the process.
 

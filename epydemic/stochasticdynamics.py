@@ -27,7 +27,10 @@ from typing import Dict, Any, Union
 class StochasticDynamics(Dynamics):
     '''A dynamics that runs stochastically in :term:`continuous time`. This is a
     very efficient and statistically exact approach, but requires that the
-    statistical properties of the events making up the process are known.
+    statistical properties of the events making up the process are known. See
+    :ref:`Gillespie 1976 <Gil76>` and :ref:`Gillespie 1977 <Gil77>` for a discussion
+    of the technique.
+      
 
     :param p: the process to run
     :param g: network or network generator (optional, can be provided later)'''
