@@ -48,6 +48,7 @@ from .process import Process, EventFunction, EventDistribution
 # network generators
 from .generator import NetworkGenerator
 from .standard_generators import FixedNetwork, ERNetwork, BANetwork
+from .plc_generator import PLCNetwork
 
 # networks with dynamical processes
 from .networkexperiment import NetworkExperiment
@@ -72,3 +73,6 @@ from .sis_model_fixed_recovery import SIS_FixedRecovery
 from .adddelete import AddDelete
 from .percolate import Percolate
 from .monitor import Monitor
+
+# other experiments
+from .newmanziff import NewmanZiffPercolation

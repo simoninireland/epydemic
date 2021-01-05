@@ -1,6 +1,6 @@
 .. _model-human-population:
 
-.. currentmodule:: epydemic
+.. currentmodule :: epydemic
 
 Modelling human contact networks
 ================================
@@ -10,6 +10,10 @@ Modelling human contact networks
 **Solution**: This is an active area of research, but a common answer is to use the approach given by
 :ref:`Newman <New02>`, which is to use a powerlaw network with exponential cut-off. 
 
+.. note ::
+
+    This class of network is now built-in to ``epydemic`` in the form of the :class:`PLCNetwork`
+    network generator. The details below explain how this class of networks is constructed.
 
 The theory
 ----------
@@ -71,14 +75,14 @@ this class of network:
 
     def PowerLawWithCutoffNetwork(epydemic.NetworkGenerator):
 
-        N = 'hcn,n'           #: Experimental parameter for the order of the network
-        ALPHA = 'hcn,alpha'   #: Experimental parameter for the exponent of the distribution
+        N = 'hcn.N'           #: Experimental parameter for the order of the network
+        ALPHA = 'hcn.alpha'   #: Experimental parameter for the exponent of the distribution
         KAPPA = 'hcn.kappa'   #: Experimewntal parameter for the cutoff of the distribution
 
         def __init__(self, params=None, limit=None):
             super(PowerLawWithCutoffNetwork, self).__init__(params, limit)
 
-        def _makePowerlawWithCutoff( self, alpha, kappa ):
+        def _makePowerlawWithCutoff(self, alpha, kappa):
             '''Create a model function for a powerlaw distribution with exponential cutoff.
 
             :param alpha: the exponent of the distribution
@@ -89,7 +93,7 @@ this class of network:
                 return (pow((k + 0.0), -alpha) * math.exp(-(k + 0.0) / kappa)) / C
             return p
 
-        def _generateFrom( self, N, p, maxdeg = 100 ):
+        def _generateFrom(self, N, p, maxdeg=100):
             '''Generate a random graph with degree distribution described
             by a model function.
 

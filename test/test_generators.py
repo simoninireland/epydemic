@@ -1,6 +1,6 @@
 # Test standard network generators
 #
-# Copyright (C) 2020 Simon Dobson
+# Copyright (C) 2017--2021 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Process, Dynamics,FixedNetwork, ERNetwork, BANetwork
+from epydemic import Process, Dynamics,FixedNetwork, ERNetwork, BANetwork, PLCNetwork
 import unittest
 import networkx
 
@@ -104,5 +104,14 @@ class GeneratorTest(unittest.TestCase):
         gen = BANetwork(param)
         _ = gen.generate()
         
+    def testPLC(self):
+        '''Test we can  generate PLC networks.'''
+        param = dict()
+        param[PLCNetwork.N] = 1000
+        param[PLCNetwork.EXPONENT] = 2
+        param[PLCNetwork.CUTOFF] = 10
+        gen = PLCNetwork(param)
+        _ = gen.generate()
+
 if __name__ == '__main__':
     unittest.main()

@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.2.1
+VERSION = 1.3.1
 
 
 # ----- Sources -----
@@ -37,6 +37,7 @@ SOURCES_CODE = \
 	epydemic/stochasticdynamics.py \
 	epydemic/generator.py \
 	epydemic/standard_generators.py \
+	epydemic/plc_generator.py \
 	epydemic/loci.py \
 	epydemic/process.py \
 	epydemic/compartmentedmodel.py \

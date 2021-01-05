@@ -37,11 +37,24 @@ that are used commonly in experimental network science.
 
 .. autoclass :: BANetwork
 
-.. note ::
-
-    For the closely-related class of networks having their powerlaw distribution cut-off at some
-    maximum degree, see :ref:`model-human-population`.
-
 .. autoattribute :: BANetwork.N
 
 .. autoattribute :: BANetwork.M
+
+
+
+:class:`PLCNetwork`: Random networks with powerlaw-distributed node degrees and an exponential cutoff
+-----------------------------------------------------------------------------------------------------
+
+.. autoclass :: PLCNetwork
+
+.. note ::
+
+    Using this class of networks for human populations is discussed in :ref:`model-human-population`.
+
+.. autoattribute :: PLCNetwork.N
+
+.. autoattribute :: PLCNetwork.EXPONENT
+
+.. autoattribute :: PLCNetwork.CUTOFF
+
