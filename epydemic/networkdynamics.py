@@ -1,6 +1,6 @@
 # Networks dynamics simulation base class
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2021 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,16 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Locus, Process, NetworkGenerator, FixedNetwork, EventFunction, EventDistribution, Element
-from epyc import Experiment
+from epydemic import NetworkExperiment, Locus, Process, NetworkGenerator, EventFunction, EventDistribution, Element
 from networkx import Graph
 from heapq import heappush, heappop
 import sys
 if sys.version_info >= (3, 8):
-    from typing import Union, Final, Dict, List, Any, Optional, Tuple, Callable, cast
+    from typing import Union, Final, Dict, List, Any, Optional, Tuple, Callable
 else:
     # backport compatibility with older typing
-    from typing import Union, Dict, List, Any, Optional, Tuple, Callable, cast
+    from typing import Union, Dict, List, Any, Optional, Tuple, Callable
     from typing_extensions import Final
 
 # Event types (not exported outside this file)
@@ -34,10 +33,11 @@ PostedEventFunction = Callable[[], None]
 PostedEvent = Tuple[float, int, PostedEventFunction]
 
 
-class Dynamics(Experiment):
+class Dynamics(NetworkExperiment):
     '''An abstract simulation framework for running a process over a network.
+
     This is the abstract base class
-    for implementing different kinds of dynamics as computational experiments
+    for implementing different kinds of network process dynamics as computational experiments
     suitable for running under ``epyc``. Sub-classes provide synchronous and stochastic
     (Gillespie) simulation dynamics.
 
@@ -54,15 +54,9 @@ class Dynamics(Experiment):
     EVENTS : Final[str] = 'epydemic.Dynamics.events'  #: Metadata element holding the number of events that happened.
 
     def __init__(self, p : Process, g : Union[Graph, NetworkGenerator] =None):
-        super(Dynamics, self).__init__()
-
-        # turn a literal network into a network generator
-        if isinstance(g, Graph):
-            g = FixedNetwork(g)
+        super(Dynamics, self).__init__(g)
 
         # initialise other fields
-        self._generator = cast(NetworkGenerator, g)                         # network generator
-        self._graph : Graph = None                                          # working network instance
         self._eventId : int = 0                                             # counter for posted events
         self._process : Process = p                                         # network process to run
         self._process.setDynamics(self)                                     # back-link from process to dynamics (for events)
@@ -74,32 +68,6 @@ class Dynamics(Experiment):
 
 
     # ---------- Configuration ----------
-
-    def network(self) -> Graph:
-        '''Return the network this dynamics is running over. This will return None
-        unless we're actually running a simulation.
-
-        :returns: the network'''
-        return self._graph
-
-    def setNetworkGenerator(self, g : Union[Graph, NetworkGenerator]):
-        '''Set the network or generator for the networks the dynamics will run over. The generator
-        should be an instance of :class:`NetworkGenerator` and is sampled from :meth:`setUp` to
-        create a new network instance for each experiment.
-        
-        If a network is supplied rather than a generator it will be treated as an
-        instance of :class:`FixedNetwork`.
-
-        :param g: network or network generator'''
-        if isinstance(g, Graph):
-            g = FixedNetwork(g)
-        self._generator = g
-
-    def networkGenerator(self) -> NetworkGenerator:
-        '''Return the generator used for this dynamics.
-
-        :returns: the generator'''
-        return self._generator
 
     def process(self) -> Process:
         '''Return the network process being run.
@@ -122,13 +90,10 @@ class Dynamics(Experiment):
 
     def setUp(self, params : Dict[str, Any]):
         '''Set up the experiment for a run. This performs the inherited actions, then
-        creates a working network and builds the network process that the dynamics is to run.
+        builds the network process that the dynamics is to run.
 
         :params params: the experimental parameters'''
         super(Dynamics, self).setUp(params)
-
-        # generate a working network instance
-        self._graph = self.networkGenerator().set(params).generate()
 
         # set up the event stream
         self._loci = dict()
@@ -145,12 +110,9 @@ class Dynamics(Experiment):
         self._process.setUp(params)
 
     def tearDown(self):
-        '''At the end of each experiment, throw away the copy and any posted by un-executed events.'''
+        '''At the end of each experiment, throw away any posted by un-executed events.'''
         self._process.tearDown()
         super(Dynamics, self).tearDown()
-        
-        # throw away the worked-on network and any posted events that weren't run
-        self._graph = None
         self._postedEvents= []
 
 

@@ -50,6 +50,7 @@ from .generator import NetworkGenerator
 from .standard_generators import FixedNetwork, ERNetwork, BANetwork
 
 # networks with dynamical processes
+from .networkexperiment import NetworkExperiment
 from .networkdynamics import Dynamics
 from .synchronousdynamics import SynchronousDynamics
 from .stochasticdynamics import StochasticDynamics

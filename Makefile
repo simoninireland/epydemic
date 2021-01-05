@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017--2020 Simon Dobson
+# Copyright (C) 2017--2021 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -31,6 +31,7 @@ SOURCES_SETUP_IN = setup.py.in
 SOURCES_CODE = \
 	epydemic/__init__.py \
 	epydemic/types.py \
+	epydemic/networkexperiment.py \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
 	epydemic/stochasticdynamics.py \
@@ -48,7 +49,6 @@ SOURCES_CODE = \
 	epydemic/adddelete.py \
 	epydemic/percolate.py \
 	epydemic/monitor.py
-
 SOURCES_TESTS = \
 	test/__init__.py \
 	test/test_networkdynamics.py \
@@ -201,7 +201,7 @@ env: $(VENV)
 $(VENV):
 	$(VIRTUALENV) $(VENV)
 	$(CAT) $(REQUIREMENTS) $(DEV_REQUIREMENTS) >$(VENV)/requirements.txt
-	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
+	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -U pip && $(PIP) install -r requirements.tx
 
 # Build a source distribution
 sdist: $(DIST_SDIST)
