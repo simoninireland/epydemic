@@ -67,7 +67,7 @@ API documentation for `epydemic` is available on `ReadTheDocs <https://pyepydemi
 Author and license
 ------------------
 
-Copyright (c) 2017-2020, Simon Dobson <simon.dobson@computer.org>
+Copyright (c) 2017-2020, Simon Dobson <simoninireland@gmail.com>
 
 Licensed under the `GNU General Public License v2 or later (GPLv2+) <http://www.gnu.org/licenses/gpl.html>`_.
 
