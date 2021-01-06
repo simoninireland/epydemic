@@ -32,6 +32,17 @@ else:
 
 
 class PLCNetwork(NetworkGenerator):
+    '''A generator for networks with a powerlaw-with-cutoff degree distribution.
+
+    PLC networks are commonly used to represent the basic structure of human contact
+    networks, where we want to cutoff the degree to stop it becoming "too high" to
+    be credible: :ref:`Newman <New02>` (and other works) use this topology extensively.
+    It is characterised by two parameters, the exponent of the power law and the
+    cutoff maximum degree after which the probability of finding nodes with larger degrees
+    falls off exponentially. 
+
+    :param params: (optional) experimental parameters
+    :param limit: (optional) maximum number of independent networks to generate'''
 
     # Experimental parameters
     N : Final[str] = 'epydemic.generators.PLCNetwork.N'                 #: Experimental parameter for the order of the network.
