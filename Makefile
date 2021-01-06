@@ -49,7 +49,8 @@ SOURCES_CODE = \
 	epydemic/seir_model.py \
 	epydemic/adddelete.py \
 	epydemic/percolate.py \
-	epydemic/monitor.py
+	epydemic/monitor.py \
+	epydemic/newmanziff.py
 SOURCES_TESTS = \
 	test/__init__.py \
 	test/test_networkdynamics.py \
@@ -65,7 +66,8 @@ SOURCES_TESTS = \
 	test/test_seir.py \
 	test/test_adddelete.py \
 	test/test_adddeletesir.py \
-	test/test_percolate.py
+	test/test_percolate.py \
+	test/test_newmanziff.py
 TESTSUITE = test
 
 SOURCES_DOC_CONF = doc/conf.py
