@@ -95,6 +95,7 @@ SOURCES_DOCUMENTATION = \
 	doc/seir.rst \
 	doc/adddelete.rst \
 	doc/percolate.rst \
+	doc/newmanziff.rst  \
 	doc/tutorial.rst \
 	doc/tutorial/simulation.rst \
 	doc/tutorial/use-standard-model.rst \
