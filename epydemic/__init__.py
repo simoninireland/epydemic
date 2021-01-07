@@ -75,4 +75,4 @@ from .percolate import Percolate
 from .monitor import Monitor
 
 # other experiments
-from .newmanziff import NewmanZiffPercolation
+from .newmanziff import BondPercolation, SitePercolation
