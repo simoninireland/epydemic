@@ -25,7 +25,7 @@ from typing import Union, Dict, Any, cast
 
 class NetworkExperiment(Experiment):
     '''A very lightweight base class for providing a network
-    to am `epyc` experiment. The network can either be a fixed network
+    to an `epyc` experiment. The network can either be a fixed network
     used for each experimental run, or a network generator that will be 
     used to generate a new instance for each run.
     
