@@ -1,16 +1,17 @@
 :class:`Dynamics`: Process dynamics over networks
 =================================================
 
-.. currentmodule:: epydemic
+.. currentmodule :: epydemic
 
-.. autoclass:: Dynamics
+.. autoclass :: Dynamics
    :show-inheritance:
 
 
 In use
 ------
 
-A :class:`Dynamics` object is an instance of `epyc.Experiment`, and
+A :class:`Dynamics` object is an instance of :class:`NetworkExperiment`
+which is turn an `epyc` experiment, and
 hence can be run either stand-alone or as part of a larger planned
 experimental protocol. Each simulation is parameterised by a dict
 providing the parameters used to condition the simulation, typically
@@ -21,7 +22,7 @@ method (inherited from `epyc.Experiment`), passing a dict of
 parameters. The network dynamics then performs a single simulation
 according to the following process:
 
-* The :meth:`Dynamics.setUp` method uses the network generator to 
+* The :meth:`Dynamics.setUp` method uses :meth:`NetworkExperiment.setUp` to 
   create a working network. It then lets the :class:`Process`
   configure the working copy: it calls :meth:`Process.reset` to reset
   the process, sets its working network by calling :meth:`Process.setNetwork`,
@@ -31,9 +32,9 @@ according to the following process:
   a dict of experimental results. This method is overridden by sub-classes
   to define the style of simulation being performed.
 * The :meth:`Dynamics.tearDown` method is called to clean-up the simulation
-  class, typically destroying the working network instance
+  class, using :meth:`NetworkExperiment.tearDown` to destroy the working network.
 
-This decomposition is very flexible. At its simplest, a network takes
+This decomposition is very flexible. At its simplest, a dynamics takes
 a fixed prototype network as a parameter to its construction and copies it
 for every run. More complex use cases supply an instance of
 :class:`NetworkGenerator` that samples from a class of random networks defined
@@ -57,12 +58,7 @@ Configuring the simulation
 --------------------------
 
 A :class:`Dynamics` object runs the process it describes over a
-network. A new working network is created for each run so that any manipulations or labelling
-the experiment caries out are torn down before the next run.
-
-.. automethod:: Dynamics.setNetworkGenerator
-
-.. automethod:: Dynamics.network
+network. 
 
 .. automethod:: Dynamics.process
 
