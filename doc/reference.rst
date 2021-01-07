@@ -6,13 +6,14 @@ API reference
 Basic concepts and classes
 --------------------------
 
-.. toctree::
+.. toctree ::
    :maxdepth: 2
 
    helper-types
    generator
    process
    loci
+   networkexperiment
    networkdynamics
    compartmentedmodel
 
@@ -20,7 +21,7 @@ Basic concepts and classes
 Dynamics: How processes are simulated
 -------------------------------------
 
-.. toctree::
+.. toctree ::
    :maxdepth: 2
 
    synchronousdynamics
@@ -30,7 +31,7 @@ Dynamics: How processes are simulated
 Reference epidemic disease processes
 ------------------------------------
 
-.. toctree::
+.. toctree ::
    :maxdepth: 2
 
    sir
@@ -41,7 +42,7 @@ Reference epidemic disease processes
 Epidemic disease process variants
 ---------------------------------
 
-.. toctree::
+.. toctree ::
    :maxdepth: 2
 
    sir_fixed_recovery
@@ -52,18 +53,27 @@ Epidemic disease process variants
 Other network processes
 -----------------------
 
-.. toctree::
+.. toctree ::
    :maxdepth: 2
 
    adddelete
    percolate
    monitor
-   
+
+
+Other experiments
+-----------------
+
+.. toctree ::
+   :maxdepth: 2
+
+   newmanziff
+
 
 Network generators
 ------------------
 
-.. toctree::
+.. toctree ::
    :maxdepth: 2
 
    standard_generators
