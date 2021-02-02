@@ -99,7 +99,7 @@ class NewmanZiff(NetworkExperiment):
         '''Take a sample. The default does nothing.
 
         :param p: the current occupation probability
-        :returns: an empyy dict'''
+        :returns: an empty dict'''
         return dict()
 
     def report(self, params : Dict[str, Any], meta : Dict[str, Any], res : List[Dict[str, Any]]) -> List[ResultsDict]:
@@ -181,7 +181,7 @@ class BondPercolation(NewmanZiff):
 
         :param p: the current occupation probability
         :returns: a dict of results'''
-        res = dict()
+        res = super(BondPercolation, self).sample(p)
         res[self.P] = p        
         res[self.GCC] = self._gcc        
         return res
@@ -267,6 +267,7 @@ class SitePercolation(NewmanZiff):
         N = self.network().order()
         self._unoccupied = N + 1                   # a root that can never occur
         self._components = numpy.full(N, self._unoccupied, numpy.int32)
+        self._gcc = 0    # initially there are no components
 
     def occupy(self, nr : Node) -> int:
         '''Occupy a node, which is then joined to all adjacent occupied nodes. 
@@ -277,9 +278,13 @@ class SitePercolation(NewmanZiff):
 
         :param nr: the node
         :returns: the size of any newly-combined component'''
-        self._components[nr] = -1
+        g = self.network()
 
+        # mark the node as a singleton component
+        self._components[nr] = -1
         csize = 1
+
+        # connect to all neighbouring occupied nodes
         for m in g.neighbors(nr):
             if self._components[m] != self._unoccupied:
                 # neighbour is occupied, join to it
@@ -299,7 +304,7 @@ class SitePercolation(NewmanZiff):
 
         :param p: the current occupation probability
         :returns: a dict of results'''
-        res = dict()
+        res = super(SitePercolation, self).sample(p)
         res[self.P] = p        
         res[self.GCC] = self._gcc        
         return res
