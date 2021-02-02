@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import NetworkExperiment, Node
+from epydemic import NetworkExperiment, Node, Edge
 from epyc import Experiment, ResultsDict
 from networkx import Graph
 import numpy
 import sys
-from typing import Any, Dict, Union, Iterable, List, cast
+from typing import Any, Dict, Union, Optional, Iterable, List, cast
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
@@ -55,7 +55,7 @@ class NewmanZiff(NetworkExperiment):
         self._components = None
         super(NewmanZiff, self).tearDown()
 
-    def _rootOf(self, n : Node) -> Node:
+    def rootOf(self, n : Node) -> Node:
         '''Return the root of the component containing node n, updating
         the tree accordingly.
 
@@ -67,7 +67,7 @@ class NewmanZiff(NetworkExperiment):
             return n
         else:
             # n has a parent, follow the tree to it
-            r = self._rootOf(np)
+            r = self.rootOf(np)
 
             # update our component record to point to the root
             self._components[n] = r
@@ -75,9 +75,37 @@ class NewmanZiff(NetworkExperiment):
             # return the root
             return r
 
+    def join(self, c1 : Node, c2 : Node) -> int:
+        '''Join two components (as represented by their roots), returning
+        the size of the combined component. The root of the combined
+        component is c1.
+
+        :param c1: the first component root
+        :param c2: trhe second component root
+        :returns: the new component's size'''
+        # extract the size of the second compooent
+        msize = self._components[c2]
+        
+        # join the second compoent to the first 
+        self._components[c2] = c1
+        
+        # update the size of the first component
+        self._components[c1] += msize
+                
+        # return the size of the new component
+        return -self._components[c1]        
+
+    def sample(self, p : float) -> Dict[str, Any]:
+        '''Take a sample. The default does nothing.
+
+        :param p: the current occupation probability
+        :returns: an empyy dict'''
+        return dict()
+
     def report(self, params : Dict[str, Any], meta : Dict[str, Any], res : List[Dict[str, Any]]) -> List[ResultsDict]:
         '''Re-write the list of results into a list of individual experiments by
-        wrapping them up as results dicts.
+        wrapping them up as results dicts. Essentially this presents the results as though
+        a percolation experiment had happened for each sample.
 
         :param params: the experimental parameters
         :param meta: the metadata
@@ -90,11 +118,6 @@ class NewmanZiff(NetworkExperiment):
             rc[self.PARAMETERS] = params.copy()
             rc[self.METADATA] = meta.copy()
             rc[self.RESULTS] = r.copy()
-
-            # move the sample point probability from being a result to being a parameter 
-            rc[self.PARAMETERS][self.P] = r[self.P]
-            del rc[self.RESULTS][self.P]
-
             rcs.append(rc)
         return rcs
 
@@ -125,56 +148,96 @@ class BondPercolation(NewmanZiff):
         super(BondPercolation, self).setUp(params)
         N = self.network().order()
         self._components = numpy.full(N, -1, numpy.int32)
+        self._gcc = 1   # initially all nodes are individual components, unconnected by occupied edges
 
-    def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
-        '''Perform the bond percolation process.
+    def occupy(self, n : Node, m : Node) -> Optional[int]:
+        '''Occupy an edge. If this causes two components to be joined, 
+        update the GCC and return the size of the new component; otherwise 
+        return None.
 
-        :param params: experimental parameters
-        :returns: a list of dicts of experimental results'''
-        gcc = -1
+        This method should be overridden to collect more statistics about the network
+        as components join.
+
+        :param n: one node
+        :param m: the other nodse
+        :returns: the size of any newly-combined component, or None'''
+        nr = self.rootOf(n)
+        mr = self.rootOf(m)
+        if mr != nr:
+            # nodes are in different components, join them together
+            csize = self.join(nr, mr)
+
+            # update the GCC
+            self._gcc = max(self._gcc, csize)
+
+            # return the new component size
+            return csize
+        else:
+            # nodes are in the same component, do nothing
+            return None
+
+    def sample(self, p : float) -> Dict[str, Any]:
+        '''Take a sample. The default samples the size of the GCC.
+
+        :param p: the current occupation probability
+        :returns: a dict of results'''
+        res = dict()
+        res[self.P] = p        
+        res[self.GCC] = self._gcc        
+        return res
+
+    def percolate(self, es : List[Edge]) -> List[Dict[str, Any]]:
+        '''Perform the bond percolation process. This runs through the
+        list of edges, occupying them and taking samples of the occupied
+        network's statistics at the requested sample points. The samples
+        will be taken as the closest point above the requested probability.
+        They will be recorded in the results as actually having been sampled at the
+        requested point, however, so that all results are sampled with the same indices.
+
+        :param es: the permuted list of edges
+        :returns: a list of dicts of experiment results.'''
+        # take an initial sample if requested
         samples = []
         samplePoint = 0
         if self._samples[samplePoint] == 0.0:
-            # an initial sample at p=0.0 implies a unit gcc
-            res = dict()
-            res[self.P] = 0.0
-            res[self.GCC] = -gcc
-            samples.append(res)
+            samples.append(self.sample(self._samples[samplePoint]))
             samplePoint += 1
 
-        # extract and shuffle the edges
-        g = self.network()
-        es = list(g.edges()).copy()
-        numpy.random.shuffle(es)
-        M = len(es)
-
         # percolate the network
+        M = len(es)
         for i in range(M):
             (n, m) = es[i]
-            nr = self._rootOf(n)
-            mr = self._rootOf(m)
-            if mr != nr:
-                # nodes are in different components
-                msize = self._components[mr]
-                self._components[mr] = nr
-                self._components[nr] += msize
-                gcc = min(gcc, self._components[nr])
+
+            # occupy the edge
+            self.occupy(n, m)
 
             # take a sample if this is a sample point
             if  (i + 1) / M >= self._samples[samplePoint]:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
-                res = dict()
-                res[self.P] = self._samples[samplePoint]
-                res[self.GCC] = -gcc                        # gcc holds 0 - (size of GCC)
-                samples.append(res)
+                samples.append(self.sample(self._samples[samplePoint]))
 
                 # if we've collected all the samples we want, bail out
                 samplePoint += 1
                 if samplePoint > len(self._samples):
                     break
-
+                    
         return samples
+
+    def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
+        '''Perform the percolation process. This passes a permuted
+        list of edges to :meth:`NewmanZiff.percolate`, which performs
+        the actual operation.
+
+        :param params: experimental parameters
+        :returns: a list of dicts of experimental results'''        
+        # extract and shuffle the edges
+        g = self.network()
+        es = list(g.edges()).copy()
+        numpy.random.shuffle(es)
+
+        # percolate the network using these edges
+        return self.percolate(es)
 
 
 class SitePercolation(NewmanZiff):
@@ -205,56 +268,93 @@ class SitePercolation(NewmanZiff):
         self._unoccupied = N + 1                   # a root that can never occur
         self._components = numpy.full(N, self._unoccupied, numpy.int32)
 
-    def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
-        '''Perform the site percolation process.
+    def occupy(self, nr : Node) -> int:
+        '''Occupy a node, which is then joined to all adjacent occupied nodes. 
+        This will update the GCC and return the size of the new component.
 
-        :param params: experimental parameters
-        :returns: a list of dicts of experimental results'''
-        gcc = 0
+        This method should be overridden to collect more statistics about the network
+        as components join.
+
+        :param nr: the node
+        :returns: the size of any newly-combined component'''
+        self._components[nr] = -1
+
+        csize = 1
+        for m in g.neighbors(nr):
+            if self._components[m] != self._unoccupied:
+                # neighbour is occupied, join to it
+                mr = self.rootOf(m)
+                
+                if mr != nr:
+                    csize = self.join(nr, mr)
+
+        # update the GCC
+        self._gcc = max(self._gcc, csize)
+
+        # return the new component size
+        return csize
+
+    def sample(self, p : float) -> Dict[str, Any]:
+        '''Take a sample. The default samples the size of the GCC.
+
+        :param p: the current occupation probability
+        :returns: a dict of results'''
+        res = dict()
+        res[self.P] = p        
+        res[self.GCC] = self._gcc        
+        return res
+
+    def percolate(self, ns : List[Node]) -> List[Dict[str, Any]]:
+        '''Perform the site percolation process. This runs through the
+        list of nodes, occupying them and taking samples of the occupied
+        network's statistics at the requested sample points. The samples
+        will be taken as the closest point above the requested probability.
+        They will be recorded in the results as actually having been sampled at the
+        requested point, however, so that all results are sampled with the same indices.
+
+        :param en: the permuted list of nodes
+        :returns: a list of dicts of experiment results.'''
+        # take an initial sample if requested
         samples = []
         samplePoint = 0
         if self._samples[samplePoint] == 0.0:
-            # an initial sample at p=0.0 implies a zero gcc
-            res = dict()
-            res[self.P] = 0.0
-            res[self.GCC] = 0
-            samples.append(res)
+            samples.append(self.sample(self._samples[samplePoint]))
             samplePoint += 1
 
-        # extract and shuffle the nodes
-        g = self.network()
-        ns = list(g.nodes()).copy()
-        numpy.random.shuffle(ns)
-        N = len(ns)
-
         # percolate the network
+        N = len(ns)
         for i in range(N):
-            nr = ns[i]
-            self._components[nr] = -1
-            for m in g.neighbors(nr):
-                if self._components[m] != self._unoccupied:
-                    # neighbour is occupied
-                    mr = self._rootOf(m)
-                    if nr != mr:
-                        # neighbour not part of this component, join the components
-                        msize = self._components[mr]
-                        self._components[mr] = nr
-                        self._components[nr] += msize
-            gcc = min(gcc, self._components[nr])
+            n = ns[i]
+
+            # occupy the edge
+            self.occupy(n)
 
             # take a sample if this is a sample point
             if  (i + 1) / N >= self._samples[samplePoint]:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
-                res = dict()
-                res[self.P] = self._samples[samplePoint]
-                res[self.GCC] = -gcc                        # gcc holds 0 - (size of GCC)
-                samples.append(res)
+                samples.append(self.sample(self._samples[samplePoint]))
 
                 # if we've collected all the samples we want, bail out
                 samplePoint += 1
                 if samplePoint > len(self._samples):
                     break
-
+                    
         return samples
+
+    def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
+        '''Perform the percolation process. This passes a permuted
+        list of nodes to :meth:`NewmanZiff.percolate`, which performs
+        the actual operation.
+
+        :param params: experimental parameters
+        :returns: a list of dicts of experimental results'''        
+        # extract and shuffle the nodes
+        g = self.network()
+        ns = list(g.nodes()).copy()
+        numpy.random.shuffle(ns)
+
+        # percolate the network using these nodes
+        return self.percolate(ns)
+
 
