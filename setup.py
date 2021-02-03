@@ -1,6 +1,6 @@
 # Setup for epydemic
 #
-# Copyright (C) 2017--2020 Simon Dobson
+# Copyright (C) 2017--2021 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -23,12 +23,12 @@ with open('README.rst') as f:
     longDescription = f.read()
 
 setup(name = 'epydemic',
-      version = '1.2.1',
+      version = '1.3.1',
       description = 'Epidemic network simulations in Python',
       long_description = longDescription,
       url = 'http://github.com/simoninireland/epydemic',
       author = 'Simon Dobson',
-      author_email = 'simon.dobson@computer.org',
+      author_email = 'simoninireland@gmail.com',
       license = 'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
       classifiers = [ 'Development Status :: 4 - Beta',
                       'Intended Audience :: Science/Research',

@@ -6,11 +6,13 @@ MANIFEST
 setup.py
 epydemic/__init__.py
 epydemic/types.py
+epydemic/networkexperiment.py
 epydemic/networkdynamics.py
 epydemic/synchronousdynamics.py
 epydemic/stochasticdynamics.py
 epydemic/generator.py
 epydemic/standard_generators.py
+epydemic/plc_generator.py
 epydemic/loci.py
 epydemic/process.py
 epydemic/compartmentedmodel.py
@@ -23,3 +25,4 @@ epydemic/seir_model.py
 epydemic/adddelete.py
 epydemic/percolate.py
 epydemic/monitor.py
+epydemic/newmanziff.py
