@@ -30,7 +30,7 @@ The probability that an edge is retained is given by an experimental parameter.
 .. autoattribute :: Percolate.T
 
 Given this, the percolation process itself simply registers edges as either
-occupied or unoccupied, return the latter set.
+occupied or unoccupied. It then executes an action for each of these sets.
 
 .. automethod :: Percolate.percolate
 
@@ -38,12 +38,15 @@ occupied or unoccupied, return the latter set.
 Actions
 -------
 
-The main action of percolation concerns what to do with the unoccupied
-edges .
+The actions of percolation concern what to do with the occupied and unoccupied
+edges.
+
+.. automethod :: Percolate.occupy
 
 .. automethod :: Percolate.unoccupy
 
-This is called as part of the construction process.
+Building
+--------
 
 .. automethod :: Percolate.build
 

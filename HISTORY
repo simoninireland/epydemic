@@ -1,3 +1,8 @@
+Version 1.3.2
+
+   - Refactored Percolate process to allow specialisation of behaviour for occupied
+     and unoccupied edges
+
 Version 1.3.1 2021-02-03
 
    - Refactored Dynamics to introduce NetworkExperiment, where there's no process per se
