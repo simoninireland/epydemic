@@ -1,4 +1,4 @@
-Version 1.3.2
+Version 1.3.2 2020-02-08
 
    - Refactored Percolate process to allow specialisation of behaviour for occupied
      and unoccupied edges
