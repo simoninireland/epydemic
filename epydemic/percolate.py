@@ -84,8 +84,9 @@ class Percolate(Process):
         process. The default removes the unoccupied edges from the process' network.
         
         :param unoccupied: set of unoccupied'''''
-        g = self.network()
+        g = self.network().copy()
         g.remove_edges_from(unoccupied)
+        self.setNetwork(g)
 
     def build(self, params : Dict[str, Any]):
         '''Percolate the network.
