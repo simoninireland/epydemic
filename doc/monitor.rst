@@ -17,31 +17,31 @@ contains an article on :ref:`monitoring-progress`.
 Parameters
 ----------
 
-.. autoattribute:: Monitor.DELTA
+.. autoattribute :: Monitor.DELTA
 
 
 Results
 -------
 
-.. autoattribute:: Monitor.TIMESERIES
+.. autoattribute :: Monitor.TIMESERIES
 
-.. autoattribute:: Monitor.OBSERVATIONS
+.. autoattribute :: Monitor.OBSERVATIONS
 
 
 Events
 ------
 
-.. automethod:: Monitor.observe
+.. automethod :: Monitor.observe
 
 
 Building the process
 --------------------
 
-.. automethod:: Monitor.reset
+.. automethod :: Monitor.reset
 
-.. automethod:: Monitor.build
+.. automethod :: Monitor.build
 
-.. automethod:: Monitor.results
+.. automethod :: Monitor.results
 
 
 
