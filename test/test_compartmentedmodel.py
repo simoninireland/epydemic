@@ -147,9 +147,9 @@ class CompartmentedModelTest(unittest.TestCase):
         '''Test that a network skeletonises correctly'''
         m = SIR()
         g = networkx.Graph()
-        m.setNetwork(g)
         g.add_edges_from([ (1, 2), (2, 3), (1, 4), (3, 4) ])
         e = StochasticDynamics(m, g)
+        m.setNetwork(g)
 
         # mark some edges as occupied
         m.markOccupied((1, 2), 0)
