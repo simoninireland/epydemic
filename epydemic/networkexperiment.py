@@ -54,10 +54,21 @@ class NetworkExperiment(Experiment):
         If a network is supplied rather than a generator it will be treated as an
         instance of :class:`FixedNetwork`.
 
+        Note that calling this method doesn't change the working network mid-experiment:
+        for that, use :meth:`NetworkExperiment.setNetwork`.
+
         :param g: network or network generator'''
         if isinstance(g, Graph):
             g = FixedNetwork(g)
         self._generator = g
+
+    def setNetwork(self, g : Graph):
+        '''Set the working network. This changes the current working network
+        immediately (i.e., within a running experiment): to change how
+        initial working networks are obntained, use :meth:`NetworkExperiment.setNetworkGenerator`. 
+
+        :param g: the network'''
+        self._graph = g
 
     def networkGenerator(self) -> NetworkGenerator:
         '''Return the generator used for this dynamics.
