@@ -228,6 +228,8 @@ class CompartmentedModel(Process):
 
     def __init__( self ):
         super(CompartmentedModel, self).__init__()
+        self._compartments : Dict[str, float] = dict()         # compartment -> initial probability
+        self._effects : Dict[str, List[Handlers]] = dict()     # compartment -> event handlers
 
 
     # ---------- Setup and initialisation ----------
@@ -235,8 +237,8 @@ class CompartmentedModel(Process):
     def reset(self):
         '''Reset the model ready to be built.'''
         super(CompartmentedModel, self).reset()
-        self._compartments : Dict[str, float]= dict()         # compartment -> initial probability
-        self._effects : Dict[str, List[Handlers]] = dict()    # compartment -> event handlers
+        self._compartments : Dict[str, float] = dict()
+        self._effects : Dict[str, List[Handlers]] = dict()
 
     def setUp(self, params : Dict[str, Any]):
         '''Set up the initial population of nodes into compartments.
