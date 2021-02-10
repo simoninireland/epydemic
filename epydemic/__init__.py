@@ -51,7 +51,6 @@ from .types import Node, Edge, Element
 # network processes
 from .loci import Locus
 from .process import Process, EventFunction, EventDistribution
-from .processsequence import ProcessSequence
 
 # network generators
 from .generator import NetworkGenerator
@@ -81,6 +80,10 @@ from .sis_model_fixed_recovery import SIS_FixedRecovery
 from .adddelete import AddDelete
 from .percolate import Percolate
 from .monitor import Monitor
+from .statistics import NetworkStatistics
+
+# process combinators
+from .processsequence import ProcessSequence
 
 # other experiments
 from .newmanziff import BondPercolation, SitePercolation
