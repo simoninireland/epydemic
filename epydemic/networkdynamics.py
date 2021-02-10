@@ -105,7 +105,6 @@ class Dynamics(NetworkExperiment):
 
         # build the process
         self._process.reset()
-        self._process.setNetwork(self.network())
         self._process.build(params)
         self._process.setUp(params)
 
