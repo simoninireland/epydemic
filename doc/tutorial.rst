@@ -15,5 +15,6 @@ If you want more examples of ``epydemic`` in action, it forms the basis for a
     tutorial/build-sir.rst
     tutorial/use-standard-model.rst
     tutorial/run-at-scale.rst
+    tutorial/process-composition.rst
     tutorial/advanced-topics.rst
 
