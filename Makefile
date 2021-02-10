@@ -50,6 +50,7 @@ SOURCES_CODE = \
 	epydemic/adddelete.py \
 	epydemic/percolate.py \
 	epydemic/monitor.py \
+	epydemic/statistics.py \
 	epydemic/newmanziff.py
 SOURCES_TESTS = \
 	test/__init__.py \
