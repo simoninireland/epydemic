@@ -30,7 +30,7 @@ code that will extract this information as the simulation progresses.
 We can observe that there are two processes here -- SIR and observation -- which are essentially 
 independent: the events observing the progress of the epidemic aren't affected by the epidemic
 itself. ``epydemic`` includes a :class:`Monitor` class that provides regular monitoring,
-so we can simply define a new class that sub-classes :class:`SIR` *and* :class:`Monitor`.
+so we can simply compose :class:`SIR` and :class:`Monitor` together to form a sequential process.
 
 The :class:`Monitor` class records the sizes of loci. :class:`SIR` has loci for infected
 nodes and susceptible-infected edges: if we want to capture the other compartments, we need
@@ -38,9 +38,9 @@ to create loci for them too. The resulting class is:
 
 .. code-block:: python
 
-    from epydemic import SIR, Monitor, ERNetwork, StochasticDynamics
+    from epydemic import SIR, ProcessSequence, Montor, ERNetwork, StochasticDynamics
 
-    class MonitoredSIR(SIR, Monitor):
+    class MonitoredSIR(SIR):
 
         def __init__(self):
             super(MonitoredSIR, self).__init__()
@@ -75,7 +75,11 @@ continuous-domain experiment:
    # capture every 10 timesteps
    params[Monitor.DELTA] = 10
 
-   e = StochasticDynamics(MonitoredSIR(), g=ERNetwork())
+   # build a compund process from the disease and the monitor
+   p = ProcessSequence([MonitoredSIR(), Monitor()])
+
+   # run the compound process
+   e = StochasticDynamics(p, g=ERNetwork())
    e.process().setMaximumTime(1000)
    rc = e.set(params).run()
 
