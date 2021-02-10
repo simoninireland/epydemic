@@ -78,7 +78,7 @@ class Monitor(Process):
 
         # make the observation
         self._timeSeries[self.OBSERVATIONS].append(t)
-        for (n, l) in self.loci().items():
+        for (n, l) in self.dynamics().loci().items():
             self._timeSeries[n].append(len(l))
         
     def results(self) -> Dict[str, Any]:
@@ -93,3 +93,4 @@ class Monitor(Process):
         rc[self.TIMESERIES] = self._timeSeries
         
         return rc
+
