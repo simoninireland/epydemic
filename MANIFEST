@@ -15,6 +15,7 @@ epydemic/standard_generators.py
 epydemic/plc_generator.py
 epydemic/loci.py
 epydemic/process.py
+epydemic/processsequence.py
 epydemic/compartmentedmodel.py
 epydemic/sir_model.py
 epydemic/sir_model_fixed_recovery.py
@@ -25,4 +26,5 @@ epydemic/seir_model.py
 epydemic/adddelete.py
 epydemic/percolate.py
 epydemic/monitor.py
+epydemic/statistics.py
 epydemic/newmanziff.py

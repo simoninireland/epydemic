@@ -66,6 +66,8 @@ SOURCES_TESTS = \
 	test/test_sis_fixed_recovery.py \
 	test/test_sirs.py \
 	test/test_seir.py \
+	test/test_process.py \
+	test/test_processsequence.py \
 	test/test_adddelete.py \
 	test/test_adddeletesir.py \
 	test/test_percolate.py \
@@ -97,12 +99,16 @@ SOURCES_DOCUMENTATION = \
 	doc/seir.rst \
 	doc/adddelete.rst \
 	doc/percolate.rst \
+	doc/monitor.rst \
+	doc/statistics.rst \
+	doc/processsequence.rst \
 	doc/newmanziff.rst  \
 	doc/tutorial.rst \
 	doc/tutorial/simulation.rst \
 	doc/tutorial/use-standard-model.rst \
 	doc/tutorial/build-sir.rst \
 	doc/tutorial/run-at-scale.rst  \
+	doc/tutorial/process-composition.rst \
 	doc/tutorial/advanced-topics.rst \
 	doc/tutorial/generators.rst \
 	doc/implementation.rst \
