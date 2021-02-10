@@ -1,6 +1,6 @@
 # Bond percolation process
 #
-# Copyright (C) 2020 Simon Dobson
+# Copyright (C) 2020--2021 Simon Dobson
 # 
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -80,10 +80,11 @@ class Percolate(Process):
         pass
 
     def unoccupy(self, unoccupied : List[Edge]):
-        '''Handle edges, given the set that is left unoccupied by the percolation
-        process. The default removes the unoccupied edges from the process' network.
+        '''Handle the edges left unoccupied by the percolation
+        process. The default removes the unoccupied edges from the process' network,
+        leaving the nodes unchanged.
         
-        :param unoccupied: set of unoccupied'''''
+        :param unoccupied: the unoccupied edges'''
         g = self.network().copy()
         g.remove_edges_from(unoccupied)
         self.setNetwork(g)
