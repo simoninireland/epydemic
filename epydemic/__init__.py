@@ -36,6 +36,13 @@ discrete time intervals, and stochastic or Gillespie :term:`continuous
 time` simulations which are better for handling a wider range of
 :term:`event` probabilities (but which are slightly harder to
 specify).
+
+`epydemic` also provides processes not directly connected with epidemic modelling
+but which are often used alongside disease models. This includes
+support for add/delete networks and percolation processes, as well as
+support for studying the percolation transition in networks. Individual
+network processes can be combined in different ways to encourage good
+software engineering practices.
 '''
 
 # helper types
@@ -44,6 +51,7 @@ from .types import Node, Edge, Element
 # network processes
 from .loci import Locus
 from .process import Process, EventFunction, EventDistribution
+from .processsequence import ProcessSequence
 
 # network generators
 from .generator import NetworkGenerator

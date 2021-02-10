@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.3.2
+VERSION = 1.4.1
 
 
 # ----- Sources -----
@@ -40,6 +40,7 @@ SOURCES_CODE = \
 	epydemic/plc_generator.py \
 	epydemic/loci.py \
 	epydemic/process.py \
+	epydemic/processsequence.py \
 	epydemic/compartmentedmodel.py \
 	epydemic/sir_model.py \
 	epydemic/sir_model_fixed_recovery.py \
