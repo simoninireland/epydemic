@@ -4,6 +4,7 @@
 .. currentmodule :: epydemic
 
 .. autoclass :: Process
+   :show-inheritance:
 
 
 Core methods
@@ -116,22 +117,6 @@ to the different stochastic events that are generated.
 .. automethod :: Process.postEvent
 
 .. automethod :: Process.postRepeatingEvent
-
-
-Accessing event distributions
------------------------------
-
-The different sets of events can be accessed procedurally. This interface is typically only needed
-if writing a new :class:`Dynamics` sub-class.
-
-.. automethod :: Process.perElementEventDistribution
-
-.. automethod :: Process.fixedRateEventDistribution
-
-.. automethod :: Process.eventRateDistribution
-
-
-
 
 
 
