@@ -59,6 +59,16 @@ Other network processes
    adddelete
    percolate
    monitor
+   statistics
+
+
+Process  combinators
+--------------------
+
+.. toctree ::
+   :maxdepth: 2
+
+   processsequence
 
 
 Other experiments
