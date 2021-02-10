@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Process
+from epydemic import Process, Dynamics
 from typing import List, Dict, Any
 
 class ProcessSequence(Process):
@@ -30,6 +30,14 @@ class ProcessSequence(Process):
         self._processes = ps
         super(ProcessSequence, self).__init__()
         
+    def setDynamics(self, d : Dynamics):
+        '''Set the dynamics.
+
+        :param d: the dynamics'''
+        super(ProcessSequence, self).setDynamics(d)
+        for p in self._processes:
+            p.setDynamics(d)
+
     def reset(self):
         '''Reset the processes.'''
         for p in self._processes:
@@ -56,7 +64,7 @@ class ProcessSequence(Process):
             
     def atEquilibrium(self, t : float):
         '''Test for equilibrium. A process sequence is at equilibrium if and when all
-        its compponent processes are.
+        its component processes are.
         
         :param t: the simulation time
         :returns: True if all the processes are at equilibrium'''
@@ -64,7 +72,24 @@ class ProcessSequence(Process):
             if not p.atEquilibrium(t):
                 return False
         return True
-    
+
+    def setMaximumTime(self, t : float):
+        '''Set the maximum default simulation time for all processes
+
+        :param t: the maximum simulation time'''
+        for p in self._processes:
+            p.setMaximumTime(t)
+
+    def maximumTime(self) -> float:
+        '''Return the maximum assumed simulation time, which is the maximum
+        of all component processes.
+
+        :returns: the maximum simulation time'''
+        t = 0
+        for p in self._processes:
+            t = max(t, p.maximumTime())
+        return t
+
     def results(self) -> Dict[str, Any]:
         '''Return all the experimental results from all the processes. The dict
         is created in process order, meaning that later processes may alter or overwrite
@@ -75,3 +100,4 @@ class ProcessSequence(Process):
         for p in self._processes:
             res.update(p.results())
         return res
+        
