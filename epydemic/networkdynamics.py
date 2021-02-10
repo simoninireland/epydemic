@@ -213,6 +213,37 @@ class Dynamics(NetworkExperiment):
         else:
             return []
 
+    def eventRateDistribution(self, t : float) -> EventDistribution:
+        """Return the event distribution, a sequence of (l, r, f) triples
+        where l is the locus where the event occurs, r is the rate at
+        which an event occurs, and f is the event function called to
+        make it happen.
+
+        Note the distinction between a *rate* and a *probability*:
+        the former can be obtained from the latter simply by
+        multiplying the event probability by the number of times it's
+        possible in the current network, which for per-element events
+        is the population of nodes or edges in a given state.
+
+        It is perfectly fine for an event to have a zero rate. The process
+        is assumed to have reached equilibrium if all events have zero rates.
+
+        :param t: current time
+        :returns: a list of (locus, rate, event function) triples"""
+        rates = []
+
+        for p in self._perElementEvents:
+            # convert per-element events to rates
+            for (l, pr, ef) in self._perElementEvents[p]:
+                rates.append((l, pr * len(l), ef))
+
+            # add fixed-rate events for non-empty loci
+            for (l, pr, ef) in self._perLocusEvents[p]:
+                if len(l) > 0:
+                    rates.append((l, pr, ef))
+                    
+        return rates
+
 
     # ---------- Posted events (occurring at a fixed time) ----------
 

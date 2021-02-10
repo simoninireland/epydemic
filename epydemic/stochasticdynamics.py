@@ -51,7 +51,7 @@ class StochasticDynamics(Dynamics):
         events = 0
         while not proc.atEquilibrium(t):
             # pull the transition dynamics at this timestep
-            transitions = proc.eventRateDistribution(t)
+            transitions = self.eventRateDistribution(t)
 
             # compute the total rate of transitions for the entire network
             a = 0.0

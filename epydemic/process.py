@@ -59,7 +59,7 @@ class Process(object):
         self._maxTime = self.DEFAULT_MAX_TIME
 
         # reset this instance
-        self.reset()
+        #self.reset()
 
 
     # ---------- Setup and initialisation ----------
@@ -301,62 +301,6 @@ class Process(object):
         :param e: the element (node or edge) on which the event occurs
         :param ef: the element function"""
         self._dynamics.postRepeatingEvent(t, dt, e, ef)
-
-
-    # ---------- Event distributions ----------
-
-    def perElementEventDistribution(self, t : float) -> EventDistribution:
-        """Return the distribution of per-element events at time t relevant to
-        this process. The list only contains those loci that this process defined.
-
-        The default is to use the distribution directly from the dynamics, which is
-        time-independent. Sub-classes can extend this method to provide time dependency
-        if needed.
-
-        :param t: the simulation time
-        :returns: a list of (locus, probability, event function) triples"""
-        return self._dynamics.perElementEventDistribution(self)
-
-    def fixedRateEventDistribution(self, t : float) -> EventDistribution:
-        """Return the distribution of fixed-rate events at time t. relevant to
-        this process. The list only contains those loci that this process defined.
-
-        The default is to use the distribution directly from the dynamics, which is
-        time-independent. Sub-classes can extend this method to provide time dependency
-        if needed.
-
-        :param t: the simulation time
-        :returns: a list of (locus, probability, event function) triples"""
-        return self._dynamics.fixedRateEventDistribution(self)
-
-    def eventRateDistribution(self, t : float) -> EventDistribution:
-        """Return the event distribution, a sequence of (l, r, f) triples
-        where l is the locus where the event occurs, r is the rate at
-        which an event occurs, and f is the event function called to
-        make it happen.
-
-        Note the distinction between a *rate* and a *probability*:
-        the former can be obtained from the latter simply by
-        multiplying the event probability by the number of times it's
-        possible in the current network, which for per-element events
-        is the population of nodes or edges in a given state.
-
-        It is perfectly fine for an event to have a zero rate. The process
-        is assumed to have reached equilibrium if all events have zero rates.
-
-        :param t: current time
-        :returns: a list of (locus, rate, event function) triples"""
-        rates = []
-
-        # convert per-element events to rates
-        for (l, pr, ef) in self.perElementEventDistribution(t):
-            rates.append((l, pr * len(l), ef))
-
-        # add fixed-rate events for non-empty loci
-        for (l, pr, ef) in self.fixedRateEventDistribution(t):
-            if len(l) > 0:
-                rates.append((l, pr, ef))
-        return rates
 
 
 
