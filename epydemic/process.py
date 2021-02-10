@@ -66,9 +66,8 @@ class Process(object):
 
     def reset(self):
         """Reset the process ready to be built. This resets all the internal process state
-        variables. Sub-classes should call the base method to make sure that the event
-        sub-system is properly reset."""
-        self._g = None
+        variables. The default does nothng."""
+        pass
 
     def build(self, params : Dict[str, Any]):
         """Build the process model. This should be overridden by sub-classes, and should
@@ -90,17 +89,20 @@ class Process(object):
         nothing."""
         pass
 
+
+    # ---------- State access and update ----------
+
     def setNetwork(self, g : Graph):
         """Set the network the process is running over.
 
         :param g: the network"""
-        self._g = g
+        self._dynamics.setNetwork(g)
 
     def network(self) -> Graph:
         """Return the network the process is running over.
 
         :returns: the network"""
-        return self._g
+        return self._dynamics.network()
 
     def setDynamics(self, d : 'Dynamics'):
         '''Set the instance of :class:`Dynamics` that runs the process.
@@ -148,7 +150,7 @@ class Process(object):
         return (t >= self.maximumTime())
 
     def results(self) -> Dict[str, Any]:
-       """Create  and return an empty dict to be filled with experimental results.
+       """Create and return an empty dict to be filled with experimental results.
        Sub-classes should extend this method to add results to the dict.
 
        :returns: an empty dict for experimental results"""
