@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epyc import Lab, HDF5LabNotebook
-from tempfile import NamedTemporaryFile
 from epydemic import *
 import networkx
 import numpy
@@ -58,22 +56,6 @@ class PercolationTest(unittest.TestCase):
         self.assertEqual(rg.order(), g.order())
         rg_kmean = numpy.mean(list(map(lambda nd: nd[1], list(rg.degree()))))
         self.assertAlmostEqual(rg_kmean, kmean, places=0)   # sd: this isn't a fine enough equality
-
-    def testInLab(self):
-        '''Test we can run in a lab and save in HDF5.'''
-        tf = NamedTemporaryFile()
-        tf.close()
-        fn = tf.name
-
-        N = 2000
-        kmean = 15
-        nb = HDF5LabNotebook(fn)
-        lab = Lab(notebook=nb)
-        lab[ERNetwork.N] = N
-        lab[ERNetwork.KMEAN] = kmean
-        lab[Percolate.T] = numpy.linspace(0.0, 1.0, num=20, endpoint=True)
-        e = StochasticDynamics(ProcessSequence([Percolate(), NetworkStatistics()]), ERNetwork())        
-        lab.runExperiment(e)
 
 
 if __name__ == '__main__':
