@@ -101,5 +101,10 @@ ENV/
 # Tox
 .tox/
 
+# Emacs (and other) backup files
+*.bak
+*~
+\#*\#
+
 # Sphinx build docs
 doc/_build/
