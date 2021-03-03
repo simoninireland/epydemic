@@ -4,4 +4,3 @@ epyc >= 1.2.1
 pandas
 numpy >= 1.18
 mpmath
-

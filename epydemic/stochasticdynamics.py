@@ -1,7 +1,7 @@
 # Gillespie dynamics base class
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ from epydemic import Dynamics, Process, NetworkGenerator
 from networkx import Graph
 import math
 import numpy                     # type: ignore
+from numba import jit, void
 from typing import Dict, Any, Union
 
 
@@ -30,7 +31,7 @@ class StochasticDynamics(Dynamics):
     statistical properties of the events making up the process are known. See
     :ref:`Gillespie 1976 <Gil76>` and :ref:`Gillespie 1977 <Gil77>` for a discussion
     of the technique.
-      
+
 
     :param p: the process to run
     :param g: network or network generator (optional, can be provided later)'''
@@ -43,7 +44,7 @@ class StochasticDynamics(Dynamics):
 
         :param params: the experimental parameters
         :returns: the experimental results dict'''
-        
+
         # run the dynamics
         proc = self.process()
         rng = numpy.random.default_rng()
@@ -57,16 +58,16 @@ class StochasticDynamics(Dynamics):
             a = 0.0
             for (_, r, _) in transitions:
                 a = a + r
-            if a == 0.0:       
-                break              # no events with non-zero rates 
-            
+            if a == 0.0:
+                break              # no events with non-zero rates
+
             # shuffle the transitions
             #random.shuffle(transitions)
-            
+
             # calculate the timestep delta
             r1 = rng.random()
             dt = (1.0 / a) * math.log(1.0 / r1)
-            
+
             # calculate which event happens
             (l, _, ef) = transitions[0]
             if len(transitions) > 1:
@@ -97,12 +98,12 @@ class StochasticDynamics(Dynamics):
             if len(l) > 0:
                 # draw a random element from the chosen locus
                 e = l.draw()
-            
+
                 # perform the event by calling the event function,
                 # passing the dynamics, event time, network, and element
                 ef(t, e)
-            
-                # increment the event counter    
+
+                # increment the event counter
                 events = events + 1
 
         # when we get here there may still be posted events that haven't
@@ -115,4 +116,3 @@ class StochasticDynamics(Dynamics):
         # report results
         rc = self.experimentalResults()
         return rc
-
