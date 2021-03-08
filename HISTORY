@@ -1,3 +1,9 @@
+Version 1.4.2
+
+   - Added results sets as keys in LabNotenook
+   - Added add-or-select method to LabNotebook
+   - Described Jupyter design pattern to avoid repeated computation of result sets
+   
 Version 1.4.1 2020-02-10
 
    - Added network statistics collection as a process

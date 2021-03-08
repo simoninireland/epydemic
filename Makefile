@@ -1,7 +1,7 @@
 # Makefile for epydemic
 #
 # Copyright (C) 2017--2021 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.4.1
+VERSION = 1.4.2
 
 
 # ----- Sources -----
@@ -246,7 +246,7 @@ diagrams:
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-monitor-progress.py
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-powerlaw-cutoff.py
 
-# Clean up the distribution build 
+# Clean up the distribution build
 clean:
 	$(RM) $(SOURCES_GENERATED) $(SOURCES_DIST_DIR) epydemic.egg-info dist $(SOURCES_DOC_BUILD_DIR) $(SOURCES_DOC_ZIP) dist build
 
@@ -286,7 +286,7 @@ Available targets:
    make sdist        create a source distribution
    make wheel	     create binary (wheel) distribution
    make upload       upload distribution to PyPi
-   make commit       tag current version and and push to master repo 
+   make commit       tag current version and and push to master repo
    make clean        clean-up the build
    make reallyclean  clean up the virtualenv as well
 
