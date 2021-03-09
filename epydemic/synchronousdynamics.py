@@ -61,7 +61,7 @@ class SynchronousDynamics(Dynamics):
             nev = self.runPendingEvents(t)
             
             # run through all the events in the distribution
-            dist = proc.perElementEventDistribution(t)
+            dist = proc.dynamics().perElementEventDistribution(proc)
             for (l, p, ef) in dist:
                 if (len(l) > 0) and (p > 0.0):
                     # run through every possible element on which this event may occur
@@ -73,7 +73,7 @@ class SynchronousDynamics(Dynamics):
                             nev = nev + 1
 
             # run through all the fixed-rate events for this timestep
-            dist = proc.fixedRateEventDistribution(t)
+            dist = proc.dynamics().fixedRateEventDistribution(proc)
             for (l, p, ef) in dist:
                 if (len(l) > 0) and (p > 0.0):
                     if rng.random() <= p:
