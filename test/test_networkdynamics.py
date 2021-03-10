@@ -1,7 +1,7 @@
 # Test network dynamics
 #
-# Copyright (C) 2017--2019 Simon Dobson
-# 
+# Copyright (C) 2017--2021 Simon Dobson
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ class NetworkDynamicsTest(unittest.TestCase):
             def ef( t, e ):
                 self._v = self._v + w
             return ef
-        
+
         # post some events at different times
         dyn.postEvent(1, None, make_ef(1))
         dyn.postEvent(2, None, make_ef(20))
@@ -80,7 +80,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         self.assertTrue(self._v, 321)
         self.assertCountEqual(self.pendingEvents(dyn, 10), [])
         self.assertCountEqual(self.pendingEvents(dyn, 20), [])
-        
+
     def testPostedPosting( self ):
         '''Test the case when a posted event itself posts an event.'''
         p = Process()
@@ -94,7 +94,7 @@ class NetworkDynamicsTest(unittest.TestCase):
                 self._v = self._v + 1
                 p.postEvent(t + dt, None, make_ef(dt))
             return ef
-        
+
         # post the first of the events
         p.postEvent(1, None, make_ef(5))
 
@@ -125,7 +125,7 @@ class NetworkDynamicsTest(unittest.TestCase):
 
         # should be one event left
         self.assertEqual(len(self.pendingEvents(dyn, 100)), 1)
-        
+
     def testRepeating(self):
         '''Test that repeating events repeat properly.'''
         p = Process()

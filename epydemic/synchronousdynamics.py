@@ -1,7 +1,7 @@
 # Synchronous dynamics base class
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -39,18 +39,18 @@ class SynchronousDynamics(Dynamics):
     :param g: prototype network to run over (optional)'''
 
     # additional metadata
-    TIMESTEPS_WITH_EVENTS : Final[str] = 'timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
+    TIMESTEPS_WITH_EVENTS : Final[str] = 'epydemic.dynamics.timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
 
     def __init__(self, p : Process, g : Union[Graph, NetworkGenerator] =None):
-        super(SynchronousDynamics, self).__init__(p, g)
+        super().__init__(p, g)
 
     def do(self, params : Dict[str, Any]) -> Dict[str, Any]:
         '''Execute the process under synchronous dynamics.
-        
+
         :param params: the parameters of the simulation
         :returns: a dict of experimental results'''
-        
-        # run the 
+
+        # run the
         rng = numpy.random.default_rng()
         proc = self.process()
         t = 0
@@ -59,9 +59,9 @@ class SynchronousDynamics(Dynamics):
         while not proc.atEquilibrium(t):
             # fire any events posted for at or before this time
             nev = self.runPendingEvents(t)
-            
+
             # run through all the events in the distribution
-            dist = proc.perElementEventDistribution(t)
+            dist = self.perElementEventDistribution(t)
             for (l, p, ef) in dist:
                 if (len(l) > 0) and (p > 0.0):
                     # run through every possible element on which this event may occur
@@ -73,7 +73,7 @@ class SynchronousDynamics(Dynamics):
                             nev = nev + 1
 
             # run through all the fixed-rate events for this timestep
-            dist = proc.fixedRateEventDistribution(t)
+            dist = self.fixedRateEventDistribution(t)
             for (l, p, ef) in dist:
                 if (len(l) > 0) and (p > 0.0):
                     if rng.random() <= p:
