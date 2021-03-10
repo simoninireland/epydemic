@@ -1,7 +1,7 @@
 # Test SIR under different dynamics
 #
-# Copyright (C) 2017--2020 Simon Dobson
-# 
+# Copyright (C) 2017--2021 Simon Dobson
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,17 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+import unittest
 from epydemic import *
 from test.compartmenteddynamics import CompartmentedDynamicsTest
 import epyc
-import unittest
-import networkx
+import networkx             # type: ignore
 
 class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
 
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''
-        
+
         # single experiment
         self._params = dict()
         self._params[SIR.P_INFECT] = 0.1
