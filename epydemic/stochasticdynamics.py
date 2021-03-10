@@ -21,6 +21,7 @@ from epydemic import Dynamics, Process, NetworkGenerator
 from networkx import Graph
 import math
 import numpy                     # type: ignore
+from numba import jit, void
 from typing import Dict, Any, Union
 
 
