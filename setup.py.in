@@ -1,7 +1,7 @@
 # Setup for epydemic
 #
 # Copyright (C) 2017--2021 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ setup(name = 'epydemic',
                       'Programming Language :: Python :: 3.6',
                       'Programming Language :: Python :: 3.7',
                       'Programming Language :: Python :: 3.8',
+                      'Programming Language :: Python :: 3.9',
                       'Topic :: Scientific/Engineering' ],
       python_requires = '>=3.6',
       packages = [ 'epydemic' ],
