@@ -171,7 +171,7 @@ ZIP = zip -r
 ROOT = $(shell pwd)
 
 # Requirements for running the library and for the development venv needed to build it
-VENV = .venv
+VENV = venv3
 REQUIREMENTS = requirements.txt
 DEV_REQUIREMENTS = dev-requirements.txt
 
@@ -213,7 +213,7 @@ env: $(VENV)
 $(VENV):
 	$(VIRTUALENV) $(VENV)
 	$(CAT) $(REQUIREMENTS) $(DEV_REQUIREMENTS) >$(VENV)/requirements.txt
-	$(ACTIVATE) && $(CHDIR) $(VENV) && $(PIP) install -U pip && $(PIP) install -r requirements.tx
+	$(ACTIVATE) && $(PIP) install -U pip wheel && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
 
 # Build a source distribution
 sdist: $(DIST_SDIST)
