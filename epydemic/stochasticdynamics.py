@@ -53,7 +53,7 @@ class StochasticDynamics(Dynamics):
             # pull the transition dynamics at this timestep
             transitions = self.eventRateDistribution(t)
 
-            # compute the total rate of transitions for the entire networkgg
+            # compute the total rate of transitions for the entire network
             a = 0.0
             for (_, r, _) in transitions:
                 a = a + r
