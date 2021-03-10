@@ -21,7 +21,6 @@ from epydemic import Dynamics, Process, NetworkGenerator
 from networkx import Graph
 import math
 import numpy                     # type: ignore
-from numba import jit, void
 from typing import Dict, Any, Union
 
 
@@ -37,7 +36,7 @@ class StochasticDynamics(Dynamics):
     :param g: network or network generator (optional, can be provided later)'''
 
     def __init__(self, p : Process, g : Union[Graph, NetworkGenerator] =None):
-        super(StochasticDynamics, self).__init__(p, g)
+        super().__init__(p, g)
 
     def do(self, params : Dict[str, Any]) -> Dict[str, Any]:
         '''Run the simulation using Gillespie dynamics.
@@ -54,7 +53,7 @@ class StochasticDynamics(Dynamics):
             # pull the transition dynamics at this timestep
             transitions = self.eventRateDistribution(t)
 
-            # compute the total rate of transitions for the entire network
+            # compute the total rate of transitions for the entire networkgg
             a = 0.0
             for (_, r, _) in transitions:
                 a = a + r
