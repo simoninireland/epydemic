@@ -12,7 +12,7 @@ An epidemic over a changing population
 scenario: a compartmented model and an addition-deletion process. We
 just have to make them work together.
 
-Python multiple inheritance is the mechanism for this, in the same way 
+Python multiple inheritance is the mechanism for this, in the same way
 as we can include :ref:`monitoring <monitoring-progress>` to any process.
 The basic structure will therefore be to create a new process that combines
 the compartmented model we want with the addition-deletion process, and then
@@ -23,8 +23,8 @@ favourite :class:`SIR` model. We'd then have a class definition that lools somet
 
     class DynamicSIR(epydemic.SIR, epydemic.AddDelete):
 
-        def __init__(self):
-            super(DynamicSIR, self).__init__()
+	def __init__(self):
+	    super(DynamicSIR, self).__init__()
 
 So far so good.
 
@@ -66,29 +66,29 @@ will just disappear. We can code this up by adding two methods to our class defi
 .. code-block :: python
 
     def addNewNode(self, **kwds):
-        '''Mark new nodes as susceptible.
+	'''Mark new nodes as susceptible.
 
-        :param kwds: (optional) node attributes'''
+	:param kwds: (optional) node attributes'''
 
-        # add the node, cepturing its name
-        n = super(DynamicSIR, self).addNewNode(*kwds)
+	# add the node, cepturing its name
+	n = super(DynamicSIR, self).addNewNode(*kwds)
 
-        # set the compartment of this node to susceptible
-        self.setCompartment(n, epydemic.SIR.SUSCEPTIBLE)
+	# set the compartment of this node to susceptible
+	self.setCompartment(n, epydemic.SIR.SUSCEPTIBLE)
 
-        # return the name of the new node
-        return n
+	# return the name of the new node
+	return n
 
     def removeNode(self, n):
-        '''Mark any node as removed before deleting.
+	'''Mark any node as removed before deleting.
 
-        :param n: the node'''
+	:param n: the node'''
 
-        # change the node's compartment to removed
-        self.changeCompartment(n, epydemic.SIR.REMOVED)
+	# change the node's compartment to removed
+	self.changeCompartment(n, epydemic.SIR.REMOVED)
 
-        # delete the node
-        super(DynamicSIR, self).removeNode(n)
+	# delete the node
+	super(DynamicSIR, self).removeNode(n)
 
 (Note that when adding a node we used :meth:`CompartmentModel.setCompartment` because
 the newly-added node didn't have a compartment, whereas when deleting a
@@ -122,5 +122,4 @@ Which of these is the "correct" approach depends on context. In any case there's
 an interaction between the addition-deletion process and the compartmented model
 process that's requiring extra code. At one level the solution you choose doesn't
 matter, because the interactions all go through an API and any extra results that
-you obtain land in the :term:`results dict` alongside the other values.
-
+you obtain land in the results dict alongside the other values.

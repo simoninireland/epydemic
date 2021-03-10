@@ -37,7 +37,6 @@ Doesn't seem to get much speed-up, even given it's quite numerical:
 there are calls to get the event distribution and to check for
 equilibrium that perhaps could be refactored?
 
-
 *** GPU acceleration
 
 Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html][containerised]].
