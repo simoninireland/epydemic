@@ -119,6 +119,7 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/monitoring-progress.rst \
 	doc/cookbook/infect-specific-nodes.rst \
 	doc/cookbook/dynamic-population.rst \
+	doc/cookbook/keep-network.rst \
 	doc/cookbook/speed.rst
 SOURCES_DIAGRAMS = \
 	doc/cookbook/powerlaw-cutoff.png \

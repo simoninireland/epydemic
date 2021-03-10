@@ -10,5 +10,5 @@ This page is a cookbook-in-progress of ways to use ``epydemic`` in practice.
     cookbook/monitoring-progress.rst
     cookbook/infect-specific-nodes.rst
     cookbook/dynamic-population.rst
+    cookbook/keep-network.rst
     cookbook/speed.rst
-    
