@@ -1,9 +1,8 @@
 Version 1.4.2
 
-   - Added results sets as keys in LabNotenook
-   - Added add-or-select method to LabNotebook
-   - Described Jupyter design pattern to avoid repeated computation of result sets
-   
+   - Fixed issue with SynchronousDynamics
+   - Added cookbook recipe on keeping access to the end-state network
+
 Version 1.4.1 2020-02-10
 
    - Added network statistics collection as a process
@@ -30,7 +29,7 @@ Version 1.2.1 2020-12-10
 
    - Added percolation process
    - Backported to support versions of Python from 3.6, and hence also PyPy3
-   
+
 Version 1.1.1 2020-12-01
 
    - Removed support for Python 3.6 and 3.7 (since we need the annotations
@@ -74,7 +73,7 @@ Version 0.99.7 2020-04-30
    - Defined a monitor process to capture the sizes of all loci as time series
    - Changed names of parameters and results to be more structured, to avoid conflicts
    - Added some implementation notes
-     
+
 Version 0.99.6 2020-04-14
 
    - Removed Python2.7 compatibility, since NetworkX v.2.4 doesn't support it anyway
@@ -87,7 +86,7 @@ Version 0.99.6 2020-04-14
 
 Version 0.99.5 2020-03-27
 
-   - Started maintaining lists of nodes in different compartments to 
+   - Started maintaining lists of nodes in different compartments to
      remove a bottleneck for adaptive networks
 
 Version 0.99.4 2020-03-23
@@ -132,7 +131,7 @@ Version 0.5.1 2018-07-27
    - Changed compartmented models to return a flat dict of results with just
      the final sizes of each compartment
    - Changed documentation to a more tutorial format
-   
+
 Version 0.4.2 2018-03-12
 
    - Maintenance release to fix compatibility with NetworkX 2.1
@@ -152,7 +151,7 @@ Version 0.3.1 2017-08-16
    - Added CompartmentedModel.build() as an abstract method, just so
      we could add documentation for it
    - Fixed a few minor issues
-   
+
 Version 0.3.0 2017-06-28
 
    - Refactored synchronous dynamics to be completely independent of models
@@ -165,7 +164,7 @@ Version 0.2.0 2017-06-27
    - Updated documentation
    - Added "Mathematics of epidemics on networks" book to bibliography
    - Refactored test suite
-   
+
 Version 0.1.1 2017-06-15
 
    - Added more documentation, bibliography, glossary
@@ -174,4 +173,3 @@ Version 0.1.1 2017-06-15
 Version 0.1.0 2017-06-12
 
    - First disentanglement from the book repo
-   
