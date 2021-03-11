@@ -7,11 +7,7 @@ epydemic: Epidemic simulations on networks in Python
 .. image:: https://readthedocs.org/projects/pyepydemic/badge/?version=latest
     :target: https://pyepydemic.readthedocs.io/en/latest/index.html
 
-.. image:: https://api.travis-ci.com/simoninireland/epydemic.svg?branch=master
-    :target: http://travis-ci.com/github/simoninireland/epydemic
-
-.. image:: https://coveralls.io/repos/github/simoninireland/epydemic/badge.svg?branch=master
-    :target: https://coveralls.io/github/simoninireland/epydemic?branch=master
+.. image:: https://github.com/simoninireland/epydemic/actions/workflows/ci.yaml/badge.svg
 
 
 Overview
@@ -49,13 +45,13 @@ The master distribution of ``epydemic`` is hosted on GitHub. To obtain a
 copy, just clone the repo:
 
 ::
-   
+
     git clone git@github.com:simoninireland/epydemic.git
     cd epydemic
     python setup.py install
 
 
-   
+
 Documentation
 -------------
 
@@ -70,4 +66,3 @@ Author and license
 Copyright (c) 2017-2020, Simon Dobson <simoninireland@gmail.com>
 
 Licensed under the `GNU General Public License v2 or later (GPLv2+) <http://www.gnu.org/licenses/gpl.html>`_.
-
