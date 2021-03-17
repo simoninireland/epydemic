@@ -27,7 +27,7 @@ We need to run an SIR simulation *and at the same time* extract the sizes of its
 *not* simply wait until equilibrium as is the default. In other words, we need to add *monitoring*
 code that will extract this information as the simulation progresses.
 
-We can observe that there are two processes here -- SIR and observation -- which are essentially 
+We can observe that there are two processes here -- SIR and observation -- which are essentially
 independent: the events observing the progress of the epidemic aren't affected by the epidemic
 itself. ``epydemic`` includes a :class:`Monitor` class that provides regular monitoring,
 so we can simply compose :class:`SIR` and :class:`Monitor` together to form a sequential process.
@@ -42,19 +42,19 @@ to create loci for them too. The resulting class is:
 
     class MonitoredSIR(SIR):
 
-        def __init__(self):
-            super(MonitoredSIR, self).__init__()
+	def __init__(self):
+	    super(MonitoredSIR, self).__init__()
 
-        def build(self, params):
-            '''Build the process, adding additional loci
-            to be monitored.
-           
-            :param params: the parameters'''
-            super(MonitoredSIR, self).setUp(params)
+	def build(self, params):
+	    '''Build the process, adding additional loci
+	    to be monitored.
 
-            # add loci for the other compartments 
-            self.trackNodesInCompartment(SIR.SUSCEPTIBLE)
-            self.trackNodesInCompartment(SIR.REMOVED)
+	    :param params: the parameters'''
+	    super(MonitoredSIR, self).setUp(params)
+
+	    # add loci for the other compartments
+	    self.trackNodesInCompartment(SIR.SUSCEPTIBLE)
+	    self.trackNodesInCompartment(SIR.REMOVED)
 
 We can then use ``epydemic`` to run this process using the same parameters as we used for the
 continuous-domain experiment:
@@ -86,7 +86,16 @@ continuous-domain experiment:
 The monitor adds a result tagged :attr:`Monitor.TIMESERIES`, which contains a dict keyed
 by locus names and containing the size of the locus at each observation. For convenience
 there is also a time series keyed by :attr:`Monitor.OBSERVATIONS` that holds the simulation
-times at which the observations were made. 
+times at which the observations were made.
+
+.. note::
+
+   If, instead of sub-classing :class:`epydemic.SIR`, we simply used
+   the base class, :class:`epydemic.Monitor` would only be able to
+   monitor the loci used by the base class (which are
+   :attr:`epydemic.SIR.SI` and :attr:`epydemic.SIR.INFECTED` as needed
+   by the dynamics). Since we want to keep track of all the
+   compartments, we have to record them.
 
 Plotting the results yields:
 
