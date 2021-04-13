@@ -1,3 +1,10 @@
+Version 1.5.1
+
+   - Started maintaining simulation time in NetworkDynamics
+   - Changed the way Monitor represents its results, to avoid problems persisting
+     in HDF5 lab notebooks
+   - Lots of changes to typing and imports, for code style
+
 Version 1.4.2 (2021-03-10)
 
    - Fixed issue with SynchronousDynamics
