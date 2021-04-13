@@ -17,8 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
 import unittest
+from epydemic import *
+
 
 class NetworkDynamicsTest(unittest.TestCase):
 
@@ -81,7 +82,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         self.assertCountEqual(self.pendingEvents(dyn, 10), [])
         self.assertCountEqual(self.pendingEvents(dyn, 20), [])
 
-    def testPostedPosting( self ):
+    def testPostedPosting(self):
         '''Test the case when a posted event itself posts an event.'''
         p = Process()
         dyn = Dynamics(p)
@@ -154,6 +155,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         p = Process()
         dyn = Dynamics(p)
         self.assertCountEqual(dyn.lociForProcess(p), dict())
+
 
 if __name__ == '__main__':
     unittest.main()

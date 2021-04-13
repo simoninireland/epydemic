@@ -1,7 +1,7 @@
 # Networks experiment base class
 #
 # Copyright (C) 2017--2021 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,21 +17,23 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from typing import Union, Dict, Any, cast
+from networkx import Graph
 from epyc import Experiment
 from epydemic import NetworkGenerator, FixedNetwork
-from networkx import Graph
-from typing import Union, Dict, Any, cast
 
 
 class NetworkExperiment(Experiment):
-    '''A very lightweight base class for providing a network
-    to an `epyc` experiment. The network can either be a fixed network
-    used for each experimental run, or a network generator that will be 
-    used to generate a new instance for each run.
-    
-    :param g: (optional) prototype network or network generator'''
+    '''A very lightweight base class for providing a network to an `epyc`
+    experiment. The network can either be a fixed network used for
+    each experimental run, or a network generator that will be used to
+    generate a new instance for each run.
+
+    :param g: (optional) prototype network or network generator
+
+    '''
     def __init__(self, g : Union[Graph, NetworkGenerator] =None):
-        super(NetworkExperiment, self).__init__()
+        super().__init__()
 
         # turn a literal network into a network generator
         if isinstance(g, Graph):
@@ -43,21 +45,26 @@ class NetworkExperiment(Experiment):
     # ---------- Configuration ----------
 
     def network(self) -> Graph:
-        '''Return the network this dynamics is running over. This will return None
-        unless we're actually running a simulation.
+        '''Return the network this dynamics is running over. This will return
+        None unless we're actually running a simulation.
 
-        :returns: the network'''
+        :returns: the network
+
+        '''
         return self._graph
 
     def setNetworkGenerator(self, g : Union[Graph, NetworkGenerator]):
-        '''Set the network or generator for the networks the dynamics will run over.
-        If a network is supplied rather than a generator it will be treated as an
-        instance of :class:`FixedNetwork`.
+        '''Set the network or generator for the networks the dynamics will run
+        over.  If a network is supplied rather than a generator it
+        will be treated as an instance of :class:`FixedNetwork`.
 
-        Note that calling this method doesn't change the working network mid-experiment:
-        for that, use :meth:`NetworkExperiment.setNetwork`.
+        Note that calling this method doesn't change the working
+        network mid-experiment: for that, use
+        :meth:`NetworkExperiment.setNetwork`.
 
-        :param g: network or network generator'''
+        :param g: network or network generator
+
+        '''
         if isinstance(g, Graph):
             g = FixedNetwork(g)
         self._generator = g
@@ -65,9 +72,12 @@ class NetworkExperiment(Experiment):
     def setNetwork(self, g : Graph):
         '''Set the working network. This changes the current working network
         immediately (i.e., within a running experiment): to change how
-        initial working networks are obntained, use :meth:`NetworkExperiment.setNetworkGenerator`. 
+        initial working networks are obtained, use
+        :meth:`NetworkExperiment.setNetworkGenerator`.
 
-        :param g: the network'''
+        :param g: the network
+
+        '''
         self._graph = g
 
     def networkGenerator(self) -> NetworkGenerator:
@@ -80,10 +90,12 @@ class NetworkExperiment(Experiment):
     # ---------- Set-up and tear-down ----------
 
     def setUp(self, params : Dict[str, Any]):
-        '''Set up the experiment for a run. This creates a working copy
-        of the network (class) underlying the experiment.
+        '''Set up the experiment for a run. This creates a working copy of the
+        network (class) underlying the experiment.
 
-        :params params: the experimental parameters'''
+        :params params: the experimental parameters
+
+        '''
         super(NetworkExperiment, self).setUp(params)
 
         # generate a working network instance
@@ -93,4 +105,3 @@ class NetworkExperiment(Experiment):
         '''At the end of each experiment, throw away the working network.'''
         super(NetworkExperiment, self).tearDown()
         self._graph = None
-

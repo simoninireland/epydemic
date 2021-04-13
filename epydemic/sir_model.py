@@ -1,7 +1,7 @@
 # SIR as a compartmented model
 #
-# Copyright (C) 2017--2020 Simon Dobson
-# 
+# Copyright (C) 2017--2021 Simon Dobson
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import CompartmentedModel
 import sys
+from epydemic import CompartmentedModel
 if sys.version_info >= (3, 8):
     from typing import Final, Dict, Any
 else:
@@ -26,16 +26,17 @@ else:
     from typing import Dict, Any
     from typing_extensions import Final
 
+
 class SIR(CompartmentedModel):
     '''The Susceptible-Infected-Removed :term:`compartmented model of disease`.
     Susceptible nodes are infected by infected neighbours, and recover to
     removed.'''
-    
+
     # Model parameters
     P_INFECTED : Final[str] = 'epydemic.SIR.pInfected'  #: Parameter for probability of initially being infected.
     P_INFECT : Final[str] = 'epydemic.SIR.pInfect'      #: Parameter for probability of infection on contact.
     P_REMOVE : Final[str] = 'epydemic.SIR.pRemove'      #: Parameter for probability of removal (recovery).
-    
+
     # Possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE : Final[str] = 'epydemic.SIR.S'         #: Compartment for nodes susceptible to infection.
     INFECTED : Final[str] = 'epydemic.SIR.I'            #: Compartment for nodes infected.
@@ -45,7 +46,7 @@ class SIR(CompartmentedModel):
     SI : Final[str] = 'epydemic.SIR.SI'                 #: Edge able to transmit infection.
 
     def __init__(self):
-        super(SIR, self).__init__()
+        super().__init__()
 
     def build(self, params : Dict[str, Any]):
         '''Build the SIR model.
@@ -85,6 +86,3 @@ class SIR(CompartmentedModel):
         :param t: the simulation time (unused)
         :param n: the node'''
         self.changeCompartment(n, self.REMOVED)
-    
-                
-   

@@ -1,7 +1,7 @@
 # Networks dynamics simulation base class
 #
 # Copyright (C) 2017--2021 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import NetworkExperiment, Locus, Process, NetworkGenerator, EventFunction, EventDistribution, Element
-from networkx import Graph
-from heapq import heappush, heappop
 import sys
+from heapq import heappush, heappop
+from networkx import Graph
+from epydemic import NetworkExperiment, Locus, Process, NetworkGenerator, EventFunction, EventDistribution, Element
 if sys.version_info >= (3, 8):
     from typing import Union, Final, Dict, List, Any, Optional, Tuple, Callable
 else:
@@ -36,35 +36,37 @@ PostedEvent = Tuple[float, int, PostedEventFunction]
 class Dynamics(NetworkExperiment):
     '''An abstract simulation framework for running a process over a network.
 
-    This is the abstract base class
-    for implementing different kinds of network process dynamics as computational experiments
-    suitable for running under ``epyc``. Sub-classes provide synchronous and stochastic
-    (Gillespie) simulation dynamics.
+    This is the abstract base class for implementing different kinds
+    of network process dynamics as computational experiments suitable
+    for running under ``epyc``. Sub-classes provide synchronous and
+    stochastic (Gillespie) simulation dynamics.
 
     The dynamics runs a network process provided as a :class:`Process`
-    object. It is provided with a network generator that is called to generate
-    a new experimental network instance for each run. The generator can be
-    any iterator but will typically be an instance of :class:`NetworkGenerator`.
-    
+    object. It is provided with a network generator that is called to
+    generate a new experimental network instance for each run. The
+    generator can be any iterator but will typically be an instance of
+    :class:`NetworkGenerator`.
+
     :param p: network process to run
     :param g: (optional) prototype network or network generator'''
 
     # Additional metadata elements
-    TIME : Final[str] = 'epydemic.Dynamics.time'      #: Metadata element holding the logical simulation end-time.
-    EVENTS : Final[str] = 'epydemic.Dynamics.events'  #: Metadata element holding the number of events that happened.
+    TIME: Final[str] = 'epydemic.Dynamics.time'      #: Metadata element holding the logical simulation end-time.
+    EVENTS: Final[str] = 'epydemic.Dynamics.events'  #: Metadata element holding the number of events that happened.
 
-    def __init__(self, p : Process, g : Union[Graph, NetworkGenerator] =None):
-        super(Dynamics, self).__init__(g)
+    def __init__(self, p: Process, g: Union[Graph, NetworkGenerator] = None):
+        super().__init__(g)
 
         # initialise other fields
-        self._eventId : int = 0                                             # counter for posted events
-        self._process : Process = p                                         # network process to run
-        self._process.setDynamics(self)                                     # back-link from process to dynamics (for events)
-        self._loci : Dict[str, Locus] = dict()                              # dict from names to loci
-        self._processLoci : Dict[Process, Dict[str, Locus]] = dict()        # dict from processes to loci for events
-        self._perElementEvents : Dict[Process, EventDistribution] = dict()  # dict from processes to events that occur per-element
-        self._perLocusEvents : Dict[Process, EventDistribution ]= dict()    # dict from processes to events that occur per-locus
-        self._postedEvents : List[PostedEvent] = []                         # pri-queue of fixed-time events
+        self._eventId: int = 0                                             # counter for posted events
+        self._process: Process = p                                         # network process to run
+        self._simulationTime: float = 0.0                                  # on-going simulation time
+        self._process.setDynamics(self)                                    # back-link from process to dynamics (for events)
+        self._loci: Dict[str, Locus] = dict()                              # dict from names to loci
+        self._processLoci: Dict[Process, Dict[str, Locus]] = dict()        # dict from processes to loci for events
+        self._perElementEvents: Dict[Process, EventDistribution] = dict()  # dict from processes to events that occur per-element
+        self._perLocusEvents: Dict[Process, EventDistribution] = dict()    # dict from processes to events that occur per-locus
+        self._postedEvents: List[PostedEvent] = []                         # pri-queue of fixed-time events
 
 
     # ---------- Configuration ----------
@@ -75,49 +77,75 @@ class Dynamics(NetworkExperiment):
         :returns: the process'''
         return self._process
 
+    def currentSimulationTime(self) -> float:
+        '''Return the current simulation time.
+
+        :returns: the current time'''
+        return self._simulationTime
+
+    def setCurrentSimulationTime(self, t: float):
+        '''Set the current simulation time. This should only be used by
+        sub-classes when running the simulation: doing so in any other
+        context risks damaging the simulation.
+
+        :param t: the new simualtion time
+
+        '''
+        self._simulationTime = t
+
 
     # ---------- Results ----------
 
     def experimentalResults(self) -> Dict[str, Any]:
-        '''Report the process' experimental results. This simply calls through to
-        the :meth:`Process.results` method of the process being simulated.
+        '''Report the process' experimental results. This simply calls through
+        to the :meth:`Process.results` method of the process being
+        simulated.
 
-        :returns: the results of the process'''
+        :returns: the results of the process
+
+        '''
         return self._process.results()
 
 
     # ---------- Set-up and tear-down ----------
 
-    def setUp(self, params : Dict[str, Any]):
-        '''Set up the experiment for a run. This performs the inherited actions, then
-        builds the network process that the dynamics is to run.
+    def setUp(self, params: Dict[str, Any]):
+        '''Set up the experiment for a run. This performs the inherited
+        actions, then builds the network process that the dynamics is
+        to run.
 
-        :params params: the experimental parameters'''
-        super(Dynamics, self).setUp(params)
+        :params params: the experimental parameters
+
+        '''
+        super().setUp(params)
 
         # set up the event stream
         self._loci = dict()
         self._processLoci = dict()
         self._perElementEvents = dict()
         self._perLocusEvents = dict()
-        self._postedEvents = [] 
+        self._postedEvents = []
         self._eventId = 0
+        self._simulationTime = 0.0
 
-        # build the process
+        # build and set up the process
         self._process.reset()
         self._process.build(params)
         self._process.setUp(params)
 
     def tearDown(self):
-        '''At the end of each experiment, throw away any posted by un-executed events.'''
+        '''At the end of each experiment, throw away any posted by un-executed
+        events.
+
+        '''
         self._process.tearDown()
-        super(Dynamics, self).tearDown()
+        super().tearDown()
         self._postedEvents= []
 
 
     # ---------- Stochastic events (drawn from a distribution) ----------
 
-    def addLocus(self, p : Process, n : str, l : Locus =None):
+    def addLocus(self, p: Process, n: str, l: Locus = None):
         """Add a named locus associated with the given process.
 
         :param p: the process
@@ -143,7 +171,7 @@ class Dynamics(NetworkExperiment):
         # return the locus
         return l
 
-    def locus(self, n : str) -> Locus:
+    def locus(self, n: str) -> Locus:
         '''Retrieve a locus by name.
 
         :param n: the locus name
@@ -156,7 +184,7 @@ class Dynamics(NetworkExperiment):
         :returns: a dict from names to loci'''
         return self._loci
 
-    def lociForProcess(self, p : Process) -> Dict[str, Locus]:
+    def lociForProcess(self, p: Process) -> Dict[str, Locus]:
         '''Return all the loci defined for a specific process.
 
         :param p: the process
@@ -168,7 +196,7 @@ class Dynamics(NetworkExperiment):
             # process doesn't have loci, return an empty dict
             return dict()
 
-    def addEventPerElement(self, p : Process, l : Union[str, Locus], pr : float, ef : EventFunction):
+    def addEventPerElement(self, p: Process, l: Union[str, Locus], pr: float, ef: EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
         probability for each element of the locus, and calling the :term:`event function`
         when it is selected.
@@ -181,7 +209,7 @@ class Dynamics(NetworkExperiment):
             l = self.locus(l)
         self._perElementEvents[p].append((l, pr, ef))
 
-    def perElementEventDistribution(self, p : Process) -> EventDistribution:
+    def perElementEventDistribution(self, p: Process) -> EventDistribution:
         """Return the distribution of per-element events for the given process' loci.
 
         :param p: the process
@@ -191,9 +219,9 @@ class Dynamics(NetworkExperiment):
         else:
             return []
 
-    def addFixedRateEvent(self, p : Process, l : Union[str, Locus], pr : float, ef : EventFunction):
+    def addFixedRateEvent(self, p: Process, l: Union[str, Locus], pr: float, ef: EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular (fixed)
-        probability, and calling the :term:`event function` when it is selected. 
+        probability, and calling the :term:`event function` when it is selected.
 
         :param p: the process
         :param l: the locus or locus name
@@ -203,7 +231,7 @@ class Dynamics(NetworkExperiment):
             l = self.locus(l)
         self._perLocusEvents[p].append((l, pr, ef))
 
-    def fixedRateEventDistribution(self, p : Process) -> EventDistribution:
+    def fixedRateEventDistribution(self, p: Process) -> EventDistribution:
         """Return the distribution of fixed-rate events for the given process' loci.
 
         :param p: the process
@@ -213,7 +241,7 @@ class Dynamics(NetworkExperiment):
         else:
             return []
 
-    def eventRateDistribution(self, t : float) -> EventDistribution:
+    def eventRateDistribution(self, t: float) -> EventDistribution:
         """Return the event distribution, a sequence of (l, r, f) triples
         where l is the locus where the event occurs, r is the rate at
         which an event occurs, and f is the event function called to
@@ -241,7 +269,7 @@ class Dynamics(NetworkExperiment):
             for (l, pr, ef) in self._perLocusEvents[p]:
                 if len(l) > 0:
                     rates.append((l, pr, ef))
-                    
+
         return rates
 
 
@@ -257,7 +285,7 @@ class Dynamics(NetworkExperiment):
         self._eventId += 1
         return id
 
-    def postEvent(self, t : float, e : Element, ef : EventFunction):
+    def postEvent(self, t: float, e: Element, ef: EventFunction):
         """Post an event that calls the :term:`event function` at time t.
 
         :param t: the current time
@@ -265,7 +293,7 @@ class Dynamics(NetworkExperiment):
         :param ef: the event function"""
         heappush(self._postedEvents, (t, self._nextEventId(), (lambda: ef(t, e))))
 
-    def postRepeatingEvent(self, t : float, dt : float, e : Element, ef : EventFunction):
+    def postRepeatingEvent(self, t: float, dt: float, e: Element, ef: EventFunction):
         """Post an event that starts at time t and re-occurs at interval dt.
 
         :param t: the start time
@@ -280,7 +308,7 @@ class Dynamics(NetworkExperiment):
 
         heappush(self._postedEvents, (t, self._nextEventId(), (lambda: repeat(t, e))))
 
-    def nextPendingEventBefore(self, t : float) -> Optional[PostedEventFunction]:
+    def nextPendingEventBefore(self, t: float) -> Optional[PostedEventFunction]:
         """Return the next pending event to occur at or before time t.
 
         :param t: the current time
@@ -289,7 +317,7 @@ class Dynamics(NetworkExperiment):
             # we have events, grab the soonest
             (et, id, pef) = heappop(self._postedEvents)
             if et <= t:
-                # event should have occurred, return 
+                # event should have occurred, return
                 return pef
             else:
                 # this (and therefore all further events) are in the future, put it back
@@ -299,7 +327,7 @@ class Dynamics(NetworkExperiment):
             # we don't have any events
             return None
 
-    def runPendingEvents(self, t : float) -> int:
+    def runPendingEvents(self, t: float) -> int:
         '''Retrieve and fire any pending events at time t. This handles
         the case where firing an event posts another event that needs to be run
         before other already-posted events coming before time t: in other words,

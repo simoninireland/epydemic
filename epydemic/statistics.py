@@ -17,9 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+import sys
 from epydemic import Process
 from networkx import degree_histogram, connected_components
-import sys
 if sys.version_info >= (3, 8):
     from typing import Final, Dict, Any
 else:
@@ -29,12 +29,15 @@ else:
 
 
 class NetworkStatistics(Process):
-    '''A process that collects statistics about the final network. This process
-    defines no events: it simply interrogates the underlying network and extracts
-    a collection of descriptive statistics into the final experimental results.
-    These are statistics commonly collected in different scenarios, which can
-    thus be provided as standard.'''
-    
+    '''A process that collects statistics about the final network. This
+    process defines no events: it simply interrogates the underlying
+    network and extracts a collection of descriptive statistics into
+    the final experimental results. These are statistics commonly
+    collected in different scenarios, which can thus be provided as
+    standard.
+
+    '''
+
     # Experimental results
     N : Final[str] = 'epydemic.networkstatistics.N'                    #: Result holding the order of the network.
     M : Final[str] = 'epydemic.networkstatistics.M'                    #: Result holding the total number of edges in the network.
@@ -43,21 +46,21 @@ class NetworkStatistics(Process):
     COMPONENTS : Final[str] = 'epydemic.networkstatistics.components'  #: Result holding the number of connected components in the network.
     LCC : Final[str] = 'epydemic.networkstatistics.lcc'                #: Result holding the size of the largest (giant) component
     SLCC : Final[str] = 'epydemic.networkstatistics.slcc'              #: Result holding the size of the second-largest component
-    
+
     def __init__(self):
-        super(NetworkStatistics, self).__init__()
-        
+        super().__init__()
+
     def results(self) -> Dict[str, Any]:
         '''Extract the network summary statistics into a dict.
-        
+
         :returns: a dict of experimental results'''
-        res = super(NetworkStatistics, self).results()
-        
+        res = super().results()
+
         # order statistics
         g = self.network()
         res[self.N] = g.order()
         res[self.M] = len(g.edges)
-        
+
         # degree statistics
         hist = degree_histogram(g)
         ktotal = 0
@@ -65,13 +68,12 @@ class NetworkStatistics(Process):
             ktotal += i * hist[i]
         res[self.KMEAN] = ktotal / g.order()
         res[self.KDIST] = hist
-        
+
         # component statistics
         ccs = sorted(list(map(len, connected_components(g))), reverse=True)
         nccs = len(ccs)
         res[self.COMPONENTS] = nccs
         res[self.LCC] = ccs[0] if nccs > 0 else 0
         res[self.SLCC] = ccs[1] if nccs > 1 else 0
-        
-        return res
 
+        return res

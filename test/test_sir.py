@@ -18,10 +18,10 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import unittest
+import networkx             # type: ignore
+import epyc
 from epydemic import *
 from test.compartmenteddynamics import CompartmentedDynamicsTest
-import epyc
-import networkx             # type: ignore
 
 class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
 
@@ -59,6 +59,7 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         self.assertTrue(rc[epyc.Experiment.RESULTS][SIR.INFECTED] == 0)
         self.assertTrue(rc[epyc.Experiment.RESULTS][SIR.REMOVED] > 0)
         self.assertEqual(rc[epyc.Experiment.RESULTS][SIR.SUSCEPTIBLE] + rc[epyc.Experiment.RESULTS][SIR.REMOVED], self._network.order())
+
 
 if __name__ == '__main__':
     unittest.main()

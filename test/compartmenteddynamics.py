@@ -1,7 +1,7 @@
 # Mixin class containing common tests for compartmented models
 #
-# Copyright (C) 2017--2020 Simon Dobson
-# 
+# Copyright (C) 2017--2021 Simon Dobson
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,14 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
 import epyc
+from epydemic import *
 
 class CompartmentedDynamicsTest():
 
     def setUp( self ):
         '''Set up for the specific model under test. This should fill in
-        self._network, self._model, self._params, self._maxTime, 
+        self._network, self._model, self._params, self._maxTime,
         and self._lab as required.'''
         raise NotImplementedError('setUp')
 

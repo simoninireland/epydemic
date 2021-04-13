@@ -17,17 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Dynamics, Process, NetworkGenerator
-from networkx import Graph
-import numpy                     # type: ignore
-from copy import copy
 import sys
+from copy import copy
+import numpy                     # type: ignore
+from networkx import Graph
+from epydemic import Dynamics, Process, NetworkGenerator
 if sys.version_info >= (3, 8):
     from typing import Any, Dict, Union, Final
 else:
     # backport compatibility with older typing
     from typing import Any, Dict, Union
     from typing_extensions import Final
+
 
 class SynchronousDynamics(Dynamics):
     '''A dynamics that runs synchronously in discrete time, applying local
@@ -53,10 +54,12 @@ class SynchronousDynamics(Dynamics):
         # run the
         rng = numpy.random.default_rng()
         proc = self.process()
-        t = 0
+        t = 1.0
         events = 0
         timestepEvents = 0
         while not proc.atEquilibrium(t):
+            self.setCurrentSimulationTime(t)
+
             # fire any events posted for at or before this time
             nev = self.runPendingEvents(t)
 
@@ -89,7 +92,7 @@ class SynchronousDynamics(Dynamics):
                 timestepEvents = timestepEvents + 1
 
             # advance to the next timestep
-            t = t + 1
+            t = t + 1.0
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

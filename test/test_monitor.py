@@ -1,7 +1,7 @@
 # Test process monitoring
 #
 # Copyright (C) 2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,15 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import *
 import unittest
+import os
+from tempfile import NamedTemporaryFile
 import epyc
 import networkx
+from epydemic import *
+
 
 class MonitoredSIR(SIR, Monitor):
-    
+
     def __init__(self):
-        super(MonitoredSIR, self).__init__()
+        super().__init__()
 
 
 class MonitorTest(unittest.TestCase):
@@ -43,15 +46,56 @@ class MonitorTest(unittest.TestCase):
         param[Monitor.DELTA] = 1.0
 
         rc = e.set(param).run()
-        self.assertIn(Monitor.TIMESERIES, rc[epyc.Experiment.RESULTS])
-        self.assertSetEqual(set(rc[epyc.Experiment.RESULTS].keys()), set([Monitor.TIMESERIES, SIR.SUSCEPTIBLE, SIR.INFECTED, SIR.REMOVED]))
-        self.assertSetEqual(set(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES].keys()), set([Monitor.OBSERVATIONS, SIR.SI, SIR.INFECTED]))
+        self.assertSetEqual(set(rc[epyc.Experiment.RESULTS].keys()),
+                            set([Monitor.timeSeriesForLocus(SIR.SI),
+                                 Monitor.timeSeriesForLocus(SIR.INFECTED),
+                                 Monitor.OBSERVATIONS,
+                                 SIR.SUSCEPTIBLE,
+                                 SIR.INFECTED,
+                                 SIR.REMOVED]))
         # the next test is >=, not =, because some events may be drawn after the maxiumum time,
         # but the time is short enough that the number of infecteds won't be exhausted beforehand
-        self.assertGreaterEqual(len(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES][Monitor.OBSERVATIONS]), 100)
-        n = len(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES][Monitor.OBSERVATIONS])
+        n = len(rc[epyc.Experiment.RESULTS][Monitor.OBSERVATIONS])
+        self.assertGreaterEqual(n, 100)
         for k in [SIR.SI, SIR.INFECTED]:
-            self.assertEqual(len(rc[epyc.Experiment.RESULTS][Monitor.TIMESERIES][k]), n)
+            self.assertEqual(len(rc[epyc.Experiment.RESULTS][Monitor.timeSeriesForLocus(k)]), n)
+
+    def testHDF5(self):
+        '''Test we can save and retrieve the time series as HDF5.'''
+        tf = NamedTemporaryFile()
+        tf.close()
+        fn = tf.name
+        #fn = 'test.h5'
+
+        try:
+            nb = epyc.HDF5LabNotebook(fn, create=True)
+            lab = epyc.Lab(nb)
+
+            # run the experiment
+            m = MonitoredSIR()
+            m.setMaximumTime(100)
+            e = StochasticDynamics(m, networkx.erdos_renyi_graph(1000, 5.0 / 1000))
+            lab[SIR.P_INFECTED] = 0.01
+            lab[SIR.P_INFECT] = 0.002
+            lab[SIR.P_REMOVE] = 0.002
+            lab[Monitor.DELTA] = 1.0
+            rc = lab.runExperiment(e)
+            df = lab.dataframe()
+
+            # check we read back in correctly
+            with epyc.HDF5LabNotebook(fn).open() as nb1:
+                df1 = nb1.dataframe()
+                r = df.iloc[0]
+                r1 = df1.iloc[0]
+                for f in [Monitor.OBSERVATIONS, Monitor.timeSeriesForLocus(SIR.SI), Monitor.timeSeriesForLocus(SIR.INFECTED)]:
+                    self.assertCountEqual(r[f], r1[f])
+        finally:
+            try:
+                os.remove(fn)
+                #pass
+            except OSError:
+                pass
+
 
 if __name__ == '__main__':
     unittest.main()

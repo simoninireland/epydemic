@@ -1,9 +1,9 @@
 :class:`Dynamics`: Process dynamics over networks
 =================================================
 
-.. currentmodule :: epydemic
+.. currentmodule:: epydemic
 
-.. autoclass :: Dynamics
+.. autoclass:: Dynamics
    :show-inheritance:
 
 
@@ -22,7 +22,7 @@ method (inherited from `epyc.Experiment`), passing a dict of
 parameters. The network dynamics then performs a single simulation
 according to the following process:
 
-* The :meth:`Dynamics.setUp` method uses :meth:`NetworkExperiment.setUp` to 
+* The :meth:`Dynamics.setUp` method uses :meth:`NetworkExperiment.setUp` to
   create a working network. It then lets the :class:`Process`
   configure the working copy: it calls :meth:`Process.reset` to reset
   the process, sets its working network by calling :meth:`Process.setNetwork`,
@@ -49,18 +49,22 @@ other than through its execution interface.
 Attributes
 ----------
 
-.. autoattribute :: Dynamics.TIME
+.. autoattribute:: Dynamics.TIME
 
-.. autoattribute :: Dynamics.EVENTS
+.. autoattribute:: Dynamics.EVENTS
 
 
 Configuring the simulation
 --------------------------
 
 A :class:`Dynamics` object runs the process it describes over a
-network. 
+network. It also maintains the simulation time as the simulation progresses.
 
-.. automethod :: Dynamics.process
+.. automethod:: Dynamics.process
+
+.. automethod:: Dynamics.currentSimulationTime
+
+.. automethod:: Dynamics.setCurrentSimulationTime
 
 
 Running the experiment
@@ -69,11 +73,11 @@ Running the experiment
 A simulation takes the form of an `epyc` experiment which has set-up,
 execution, and tear-down phases.
 
-.. automethod :: Dynamics.setUp
+.. automethod:: Dynamics.setUp
 
-.. automethod :: Dynamics.tearDown
+.. automethod:: Dynamics.tearDown
 
-.. automethod :: Dynamics.experimentalResults
+.. automethod:: Dynamics.experimentalResults
 
 
 Loci
@@ -81,13 +85,13 @@ Loci
 
 Loci for stochastic events are craeted by :class:`Process` instances.
 
-.. automethod :: Dynamics.addLocus
+.. automethod:: Dynamics.addLocus
 
-.. automethod :: Dynamics.locus
+.. automethod:: Dynamics.locus
 
-.. automethod :: Dynamics.loci
+.. automethod:: Dynamics.loci
 
-.. automethod :: Dynamics.lociForProcess
+.. automethod:: Dynamics.lociForProcess
 
 
 Probabilistic events
@@ -95,18 +99,18 @@ Probabilistic events
 
 Stochastic events can be attached to each locus defined for the simulation.
 
-.. automethod: : Dynamics.addEventPerElement
+.. automethod : Dynamics.addEventPerElement
 
-.. automethod :: Dynamics.addFixedRateEvent
+.. automethod:: Dynamics.addFixedRateEvent
 
 Thes events form a probability distribution from which events can be drawn
 in the course of the simulation.
 
-.. automethod :: Dynamics.perElementEventDistribution
+.. automethod:: Dynamics.perElementEventDistribution
 
-.. automethod :: Dynamics.fixedRateEventDistribution
+.. automethod:: Dynamics.fixedRateEventDistribution
 
-.. automethod :: Dynamics.eventRateDistribution
+.. automethod:: Dynamics.eventRateDistribution
 
 
 Posted events
@@ -114,17 +118,13 @@ Posted events
 
 A :class:`Dynamics` object also maintains a queue of posted event.
 
-.. automethod :: Dynamics.postEvent
+.. automethod:: Dynamics.postEvent
 
-.. automethod :: Dynamics.postRepeatingEvent
+.. automethod:: Dynamics.postRepeatingEvent
 
 This queue is then accessed to extract the events that need to be fired
 up to a given simulation time.
 
-.. automethod :: Dynamics.nextPendingEventBefore
+.. automethod:: Dynamics.nextPendingEventBefore
 
-.. automethod :: Dynamics.runPendingEvents
-
-
-
-
+.. automethod:: Dynamics.runPendingEvents
