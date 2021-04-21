@@ -1,12 +1,52 @@
-* This release
+#+title: epydemic
 
-** Coding
+* epydemic, epidemic simulation in Python                           :PROJECT:
 
-** Bugs
+* Next release
 
-** Documentation
+** Coding [0/3]
+
+   - [ ] Configuration model generator, with both a list of node
+     degrees (as in networkx) and a distribution to draw from
+   - [ ] Extended configuration model with triangles etc
+   - [ ] Add degree-distribution-preserving rewiring functions to
+     randomise networks while preserving p_k or P(k, k')
+
+** Bugs [0/0]
+
+** Documentation [0/1]
+
+   - [ ] Add discussion of moving from R-values to parameters
+
 
 * Ideas
+
+** Improving sequential Gillespie simulation [5/9]
+
+   branch: accelerating-gillespie-dynamics
+
+   There are several suggestions from the literature, many of which
+   relate solely to chemical-style systems with lots of reactions. A
+   few ideas come out, though:
+
+   1. [X] Assume that reaction rates are constant. That saves a call to
+      re-compute. Could make this an option for systems that want to
+      change the rates over time.
+   2. [X] Have the events capture their effects on the occupation of
+      compartments, to increment the counts.
+   3. [X] Embed counting into the changeCompartment() etc methods to
+      increment the counts.
+
+   Profiling the code suggests that it spends about 80% of its time in
+   Locus.draw() choosing elements to fire events on.
+
+   - [X] Re-implement Locus using a better data structure
+   - [ ] Build an iterator that doesn't copy all the elements
+   - [X] Random choice based on infinite random bitstream
+   - [ ] Check the statistical properties of this choice
+   - [ ] Randomise a locus after first creation, before simulation?
+   - [ ] Change recursive functions to iterating
+
 
 ** Acceleration
 
@@ -40,3 +80,32 @@ equilibrium that perhaps could be refactored?
 *** GPU acceleration
 
 Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html][containerised]].
+
+
+** Containerisation
+
+   To run in the cloud we need to be able to containerise. There are a
+   couple of options here:
+
+   1. A single container running on a multicore host, extended with
+      whatever code is needed for the application. This is
+      straightforward, but limited by the single-host performance
+      (which might be fine for a lot of applications).
+   2. Multiple containers acting together, with a virtual network
+      between them. This probably needs ~docker-compose~ and some
+      tests to see whether it's possible to run ~ipyparallel~ in this
+      way (which I think it is).
+
+** Generating functions
+
+   We need a generating functions library, perhaps alongside the
+   network generator classes, so we can use this formalism easily
+   alongside epydemic's simulations. In particular we need the
+   high-order-numerical-derivative function to be able to extract
+   probabilities etc.
+
+   The biggest challenge might be to write documentation....
+
+   There's another approach alongside this, which would be to write a
+   symbolic package with the generating functions in them, for use in
+   Sage. This would then complement the numerical side.
