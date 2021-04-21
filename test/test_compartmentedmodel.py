@@ -1,7 +1,7 @@
 # Test compartmented model basic functions
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ class CompartmentedModelTest(unittest.TestCase):
         self._params[SIR.P_INFECT] = 0.1
         self._params[SIR.P_INFECTED] = 0.01
         self._params[SIR.P_REMOVE] = 0.05
-       
+
     def testPopulation( self ):
         '''Test populating a model.'''
         e = StochasticDynamics(SIR(), self._er)
@@ -72,7 +72,7 @@ class CompartmentedModelTest(unittest.TestCase):
         m.build(self._params)
         with self.assertRaises(Exception):
             m.changeCompartmentInitialOccupancy('missing', 1.0)
-         
+
     def testSanityCheckDistribution(self):
         '''Check that we detect a bad distribution in initial comaprtment occupancy.'''
         m = SIR()
@@ -126,7 +126,7 @@ class CompartmentedModelTest(unittest.TestCase):
         # keep track of the other compartments as well
         m.trackNodesInCompartment(SIR.SUSCEPTIBLE)
         m.trackNodesInCompartment(SIR.REMOVED)
-        
+
         # all nodes in I
         self.assertCountEqual(m.loci()[SIR.INFECTED].elements(), [1, 2, 3, 4])
 

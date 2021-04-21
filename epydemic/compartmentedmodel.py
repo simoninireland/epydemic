@@ -290,10 +290,17 @@ class CompartmentedModel(Process):
         # get the initial compartment distribution
         dist = self.initialCompartmentDistribution()
 
-        # assign nodes to compartments
+        # collect the nodes to assign
+        # these are randomised so that they land in the appropriate loci
+        # unordered
+        # sd: should we change this to randomise before simulation?
         g = self.network()
+        ns = list(g.nodes())
+        numpy.random.shuffle(ns)
+
+        # assign nodes to compartments
         rng = numpy.random.default_rng()
-        for n in g.nodes():
+        for n in ns:
             # select a compartment according to the initial distribution
             r = rng.random()
             a = 0.0
