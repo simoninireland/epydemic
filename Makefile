@@ -31,6 +31,7 @@ SOURCES_SETUP_IN = setup.py.in
 SOURCES_CODE = \
 	epydemic/__init__.py \
 	epydemic/types.py \
+	epydemic/drawableset.py \
 	epydemic/networkexperiment.py \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
@@ -55,6 +56,7 @@ SOURCES_CODE = \
 	epydemic/newmanziff.py
 SOURCES_TESTS = \
 	test/__init__.py \
+	test/test_drawableset/py \
 	test/test_networkdynamics.py \
 	test/test_stochasticrates.py \
 	test/test_compartmentedmodel.py \
@@ -132,8 +134,9 @@ SOURCES_PAPER = \
 
 # Extras for building diagrams etc
 SOURCES_UTILS = \
-    utils/make-powerlaw-cutoff.py \
-    utils/make-monitor-progress.py
+	utils/make-powerlaw-cutoff.py \
+	utils/make-monitor-progress.py \
+	utils/profile-simulation.py
 
 # Extras for the build and packaging system
 SOURCES_EXTRA = \

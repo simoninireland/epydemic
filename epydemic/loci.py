@@ -1,7 +1,7 @@
 # Loci for dynamics epidemic model
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,10 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Element
-import random
+from epydemic import Element, DrawableSet
+from numpy.random import default_rng
 from networkx import Graph
-from typing import Any, Set
+from typing import Any, Set, List
+
 
 class Locus(object):
     '''The locus of dynamics, where changes can happen. Loci
@@ -35,7 +36,7 @@ class Locus(object):
     def __init__(self, name : str):
         super(Locus, self).__init__()
         self._name : str = name
-        self._elements : Set[Element] = set()
+        self._elements : DrawableSet = DrawableSet()
 
     def name( self ) -> str:
         '''Returns the name of the locus.
@@ -49,12 +50,12 @@ class Locus(object):
         :returns: the number of elements'''
         return len(self.elements())
 
-    def elements( self ) -> Set[Any]:
+    def elements( self ) -> Set[Element]:
         '''Return the underlying elements of the locus.
 
         :returns: the elements'''
         return self._elements
-    
+
     def draw(self) -> Element:
         '''Draw a random element from the locus. The default performs a simple
         draw that is equiprobable across all the elements. The locus remains unchanged:
@@ -63,7 +64,7 @@ class Locus(object):
         :returns: a random element at the locus'''
         if len(self) == 0:
             raise ValueError('Trying to draw element from empty locus {n}'.format(n = self.name()))
-        e = random.choice(list(self.elements()))
+        e = self._elements.draw()
         return e
 
 
@@ -87,7 +88,7 @@ class Locus(object):
 
     def enterHandler(self, g : Graph, e : Element):
         '''Handler for when an element enters the locus due to changes in circumstances,
-        not changes in population. 
+        not changes in population.
 
         :param g: the network
         :param e: the element'''
@@ -100,4 +101,3 @@ class Locus(object):
         :param g: the network
         :param e: the element'''
         self._elements.discard(e)
-
