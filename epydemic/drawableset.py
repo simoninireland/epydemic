@@ -95,109 +95,131 @@ class Bitstream(object):
 class DrawableSet(object):
     '''A set that can be drawn from randomly.
 
-    The implementation uses an (unbalanced) binary search tree that also
-    maintains its height. Addition, deletion, and containment testing
-    are all :math:`O(\log n)` average time complexity, as is the
-    :meth:`draw` method that selects a uniformly random element.
+    The implementation uses an balanced (red-black) binary search
+    tree. Addition, deletion, and containment testing are all
+    :math:`O(\log n)` average time complexity, as is the :meth:`draw`
+    method that selects a uniformly random element.
 
-    These complexities all rely on the tree being -- and remaining
-    -- balanced, which isn't enforced or checked.
+    We don't implement the whole of the standard set interface as we
+    don't need it for the current application. Possibly we ought to,
+    just to be future-proof.
 
     :param d: (optional) the data at the tree node (defaults to None)
-    :param p: (optional) thew parent node (defaults to None)
+    :param p: (optional) the parent node (defaults to None)
 
     '''
 
     Bitstream = Bitstream()   #: A random bit stream generator.
 
-    def __init__(self, d : Element =None, p : 'DrawableSet' =None):
-        self._left : 'DrawableSet' = None
-        self._right : 'DrawableSet' = None
-        self._parent : 'DrawableSet' = p
-        self._data : Element = d
-        self._leftSize : int = 0
-        self._rightSize : int = 0
-        self._height : int = 0
+    def __init__(self, d: Element = None, p: 'DrawableSet' = None):
+        self._red: bool = False             # red or black (root is always black)
+        self._left: 'DrawableSet' = None    # left sub-tree
+        self._right: 'DrawableSet' = None   # right sub-tree
+        self._parent: 'DrawableSet' = p     # parent nodes
+        self._data: Element = d             # value at this node
+        self._height: int = 0               # height of sub-tree rooted at this node
 
-    def _add(self, e : Element) -> Tuple[int, int]:
+    def _add(self, e: Element) -> int:
+        '''Private method to add a value to the tree.
+
+        :param e: the element to addCompartment:
+        :returns: the new height of the tree'''
         if self._data is None:
+            # we're the root, store here
             self._data = e
-            return (0, 1)
+            return 0
         elif e == self._data:
-            return (self._height, self._leftSize + self._rightSize + 1)
+            # value is already in the set, return
+            return self._height
         elif e < self._data:
+            # add in left sub-tree
             if self._left is None:
+                # no left sub-tree, create a new node and attach it
                 self._left = DrawableSet(e, self)
-                self._leftSize = 1
                 self._height = max(self._height, 1)
             else:
-                (h, self._leftSize) = self._left._add(e)
-                self._height = max(self._height, h + 1)
+                # descend into right sub-tree, updating our height
+                self._height = max(self._height, self._left._add(e) + 1)
         else:
+            # add in right sub-tree
             if self._right is None:
+                # no right sub-tree, create a new node and attach it
                 self._right = DrawableSet(e, self)
-                self._rightSize = 1
                 self._height = max(self._height, 1)
             else:
-                (h, self._rightSize) = self._right._add(e)
-                self._height = max(self._height, h + 1)
-        return (self._height, self._leftSize + self._rightSize + 1)
+                # descend into right sub-tree, updating our height
+                self._height = max(self._height, self._right._add(e) + 1)
+        return self._height
 
-    def add(self, e : Element):
+    def add(self, e: Element):
         '''Add an element to the set. This is a no-op if the element is already
         in the set.
 
         :param e: the element to add'''
         self._add(e)
 
-    def union(self, s : Iterable[Element]):
-        '''Add all the elements from the given iterable to the set.
-
-        :param s: the elements'''
-        es = list(s)
-        numpy.random.shuffle(es)
-        for e in es:
-            self._add(e)
-
     def _find(self, e: Element) -> 'DrawableSet':
+        '''Private method to search for an element.
+
+        :param e: the element
+        :returns: the node holding the element or None'''
         if e == self._data:
+            # element found, return
             return self
         elif e < self._data:
+            # element should be in left sub-tree
             if self._left is None:
                 return None
             else:
                 return self._left._find(e)
         else:
+            # element should be in right sub-tree
             if self._right is None:
                 return None
             else:
                 return self._right._find(e)
 
-    def __contains__(self, e : Element) -> bool:
+    def __contains__(self, e: Element) -> bool:
         '''Check whether the given element is a member of ther set.
 
-        :param e: the element:returns: True if the element is in the set'''
+        :param e: the element
+        :returns: True if the element is in the set'''
         if self._data is None:
+            # we've the (empty) root
             return False
         else:
             return self._find(e) is not None
+
+    def empty(self) -> bool:
+        '''Test if the set is empty.
+
+        :returns: True if the set is empty'''
+        return self._data is None
 
     def __len__(self) -> int:
         '''Return the size of the set.
 
         :returns: the size of the set'''
         if self._data is None:
+            # we're the (empty) root
             return 0
         else:
-            return self._leftSize + self._rightSize + 1
+            s = 1
+            if self._left is not None:
+                s += len(self._left)
+            if self._right is not None:
+                s += len(self._right)
+            return s
 
     def elements(self) -> List[Element]:
         '''Returns all the elements in the set as a list.
 
         :returns: a list of element'''
         if self._data is None:
+            # we're the (empty) root
             return []
         else:
+            # perform an in-order traverse of the tree
             es = []
             if self._left is not None:
                 es.extend(self._left.elements())
@@ -213,10 +235,10 @@ class DrawableSet(object):
         return iter(self.elements())
 
     def __eq__(self, s : 'DrawableSet') -> bool:
-        '''Tests for itemwise equality.
+        '''Tests for item-wise equality.
 
         :param s: the other set
-        :returns: True if allthe elements match'''
+        :returns: True if all the elements match'''
         if len(s) != len(self):
             return False
         a = self.iter()
@@ -240,21 +262,32 @@ class DrawableSet(object):
 
     def nextElement(self) -> 'DrawableSet':
         '''Return the the "least disruptive element" to swap with
-        when discarding a branch node. This is selected from the
-        higher sub-tree, with a view to reducing that sub-tree's height.
+        when discarding a branch node. This is selected randomly
+        from the left or right sub-tree.
 
         :returns: the node to swap with'''
-        if self._leftSize == 0 and self._rightSize == 0:
-            return None
-        elif self._leftSize > self._rightSize:
+        if self._left is None:
+            if self._right is None:
+                return None
+            else:
+                return self._right.leftmost()
+        elif self._right is None:
             return self._left.rightmost()
         else:
-            return self._right.leftmost()
+            b = next(self.Bitstream)
+            if b == 0:
+                return self._left.rightmost()
+            else:
+                return self._right.leftmost()
 
-    def _discard(self, e : Element) -> Tuple['DrawableSet', int, int]:
+    def _discard(self, e: Element) -> Tuple['DrawableSet', int]:
+        '''Provate methiod to discard an element from the tree.
+
+        :param e: the element
+        :returns: the replacement node and its height'''
         if self._data is None:
-            # we're the root node, there's nothing to be discarded
-            return (None, -1, 0)
+            # we're the (empty) root node, there's nothing to be discarded
+            return (None, -1)
 
         elif e == self._data:
             # we hold the data, find the least disruptive element to swap us with
@@ -263,20 +296,20 @@ class DrawableSet(object):
             if n is None:
                 # we're a leaf, we can simply be deleted
                 self._data = None   # this handles the case where we're the last (root) element
-                return (None, -1, 0)
+                return (None, -1)
             else:
                 # grab the data at the chosen nodes
                 d = n._data
 
                 # recursively delete the data from the sub-tree
                 if d < self._data:
-                    (self._left, h, self._leftSize) = self._left._discard(d)
+                    (self._left, h) = self._left._discard(d)
                     if self._right is None:
                         self._height = h + 1
                     else:
                         self._height = max(self._right._height, h) + 1
                 else:
-                    (self._right, h, self._rightSize) = self._right._discard(d)
+                    (self._right, h) = self._right._discard(d)
                     if self._left is None:
                         self._height = h + 1
                     else:
@@ -287,23 +320,23 @@ class DrawableSet(object):
 
         elif e < self._data:
             if self._left is not None:
-                (self._left, h, self._leftSize) = self._left._discard(e)
+                (self._left, h) = self._left._discard(e)
                 if self._right is None:
                     self._height = h + 1
                 else:
                     self._height = max(self._right._height, h) + 1
         else:
             if self._right is not None:
-                (self._right, h, self._rightSize) = self._right._discard(e)
+                (self._right, h) = self._right._discard(e)
                 if self._left is None:
                     self._height = h + 1
                 else:
                     self._height = max(self._left._height, h) + 1
 
         # return our new size
-        return (self, self._height, self._leftSize + self._rightSize + 1)
+        return (self, self._height)
 
-    def discard(self, e : Element):
+    def discard(self, e: Element):
         '''Discard the given element from the set. If the element
         isn't in the set, this is a no-op.
 

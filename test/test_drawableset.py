@@ -208,6 +208,7 @@ class DrawableSetTest(unittest.TestCase):
         s.add(30)
         self.assertEqual(s._height, 3)
 
+    @unittest.skip('Not interesting any more')
     def testDiscardDetail(self):
         '''Test that discarding follows the algorithm.'''
         s = DrawableSet()
@@ -219,97 +220,69 @@ class DrawableSetTest(unittest.TestCase):
 
         self.assertEqual(s._data, 10)
         self.assertEqual(s._height, 3)
-        self.assertEqual(s._leftSize, 1)
-        self.assertEqual(s._rightSize, 3)
 
         self.assertEqual(s._left._data, 5)
         self.assertEqual(s._left._height, 0)
         self.assertIsNone(s._left._left)
         self.assertIsNone(s._left._right)
-        self.assertEqual(s._left._leftSize, 0)
-        self.assertEqual(s._left._rightSize, 0)
 
         self.assertEqual(s._right._data, 20)
         self.assertEqual(s._right._height, 2)
         self.assertIsNone(s._right._left)
-        self.assertEqual(s._right._leftSize, 0)
-        self.assertEqual(s._right._rightSize, 2)
 
         self.assertEqual(s._right._right._data, 25)
         self.assertEqual(s._right._right._height, 1)
         self.assertIsNone(s._right._right._left)
-        self.assertEqual(s._right._right._leftSize, 0)
-        self.assertEqual(s._right._right._rightSize, 1)
 
         self.assertEqual(s._right._right._right._data, 30)
         self.assertEqual(s._right._right._right._height, 0)
         self.assertIsNone(s._right._right._right._left)
         self.assertIsNone(s._right._right._right._right)
-        self.assertEqual(s._right._right._right._leftSize, 0)
-        self.assertEqual(s._right._right._right._rightSize, 0)
 
         s.discard(10)
 
         self.assertEqual(s._data, 20)
         self.assertEqual(s._height, 2)
-        self.assertEqual(s._leftSize, 1)
-        self.assertEqual(s._rightSize, 2)
 
         self.assertEqual(s._left._data, 5)
         self.assertEqual(s._left._height, 0)
         self.assertIsNone(s._left._left)
         self.assertIsNone(s._left._right)
-        self.assertEqual(s._left._leftSize, 0)
-        self.assertEqual(s._left._rightSize, 0)
 
         self.assertEqual(s._right._data, 25)
         self.assertEqual(s._right._height, 1)
         self.assertIsNone(s._right._left)
-        self.assertEqual(s._right._leftSize, 0)
-        self.assertEqual(s._right._rightSize, 1)
 
         self.assertEqual(s._right._right._data, 30)
         self.assertEqual(s._right._right._height, 0)
         self.assertIsNone(s._right._right._left)
         self.assertIsNone(s._right._right._right)
-        self.assertEqual(s._right._right._leftSize, 0)
-        self.assertEqual(s._right._right._rightSize, 0)
 
         s.discard(25)
 
         self.assertEqual(s._data, 20)
         self.assertEqual(s._height, 1)
-        self.assertEqual(s._leftSize, 1)
-        self.assertEqual(s._rightSize, 1)
 
         self.assertEqual(s._left._data, 5)
         self.assertEqual(s._left._height, 0)
         self.assertIsNone(s._left._left)
         self.assertIsNone(s._left._right)
-        self.assertEqual(s._left._leftSize, 0)
-        self.assertEqual(s._left._rightSize, 0)
 
         self.assertEqual(s._right._data, 30)
         self.assertEqual(s._right._height, 0)
         self.assertIsNone(s._right._left)
         self.assertIsNone(s._right._right)
-        self.assertEqual(s._right._leftSize, 0)
-        self.assertEqual(s._right._rightSize, 0)
 
         s.discard(5)
 
         self.assertEqual(s._data, 20)
         self.assertEqual(s._height, 1)
         self.assertIsNone(s._left)
-        self.assertEqual(s._leftSize, 0)
-        self.assertEqual(s._rightSize, 1)
 
         self.assertEqual(s._right._data, 30)
         self.assertEqual(s._right._height, 0)
         self.assertIsNone(s._right._left)
         self.assertIsNone(s._right._right)
-        self.assertEqual(s._right._leftSize, 0)
-        self.assertEqual(s._right._rightSize, 0)
 
     def testShrink(self):
         '''Test the height calculation when discarding.'''
@@ -329,7 +302,9 @@ class DrawableSetTest(unittest.TestCase):
         '''Test the basic draw functionality.'''
         s = DrawableSet()
         es = list(range(1000))
-        s.union(es)
+        numpy.random.shuffle(es)
+        for e in es:
+            s.add(e)
         for _ in range(int(len(es) * 0.1)):
             j = s.draw()
             self.assertIn(j, s)
@@ -338,7 +313,9 @@ class DrawableSetTest(unittest.TestCase):
         '''Test we always draw all elements.'''
         s = DrawableSet()
         es = list(range(1000))
-        s.union(es)
+        numpy.random.shuffle(es)
+        for e in es:
+            s.add(e)
         ns = []
         for _ in range(len(es)):
             n = s.draw()
