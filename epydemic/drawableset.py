@@ -171,7 +171,7 @@ class TreeNode(object):
             else:
                 return (z, y, x)
 
-    def _rebalance(self) -> 'TreeNode':
+    def _rebalance(self, recursive:bool = False) -> 'TreeNode':
         '''Rebalance the tree after addition of a node.'''
 
         # find the shallowest unbalanced node
@@ -257,8 +257,12 @@ class TreeNode(object):
             # update the heights back up to the root
             parent._updateHeights()
 
-            # the global root of the tree is unchanged
-            return None
+            if recursive:
+                # we're recursing, so call again on our parent
+                return parent._rebalance(True)
+            else:
+                # we're not recursing and the global root of the tree is unchanged
+                return None
         else:
             # tree has a new global root, return it
             return root
@@ -284,13 +288,132 @@ class TreeNode(object):
             es.extend(self._right.inOrderTraverse())
         return es
 
+    def _leftmost(self) -> 'TreeNode':
+        '''Return the leftmost node in a tree.'''
+        if self._left is None:
+            return self
+        else:
+            return self._left._leftmost()
+
+    def _rightmost(self) -> 'TreeNode':
+        '''Return the rightmost node in a tree.'''
+        if self._right is None:
+            return self
+        else:
+            return self._right._leftmost()
+
+    def _deepest(self) -> 'TreeNode':
+        '''Return the deepest node in a sub-tree.'''
+        lh = self._left._height + 1 if self._left is not None else 0
+        rh = self._right._height + 1 if self._right is not None else 0
+        if lh == 0 and rh == 0:
+            return self
+        elif lh > rh:
+            return self._left._deepest()
+        else:
+            return self._right._deepest()
+
+    def _discard(self, e) -> Tuple[bool, 'TreeNode']:
+        '''Delete the given element from the tree, if it is present.'''
+        if e == self._data:
+            if self._left is None:
+                if self._right is None:
+                    # leaf node, can be deleted immediately
+                    print('leaf')
+                    if self._parent is None:
+                        # we're the last node in the tree
+                        return (True, None)
+                    else:
+                        # delete from parent
+                        if self._parent._left == self:
+                            self._parent._left = None
+                            self._parent._updateHeights()
+                            if self._parent._right is not None:
+                                return (False, self._parent._right._deepest()._rebalance(True))
+                        else:
+                            self._parent._right = None
+                            self._parent._updateHeights()
+                            if self._parent._left is not None:
+                                return (False, self._parent._left._deepest()._rebalance(True))
+                        return (False, None)
+                else:
+                    print('right sub-tree only')
+                    # only a right sub-tree, slide up to replace
+                    if self._parent is None:
+                        # we're the root, replace us
+                        self._right._parent = None
+                        return (None, self._right)
+                    else:
+                        # replace us with our sub-tree
+                        if self._parent._left == self:
+                            self._parent._left = self._right
+                            self._right._parent = self._parent
+                            self._parent._updateHeights()
+                            return (False, self._parent._right._deepest()._rebalance(True))
+                        else:
+                            self._parent._right = self._right
+                            self._right._parent = self._parent
+                            self._parent._updateHeights()
+                            return (False, self._parent._right._deepest()._rebalance(True))
+            elif self._right is None:
+                print('left sub-tree only')
+                # only a left sub-tree, slide up to replace
+                if self._parent is None:
+                    # we're the root, replace us
+                    self._left._parent = None
+                    return (None, self._left)
+                else:
+                    # replace us with our sub-tree
+                    if self._parent._left == self:
+                        self._parent._left = self._left
+                        self._left._parent = self._parent
+                        self._parent._updateHeights()
+                        return (False, self._parent._left._deepest()._rebalance(True))
+                    else:
+                        self._parent._right = self._left
+                        self._left._parent = self._parent
+                        self._parent._updateHeights()
+                        return (False, self._parent._left._deepest()._rebalance(True))
+            else:
+                print('two sub-trees')
+                # two sub-trees, choose the largest-smaller as a replacement
+                r = self._left._rightmost()
+                d = r._data
+
+                # discard the element (which will be a leaf or have only one sub-tree)
+                self._left._discard(d)
+
+                # replace our data with that discarded
+                self._data = d
+
+                # re-balance on the right
+                if self._right is not None:
+                    self._right._deepest()._rebalance(True)
+
+                # this operation can't change the root or empty the tree
+                return (False, None)
+
+        elif e < self._data:
+            if self._left is None:
+                return (False, None)
+            else:
+                return self._left._discard(e)
+        else:
+            if self._right is None:
+                return (False, None)
+            else:
+                return self._right._discard(e)
+
     def __repr__(self) -> str:
         d = str(self._data)
-        lh = str(self._left._height + 1) if self._left is not None else 0
-        rh = str(self._right._height + 1) if self._right is not None else 0
-        l = (str(self._left) + ' ') if self._left is not None else ''
-        r = (' ' + str(self._right)) if self._right is not None else ''
-        return f'({l}[{lh}]{d}[{rh}]{r})'
+        ld = str(self._left._data) if self._left is not None else ''
+        rd = str(self._right._data) if self._right is not None else ''
+        buf = f'{d}: {ld} {rd}\n'
+        if self._left is not None:
+            buf += str(self._left)
+        if self._right is not None:
+            buf += str(self._right)
+        return buf
 
 
 class DrawableSet(object):
@@ -383,51 +506,19 @@ class DrawableSet(object):
         else:
             return self._root.inOrderTraverse()
 
-    def _discard(self, e: Element) -> Tuple['DrawableSet']:
-        '''Private method to discard an element from the tree.
-
-        :param e: the element
-        :returns: the replacement node'''
-        if self._data is None:
-            # we're the (empty) root node, there's nothing to be discarded
-            return None
-
-        elif e == self._data:
-            # we hold the data, find the least disruptive element to swap us with
-            # this will always be taken from the taller sub-tree
-            n = self.nextElement()
-            if n is None:
-                # we're a leaf, we can simply be deleted
-                self._data = None   # this handles the case where we're the last (root) element
-                return None
-            else:
-                # grab the data at the chosen nodes
-                d = n._data
-
-                # recursively delete the data from the sub-tree
-                if d < self._data:
-                    self._left = self._left._discard(d)
-                else:
-                    self._right = self._right._discard(d)
-
-                # replace our data with that from the chosen node
-                self._data = d
-
-        elif e < self._data:
-            if self._left is not None:
-                self._left = self._left._discard(e)
-        else:
-            if self._right is not None:
-                self._right = self._right._discard(e)
-
-        return self
-
     def discard(self, e: Element):
         '''Discard the given element from the set. If the element
         isn't in the set, this is a no-op.
 
         :param e: the element'''
-        self._discard(e)
+        if self._root is not None:
+            (empty, r) = self._root._discard(e)
+            if empty:
+                # tree has been emptied
+                self._root = None
+            elif r is not None:
+                # the tree was rotated about the root
+                self._root = r
 
     def draw(self) -> Element:
         '''Draw an element from the set at random.

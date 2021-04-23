@@ -82,22 +82,16 @@ class DrawableSetTest(unittest.TestCase):
     def assertAVLInvariant(self, n):
         lh = n._left._height + 1 if n._left is not None else 0
         rh = n._right._height + 1 if n._right is not None else 0
-        d = n._data
-        print(f'{lh} - {d} - {rh}')
+        #d = n._data
+        #print(f'{lh} - {d} - {rh}')
         self.assertTrue(abs(lh - rh) <= 1)
-        self.assertHeight(n)
+        self.assertEqual(n._height, max(lh, rh))
         if n._left is not None:
             self.assertTrue(n._left._data < n._data)
             self.assertAVLInvariant(n._left)
         if n._right is not None:
             self.assertTrue(n._right._data > n._data)
             self.assertAVLInvariant(n._right)
-
-    def assertHeight(self, n):
-        '''Compute the height of a node.'''
-        lh = n._left._height + 1 if n._left is not None else 0
-        rh = n._right._height + 1 if n._right is not None else 0
-        self.assertEqual(n._height, max(lh, rh))
 
     def testEmptySet(self):
         '''Test empty sets.'''
@@ -106,11 +100,14 @@ class DrawableSetTest(unittest.TestCase):
         self.assertEqual(len(s), 0)
         self.assertFalse(1 in s)
         self.assertCountEqual(s, [])
+        self.assertTrue(s.empty())
 
     def testAdd(self):
         '''Test we can add individual elements.'''
         s = DrawableSet()
+        self.assertTrue(s.empty())
         s.add(1)
+        self.assertFalse(s.empty())
         print(s)
         self.assertInvariant(s)
         self.assertEqual(len(s), 1)
@@ -222,11 +219,72 @@ class DrawableSetTest(unittest.TestCase):
     def testDiscard(self):
         '''Test we can discard elements that are present.'''
         s = DrawableSet()
-        s.add(1)
         s.add(2)
-        s.discard(1)
+        s.add(3)
+        s.discard(3)
+        self.assertInvariant(s)
         self.assertEqual(len(s), 1)
         self.assertCountEqual(s, [2])
+
+    def testDiscardEmpty(self):
+        '''Test we can discard the last element in the set.'''
+        s = DrawableSet()
+        s.add(1)
+        s.discard(1)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 0)
+        self.assertCountEqual(s, [])
+        self.assertTrue(s.empty())
+
+    def testDiscardLeaves(self):
+        '''Test we can discard leaf elements.'''
+        s = DrawableSet()
+        s.add(2)
+        s.add(3)
+        s.discard(3)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 1)
+        self.assertCountEqual(s, [2])
+        s.add(1)
+        s.discard(1)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 1)
+        self.assertCountEqual(s, [2])
+        s.discard(2)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 0)
+        self.assertCountEqual(s, [])
+
+    def testDiscardSingleSubtree(self):
+        '''Test we can discard nodes with a single sub-tree.'''
+        s = DrawableSet()
+        s.add(2)
+        s.add(3)
+        s.add(4)
+        s.add(5)
+        s.discard(4)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 3)
+        self.assertCountEqual(s, [2, 3, 5])
+        s.add(1)
+        s.discard(2)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 3)
+        self.assertCountEqual(s, [1, 3, 5])
+
+    def testDiscardTwoSubtrees(self):
+        '''Test we can discard a node with two sub-trees.'''
+        s = DrawableSet()
+        s.add(3)
+        s.add(2)
+        s.add(10)
+        s.add(7)
+        s.add(15)
+        s.add(6)
+        s.discard(10)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 5)
+        self.assertCountEqual(s, [2, 3, 6, 7, 15])
 
     def testRepeatedAdd(self):
         '''Test we can add the same element twice.'''
@@ -254,7 +312,6 @@ class DrawableSetTest(unittest.TestCase):
         self.assertEqual(len(s), 2)
         self.assertCountEqual(s, [1, 2])
         s.discard(3)
-        print(list(s.elements()))
         self.assertEqual(len(s), 2)
         self.assertCountEqual(s, [1, 2])
         s.discard(1)
@@ -281,11 +338,11 @@ class DrawableSetTest(unittest.TestCase):
     def testLotsOfAdds(self):
         '''Test we can add loads of elements, and get the results in order.'''
         s = DrawableSet()
-        es = list(range(20))
+        es = list(range(200))
         rs = es.copy()
         numpy.random.shuffle(es)
         for i in es:
-            print(f'add {i}')
+            #print(f'add {i}')
             s.add(i)
             self.assertInvariant(s)
         self.assertEqual(len(s), len(rs))
@@ -294,13 +351,17 @@ class DrawableSetTest(unittest.TestCase):
     def testAddDeleteInOrder(self):
         '''Test we can handle an maximally inbalanced tree.'''
         s = DrawableSet()
-        es = list(range(10))
+        es = list(range(12))
         for i in es:
+            print(f'add {i}')
             s.add(i)
             self.assertInvariant(s)
         self.assertEqual(len(s), len(es))
         for i in es:
+            print(s)
+            print(f'discard {i}')
             s.discard(i)
+            print(s)
             self.assertInvariant(s)
         self.assertEqual(len(s), 0)
 
@@ -311,9 +372,11 @@ class DrawableSetTest(unittest.TestCase):
         es.reverse()
         for i in es:
             s.add(i)
+            self.assertInvariant(s)
         self.assertEqual(len(s), len(es))
         for i in es:
             s.discard(i)
+            self.assertInvariant(s)
         self.assertEqual(len(s), 0)
 
     def testAddDelete(self):
@@ -324,117 +387,14 @@ class DrawableSetTest(unittest.TestCase):
         numpy.random.shuffle(es)
         for i in rs:
             s.add(i)
+            self.assertInvariant(s)
         l = len(s)
         for j in es:
             s.discard(j)
+            self.assertInvariant(s)
             l -= 1
             self.assertEqual(len(s), l)
         self.assertEqual(len(s), 0)
-
-    def testGrow(self):
-        '''Test the height calculation when adding.'''
-        s = DrawableSet()
-        self.assertEqual(s._height, 0)
-        s.add(10)
-        self.assertEqual(s._height, 0)
-        s.add(20)
-        self.assertEqual(s._height, 1)
-        s.add(5)
-        self.assertEqual(s._height, 1)
-        s.add(25)
-        self.assertEqual(s._height, 2)
-        s.add(30)
-        self.assertEqual(s._height, 3)
-
-    @unittest.skip('Not interesting any more')
-    def testDiscardDetail(self):
-        '''Test that discarding follows the algorithm.'''
-        s = DrawableSet()
-        s.add(10)
-        s.add(20)
-        s.add(5)
-        s.add(25)
-        s.add(30)
-
-        self.assertEqual(s._data, 10)
-        self.assertEqual(s._height, 3)
-
-        self.assertEqual(s._left._data, 5)
-        self.assertEqual(s._left._height, 0)
-        self.assertIsNone(s._left._left)
-        self.assertIsNone(s._left._right)
-
-        self.assertEqual(s._right._data, 20)
-        self.assertEqual(s._right._height, 2)
-        self.assertIsNone(s._right._left)
-
-        self.assertEqual(s._right._right._data, 25)
-        self.assertEqual(s._right._right._height, 1)
-        self.assertIsNone(s._right._right._left)
-
-        self.assertEqual(s._right._right._right._data, 30)
-        self.assertEqual(s._right._right._right._height, 0)
-        self.assertIsNone(s._right._right._right._left)
-        self.assertIsNone(s._right._right._right._right)
-
-        s.discard(10)
-
-        self.assertEqual(s._data, 20)
-        self.assertEqual(s._height, 2)
-
-        self.assertEqual(s._left._data, 5)
-        self.assertEqual(s._left._height, 0)
-        self.assertIsNone(s._left._left)
-        self.assertIsNone(s._left._right)
-
-        self.assertEqual(s._right._data, 25)
-        self.assertEqual(s._right._height, 1)
-        self.assertIsNone(s._right._left)
-
-        self.assertEqual(s._right._right._data, 30)
-        self.assertEqual(s._right._right._height, 0)
-        self.assertIsNone(s._right._right._left)
-        self.assertIsNone(s._right._right._right)
-
-        s.discard(25)
-
-        self.assertEqual(s._data, 20)
-        self.assertEqual(s._height, 1)
-
-        self.assertEqual(s._left._data, 5)
-        self.assertEqual(s._left._height, 0)
-        self.assertIsNone(s._left._left)
-        self.assertIsNone(s._left._right)
-
-        self.assertEqual(s._right._data, 30)
-        self.assertEqual(s._right._height, 0)
-        self.assertIsNone(s._right._left)
-        self.assertIsNone(s._right._right)
-
-        s.discard(5)
-
-        self.assertEqual(s._data, 20)
-        self.assertEqual(s._height, 1)
-        self.assertIsNone(s._left)
-
-        self.assertEqual(s._right._data, 30)
-        self.assertEqual(s._right._height, 0)
-        self.assertIsNone(s._right._left)
-        self.assertIsNone(s._right._right)
-
-    def testShrink(self):
-        '''Test the height calculation when discarding.'''
-        s = DrawableSet()
-        s.add(10)
-        s.add(20)
-        s.add(5)
-        s.add(25)
-        s.add(30)
-        self.assertEqual(s._height, 3)
-        s.discard(30)
-        self.assertEqual(s._height, 2)
-        s.discard(10)
-        self.assertEqual(s._height, 1)
 
     def testDraw(self):
         '''Test the basic draw functionality.'''
