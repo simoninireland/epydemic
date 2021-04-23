@@ -23,6 +23,8 @@ import unittest
 
 class DrawableSetTest(unittest.TestCase):
 
+    # ---------- Bitstream tests ----------
+
     def testBits(self):
         '''Test bitstreams carry on regardless.'''
         bs = Bitstream()
@@ -69,9 +71,38 @@ class DrawableSetTest(unittest.TestCase):
             ns.append(bs.integer(3))
         self.assertTrue(len([n for n in ns if n < 2**3 - 1]), len(ns))
 
+
+    # ---------- Drawableset tests ----------
+
+    def assertInvariant(self, s):
+        '''Test the invariant of tree is satisfied.'''
+        if s._root is not None:
+            self.assertAVLInvariant(s._root)
+
+    def assertAVLInvariant(self, n):
+        lh = n._left._height + 1 if n._left is not None else 0
+        rh = n._right._height + 1 if n._right is not None else 0
+        d = n._data
+        print(f'{lh} - {d} - {rh}')
+        self.assertTrue(abs(lh - rh) <= 1)
+        self.assertHeight(n)
+        if n._left is not None:
+            self.assertTrue(n._left._data < n._data)
+            self.assertAVLInvariant(n._left)
+        if n._right is not None:
+            self.assertTrue(n._right._data > n._data)
+            self.assertAVLInvariant(n._right)
+
+    def assertHeight(self, n):
+        '''Compute the height of a node.'''
+        lh = n._left._height + 1 if n._left is not None else 0
+        rh = n._right._height + 1 if n._right is not None else 0
+        self.assertEqual(n._height, max(lh, rh))
+
     def testEmptySet(self):
         '''Test empty sets.'''
         s = DrawableSet()
+        self.assertInvariant(s)
         self.assertEqual(len(s), 0)
         self.assertFalse(1 in s)
         self.assertCountEqual(s, [])
@@ -80,14 +111,113 @@ class DrawableSetTest(unittest.TestCase):
         '''Test we can add individual elements.'''
         s = DrawableSet()
         s.add(1)
+        print(s)
+        self.assertInvariant(s)
         self.assertEqual(len(s), 1)
         self.assertTrue(1 in s)
         s.add(2)
+        print(s)
+        self.assertInvariant(s)
         self.assertEqual(len(s), 2)
         self.assertTrue(1 in s)
         self.assertTrue(2 in s)
-        self.assertCountEqual(s.elements(), [1,2])
-        self.assertCountEqual(s, [1, 2])
+        self.assertCountEqual(list(s), [1,2])
+        s.add(3)
+        print(s)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 3)
+        self.assertTrue(1 in s)
+        self.assertTrue(2 in s)
+        self.assertTrue(3 in s)
+        self.assertCountEqual(list(s), [1, 2, 3])
+
+    def testABCroot(self):
+        '''Test the ABC rotation over the root.'''
+        s = DrawableSet()
+        s.add(0)
+        s.add(1)
+        s.add(2)
+        self.assertInvariant(s)
+        self.assertCountEqual(list(s), [0, 1, 2])
+        self.assertEqual(s._root._data, 1)
+
+    def testABC(self):
+        '''Test the ABC rotation below the root.'''
+        s = DrawableSet()
+        s.add(1)
+        s.add(0)
+        s.add(2)
+        s.add(3)
+        s.add(4)
+        self.assertInvariant(s)
+        self.assertCountEqual(list(s), [0, 1, 2, 3, 4])
+        self.assertEqual(s._root._data, 1)
+
+    def testACBroot(self):
+        '''Test the ACB rotation overt the root.'''
+        s = DrawableSet()
+        s.add(1)
+        s.add(3)
+        s.add(2)
+        self.assertInvariant(s)
+        self.assertCountEqual(list(s), [1, 2, 3])
+        self.assertEqual(s._root._data, 2)
+
+    def testACB(self):
+        '''Test the ACB rotation below the root.'''
+        s = DrawableSet()
+        s.add(3)
+        s.add(0)
+        s.add(5)
+        s.add(7)
+        s.add(6)
+        self.assertInvariant(s)
+        self.assertCountEqual(list(s), [0, 3, 5, 6, 7])
+        self.assertEqual(s._root._data, 3)
+
+    def testCBAroot(self):
+        '''Test the CBA rotation across the root.'''
+        s = DrawableSet()
+        s.add(3)
+        s.add(2)
+        s.add(1)
+        self.assertInvariant(s)
+        self.assertCountEqual(list(s), [1, 2, 3])
+        self.assertEqual(s._root._data, 2)
+
+    def testCBA(self):
+        '''Test the CBA rotation below the root.'''
+        s = DrawableSet()
+        s.add(5)
+        s.add(7)
+        s.add(3)
+        s.add(2)
+        s.add(1)
+        self.assertInvariant(s)
+        self.assertCountEqual(list(s), [1, 2, 3, 5, 7])
+        self.assertEqual(s._root._data, 5)
+
+    def testCABroot(self):
+        '''Test the CABB rotation across the root.'''
+        s = DrawableSet()
+        s.add(4)
+        s.add(2)
+        s.add(3)
+        self.assertInvariant(s)
+        self.assertCountEqual(list(s), [2, 3, 4])
+        self.assertEqual(s._root._data, 3)
+
+    def testCAB(self):
+        '''Test the CAB rotation below the root.'''
+        s = DrawableSet()
+        s.add(2)
+        s.add(1)
+        s.add(8)
+        s.add(5)
+        s.add(6)
+        self.assertInvariant(s)
+        self.assertCountEqual(list(s), [1, 2, 5, 6, 8])
+        self.assertEqual(s._root._data, 2)
 
     def testDiscard(self):
         '''Test we can discard elements that are present.'''
@@ -98,17 +228,21 @@ class DrawableSetTest(unittest.TestCase):
         self.assertEqual(len(s), 1)
         self.assertCountEqual(s, [2])
 
-    def testRepeateAdd(self):
+    def testRepeatedAdd(self):
         '''Test we can add the same element twice.'''
         s = DrawableSet()
         s.add(1)
+        self.assertInvariant(s)
         s.add(2)
+        self.assertInvariant(s)
         self.assertEqual(len(s), 2)
         self.assertCountEqual(s, [1, 2])
         s.add(2)
+        self.assertInvariant(s)
         self.assertEqual(len(s), 2)
         self.assertCountEqual(s, [1, 2])
         s.add(1)
+        self.assertInvariant(s)
         self.assertEqual(len(s), 2)
         self.assertCountEqual(s, [1, 2])
 
@@ -131,7 +265,7 @@ class DrawableSetTest(unittest.TestCase):
         self.assertCountEqual(s, [])
 
     def testRepeatedDiscard(self):
-        '''Test repeated doiscarding.'''
+        '''Test repeated discarding.'''
         s = DrawableSet()
         s.add(1)
         s.add(2)
@@ -147,11 +281,13 @@ class DrawableSetTest(unittest.TestCase):
     def testLotsOfAdds(self):
         '''Test we can add loads of elements, and get the results in order.'''
         s = DrawableSet()
-        es = list(range(10))
+        es = list(range(20))
         rs = es.copy()
         numpy.random.shuffle(es)
-        for i in rs:
+        for i in es:
+            print(f'add {i}')
             s.add(i)
+            self.assertInvariant(s)
         self.assertEqual(len(s), len(rs))
         self.assertCountEqual(rs, s.elements())
 
@@ -161,9 +297,11 @@ class DrawableSetTest(unittest.TestCase):
         es = list(range(10))
         for i in es:
             s.add(i)
+            self.assertInvariant(s)
         self.assertEqual(len(s), len(es))
         for i in es:
             s.discard(i)
+            self.assertInvariant(s)
         self.assertEqual(len(s), 0)
 
     def testAddDeleteInReverseOrder(self):

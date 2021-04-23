@@ -92,202 +92,305 @@ class Bitstream(object):
                 v += next(self)
 
 
+class TreeNode(object):
+    '''A node in an AVL tree.
+
+    :param d: the data at the tree node
+    :param p: (optional) the parent node (defaults to None)
+
+    '''
+
+    def __init__(self, d: Element, p: 'TreeNode' = None):
+        self._left: 'TreeNode' = None    # left sub-tree
+        self._right: 'TreeNode' = None   # right sub-tree
+        self._parent: 'TreeNode' = p     # parent nodes
+        self._data: Element = d          # value at this node
+        self._height: int = 0            # height of the sub-tree rooted here
+
+    def __len__(self) -> int:
+        s = 1
+        if self._left is not None:
+            s += len(self._left)
+        if self._right is not None:
+            s += len(self._right)
+        return s
+
+    def _add(self, e: Element) -> 'TreeNode':
+        if e == self._data:
+            return None
+        elif e < self._data:
+            if self._left is None:
+                self._left = TreeNode(e, self)
+                self._updateHeights()
+                return self._left._rebalance()
+            else:
+                return self._left._add(e)
+        else:
+            if self._right is None:
+                self._right = TreeNode(e, self)
+                self._updateHeights()
+                return self._right._rebalance()
+            else:
+                return self._right._add(e)
+
+    def _updateHeights(self):
+        '''Walk back to the root updating the heights of nodes.'''
+        if self._updateHeight() and self._parent is not None:
+            self._parent._updateHeights()
+
+    def _updateHeight(self) -> bool:
+        '''Update the node height.'''
+        lh = self._left._height + 1 if self._left is not None else 0
+        rh = self._right._height + 1 if self._right is not None else 0
+
+        h = max(lh, rh)
+        if h != self._height:
+            self._height = h
+            return True
+        else:
+            return False
+
+    def _findUnbalanced(self) -> ('TreeNode', 'TreeNode', 'TreeNode'):
+        '''Walk back up the tree looking for the shallowest unbalanced
+        node.'''
+        lh = self._left._height + 1 if self._left is not None else 0
+        rh = self._right._height + 1 if self._right is not None else 0
+
+        if abs(lh - rh) > 1:
+            return (self, None, None)
+        elif self._parent is None:
+            return (None, None, None)
+        else:
+            (z, y, x) = self._parent._findUnbalanced()
+            if z is None:
+                return (None, None, None)
+            elif y is None:
+                return (z, self, None)
+            elif x is None:
+                return (z, y, self)
+            else:
+                return (z, y, x)
+
+    def _rebalance(self) -> 'TreeNode':
+        '''Rebalance the tree after addition of a node.'''
+
+        # find the shallowest unbalanced node
+        (z, y, x) = self._findUnbalanced()
+        if z is None:
+            # tree is balanced all the way up
+            return None
+        if x is None:
+            # a shallow tree, we are x
+            x = self
+
+        # perform the appropriate rotation
+        parent = z._parent
+        if y._data > z._data:
+            if x._data > y._data:
+                print('a-b-c')
+                root = y
+                y._parent = parent
+                z._right = y._left
+                if y._left is not None:
+                    y._left._parent = z
+                y._left = z
+                z._parent = y
+                z._updateHeight()
+                y._updateHeight()
+            else:
+                print('a-c-b')
+                root = x
+                x._parent = parent
+                y._left = x._right
+                if x._right is not None:
+                    x._right._parent = y
+                z._right = x._left
+                if x._left is not None:
+                    x._left._parent = z
+                x._left = z
+                z._parent = x
+                x._right = y
+                y._parent = x
+                z._updateHeight()
+                y._updateHeight()
+                x._updateHeight()
+        else:
+            if x._data > y._data:
+                print('c-a-b')
+                root = x
+                x._parent = parent
+                y._right = x._left
+                if x._left is not None:
+                    x._left._parent = y
+                z._left = x._right
+                if x._right is not None:
+                    x._right._parent = z
+                x._left = y
+                y._parent = x
+                x._right = z
+                z._parent = x
+                z._updateHeight()
+                y._updateHeight()
+                x._updateHeight()
+            else:
+                print('c-b-a')
+                root = y
+                y._parent = parent
+                z._left = y._right
+                if y._right is not None:
+                    y._right._parent = z
+                y._left = x
+                x._parent = y
+                y._right = z
+                z._parent = y
+                z._updateHeight()
+                y._updateHeight()
+
+        if parent is not None:
+            # glue new local root into the parent in place of z,
+            # the old root
+            if parent._left == z:
+                parent._left = root
+            else:
+                parent._right = root
+
+            # update the heights back up to the root
+            parent._updateHeights()
+
+            # the global root of the tree is unchanged
+            return None
+        else:
+            # tree has a new global root, return it
+            return root
+
+    def _find(self, e: Element) -> 'TreeNode':
+        '''Private method to search for an element.
+
+        :param e: the element
+        :returns: the node holding the element or None'''
+        if e == self._data:
+            return self
+        elif e < self._data:
+            return self._left._find(e)
+        else:
+            return self._right._find(e)
+
+    def inOrderTraverse(self) -> List[Element]:
+        es = []
+        if self._left is not None:
+            es.extend(self._left.inOrderTraverse())
+        es.append(self._data)
+        if self._right is not None:
+            es.extend(self._right.inOrderTraverse())
+        return es
+
+    def __repr__(self) -> str:
+        d = str(self._data)
+        lh = str(self._left._height + 1) if self._left is not None else 0
+        rh = str(self._right._height + 1) if self._right is not None else 0
+        l = (str(self._left) + ' ') if self._left is not None else ''
+        r = (' ' + str(self._right)) if self._right is not None else ''
+        return f'({l}[{lh}]{d}[{rh}]{r})'
+
+
 class DrawableSet(object):
     '''A set that can be drawn from randomly.
 
-    The implementation uses an balanced (red-black) binary search
-    tree. Addition, deletion, and containment testing are all
-    :math:`O(\log n)` average time complexity, as is the :meth:`draw`
-    method that selects a uniformly random element.
+    The implementation uses an balanced binary search tree. Addition,
+    deletion, and containment testing are all :math:`O(\log n)`
+    average time complexity, as is the :meth:`draw` method that
+    selects a uniformly random element.
 
     We don't implement the whole of the standard set interface as we
     don't need it for the current application. Possibly we ought to,
     just to be future-proof.
 
-    :param d: (optional) the data at the tree node (defaults to None)
-    :param p: (optional) the parent node (defaults to None)
-
     '''
 
+    # Supporting source of random bits
     Bitstream = Bitstream()   #: A random bit stream generator.
 
-    def __init__(self, d: Element = None, p: 'DrawableSet' = None):
-        self._red: bool = False             # red or black (root is always black)
-        self._left: 'DrawableSet' = None    # left sub-tree
-        self._right: 'DrawableSet' = None   # right sub-tree
-        self._parent: 'DrawableSet' = p     # parent nodes
-        self._data: Element = d             # value at this node
-        self._height: int = 0               # height of sub-tree rooted at this node
 
-    def _add(self, e: Element) -> int:
-        '''Private method to add a value to the tree.
-
-        :param e: the element to addCompartment:
-        :returns: the new height of the tree'''
-        if self._data is None:
-            # we're the root, store here
-            self._data = e
-            return 0
-        elif e == self._data:
-            # value is already in the set, return
-            return self._height
-        elif e < self._data:
-            # add in left sub-tree
-            if self._left is None:
-                # no left sub-tree, create a new node and attach it
-                self._left = DrawableSet(e, self)
-                self._height = max(self._height, 1)
-            else:
-                # descend into right sub-tree, updating our height
-                self._height = max(self._height, self._left._add(e) + 1)
-        else:
-            # add in right sub-tree
-            if self._right is None:
-                # no right sub-tree, create a new node and attach it
-                self._right = DrawableSet(e, self)
-                self._height = max(self._height, 1)
-            else:
-                # descend into right sub-tree, updating our height
-                self._height = max(self._height, self._right._add(e) + 1)
-        return self._height
+    def __init__(self):
+        self._root = None
 
     def add(self, e: Element):
         '''Add an element to the set. This is a no-op if the element is already
         in the set.
 
         :param e: the element to add'''
-        self._add(e)
-
-    def _find(self, e: Element) -> 'DrawableSet':
-        '''Private method to search for an element.
-
-        :param e: the element
-        :returns: the node holding the element or None'''
-        if e == self._data:
-            # element found, return
-            return self
-        elif e < self._data:
-            # element should be in left sub-tree
-            if self._left is None:
-                return None
-            else:
-                return self._left._find(e)
+        if self._root is None:
+            # we're the root, store here
+            self._root = TreeNode(e)
         else:
-            # element should be in right sub-tree
-            if self._right is None:
-                return None
-            else:
-                return self._right._find(e)
+            r = self._root._add(e)
+            if r is not None:
+                # the tree was rotated about the root
+                self._root = r
 
     def __contains__(self, e: Element) -> bool:
-        '''Check whether the given element is a member of ther set.
+        '''Check whether the given element is a member of the set.
 
         :param e: the element
         :returns: True if the element is in the set'''
-        if self._data is None:
-            # we've the (empty) root
+        if self._root is None:
             return False
         else:
-            return self._find(e) is not None
+            return self._root._find(e) is not None
 
     def empty(self) -> bool:
         '''Test if the set is empty.
 
         :returns: True if the set is empty'''
-        return self._data is None
+        return self._root is None
 
     def __len__(self) -> int:
         '''Return the size of the set.
 
         :returns: the size of the set'''
-        if self._data is None:
-            # we're the (empty) root
+        if self._root is None:
             return 0
         else:
-            s = 1
-            if self._left is not None:
-                s += len(self._left)
-            if self._right is not None:
-                s += len(self._right)
-            return s
+            return len(self._root)
 
-    def elements(self) -> List[Element]:
-        '''Returns all the elements in the set as a list.
-
-        :returns: a list of element'''
-        if self._data is None:
-            # we're the (empty) root
-            return []
+    def __repr__(self) -> str:
+        if self._root is None:
+            return '()'
         else:
-            # perform an in-order traverse of the tree
-            es = []
-            if self._left is not None:
-                es.extend(self._left.elements())
-            es.append(self._data)
-            if self._right is not None:
-                es.extend(self._right.elements())
-            return es
+            return str(self._root)
 
-    def __iter__(self) -> Iterable[Element]:
-        '''Returns an iterator over the elements of the set.
+    def __iter__(self):
+        '''Return an iterator over the set.
 
         :returns: an iterator'''
-        return iter(self.elements())
+        visit = []
+        es = []
+        n = self._root
+        while True:
+            while n is not None:
+                visit.append(n)
+                n = n._left
+            if len(visit) == 0:
+                break
+            n = visit.pop()
+            es.append(n._data)
+            n = n._right
+        return iter(es)
 
-    def __eq__(self, s : 'DrawableSet') -> bool:
-        '''Tests for item-wise equality.
-
-        :param s: the other set
-        :returns: True if all the elements match'''
-        if len(s) != len(self):
-            return False
-        a = self.iter()
-        b = s.iter()
-        for i in a:
-            if i != next(b):
-                return False
-        return True
-
-    def leftmost(self) -> 'DrawableSet':
-        if self._left is None:
-            return self
+    def elements(self) ->List[Element]:
+        if self._root is None:
+            return []
         else:
-            return self._left.leftmost()
+            return self._root.inOrderTraverse()
 
-    def rightmost(self) -> 'DrawableSet':
-        if self._right is None:
-            return self
-        else:
-            return self._right.rightmost()
-
-    def nextElement(self) -> 'DrawableSet':
-        '''Return the the "least disruptive element" to swap with
-        when discarding a branch node. This is selected randomly
-        from the left or right sub-tree.
-
-        :returns: the node to swap with'''
-        if self._left is None:
-            if self._right is None:
-                return None
-            else:
-                return self._right.leftmost()
-        elif self._right is None:
-            return self._left.rightmost()
-        else:
-            b = next(self.Bitstream)
-            if b == 0:
-                return self._left.rightmost()
-            else:
-                return self._right.leftmost()
-
-    def _discard(self, e: Element) -> Tuple['DrawableSet', int]:
-        '''Provate methiod to discard an element from the tree.
+    def _discard(self, e: Element) -> Tuple['DrawableSet']:
+        '''Private method to discard an element from the tree.
 
         :param e: the element
-        :returns: the replacement node and its height'''
+        :returns: the replacement node'''
         if self._data is None:
             # we're the (empty) root node, there's nothing to be discarded
-            return (None, -1)
+            return None
 
         elif e == self._data:
             # we hold the data, find the least disruptive element to swap us with
@@ -296,45 +399,28 @@ class DrawableSet(object):
             if n is None:
                 # we're a leaf, we can simply be deleted
                 self._data = None   # this handles the case where we're the last (root) element
-                return (None, -1)
+                return None
             else:
                 # grab the data at the chosen nodes
                 d = n._data
 
                 # recursively delete the data from the sub-tree
                 if d < self._data:
-                    (self._left, h) = self._left._discard(d)
-                    if self._right is None:
-                        self._height = h + 1
-                    else:
-                        self._height = max(self._right._height, h) + 1
+                    self._left = self._left._discard(d)
                 else:
-                    (self._right, h) = self._right._discard(d)
-                    if self._left is None:
-                        self._height = h + 1
-                    else:
-                        self._height = max(self._left._height, h) + 1
+                    self._right = self._right._discard(d)
 
                 # replace our data with that from the chosen node
                 self._data = d
 
         elif e < self._data:
             if self._left is not None:
-                (self._left, h) = self._left._discard(e)
-                if self._right is None:
-                    self._height = h + 1
-                else:
-                    self._height = max(self._right._height, h) + 1
+                self._left = self._left._discard(e)
         else:
             if self._right is not None:
-                (self._right, h) = self._right._discard(e)
-                if self._left is None:
-                    self._height = h + 1
-                else:
-                    self._height = max(self._left._height, h) + 1
+                self._right = self._right._discard(e)
 
-        # return our new size
-        return (self, self._height)
+        return self
 
     def discard(self, e: Element):
         '''Discard the given element from the set. If the element
