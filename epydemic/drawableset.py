@@ -28,8 +28,20 @@ class Bitstream(object):
 
     :param size: (optional) size of the entropy pool in words'''
 
+    # Singleton instance, created on demand
+    _bitstream: 'Bitstream' = None             #: Default bit stream generator.
+
+    @classmethod
+    def default_rng(cl) -> 'Bitstream':
+        '''Static method to return the default bitstream.
+
+        @returns: the bitstream'''
+        if cl._bitstream is None:
+            cl._bitstream = Bitstream()
+        return cl._bitstream
+
     # Underlying types
-    Dtype = numpy.int64                        #: Type ufor elements of the entropy pool.
+    Dtype = numpy.int64                        #: Type for elements of the entropy pool.
     DtypeSize = 63                             #: Bits per element (excluding sign).
 
     def __init__(self, size : int =100):
@@ -37,11 +49,11 @@ class Bitstream(object):
 
         self._pool: List[int] = []                      # entropy pool
         self._size = size                               # size of the pool
-        self._max : int = 2 ** self.DtypeSize -1        # maximum value of an entry in the pool
-        self._element : int = 0                         # current element from the pool
-        self._nelement : int = 0                        # index of current element
-        self._index : int = 0                           # current bit within the element
-        self._mask : int = 1                            # bit-mask
+        self._max: int = 2 ** self.DtypeSize - 1        # maximum value of an entry in the pool
+        self._element: int = 0                          # current element from the pool
+        self._nelement: int = 0                         # index of current element
+        self._index: int = 0                            # current bit within the element
+        self._mask: int = 1                             # bit-mask
 
         self._refill()
 
@@ -103,17 +115,15 @@ class TreeNode(object):
     def __init__(self, d: Element, p: 'TreeNode' = None):
         self._left: 'TreeNode' = None    # left sub-tree
         self._right: 'TreeNode' = None   # right sub-tree
+        self._leftSize: int = 0          # size of left sub-tree
+        self._rightSize: int = 0         # size of right sub-tree
         self._parent: 'TreeNode' = p     # parent nodes
         self._data: Element = d          # value at this node
-        self._height: int = 0            # height of the sub-tree rooted here
+        self._height: int = 0            # height of the tree
+        self._size: int = 1              # number of nodes in the tree
 
     def __len__(self) -> int:
-        s = 1
-        if self._left is not None:
-            s += len(self._left)
-        if self._right is not None:
-            s += len(self._right)
-        return s
+        return self._size
 
     def _add(self, e: Element) -> 'TreeNode':
         if e == self._data:
@@ -142,110 +152,144 @@ class TreeNode(object):
         '''Update the node height.'''
         lh = self._left._height + 1 if self._left is not None else 0
         rh = self._right._height + 1 if self._right is not None else 0
-
+        ls = self._left._size if self._left is not None else 0
+        rs = self._right._size if self._right is not None else 0
         h = max(lh, rh)
-        if h != self._height:
+        if h != self._height or ls != self._leftSize or rs != self._rightSize:
             self._height = h
+            self._leftSize = ls
+            self._rightSize = rs
+            self._size = ls + 1 + rs
             return True
         else:
             return False
 
-    def _findUnbalanced(self) -> ('TreeNode', 'TreeNode', 'TreeNode'):
-        '''Walk back up the tree looking for the shallowest unbalanced
-        node.'''
+    def isUnbalanced(self) -> bool:
         lh = self._left._height + 1 if self._left is not None else 0
         rh = self._right._height + 1 if self._right is not None else 0
+        return abs(lh - rh) > 1
 
-        if abs(lh - rh) > 1:
-            return (self, None, None)
+    def _findUnbalanced(self) -> 'TreeNode':
+        '''Walk back up the tree looking for the shallowest unbalanced
+        node.'''
+        if self.isUnbalanced():
+            return self
         elif self._parent is None:
-            return (None, None, None)
+            return None
         else:
-            (z, y, x) = self._parent._findUnbalanced()
-            if z is None:
-                return (None, None, None)
-            elif y is None:
-                return (z, self, None)
-            elif x is None:
-                return (z, y, self)
-            else:
-                return (z, y, x)
+            return self._parent._findUnbalanced()
 
-    def _rebalance(self, recursive:bool = False) -> 'TreeNode':
+    def _tallerSubtree(self) -> 'TreeNode':
+        '''Return the taller of teh node's sub-trees.'''
+        lh = self._left._height + 1 if self._left is not None else 0
+        rh = self._right._height + 1 if self._right is not None else 0
+        if lh == 0 and rh == 0:
+            return None
+        elif lh > rh:
+            return self._left
+        else:
+            return self._right
+
+    def _rebalance(self, recursive: bool = False) -> 'TreeNode':
         '''Rebalance the tree after addition of a node.'''
 
         # find the shallowest unbalanced node
-        (z, y, x) = self._findUnbalanced()
+        z = self._findUnbalanced()
         if z is None:
             # tree is balanced all the way up
             return None
-        if x is None:
-            # a shallow tree, we are x
-            x = self
+        else:
+            root = z._rotate()
+
+            if root._parent is None:
+                return root
+            elif recursive:
+                # call again on the parent
+                return root._parent._rebalance(True)
+            else:
+                return None
+
+    def _rotate(self) -> 'TreeNode':
+        z = self
+
+        # find the two other nodes for the rotation
+        y = z._tallerSubtree()
+        x = y._tallerSubtree()
+
+        # grab the parent to which we'll re-attach the new root
+        # after rotation
+        parent = z._parent
 
         # perform the appropriate rotation
-        parent = z._parent
-        if y._data > z._data:
-            if x._data > y._data:
-                print('a-b-c')
-                root = y
-                y._parent = parent
-                z._right = y._left
-                if y._left is not None:
-                    y._left._parent = z
-                y._left = z
-                z._parent = y
-                z._updateHeight()
-                y._updateHeight()
-            else:
-                print('a-c-b')
-                root = x
-                x._parent = parent
-                y._left = x._right
-                if x._right is not None:
-                    x._right._parent = y
-                z._right = x._left
-                if x._left is not None:
-                    x._left._parent = z
-                x._left = z
-                z._parent = x
-                x._right = y
-                y._parent = x
-                z._updateHeight()
-                y._updateHeight()
-                x._updateHeight()
+        if z._data < y._data < x._data:
+            root = y
+            #print('a-b-c about ' + str(z._data))
+            z._right = y._left
+            if y._left is not None:
+                y._left._parent = z
+            y._left = z
+            z._parent = y
+            z._updateHeight()
+            if z.isUnbalanced():
+                z._rotate()
+            y._updateHeight()
+        elif x._data < y._data < z._data:
+            root = y
+            #print('c-b-a about ' + str(z._data))
+            z._left = y._right
+            if y._right is not None:
+                y._right._parent = z
+            y._left = x
+            x._parent = y
+            y._right = z
+            z._parent = y
+            z._updateHeight()
+            if z.isUnbalanced():
+                z._rotate()
+            y._updateHeight()
+        elif z._data < y._data and x._data < y._data:
+            root = x
+            #print('a-c-b about ' + str(z._data))
+            y._left = x._right
+            if x._right is not None:
+                x._right._parent = y
+            z._right = x._left
+            if x._left is not None:
+                x._left._parent = z
+            x._left = z
+            z._parent = x
+            x._right = y
+            y._parent = x
+            z._updateHeight()
+            y._updateHeight()
+            if z.isUnbalanced():
+                z._rotate()
+            if y.isUnbalanced():
+                y._rotate()
+            x._updateHeight()
         else:
-            if x._data > y._data:
-                print('c-a-b')
-                root = x
-                x._parent = parent
-                y._right = x._left
-                if x._left is not None:
-                    x._left._parent = y
-                z._left = x._right
-                if x._right is not None:
-                    x._right._parent = z
-                x._left = y
-                y._parent = x
-                x._right = z
-                z._parent = x
-                z._updateHeight()
-                y._updateHeight()
-                x._updateHeight()
-            else:
-                print('c-b-a')
-                root = y
-                y._parent = parent
-                z._left = y._right
-                if y._right is not None:
-                    y._right._parent = z
-                y._left = x
-                x._parent = y
-                y._right = z
-                z._parent = y
-                z._updateHeight()
-                y._updateHeight()
+            root = x
+            #print('c-a-b about ' + str(z._data))
+            y._right = x._left
+            if x._left is not None:
+                x._left._parent = y
+            z._left = x._right
+            if x._right is not None:
+                x._right._parent = z
+            x._left = y
+            y._parent = x
+            x._right = z
+            z._parent = x
+            z._updateHeight()
+            y._updateHeight()
+            if z.isUnbalanced():
+                z._rotate()
+            if y.isUnbalanced():
+                y._rotate()
+            x._updateHeight()
 
+        # re-parent the new root
+        root._parent = parent
         if parent is not None:
             # glue new local root into the parent in place of z,
             # the old root
@@ -257,27 +301,26 @@ class TreeNode(object):
             # update the heights back up to the root
             parent._updateHeights()
 
-            if recursive:
-                # we're recursing, so call again on our parent
-                return parent._rebalance(True)
-            else:
-                # we're not recursing and the global root of the tree is unchanged
-                return None
-        else:
-            # tree has a new global root, return it
-            return root
+        # return the new root of the rotated tree
+        return root
 
     def _find(self, e: Element) -> 'TreeNode':
-        '''Private method to search for an element.
+        '''Search for an element in the tree, returning its node..
 
         :param e: the element
         :returns: the node holding the element or None'''
         if e == self._data:
             return self
         elif e < self._data:
-            return self._left._find(e)
+            if self._left is None:
+                return None
+            else:
+                return self._left._find(e)
         else:
-            return self._right._find(e)
+            if self._right is None:
+                return None
+            else:
+                return self._right._find(e)
 
     def inOrderTraverse(self) -> List[Element]:
         es = []
@@ -300,63 +343,52 @@ class TreeNode(object):
         if self._right is None:
             return self
         else:
-            return self._right._leftmost()
-
-    def _deepest(self) -> 'TreeNode':
-        '''Return the deepest node in a sub-tree.'''
-        lh = self._left._height + 1 if self._left is not None else 0
-        rh = self._right._height + 1 if self._right is not None else 0
-        if lh == 0 and rh == 0:
-            return self
-        elif lh > rh:
-            return self._left._deepest()
-        else:
-            return self._right._deepest()
+            return self._right._rightmost()
 
     def _discard(self, e) -> Tuple[bool, 'TreeNode']:
         '''Delete the given element from the tree, if it is present.'''
         if e == self._data:
+            # grab the parent node that will need to have
+            # the replacement re-attached
+            parent = self._parent
+
+            # switch on the states of sub-trees
             if self._left is None:
                 if self._right is None:
                     # leaf node, can be deleted immediately
-                    print('leaf')
-                    if self._parent is None:
+                    #print('leaf')
+                    if parent is None:
                         # we're the last node in the tree
                         return (True, None)
                     else:
                         # delete from parent
-                        if self._parent._left == self:
-                            self._parent._left = None
-                            self._parent._updateHeights()
-                            if self._parent._right is not None:
-                                return (False, self._parent._right._deepest()._rebalance(True))
+                        if parent._left == self:
+                            #print('on left')
+                            parent._left = None
                         else:
-                            self._parent._right = None
-                            self._parent._updateHeights()
-                            if self._parent._left is not None:
-                                return (False, self._parent._left._deepest()._rebalance(True))
-                        return (False, None)
+                            #print ('on right')
+                            parent._right = None
+                        parent._updateHeights()
+                        return (False, parent._rebalance(True))
                 else:
-                    print('right sub-tree only')
+                    #print('right sub-tree only')
                     # only a right sub-tree, slide up to replace
-                    if self._parent is None:
+                    if parent is None:
                         # we're the root, replace us
                         self._right._parent = None
                         return (None, self._right)
                     else:
                         # replace us with our sub-tree
-                        if self._parent._left == self:
-                            self._parent._left = self._right
-                            self._right._parent = self._parent
-                            self._parent._updateHeights()
-                            return (False, self._parent._right._deepest()._rebalance(True))
+                        if parent._left == self:
+                            parent._left = self._right
+                            self._right._parent = parent
                         else:
-                            self._parent._right = self._right
-                            self._right._parent = self._parent
-                            self._parent._updateHeights()
-                            return (False, self._parent._right._deepest()._rebalance(True))
+                            parent._right = self._right
+                            self._right._parent = parent
+                        parent._updateHeights()
+                        return (False, parent._rebalance(True))
             elif self._right is None:
-                print('left sub-tree only')
+                #print('left sub-tree only')
                 # only a left sub-tree, slide up to replace
                 if self._parent is None:
                     # we're the root, replace us
@@ -364,34 +396,26 @@ class TreeNode(object):
                     return (None, self._left)
                 else:
                     # replace us with our sub-tree
-                    if self._parent._left == self:
-                        self._parent._left = self._left
-                        self._left._parent = self._parent
-                        self._parent._updateHeights()
-                        return (False, self._parent._left._deepest()._rebalance(True))
+                    if parent._left == self:
+                        parent._left = self._left
+                        self._left._parent = parent
                     else:
-                        self._parent._right = self._left
-                        self._left._parent = self._parent
-                        self._parent._updateHeights()
-                        return (False, self._parent._left._deepest()._rebalance(True))
+                        parent._right = self._left
+                        self._left._parent = parent
+                    parent._updateHeights()
+                    return (False, parent._rebalance(True))
             else:
-                print('two sub-trees')
-                # two sub-trees, choose the largest-smaller as a replacement
-                r = self._left._rightmost()
-                d = r._data
-
-                # discard the element (which will be a leaf or have only one sub-tree)
-                self._left._discard(d)
-
-                # replace our data with that discarded
-                self._data = d
-
-                # re-balance on the right
-                if self._right is not None:
-                    self._right._deepest()._rebalance(True)
-
-                # this operation can't change the root or empty the tree
-                return (False, None)
+                #print('two sub-trees')
+                # two sub-trees, choose the least disruptive element
+                # from the taller as replacement
+                if self._left._height > self._right._height:
+                    r = self._left._rightmost()
+                    #print('replace with ' + str(r._data))
+                else:
+                    r = self._right._leftmost()
+                    #print('replace with ' + str(r._data))
+                self._data = r._data
+                return r._discard(r._data)
 
         elif e < self._data:
             if self._left is None:
@@ -404,10 +428,30 @@ class TreeNode(object):
             else:
                 return self._right._discard(e)
 
+    def _draw(self) -> Element:
+        '''Draw an element from the tree at random.
+
+        This implementation isn't fair (yet).
+
+        :returns: a random element, or none if the set is empty'''
+        bs = Bitstream.default_rng()
+        pathlength = bs.integer(self._height)
+        n = self
+        bits = iter(bs)
+        for _ in range(pathlength):
+            b = next(bits)
+            if b == 0:
+                n = n._left
+            else:
+                n = n._right
+            if n is None:
+                n = self
+        return n._data
+
     def __repr__(self) -> str:
         d = str(self._data)
-        ld = str(self._left._data) if self._left is not None else ''
-        rd = str(self._right._data) if self._right is not None else ''
+        ld = str(self._left._data) if self._left is not None else '_'
+        rd = str(self._right._data) if self._right is not None else '_'
         buf = f'{d}: {ld} {rd}\n'
         if self._left is not None:
             buf += str(self._left)
@@ -429,10 +473,6 @@ class DrawableSet(object):
     just to be future-proof.
 
     '''
-
-    # Supporting source of random bits
-    Bitstream = Bitstream()   #: A random bit stream generator.
-
 
     def __init__(self):
         self._root = None
@@ -476,29 +516,8 @@ class DrawableSet(object):
         else:
             return len(self._root)
 
-    def __repr__(self) -> str:
-        if self._root is None:
-            return '()'
-        else:
-            return str(self._root)
-
-    def __iter__(self):
-        '''Return an iterator over the set.
-
-        :returns: an iterator'''
-        visit = []
-        es = []
-        n = self._root
-        while True:
-            while n is not None:
-                visit.append(n)
-                n = n._left
-            if len(visit) == 0:
-                break
-            n = visit.pop()
-            es.append(n._data)
-            n = n._right
-        return iter(es)
+    def __iter__(self) -> Iterable[Element]:
+        return iter(self.elements())
 
     def elements(self) ->List[Element]:
         if self._root is None:
@@ -524,15 +543,7 @@ class DrawableSet(object):
         '''Draw an element from the set at random.
 
         :returns: a random element, or none if the set is empty'''
-        pathlength = self.Bitstream.integer(self._height)
-        n = self
-        bits = iter(self.Bitstream)
-        for _ in range(pathlength):
-            b = next(bits)
-            if b == 0:
-                n = n._left
-            else:
-                n = n._right
-            if n is None:
-                n = self
-        return n._data
+        if self._root is None:
+            return None
+        else:
+            return self._root._draw()

@@ -82,14 +82,21 @@ class DrawableSetTest(unittest.TestCase):
     def assertAVLInvariant(self, n):
         lh = n._left._height + 1 if n._left is not None else 0
         rh = n._right._height + 1 if n._right is not None else 0
-        #d = n._data
-        #print(f'{lh} - {d} - {rh}')
+        ls = n._left._size if n._left is not None else 0
+        rs = n._right._size if n._right is not None else 0
         self.assertTrue(abs(lh - rh) <= 1)
         self.assertEqual(n._height, max(lh, rh))
-        if n._left is not None:
+        self.assertEqual(n._size, ls + rs + 1)
+        if lh > 0:
+            self.assertIsNotNone(n._left)
+            self.assertTrue(n._left._size > 0)
+            self.assertEqual(n._leftSize, n._left._size)
             self.assertTrue(n._left._data < n._data)
             self.assertAVLInvariant(n._left)
-        if n._right is not None:
+        if rh > 0:
+            self.assertIsNotNone(n._right)
+            self.assertTrue(n._right._size > 0)
+            self.assertEqual(n._rightSize, n._right._size)
             self.assertTrue(n._right._data > n._data)
             self.assertAVLInvariant(n._right)
 
@@ -108,19 +115,16 @@ class DrawableSetTest(unittest.TestCase):
         self.assertTrue(s.empty())
         s.add(1)
         self.assertFalse(s.empty())
-        print(s)
         self.assertInvariant(s)
         self.assertEqual(len(s), 1)
         self.assertTrue(1 in s)
         s.add(2)
-        print(s)
         self.assertInvariant(s)
         self.assertEqual(len(s), 2)
         self.assertTrue(1 in s)
         self.assertTrue(2 in s)
         self.assertCountEqual(list(s), [1,2])
         s.add(3)
-        print(s)
         self.assertInvariant(s)
         self.assertEqual(len(s), 3)
         self.assertTrue(1 in s)
@@ -227,6 +231,14 @@ class DrawableSetTest(unittest.TestCase):
         self.assertCountEqual(s, [2])
 
     def testDiscardEmpty(self):
+        '''Test we can discard from an empty set.'''
+        s = DrawableSet()
+        s.discard(1)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 0)
+        self.assertCountEqual(s, [])
+
+    def testDiscardToEmpty(self):
         '''Test we can discard the last element in the set.'''
         s = DrawableSet()
         s.add(1)
@@ -342,7 +354,6 @@ class DrawableSetTest(unittest.TestCase):
         rs = es.copy()
         numpy.random.shuffle(es)
         for i in es:
-            #print(f'add {i}')
             s.add(i)
             self.assertInvariant(s)
         self.assertEqual(len(s), len(rs))
@@ -351,24 +362,20 @@ class DrawableSetTest(unittest.TestCase):
     def testAddDeleteInOrder(self):
         '''Test we can handle an maximally inbalanced tree.'''
         s = DrawableSet()
-        es = list(range(12))
+        es = list(range(20))
         for i in es:
-            print(f'add {i}')
             s.add(i)
             self.assertInvariant(s)
         self.assertEqual(len(s), len(es))
         for i in es:
-            print(s)
-            print(f'discard {i}')
             s.discard(i)
-            print(s)
             self.assertInvariant(s)
         self.assertEqual(len(s), 0)
 
     def testAddDeleteInReverseOrder(self):
         '''Test we can handle an maximally inbalanced tree the other way.'''
         s = DrawableSet()
-        es = list(range(10))
+        es = list(range(100))
         es.reverse()
         for i in es:
             s.add(i)
@@ -382,9 +389,9 @@ class DrawableSetTest(unittest.TestCase):
     def testAddDelete(self):
         '''Test we can add in random order and then delete in order.'''
         s = DrawableSet()
-        es = list(range(10))
+        es = list(range(100))
         rs = es.copy()
-        numpy.random.shuffle(es)
+        numpy.random.shuffle(rs)
         for i in rs:
             s.add(i)
             self.assertInvariant(s)
@@ -417,7 +424,11 @@ class DrawableSetTest(unittest.TestCase):
         ns = []
         for _ in range(len(es)):
             n = s.draw()
+            self.assertIsNotNone(n)
+            self.assertNotIn(n, ns)
             ns.append(n)
             s.discard(n)
+            self.assertInvariant(s)
+            self.assertNotIn(n, s)
         self.assertEqual(len(s), 0)
         self.assertCountEqual(es, ns)
