@@ -78,29 +78,17 @@ class DrawableSetTest(unittest.TestCase):
         '''Test the invariant of tree is satisfied.'''
         if s._root is not None:
             self.assertAVLInvariant(s._root)
-            ls = s._root._left._size if s._root._left is not None else 0
-            rs = s._root._right._size if s._root._right is not None else 0
-            self.assertEqual(len(s), ls + 1 + rs)
 
     def assertAVLInvariant(self, n):
         lh = n._left._height + 1 if n._left is not None else 0
         rh = n._right._height + 1 if n._right is not None else 0
-        ls = n._left._size if n._left is not None else 0
-        rs = n._right._size if n._right is not None else 0
         self.assertTrue(abs(lh - rh) <= 1)
         self.assertEqual(n._height, max(lh, rh))
-        self.assertEqual(n._size, ls + rs + 1)
         if lh > 0:
             self.assertIsNotNone(n._left)
-            self.assertTrue(n._left._size > 0)
-            self.assertEqual(n._leftSize, n._left._size)
-            self.assertTrue(n._left._data < n._data)
             self.assertAVLInvariant(n._left)
         if rh > 0:
             self.assertIsNotNone(n._right)
-            self.assertTrue(n._right._size > 0)
-            self.assertEqual(n._rightSize, n._right._size)
-            self.assertTrue(n._right._data > n._data)
             self.assertAVLInvariant(n._right)
 
     def testEmptySet(self):

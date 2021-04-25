@@ -115,15 +115,22 @@ class TreeNode(object):
     def __init__(self, d: Element, p: 'TreeNode' = None):
         self._left: 'TreeNode' = None    # left sub-tree
         self._right: 'TreeNode' = None   # right sub-tree
-        self._leftSize: int = 0          # size of left sub-tree
-        self._rightSize: int = 0         # size of right sub-tree
         self._parent: 'TreeNode' = p     # parent nodes
         self._data: Element = d          # value at this node
         self._height: int = 0            # height of the tree
-        self._size: int = 1              # number of nodes in the tree
 
     def __len__(self) -> int:
-        return self._size
+        '''Return the size of the tree. This is intended for testing only,
+        as it's a slow recursive count: :class:`DrawableSet` maintains
+        its size itself.
+
+        :returns: the size of the tree'''
+        s = 1
+        if self._left is not None:
+            s += len(self._left)
+        if self._right is not None:
+            s += len(self._rignt)
+        return s
 
     def add(self, e: Element) -> Tuple[bool, 'TreeNode']:
         '''Add an element to the tree.
@@ -159,14 +166,9 @@ class TreeNode(object):
         '''Update the node height.'''
         lh = self._left._height + 1 if self._left is not None else 0
         rh = self._right._height + 1 if self._right is not None else 0
-        ls = self._left._size if self._left is not None else 0
-        rs = self._right._size if self._right is not None else 0
         h = max(lh, rh)
-        if h != self._height or ls != self._leftSize or rs != self._rightSize:
+        if h != self._height:
             self._height = h
-            self._leftSize = ls
-            self._rightSize = rs
-            self._size = ls + 1 + rs
             return True
         else:
             return False
