@@ -31,6 +31,7 @@ SOURCES_SETUP_IN = setup.py.in
 SOURCES_CODE = \
 	epydemic/__init__.py \
 	epydemic/types.py \
+	epydemic/bitstream.py \
 	epydemic/drawableset.py \
 	epydemic/networkexperiment.py \
 	epydemic/networkdynamics.py \
@@ -56,6 +57,7 @@ SOURCES_CODE = \
 	epydemic/newmanziff.py
 SOURCES_TESTS = \
 	test/__init__.py \
+	test/test_bitstream.py \
 	test/test_drawableset/py \
 	test/test_networkdynamics.py \
 	test/test_stochasticrates.py \

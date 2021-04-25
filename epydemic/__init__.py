@@ -47,7 +47,8 @@ software engineering practices.
 
 # helper types
 from .types import Node, Edge, Element
-from .drawableset import Bitstream, DrawableSet
+from .bitstream import Bitstream
+from .drawableset import DrawableSet
 
 # network processes
 from .loci import Locus

@@ -1,4 +1,4 @@
-# Test bitstreams and drawable sets
+# Test drawable sets
 #
 # Copyright (C) 2021 Simon Dobson
 #
@@ -22,57 +22,6 @@ import numpy
 import unittest
 
 class DrawableSetTest(unittest.TestCase):
-
-    # ---------- Bitstream tests ----------
-
-    def testBits(self):
-        '''Test bitstreams carry on regardless.'''
-        bs = Bitstream()
-        bss = iter(bs)
-        bits = []
-        for _ in range(100000):
-            bits.append(next(bss))
-        ones = len([b for b in bits if b == 1])
-        zeros = len([b for b in bits if b == 0])
-        self.assertEqual(ones + zeros, len(bits))
-        self.assertAlmostEqual(ones, zeros, delta=int(len(bits) * 0.05))
-
-    def testInteger(self):
-        '''Test we can get random integers with the given bit-length.'''
-        bs = Bitstream()
-
-        # test zero length
-        ns = []
-        for _ in range(10000):
-            ns.append(bs.integer(0))
-        self.assertTrue(len([n for n in ns if n == 0]), len(ns))
-
-        # test singleton length
-        ns = []
-        for _ in range(10000):
-            ns.append(bs.integer(1))
-        self.assertTrue(len([n for n in ns if n <= 1]), len(ns))
-
-        # test bytes
-        ns = []
-        for _ in range(10000):
-            ns.append(bs.integer(8))
-        self.assertTrue(len([n for n in ns if n < 2**8]), len(ns))
-
-        # test larger numbers
-        ns = []
-        for _ in range(10000):
-            ns.append(bs.integer(128))
-        self.assertTrue(len([n for n in ns if n < 2**128 - 1]), len(ns))
-
-        # test arbitrary length
-        ns = []
-        for _ in range(10):
-            ns.append(bs.integer(3))
-        self.assertTrue(len([n for n in ns if n < 2**3 - 1]), len(ns))
-
-
-    # ---------- Drawableset tests ----------
 
     def assertInvariant(self, s):
         '''Test the invariant of tree is satisfied.'''
