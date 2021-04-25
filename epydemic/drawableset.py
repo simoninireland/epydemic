@@ -18,24 +18,25 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import Bitstream, Element
-from typing import Any, Set, List, Tuple, Iterable
-import numpy
+from typing import List, Tuple, Iterable, Optional
 
 
 class TreeNode(object):
-    '''A node in an AVL tree.
+    '''A node in an AVL tree. This is used within :class:`DrawableSet`
+    to maintain the contents of a locus in a way that can perform a
+    random fair draw of its contents.
 
     :param d: the data at the tree node
     :param p: (optional) the parent node (defaults to None)
 
     '''
 
-    def __init__(self, d: Element, p: 'TreeNode' = None):
-        self._left: 'TreeNode' = None    # left sub-tree
-        self._right: 'TreeNode' = None   # right sub-tree
-        self._parent: 'TreeNode' = p     # parent nodes
-        self._data: Element = d          # value at this node
-        self._height: int = 0            # height of the tree
+    def __init__(self, d: Element, p: Optional['TreeNode'] = None):
+        self._left: Optional['TreeNode'] = None    # left sub-tree
+        self._right: Optional['TreeNode'] = None   # right sub-tree
+        self._parent: Optional['TreeNode'] = p     # parent nodes
+        self._data: Element = d                    # value at this node
+        self._height: int = 0                      # height of the tree
 
     def __len__(self) -> int:
         '''Return the size of the tree. This is intended for testing only,
@@ -50,7 +51,7 @@ class TreeNode(object):
             s += len(self._rignt)
         return s
 
-    def add(self, e: Element) -> Tuple[bool, 'TreeNode']:
+    def add(self, e: Element) -> Tuple[bool, Optional['TreeNode']]:
         '''Add an element to the tree.
 
         This method performs two tasks. It adds the element, testing
@@ -81,7 +82,9 @@ class TreeNode(object):
             self._parent._updateHeights()
 
     def _updateHeight(self) -> bool:
-        '''Update the node height.'''
+        '''Update the node height.
+
+        :returns: True if the height of the node changed'''
         lh = self._left._height + 1 if self._left is not None else 0
         rh = self._right._height + 1 if self._right is not None else 0
         h = max(lh, rh)
@@ -92,13 +95,19 @@ class TreeNode(object):
             return False
 
     def isUnbalanced(self) -> bool:
+        '''Test whether the node is unbalanced, defined as its
+        sub-tree heights differing by more than one.
+
+        :returns: True if the node is unbalanced'''
         lh = self._left._height + 1 if self._left is not None else 0
         rh = self._right._height + 1 if self._right is not None else 0
         return abs(lh - rh) > 1
 
-    def _findUnbalanced(self) -> 'TreeNode':
+    def _findUnbalanced(self) -> Optional['TreeNode']:
         '''Walk back up the tree looking for the shallowest unbalanced
-        node.'''
+        node.
+
+        :returns: the shallowest unbalanced node, or None if the tree is completely balanced'''
         if self.isUnbalanced():
             return self
         elif self._parent is None:
@@ -107,7 +116,9 @@ class TreeNode(object):
             return self._parent._findUnbalanced()
 
     def _tallerSubtree(self) -> 'TreeNode':
-        '''Return the taller of teh node's sub-trees.'''
+        '''Return the taller of teh node's sub-trees.
+
+        :returns: the smaller sub-tree'''
         lh = self._left._height + 1 if self._left is not None else 0
         rh = self._right._height + 1 if self._right is not None else 0
         if lh > rh:
@@ -115,8 +126,16 @@ class TreeNode(object):
         else:
             return self._right
 
-    def _rebalance(self, recursive: bool = False) -> 'TreeNode':
-        '''Rebalance the tree after addition of a node.'''
+    def _rebalance(self, recursive: bool = False) -> Optional['TreeNode']:
+        '''Re-balance the tree after addition of a node. If the re-balancing
+        is recursive (which is needed after deletions, but not after
+        additions) then the re-balancing proceeds up the tree to the
+        root.
+
+        :param recursive: (optional) True to recursively re-balance (defaults to False)
+        :returns: the new overall root, or None if the root hasn't been changed
+
+        '''
 
         # find the shallowest unbalanced node
         z = self._findUnbalanced()
@@ -134,8 +153,12 @@ class TreeNode(object):
             else:
                 return None
 
-    def _rotate(self) -> 'TreeNode':
-        z = self
+    def _rotate(z) -> Optional['TreeNode']:
+        '''Perform a single rotation to re-balance the node.
+
+        :returns: the new overall root, or None if the root hasn't been changed
+
+        '''
 
         # find the two other nodes for the rotation
         y = z._tallerSubtree()
@@ -233,7 +256,7 @@ class TreeNode(object):
         '''Search for an element in the tree, returning its node..
 
         :param e: the element
-        :returns: the node holding the element or None'''
+        :returns: the node holding the element, or None'''
         if e == self._data:
             return self
         elif e < self._data:
@@ -248,6 +271,10 @@ class TreeNode(object):
                 return self._right.find(e)
 
     def inOrderTraverse(self) -> List[Element]:
+        '''Perform an iun-order traverse opf the tree, which generates
+        all the elements in order.
+
+        :returns: a list of elements'''
         es = []
         if self._left is not None:
             es.extend(self._left.inOrderTraverse())
@@ -257,14 +284,20 @@ class TreeNode(object):
         return es
 
     def _leftmost(self) -> 'TreeNode':
-        '''Return the leftmost node in a tree.'''
+        '''Return the leftmost node in a tree. This by definition
+        holds the smallest element.
+
+        :returns: the leftmost node'''
         if self._left is None:
             return self
         else:
             return self._left._leftmost()
 
     def _rightmost(self) -> 'TreeNode':
-        '''Return the rightmost node in a tree.'''
+        '''Return the rightmost node in a tree. This by defintion holds
+        the largest element.
+
+        :returns: the rightmost node'''
         if self._right is None:
             return self
         else:
@@ -360,7 +393,7 @@ class TreeNode(object):
             else:
                 return self._right.discard(e)
 
-    def _draw(self) -> Element:
+    def draw(self) -> Element:
         '''Draw an element from the tree at random.
 
         This implementation isn't fair (yet).
@@ -503,4 +536,4 @@ class DrawableSet(object):
         if self._root is None:
             return None
         else:
-            return self._root._draw()
+            return self._root.draw()
