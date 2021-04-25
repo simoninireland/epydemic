@@ -160,6 +160,11 @@ class TreeNode(object):
 
         '''
 
+        # we use z instead of the more usual self as the name for
+        # the node on which the method is called, to match the
+        # normal usage when describing AVL operations for which
+        # z is always the root node.
+
         # find the two other nodes for the rotation
         y = z._tallerSubtree()
         x = y._tallerSubtree()
@@ -169,19 +174,40 @@ class TreeNode(object):
         parent = z._parent
 
         # perform the appropriate rotation
-        if z._data < y._data < x._data:
-            root = y
-            #print('a-b-c about ' + str(z._data))
-            z._right = y._left
-            if y._left is not None:
-                y._left._parent = z
-            y._left = z
-            z._parent = y
-            z._updateHeight()
-            if z.isUnbalanced():
-                z._rotate()
-            y._updateHeight()
-        elif x._data < y._data < z._data:
+        if z._data < y._data:
+            if x._data < y._data:
+                root = x
+                #print('a-c-b about ' + str(z._data))
+                y._left = x._right
+                if x._right is not None:
+                    x._right._parent = y
+                z._right = x._left
+                if x._left is not None:
+                    x._left._parent = z
+                x._left = z
+                z._parent = x
+                x._right = y
+                y._parent = x
+                z._updateHeight()
+                y._updateHeight()
+                if z.isUnbalanced():
+                    z._rotate()
+                if y.isUnbalanced():
+                    y._rotate()
+                x._updateHeight()
+            else:
+                root = y
+                #print('a-b-c about ' + str(z._data))
+                z._right = y._left
+                if y._left is not None:
+                    y._left._parent = z
+                y._left = z
+                z._parent = y
+                z._updateHeight()
+                if z.isUnbalanced():
+                    z._rotate()
+                y._updateHeight()
+        elif x._data < y._data:
             root = y
             #print('c-b-a about ' + str(z._data))
             z._left = y._right
@@ -195,26 +221,6 @@ class TreeNode(object):
             if z.isUnbalanced():
                 z._rotate()
             y._updateHeight()
-        elif z._data < y._data and x._data < y._data:
-            root = x
-            #print('a-c-b about ' + str(z._data))
-            y._left = x._right
-            if x._right is not None:
-                x._right._parent = y
-            z._right = x._left
-            if x._left is not None:
-                x._left._parent = z
-            x._left = z
-            z._parent = x
-            x._right = y
-            y._parent = x
-            z._updateHeight()
-            y._updateHeight()
-            if z.isUnbalanced():
-                z._rotate()
-            if y.isUnbalanced():
-                y._rotate()
-            x._updateHeight()
         else:
             root = x
             #print('c-a-b about ' + str(z._data))
