@@ -78,6 +78,9 @@ class DrawableSetTest(unittest.TestCase):
         '''Test the invariant of tree is satisfied.'''
         if s._root is not None:
             self.assertAVLInvariant(s._root)
+            ls = s._root._left._size if s._root._left is not None else 0
+            rs = s._root._right._size if s._root._right is not None else 0
+            self.assertEqual(len(s), ls + 1 + rs)
 
     def assertAVLInvariant(self, n):
         lh = n._left._height + 1 if n._left is not None else 0
@@ -238,11 +241,43 @@ class DrawableSetTest(unittest.TestCase):
         self.assertEqual(len(s), 0)
         self.assertCountEqual(s, [])
 
+    def testRemoveSuccess(self):
+        '''Test successful removal.'''
+        s = DrawableSet()
+        s.add(1)
+        s.add(2)
+        s.remove(2)
+        self.assertInvariant(s)
+
+    def testRemoveFailure(self):
+        '''Test failing removal of a non-element.'''
+        s = DrawableSet()
+        s.add(1)
+        s.add(2)
+        with self.assertRaises(KeyError):
+            s.remove(3)
+
+    def testRemoveEmpty(self):
+        '''Test removal; from an empty set.'''
+        s = DrawableSet()
+        with self.assertRaises(KeyError):
+            s.remove(3)
+
     def testDiscardToEmpty(self):
         '''Test we can discard the last element in the set.'''
         s = DrawableSet()
         s.add(1)
         s.discard(1)
+        self.assertInvariant(s)
+        self.assertEqual(len(s), 0)
+        self.assertCountEqual(s, [])
+        self.assertTrue(s.empty())
+
+    def testRemoveToEmpty(self):
+        '''Test we can removethe last element in the set.'''
+        s = DrawableSet()
+        s.add(1)
+        s.remove(1)
         self.assertInvariant(s)
         self.assertEqual(len(s), 0)
         self.assertCountEqual(s, [])
@@ -347,6 +382,19 @@ class DrawableSetTest(unittest.TestCase):
         self.assertEqual(len(s), 1)
         self.assertCountEqual(s, [2])
 
+    def testRepeatedRemove(self):
+        '''Test repeated removing.'''
+        s = DrawableSet()
+        s.add(1)
+        s.add(2)
+        self.assertEqual(len(s), 2)
+        self.assertCountEqual(s, [1, 2])
+        s.remove(1)
+        self.assertEqual(len(s), 1)
+        self.assertCountEqual(s, [2])
+        with self.assertRaises(KeyError):
+            s.remove(1)
+
     def testLotsOfAdds(self):
         '''Test we can add loads of elements, and get the results in order.'''
         s = DrawableSet()
@@ -359,7 +407,7 @@ class DrawableSetTest(unittest.TestCase):
         self.assertEqual(len(s), len(rs))
         self.assertCountEqual(rs, s.elements())
 
-    def testAddDeleteInOrder(self):
+    def testAddRemoveInOrder(self):
         '''Test we can handle an maximally inbalanced tree.'''
         s = DrawableSet()
         es = list(range(20))
@@ -368,11 +416,11 @@ class DrawableSetTest(unittest.TestCase):
             self.assertInvariant(s)
         self.assertEqual(len(s), len(es))
         for i in es:
-            s.discard(i)
+            s.remove(i)
             self.assertInvariant(s)
         self.assertEqual(len(s), 0)
 
-    def testAddDeleteInReverseOrder(self):
+    def testAddRemoveInReverseOrder(self):
         '''Test we can handle an maximally inbalanced tree the other way.'''
         s = DrawableSet()
         es = list(range(100))
@@ -382,12 +430,12 @@ class DrawableSetTest(unittest.TestCase):
             self.assertInvariant(s)
         self.assertEqual(len(s), len(es))
         for i in es:
-            s.discard(i)
+            s.remove(i)
             self.assertInvariant(s)
         self.assertEqual(len(s), 0)
 
-    def testAddDelete(self):
-        '''Test we can add in random order and then delete in order.'''
+    def testAddRemove(self):
+        '''Test we can add in random order and then remove in order.'''
         s = DrawableSet()
         es = list(range(100))
         rs = es.copy()
@@ -397,7 +445,7 @@ class DrawableSetTest(unittest.TestCase):
             self.assertInvariant(s)
         l = len(s)
         for j in es:
-            s.discard(j)
+            s.remove(j)
             self.assertInvariant(s)
             l -= 1
             self.assertEqual(len(s), l)
@@ -427,7 +475,7 @@ class DrawableSetTest(unittest.TestCase):
             self.assertIsNotNone(n)
             self.assertNotIn(n, ns)
             ns.append(n)
-            s.discard(n)
+            s.remove(n)
             self.assertInvariant(s)
             self.assertNotIn(n, s)
         self.assertEqual(len(s), 0)

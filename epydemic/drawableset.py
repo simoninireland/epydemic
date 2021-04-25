@@ -42,9 +42,9 @@ class Bitstream(object):
 
     # Underlying types
     Dtype = numpy.int64                        #: Type for elements of the entropy pool.
-    DtypeSize = 63                             #: Bits per element (excluding sign).
+    DtypeSize = 63                             #: Bits per element (excluding sign bit).
 
-    def __init__(self, size : int =100):
+    def __init__(self, size: int =100):
         self._rng = numpy.random.default_rng()
 
         self._pool: List[int] = []                      # entropy pool
@@ -125,23 +125,30 @@ class TreeNode(object):
     def __len__(self) -> int:
         return self._size
 
-    def _add(self, e: Element) -> 'TreeNode':
+    def add(self, e: Element) -> Tuple[bool, 'TreeNode']:
+        '''Add an element to the tree.
+
+        This method performs two tasks. It adds the element, testing
+        whether it was in fact added or was a repetition; and it
+        potentially replaces trhe overall tree root.
+
+        :returns: a pair (wasadded, newroot)'''
         if e == self._data:
-            return None
+            return (False, None)
         elif e < self._data:
             if self._left is None:
                 self._left = TreeNode(e, self)
                 self._updateHeights()
-                return self._left._rebalance()
+                return (True, self._left._rebalance())
             else:
-                return self._left._add(e)
+                return self._left.add(e)
         else:
             if self._right is None:
                 self._right = TreeNode(e, self)
                 self._updateHeights()
-                return self._right._rebalance()
+                return (True, self._right._rebalance())
             else:
-                return self._right._add(e)
+                return self._right.add(e)
 
     def _updateHeights(self):
         '''Walk back to the root updating the heights of nodes.'''
@@ -183,9 +190,7 @@ class TreeNode(object):
         '''Return the taller of teh node's sub-trees.'''
         lh = self._left._height + 1 if self._left is not None else 0
         rh = self._right._height + 1 if self._right is not None else 0
-        if lh == 0 and rh == 0:
-            return None
-        elif lh > rh:
+        if lh > rh:
             return self._left
         else:
             return self._right
@@ -304,7 +309,7 @@ class TreeNode(object):
         # return the new root of the rotated tree
         return root
 
-    def _find(self, e: Element) -> 'TreeNode':
+    def find(self, e: Element) -> 'TreeNode':
         '''Search for an element in the tree, returning its node..
 
         :param e: the element
@@ -315,12 +320,12 @@ class TreeNode(object):
             if self._left is None:
                 return None
             else:
-                return self._left._find(e)
+                return self._left.find(e)
         else:
             if self._right is None:
                 return None
             else:
-                return self._right._find(e)
+                return self._right.find(e)
 
     def inOrderTraverse(self) -> List[Element]:
         es = []
@@ -345,8 +350,15 @@ class TreeNode(object):
         else:
             return self._right._rightmost()
 
-    def _discard(self, e) -> Tuple[bool, 'TreeNode']:
-        '''Delete the given element from the tree, if it is present.'''
+    def discard(self, e) -> Tuple[bool, bool, 'TreeNode']:
+        '''Delete the given element from the tree, if it is present.
+
+        This method performs three integrated tasks. If the element
+        is present, it is removed; the resulting set is tested
+        for emptiness; and any change to the overall root is detected.
+        These three tasks each form an element of the return value.
+
+        :returns: a triple (waspresent, nowempty, newroot)'''
         if e == self._data:
             # grab the parent node that will need to have
             # the replacement re-attached
@@ -359,7 +371,7 @@ class TreeNode(object):
                     #print('leaf')
                     if parent is None:
                         # we're the last node in the tree
-                        return (True, None)
+                        return (True, True, None)
                     else:
                         # delete from parent
                         if parent._left == self:
@@ -369,14 +381,14 @@ class TreeNode(object):
                             #print ('on right')
                             parent._right = None
                         parent._updateHeights()
-                        return (False, parent._rebalance(True))
+                        return (True, False, parent._rebalance(True))
                 else:
                     #print('right sub-tree only')
                     # only a right sub-tree, slide up to replace
                     if parent is None:
                         # we're the root, replace us
                         self._right._parent = None
-                        return (None, self._right)
+                        return (True, False, self._right)
                     else:
                         # replace us with our sub-tree
                         if parent._left == self:
@@ -386,14 +398,14 @@ class TreeNode(object):
                             parent._right = self._right
                             self._right._parent = parent
                         parent._updateHeights()
-                        return (False, parent._rebalance(True))
+                        return (True, False, parent._rebalance(True))
             elif self._right is None:
                 #print('left sub-tree only')
                 # only a left sub-tree, slide up to replace
                 if self._parent is None:
                     # we're the root, replace us
                     self._left._parent = None
-                    return (None, self._left)
+                    return (True, False, self._left)
                 else:
                     # replace us with our sub-tree
                     if parent._left == self:
@@ -403,7 +415,7 @@ class TreeNode(object):
                         parent._right = self._left
                         self._left._parent = parent
                     parent._updateHeights()
-                    return (False, parent._rebalance(True))
+                    return (True, False, parent._rebalance(True))
             else:
                 #print('two sub-trees')
                 # two sub-trees, choose the least disruptive element
@@ -415,18 +427,18 @@ class TreeNode(object):
                     r = self._right._leftmost()
                     #print('replace with ' + str(r._data))
                 self._data = r._data
-                return r._discard(r._data)
+                return r.discard(r._data)
 
         elif e < self._data:
             if self._left is None:
-                return (False, None)
+                return (False, False, None)
             else:
-                return self._left._discard(e)
+                return self._left.discard(e)
         else:
             if self._right is None:
-                return (False, None)
+                return (False, False, None)
             else:
-                return self._right._discard(e)
+                return self._right.discard(e)
 
     def _draw(self) -> Element:
         '''Draw an element from the tree at random.
@@ -475,7 +487,8 @@ class DrawableSet(object):
     '''
 
     def __init__(self):
-        self._root = None
+        self._root: TreeNode = None
+        self._size: int = 0
 
     def add(self, e: Element):
         '''Add an element to the set. This is a no-op if the element is already
@@ -485,8 +498,11 @@ class DrawableSet(object):
         if self._root is None:
             # we're the root, store here
             self._root = TreeNode(e)
+            self._size = 1
         else:
-            r = self._root._add(e)
+            (added, r) = self._root.add(e)
+            if added:
+                self._size += 1
             if r is not None:
                 # the tree was rotated about the root
                 self._root = r
@@ -499,7 +515,7 @@ class DrawableSet(object):
         if self._root is None:
             return False
         else:
-            return self._root._find(e) is not None
+            return self._root.find(e) is not None
 
     def empty(self) -> bool:
         '''Test if the set is empty.
@@ -511,10 +527,7 @@ class DrawableSet(object):
         '''Return the size of the set.
 
         :returns: the size of the set'''
-        if self._root is None:
-            return 0
-        else:
-            return len(self._root)
+        return self._size
 
     def __iter__(self) -> Iterable[Element]:
         return iter(self.elements())
@@ -527,11 +540,35 @@ class DrawableSet(object):
 
     def discard(self, e: Element):
         '''Discard the given element from the set. If the element
-        isn't in the set, this is a no-op.
+        isn't in the set, this is a no-op: use :meth:`remove`
+        to detect removal of non-elements.
 
         :param e: the element'''
         if self._root is not None:
-            (empty, r) = self._root._discard(e)
+            (present, empty, r) = self._root.discard(e)
+            if present:
+                self._size -= 1
+            if empty:
+                # tree has been emptied
+                self._root = None
+            elif r is not None:
+                # the tree was rotated about the root
+                self._root = r
+
+    def remove(self, e: Element):
+        '''Remove the given element from the set, raising
+        an exception if it wasn't present: use :meth:`discard`
+        to allow the removal of non-elements.
+
+        :param e: the element'''
+        if self._root is None:
+            raise KeyError(e)
+        else:
+            (present, empty, r) = self._root.discard(e)
+            if present:
+                self._size -= 1
+            else:
+                raise KeyError(e)
             if empty:
                 # tree has been emptied
                 self._root = None
