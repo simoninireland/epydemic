@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import Bitstream, Element
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Iterator, Optional
 
 
 class TreeNode():
@@ -40,8 +40,7 @@ class TreeNode():
 
     def __len__(self) -> int:
         '''Return the size of the tree. This is intended for testing only,
-        as it's a slow recursive count: :class:`DrawableSet` maintains
-        its size itself.
+        as it's a slow recursive count.
 
         :returns: the size of the tree'''
         s = 1
@@ -276,18 +275,22 @@ class TreeNode():
             else:
                 return self._right.find(e)
 
-    def inOrderTraverse(self) -> List[Element]:
-        '''Perform an iun-order traverse opf the tree, which generates
-        all the elements in order.
+    def __iter__(self) -> Iterator[Element]:
+        '''Return an iterator that returns elements in order.
 
-        :returns: a list of elements'''
-        es = []
+        :returns: an iterator'''
+        return self._inOrder()
+
+    def _inOrder(self) -> Element:
+        '''Generator t oreturn the elements of the tree
+        in order using an in-order traverse.
+
+        :returns: the next element'''
         if self._left is not None:
-            es.extend(self._left.inOrderTraverse())
-        es.append(self._data)
+            yield from self._left._inOrder()
+        yield self._data
         if self._right is not None:
-            es.extend(self._right.inOrderTraverse())
-        return es
+            yield from self._right._inOrder()
 
     def _leftmost(self) -> 'TreeNode':
         '''Return the leftmost node in a tree. This by definition

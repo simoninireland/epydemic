@@ -18,12 +18,11 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import Element, TreeNode
-from numpy.random import default_rng
 from networkx import Graph
-from typing import List, Iterable
+from typing import Iterator
 
 
-class Locus(object):
+class Locus():
     '''The locus of dynamics, where changes can happen. Loci
     are filled with nodes or edges from a network and represent some (possibly
     complete) sub-set of the elements, typically being populated and re-populated as
@@ -93,14 +92,14 @@ class Locus(object):
         :returns: the size of the locus'''
         return self._size
 
-    def elements(self) -> Iterable[Element]:
-        '''Return all the elements in the locus.
+    def __iter__(self) -> Iterator[Element]:
+        '''Return an iterator that returns elements in order.
 
-        :returns the elements'''
+        :returns: an iterator'''
         if self._root is None:
-            return []
+            return iter([])
         else:
-            return self._root.inOrderTraverse()
+            return iter(self._root)
 
     def discard(self, e: Element):
         '''Discard the given element from the locus. If the element

@@ -23,7 +23,7 @@ import numpy
 import unittest
 
 
-class BBTHelper(object):
+class BBTHelper():
     '''Set wrapper to make testing easier.'''
 
     def __init__(self):
@@ -36,13 +36,10 @@ class BBTHelper(object):
             return len(self._root)
 
     def __iter__(self):
-        return iter(self.elements())
-
-    def elements(self):
         if self._root is None:
-            return []
+            return iter([])
         else:
-            return self._root.inOrderTraverse()
+            return iter(self._root)
 
     def add(self, e):
         if self._root is None:
@@ -422,7 +419,7 @@ class BBTTest(unittest.TestCase):
             s.add(i)
             self.assertInvariant(s)
         self.assertEqual(len(s), len(rs))
-        self.assertCountEqual(rs, s.elements())
+        self.assertCountEqual(rs, list(s))
 
     def testAddRemoveInOrder(self):
         '''Test we can handle an maximally inbalanced tree.'''

@@ -65,22 +65,21 @@ class LociTest(unittest.TestCase):
         self.assertIn(j, l)
 
     def testDrawOne(self):
-        '''Test we can draw from an empty locus.'''
+        '''Test we can draw an element without changing the locus.'''
         l = Locus('test')
         l.addHandler(None, 1)
         l.addHandler(None, 2)
-        self.assertEqual(len(l.elements()), 2)
         self.assertEqual(len(l), 2)
-        self.assertCountEqual(l.elements(), [ 1, 2 ])
+        self.assertCountEqual(l, [1, 2])
 
         # duplicate entries are ignored
         l.addHandler(None, 2)
-        self.assertCountEqual(l.elements(), [ 1, 2 ])
+        self.assertCountEqual(l, [1, 2])
 
         # drawing leaves the opulation unchanged
         e = l.draw()
-        self.assertIn(e, [ 1, 2 ])
-        self.assertCountEqual(l.elements(), [ 1, 2 ])
+        self.assertIn(e, [1, 2])
+        self.assertCountEqual(l, [1, 2])
 
 
 if __name__ == '__main__':
