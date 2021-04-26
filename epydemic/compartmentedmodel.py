@@ -147,15 +147,14 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
         :param e: the edge'''
         if isinstance(e, tuple):
             (n, m) = e
-            es = self.elements()
             match = self.matches(g, n, m)
             if match == -1:
                 #print('edge ({m}, {n}) added to {l}'.format(n = n, m = m, l = self._name))
-                es.add((m, n))
+                self.add((m, n))
             else:
                 if match == 1:
                     #print('edge ({n}, {m}) added {l}'.format(n = n, m = m, l = self._name))
-                    es.add((n, m))
+                    self.add((n, m))
 
     def leaveHandler(self, g : Graph, n : Node):
         '''Node leaves one of the edge's compartments, remove any incident edges
@@ -163,16 +162,15 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
 
         :param g: the network
         :param n: the node'''
-        es = self.elements()
         for (nn, mm) in g.edges(n):
             match = self.matches(g, nn, mm)
             if match == -1:
                 #print('edge ({m}, {n}) leaves {l}'.format(n = nn, m = mm, l = self._name))
-                es.discard((mm, nn))
+                self.discard((mm, nn))
             else:
                 if match == 1:
                     #print('edge ({n}, {m}) leaves {l}'.format(n = nn, m = mm, l = self._name))
-                    es.discard((nn, mm))
+                    self.discard((nn, mm))
 
     def enterHandler(self, g : Graph, n : Node):
         '''Node enters one of the edge's compartments, add any incident edges
@@ -180,16 +178,15 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
 
         :param g: the network
         :param n: the node'''
-        es = self.elements()
         for (nn, mm) in g.edges(n):
             match = self.matches(g, nn, mm)
             if match == -1:
                 #print('edge ({m}, {n}) enters {l}'.format(n = nn, m = mm, l = self._name))
-                es.add((mm, nn))
+                self.add((mm, nn))
             else:
                 if match == 1:
                     #print('edge ({n}, {m}) enters {l}'.format(n = nn, m = mm, l = self._name))
-                    es.add((nn, mm))
+                    self.add((nn, mm))
 
     def removeHandler(self, g : Graph, e : Edge):
         '''An edge is removed from the network, check whether it was in this locus and
@@ -199,15 +196,14 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
         :param e: the edge'''
         if isinstance(e, tuple):
             (n, m) = e
-            es = self.elements()
             match = self.matches(g, n, m)
             if match == -1:
                 #print('edge ({m}, {n}) removed from {l}'.format(n = n, m = m, l = self._name))
-                es.discard((m, n))
+                self.discard((m, n))
             else:
                 if match == 1:
                     #print('edge ({n}, {m}) removed from {l}'.format(n = n, m = m, l = self._name))
-                    es.discard((n, m))
+                    self.discard((n, m))
 
 
 class CompartmentedModel(Process):
