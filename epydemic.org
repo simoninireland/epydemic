@@ -4,24 +4,28 @@
 
 * Next release
 
-** Coding [0/3]
+  branch: dev
+
+** Coding [0/4]
 
    - [ ] Configuration model generator, with both a list of node
      degrees (as in networkx) and a distribution to draw from
    - [ ] Extended configuration model with triangles etc
    - [ ] Add degree-distribution-preserving rewiring functions to
      randomise networks while preserving p_k or P(k, k')
+     cite:UnreasonableEffectiveness
+   - [ ] Integrate accelerated simulation
 
-** Bugs [0/0]
+** Bug fixes [0/0]
 
-** Documentation [0/1]
+** Documentation [0/2]
 
    - [ ] Add discussion of moving from R-values to parameters
 
 
 * Ideas
 
-** Improving sequential Gillespie simulation [5/9]
+** Improving sequential Gillespie simulation [14/15]
 
    branch: accelerating-gillespie-dynamics
 
@@ -41,12 +45,52 @@
    Locus.draw() choosing elements to fire events on.
 
    - [X] Re-implement Locus using a better data structure
-   - [ ] Build an iterator that doesn't copy all the elements
+   - [X] Build an iterator that doesn't copy all the elements, for
+     equality testing
    - [X] Random choice based on infinite random bitstream
-   - [ ] Check the statistical properties of this choice
-   - [ ] Randomise a locus after first creation, before simulation?
-   - [ ] Change recursive functions to iterating
 
+   The results are pretty impressive. Running
+   ~utils/profile-simulation.py~ on CPython took 580s under the old
+   implementation. It takes 122s with the new implementation. On PyPy
+   it takes 27s.
+
+   - [X] Check the statistical properties of this implementation
+
+   The draw function I did isn't completely uniform. The [[file:~/personal/notebook/20210422083620-uniform_random_choice_from_a_binary_tree.org][textbook
+   approach]] draws too many random numbers, but it might be possible to
+   do a faster version using bitwise arithmetic on a balanced tree
+   (which would also solve the possible problems due to structured
+   insertion into the set).
+
+   - [X] Re-implement as a red-black tree (simpler and faster than AVL)
+   - [X] Actually red-black is confusing and doesn't guarantee
+     minimal height, so re-implement as AVL
+   - [X] Re-implement fair draw, and check (again)
+   - [ ] Unit tests for fairness
+
+   Using a balanced tree adds about 3s to execution time. Maintaining
+   size in the set rather than in the tree (since it's not needed with
+   the new drawing algorithm) brings it back to 22s. That just goes to
+   show how even small changed add up when the code's being called
+   millions of times (6M, counting recursive calls, in the case of
+   TreeNode._updateHeight() in the performance test).
+
+   Then need larger-scale checks and tweaks to the implementation, and
+   compare with the current versions to see how performance changes.
+
+   - [X] Check simulation results on a large example
+   - [X] Randomise a large locus after first creation, before
+     simulation, to avoid problems with structured addition? -- no
+     need now we're using a balanced tree
+   - [X] Change recursive functions to iterating -- no
+   - [X] Move DrawableSet API into Locus -- no point in a separate
+     class
+
+   SIR on 10^6 nodes runs in 250s -- so ten times the nodes takes 10
+   times the time. The number of edges, and hence the number of events
+   scales as O(N^2) with the number of nodes -- but the complexity of
+   the core operations scales as O(log N), which cancels-out the
+   non-linearity.
 
 ** Acceleration
 
@@ -96,7 +140,8 @@ Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-tool
       tests to see whether it's possible to run ~ipyparallel~ in this
       way (which I think it is).
 
-** Generating functions
+
+** Generating function library
 
    We need a generating functions library, perhaps alongside the
    network generator classes, so we can use this formalism easily
