@@ -23,7 +23,7 @@ from epydemic import SIR, ERNetwork, StochasticDynamics
 
 profile = "profile.pstats"
 
-N = 100000
+N = int(1e5)
 kmean = 10
 
 params = dict()
