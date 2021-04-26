@@ -28,16 +28,17 @@ class Bitstream(object):
     :param size: (optional) size of the entropy pool in words'''
 
     # Singleton instance, created on demand
-    _bitstream: Optional['Bitstream'] = None    #: Default bit stream generator.
+    default_rng: Optional['Bitstream'] = None    #: Default bit stream generator.
 
     @classmethod
-    def default_rng(cl) -> 'Bitstream':
-        '''Static method to return the default bitstream.
+    def init_default_rng(cl) -> 'Bitstream':
+        '''Static method to return the default bitstream. This is called
+        during system initialisation so that there is a generator always
+        available.
 
         @returns: the bitstream'''
-        if cl._bitstream is None:
-            cl._bitstream = Bitstream()
-        return cl._bitstream
+        if cl.default_rng is None:
+            cl.default_rng = Bitstream()
 
     # Underlying types
     Dtype = numpy.int64                        #: Type for elements of the entropy pool.

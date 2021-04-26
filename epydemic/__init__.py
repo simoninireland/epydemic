@@ -89,3 +89,6 @@ from .processsequence import ProcessSequence
 
 # other experiments
 from .newmanziff import BondPercolation, SitePercolation
+
+# late initialisation
+Bitstream.init_default_rng()

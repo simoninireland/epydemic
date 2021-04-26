@@ -18,10 +18,10 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import Bitstream, Element
-from typing import List, Tuple, Iterable, Optional
+from typing import List, Tuple, Optional
 
 
-class TreeNode(object):
+class TreeNode():
     '''A node in an AVL tree. This is used within :class:`DrawableSet`
     to maintain the contents of a locus in a way that can perform a
     random fair draw of its contents.
@@ -402,19 +402,19 @@ class TreeNode(object):
     def draw(self) -> Element:
         '''Draw an element from the tree at random.
 
-        This implementation isn't fair (yet).
-
         :returns: a random element, or none if the set is empty'''
-        bs = Bitstream.default_rng()
-        pathlength = bs.integer(self._height)
-        n = self
-        bits = iter(bs)
-        for _ in range(pathlength):
-            b = next(bits)
-            if b == 0:
-                n = n._left
-            else:
-                n = n._right
-            if n is None:
-                n = self
-        return n._data
+        h = self._height
+        if h == 0:
+            return self._data
+
+        bs = Bitstream.default_rng
+        if self._left != None:
+            if next(bs) == 0:
+                return self._left.draw()
+
+        if self._right is not None:
+            for _ in range(h):
+                if next(bs) == 1:
+                    return self._right.draw()
+
+        return self._data
