@@ -35,3 +35,7 @@ class BitstreamTest(unittest.TestCase):
         zeros = len([b for b in bits if b == 0])
         self.assertEqual(ones + zeros, len(bits))
         self.assertAlmostEqual(ones, zeros, delta=int(len(bits) * 0.05))
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import *
+import statistics
 import numpy
 import unittest
 
@@ -496,3 +497,7 @@ class BBTTest(unittest.TestCase):
             self.assertNotIn(n, s)
         self.assertEqual(len(s), 0)
         self.assertCountEqual(es, ns)
+
+
+if __name__ == '__main__':
+    unittest.main()
