@@ -17,55 +17,137 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Element, DrawableSet
+from epydemic import Element, TreeNode
 from numpy.random import default_rng
 from networkx import Graph
-from typing import Any, Set, List
+from typing import List, Iterable
 
 
 class Locus(object):
     '''The locus of dynamics, where changes can happen. Loci
     are filled with nodes or edges from a network and represent some (possibly
     complete) sub-set of the elements, typically being populated and re-populated as
-    a process over the network evolves. A locus is basically a set with
-    some additional methods to allow or more complex behaviours, including
-    customisable drawing random selection of elements.
+    a process over the network evolves.
 
-    :param name: the locus name'''
+    A locus is basically a set with some additional methods to allow
+    or more complex behaviours, including customisable drawing random
+    selection of elements. The underlying set is implemented as a
+    balanced binary tree to ensure scalability, especially of the
+    :meth:`draw` method whose performance is critical.
 
-    def __init__(self, name : str):
-        super(Locus, self).__init__()
-        self._name : str = name
-        self._elements : DrawableSet = DrawableSet()
+    :param name: the locus name
 
-    def name( self ) -> str:
+    '''
+
+    def __init__(self, name: str):
+        super().__init__()
+        self._name: str = name
+        self._root: TreeNode = None
+        self._size = 0
+
+    def name(self) -> str:
         '''Returns the name of the locus.
 
         :returns: the locus' name'''
         return self._name
 
-    def __len__( self ) -> int:
-        '''Return the number of elements at the locus.
 
-        :returns: the number of elements'''
-        return len(self.elements())
+    # ---------- Basic access ----------
 
-    def elements( self ) -> Set[Element]:
-        '''Return the underlying elements of the locus.
+    def add(self, e: Element):
+        '''Add an element to the set. This is a no-op if the element is already
+        in the set.
 
-        :returns: the elements'''
-        return self._elements
+        :param e: the element to add'''
+        if self._root is None:
+            # we're the root, store here
+            self._root = TreeNode(e)
+            self._size = 1
+        else:
+            (added, r) = self._root.add(e)
+            if added:
+                self._size += 1
+            if r is not None:
+                # the tree was rotated about the root
+                self._root = r
+
+    def __contains__(self, e: Element) -> bool:
+        '''Check whether the given element is a member of the locus.
+
+        :param e: the element
+        :returns: True if the element is in the locus'''
+        if self._root is None:
+            return False
+        else:
+            return self._root.find(e) is not None
+
+    def empty(self) -> bool:
+        '''Test if the locus is empty.
+
+        :returns: True if the locus is empty'''
+        return self._root is None
+
+    def __len__(self) -> int:
+        '''Return the size of the locus.
+
+        :returns: the size of the locus'''
+        return self._size
+
+    def elements(self) -> Iterable[Element]:
+        '''Return all the elements in the locus.
+
+        :returns the elements'''
+        if self._root is None:
+            return []
+        else:
+            return self._root.inOrderTraverse()
+
+    def discard(self, e: Element):
+        '''Discard the given element from the locus. If the element
+        isn't in the set, this is a no-op: use :meth:`remove`
+        to detect removal of non-elements.
+
+        :param e: the element'''
+        if self._root is not None:
+            (present, empty, r) = self._root.discard(e)
+            if present:
+                self._size -= 1
+            if empty:
+                # tree has been emptied
+                self._root = None
+            elif r is not None:
+                # the tree was rotated about the root
+                self._root = r
+
+    def remove(self, e: Element):
+        '''Remove the given element from the locus, raising
+        an exception if it wasn't present: use :meth:`discard`
+        to allow the removal of non-elements.
+
+        :param e: the element'''
+        if self._root is None:
+            raise KeyError(e)
+        else:
+            (present, empty, r) = self._root.discard(e)
+            if present:
+                self._size -= 1
+            else:
+                raise KeyError(e)
+            if empty:
+                # tree has been emptied
+                self._root = None
+            elif r is not None:
+                # the tree was rotated about the root
+                self._root = r
 
     def draw(self) -> Element:
-        '''Draw a random element from the locus. The default performs a simple
-        draw that is equiprobable across all the elements. The locus remains unchanged:
-        drawing simply selects and returns an element at random.
+        '''Draw an element from the locus at random.
 
-        :returns: a random element at the locus'''
-        if len(self) == 0:
-            raise ValueError('Trying to draw element from empty locus {n}'.format(n = self.name()))
-        e = self._elements.draw()
-        return e
+        :returns: a random element, or none if the set is empty'''
+        if self._root is None:
+            raise ValueError('Drawing from an empty locus')
+        else:
+            return self._root.draw()
 
 
     # ---------- Handlers ----------
@@ -76,7 +158,7 @@ class Locus(object):
 
         :param g: the network
         :param e: the element'''
-        self._elements.add(e)
+        self.add(e)
 
     def leaveHandler(self, g : Graph, e : Element):
         '''Handler for when an element leaves the locus due to changes in circumstances,
@@ -84,7 +166,7 @@ class Locus(object):
 
         :param g: the network
         :param e: the element'''
-        self._elements.discard(e)
+        self.discard(e)
 
     def enterHandler(self, g : Graph, e : Element):
         '''Handler for when an element enters the locus due to changes in circumstances,
@@ -92,7 +174,7 @@ class Locus(object):
 
         :param g: the network
         :param e: the element'''
-        self._elements.add(e)
+        self.add(e)
 
     def removeHandler(self, g : Graph, e : Element):
         '''Handler called when an element is removed from the network.  This is used to indicate
@@ -100,4 +182,4 @@ class Locus(object):
 
         :param g: the network
         :param e: the element'''
-        self._elements.discard(e)
+        self.discard(e)
