@@ -8,22 +8,34 @@ dynamics of a model defines what events are called; the loci define
 the population of nodes or edges that may be subject to a particular
 event.
 
-The management of loci is automated as far as possible within the procedural
-interface for evolving the working network within :class:`Process`. Using these
-methods (and the methods extended in sub-classes) hopefully renders the machinery
-largely transparent.
+The management of loci is automated as far as possible within the
+procedural interface for evolving the working network within
+:class:`Process`. Using these methods (and the methods extended in
+sub-classes) hopefully renders the machinery largely transparent.
 
 .. autoclass:: Locus
 
-There are three four access methods defined on loci: to get the locus' name,
-to get the size of the locus (the number of nodes or edges it contains); to retrieve
-the elements themselves; and to draw one element at random.
+There are several basic access methods defined on loci: to get the
+locus' name; to get the size of the locus (the number of nodes or
+edges it contains); to retrieve the elements themselves; to add and
+remove elements; and to draw one element at random. Most of these
+won't be needed unless defining new locus sub-classes.
 
 .. automethod:: Locus.name
 
 .. automethod:: Locus.__len__
 
+.. automethod:: Locus.__contains__
+
+.. automethod:: Locus.empty
+
 .. automethod:: Locus.elements
+
+.. automethod:: Locus.add
+
+.. automethod:: Locus.discard
+
+.. automethod:: Locus.remove
 
 .. automethod:: Locus.draw
 
@@ -75,4 +87,3 @@ The compartmented edge locus extends the default handler methods.
 .. automethod:: CompartmentedEdgeLocus.leaveHandler
 
 .. automethod:: CompartmentedEdgeLocus.removeHandler
-
