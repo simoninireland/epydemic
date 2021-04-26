@@ -1,4 +1,4 @@
-# A set that can be drawn from quickly
+# A AVL tree with random draw
 #
 # Copyright (C) 2021 Simon Dobson
 #
@@ -48,7 +48,7 @@ class TreeNode(object):
         if self._left is not None:
             s += len(self._left)
         if self._right is not None:
-            s += len(self._rignt)
+            s += len(self._right)
         return s
 
     def add(self, e: Element) -> Tuple[bool, Optional['TreeNode']]:
@@ -418,128 +418,3 @@ class TreeNode(object):
             if n is None:
                 n = self
         return n._data
-
-    def __repr__(self) -> str:
-        d = str(self._data)
-        ld = str(self._left._data) if self._left is not None else '_'
-        rd = str(self._right._data) if self._right is not None else '_'
-        buf = f'{d}: {ld} {rd}\n'
-        if self._left is not None:
-            buf += str(self._left)
-        if self._right is not None:
-            buf += str(self._right)
-        return buf
-
-
-class DrawableSet(object):
-    '''A set that can be drawn from randomly.
-
-    The implementation uses an balanced binary search tree. Addition,
-    deletion, and containment testing are all :math:`O(\log n)`
-    average time complexity, as is the :meth:`draw` method that
-    selects a uniformly random element.
-
-    We don't implement the whole of the standard set interface as we
-    don't need it for the current application. Possibly we ought to,
-    just to be future-proof.
-
-    '''
-
-    def __init__(self):
-        self._root: TreeNode = None
-        self._size: int = 0
-
-    def add(self, e: Element):
-        '''Add an element to the set. This is a no-op if the element is already
-        in the set.
-
-        :param e: the element to add'''
-        if self._root is None:
-            # we're the root, store here
-            self._root = TreeNode(e)
-            self._size = 1
-        else:
-            (added, r) = self._root.add(e)
-            if added:
-                self._size += 1
-            if r is not None:
-                # the tree was rotated about the root
-                self._root = r
-
-    def __contains__(self, e: Element) -> bool:
-        '''Check whether the given element is a member of the set.
-
-        :param e: the element
-        :returns: True if the element is in the set'''
-        if self._root is None:
-            return False
-        else:
-            return self._root.find(e) is not None
-
-    def empty(self) -> bool:
-        '''Test if the set is empty.
-
-        :returns: True if the set is empty'''
-        return self._root is None
-
-    def __len__(self) -> int:
-        '''Return the size of the set.
-
-        :returns: the size of the set'''
-        return self._size
-
-    def __iter__(self) -> Iterable[Element]:
-        return iter(self.elements())
-
-    def elements(self) ->List[Element]:
-        if self._root is None:
-            return []
-        else:
-            return self._root.inOrderTraverse()
-
-    def discard(self, e: Element):
-        '''Discard the given element from the set. If the element
-        isn't in the set, this is a no-op: use :meth:`remove`
-        to detect removal of non-elements.
-
-        :param e: the element'''
-        if self._root is not None:
-            (present, empty, r) = self._root.discard(e)
-            if present:
-                self._size -= 1
-            if empty:
-                # tree has been emptied
-                self._root = None
-            elif r is not None:
-                # the tree was rotated about the root
-                self._root = r
-
-    def remove(self, e: Element):
-        '''Remove the given element from the set, raising
-        an exception if it wasn't present: use :meth:`discard`
-        to allow the removal of non-elements.
-
-        :param e: the element'''
-        if self._root is None:
-            raise KeyError(e)
-        else:
-            (present, empty, r) = self._root.discard(e)
-            if present:
-                self._size -= 1
-            else:
-                raise KeyError(e)
-            if empty:
-                # tree has been emptied
-                self._root = None
-            elif r is not None:
-                # the tree was rotated about the root
-                self._root = r
-
-    def draw(self) -> Element:
-        '''Draw an element from the set at random.
-
-        :returns: a random element, or none if the set is empty'''
-        if self._root is None:
-            return None
-        else:
-            return self._root.draw()
