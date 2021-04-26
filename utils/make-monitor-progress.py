@@ -17,13 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-import networkx
-import math
 import numpy
 import epyc
 import epydemic
-from mpmath import polylog as Li
-import matplotlib
 import matplotlib.pyplot as plt
 import seaborn
 
@@ -80,15 +76,15 @@ plt.savefig('doc/cookbook/sir-progress-dt.png')
 class MonitoredSIR(epydemic.SIR):
 
     def __init__(self):
-        super(MonitoredSIR, self).__init__()
+        super().__init__()
 
     def build(self, params):
         '''Build the process, adding additional loci to be monitored.
-           
-        :param params: the parameters'''
-        super(MonitoredSIR, self).build(params)
 
-        # add loci for the other compartments 
+        :param params: the parameters'''
+        super().build(params)
+
+        # add loci for the other compartments
         self.trackNodesInCompartment(epydemic.SIR.SUSCEPTIBLE)
         self.trackNodesInCompartment(epydemic.SIR.REMOVED)
 
@@ -114,11 +110,11 @@ plt.xlabel('time')
 ax.set_xlim([0, T])
 plt.ylabel('fraction of population that is...')
 ax.set_ylim([0.0, 1.0])
-timeseries = rc[epyc.Experiment.RESULTS][epydemic.Monitor.TIMESERIES]
-ts = timeseries[epydemic.Monitor.OBSERVATIONS]
-er_sss = list(map(lambda v: v / N, timeseries[epydemic.SIR.SUSCEPTIBLE]))
-er_iis = list(map(lambda v: v / N, timeseries[epydemic.SIR.INFECTED]))
-er_rrs = list(map(lambda v: v / N, timeseries[epydemic.SIR.REMOVED]))
+res = rc[epyc.Experiment.RESULTS]
+ts = res[epydemic.Monitor.OBSERVATIONS]
+er_sss = list(map(lambda v: v / N, res[epydemic.Monitor.timeSeriesForLocus(epydemic.SIR.SUSCEPTIBLE)]))
+er_iis = list(map(lambda v: v / N, res[epydemic.Monitor.timeSeriesForLocus(epydemic.SIR.INFECTED)]))
+er_rrs = list(map(lambda v: v / N, res[epydemic.Monitor.timeSeriesForLocus(epydemic.SIR.REMOVED)]))
 plt.plot(ts, er_sss, 'y', label='susceptible')
 plt.plot(ts, er_iis, 'r', label='infected')
 plt.plot(ts, er_rrs, 'g', label='removed')
@@ -143,11 +139,11 @@ plt.xlabel('time')
 ax.set_xlim([0, T])
 plt.ylabel('fraction of population that is...')
 ax.set_ylim([0.0, 1.0])
-timeseries = rc[epyc.Experiment.RESULTS][epydemic.Monitor.TIMESERIES]
-ts = timeseries[epydemic.Monitor.OBSERVATIONS]
-plc_sss = list(map(lambda v: v / N, timeseries[epydemic.SIR.SUSCEPTIBLE]))
-plc_iis = list(map(lambda v: v / N, timeseries[epydemic.SIR.INFECTED]))
-plc_rrs = list(map(lambda v: v / N, timeseries[epydemic.SIR.REMOVED]))
+res = rc[epyc.Experiment.RESULTS]
+ts = res[epydemic.Monitor.OBSERVATIONS]
+plc_sss = list(map(lambda v: v / N, res[epydemic.Monitor.timeSeriesForLocus(epydemic.SIR.SUSCEPTIBLE)]))
+plc_iis = list(map(lambda v: v / N, res[epydemic.Monitor.timeSeriesForLocus(epydemic.SIR.INFECTED)]))
+plc_rrs = list(map(lambda v: v / N, res[epydemic.Monitor.timeSeriesForLocus(epydemic.SIR.REMOVED)]))
 plt.plot(ts, plc_sss, 'y', label='susceptible')
 plt.plot(ts, plc_iis, 'r', label='infected')
 plt.plot(ts, plc_rrs, 'g', label='removed')

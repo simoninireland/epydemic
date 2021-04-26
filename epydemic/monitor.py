@@ -103,9 +103,10 @@ class Monitor(Process):
             self._timeSeries[Monitor.timeSeriesForLocus(n)].append(len(l))
 
     def results(self) -> Dict[str, Any]:
-        '''Return the time series as a dict tagged :attr:`TIMESERIES`. There
-        is one time series *per* locus, plus one for the sequence of
-        times at which the observations were made.
+        '''Return the time series tagged as specified by
+        :meth:`timeSeriesForLocus`. There is one time series *per*
+        locus, plus one for the sequence of times at which the
+        observations were made.
 
         :returns: the results
 
