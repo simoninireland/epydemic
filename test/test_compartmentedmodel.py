@@ -128,20 +128,20 @@ class CompartmentedModelTest(unittest.TestCase):
         m.trackNodesInCompartment(SIR.REMOVED)
 
         # all nodes in I
-        self.assertCountEqual(m.loci()[SIR.INFECTED].elements(), [1, 2, 3, 4])
+        self.assertCountEqual(m.loci()[SIR.INFECTED], [1, 2, 3, 4])
 
         # one node from I into S, two edges into SI
         m.changeCompartment(1, SIR.SUSCEPTIBLE)
-        self.assertCountEqual(m.loci()[SIR.INFECTED].elements(), [2, 3, 4])
-        self.assertCountEqual(m.loci()[SIR.SUSCEPTIBLE].elements(), [1])
-        self.assertCountEqual(m.loci()[SIR.SI].elements(), [(1, 2), (1, 4)])
+        self.assertCountEqual(m.loci()[SIR.INFECTED], [2, 3, 4])
+        self.assertCountEqual(m.loci()[SIR.SUSCEPTIBLE], [1])
+        self.assertCountEqual(m.loci()[SIR.SI], [(1, 2), (1, 4)])
 
         # recover the infected node
         m.changeCompartment(1, SIR.REMOVED)
-        self.assertCountEqual(m.loci()[SIR.INFECTED].elements(), [2, 3, 4])
-        self.assertCountEqual(m.loci()[SIR.SUSCEPTIBLE].elements(), [])
-        self.assertCountEqual(m.loci()[SIR.REMOVED].elements(), [1])
-        self.assertCountEqual(m.loci()[SIR.SI].elements(), [])
+        self.assertCountEqual(m.loci()[SIR.INFECTED], [2, 3, 4])
+        self.assertCountEqual(m.loci()[SIR.SUSCEPTIBLE], [])
+        self.assertCountEqual(m.loci()[SIR.REMOVED], [1])
+        self.assertCountEqual(m.loci()[SIR.SI], [])
 
     def testSkeletonise( self ):
         '''Test that a network skeletonises correctly'''
