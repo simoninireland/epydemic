@@ -8,7 +8,7 @@ epydemic: Epidemic simulations on networks in Python
     :target: https://pyepydemic.readthedocs.io/en/latest/index.html
 
 .. image:: https://github.com/simoninireland/epydemic/actions/workflows/ci.yaml/badge.svg
-
+    :target: https://github.com/simoninireland/epydemic/actions/workflows/ci.yaml
 
 Overview
 --------
