@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.4.2
+VERSION = 1.5.1
 
 
 # ----- Sources -----
@@ -33,6 +33,7 @@ SOURCES_CODE = \
 	epydemic/types.py \
 	epydemic/bitstream.py \
 	epydemic/bbt.py \
+	epydemic/drawset.py \
 	epydemic/networkexperiment.py \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
@@ -91,6 +92,7 @@ SOURCES_DOCUMENTATION = \
 	doc/networkdynamics.rst \
 	doc/synchronousdynamics.rst \
 	doc/stochasticdynamics.rst \
+	doc/drawset.rst \
 	doc/loci.rst \
 	doc/compartmentedmodel.rst \
 	doc/generator.rst \

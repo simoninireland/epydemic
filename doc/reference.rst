@@ -6,7 +6,7 @@ API reference
 Basic concepts and classes
 --------------------------
 
-.. toctree ::
+.. toctree::
    :maxdepth: 2
 
    helper-types
@@ -21,7 +21,7 @@ Basic concepts and classes
 Dynamics: How processes are simulated
 -------------------------------------
 
-.. toctree ::
+.. toctree::
    :maxdepth: 2
 
    synchronousdynamics
@@ -31,7 +31,7 @@ Dynamics: How processes are simulated
 Reference epidemic disease processes
 ------------------------------------
 
-.. toctree ::
+.. toctree::
    :maxdepth: 2
 
    sir
@@ -39,10 +39,10 @@ Reference epidemic disease processes
    seir
 
 
-Epidemic disease process variants
----------------------------------
+Process variants
+----------------
 
-.. toctree ::
+.. toctree::
    :maxdepth: 2
 
    sir_fixed_recovery
@@ -50,10 +50,10 @@ Epidemic disease process variants
    sirs
 
 
-Other network processes
------------------------
+Other processes
+---------------
 
-.. toctree ::
+.. toctree::
    :maxdepth: 2
 
    adddelete
@@ -62,10 +62,10 @@ Other network processes
    statistics
 
 
-Process  combinators
+Process combinators
 --------------------
 
-.. toctree ::
+.. toctree::
    :maxdepth: 2
 
    processsequence
@@ -74,7 +74,7 @@ Process  combinators
 Other experiments
 -----------------
 
-.. toctree ::
+.. toctree::
    :maxdepth: 2
 
    newmanziff
@@ -83,8 +83,16 @@ Other experiments
 Network generators
 ------------------
 
-.. toctree ::
+.. toctree::
    :maxdepth: 2
 
    standard_generators
-   
+
+
+Supporting code
+---------------
+
+.. toctree::
+   :maxdepth: 2
+
+   drawset

@@ -15,29 +15,7 @@ sub-classes) hopefully renders the machinery largely transparent.
 
 .. autoclass:: Locus
 
-There are several basic access methods defined on loci: to get the
-locus' name; to get the size of the locus (the number of nodes or
-edges it contains); to retrieve the elements themselves; to add and
-remove elements; and to draw one element at random. Most of these
-won't be needed unless defining new locus sub-classes.
-
 .. automethod:: Locus.name
-
-.. automethod:: Locus.__len__
-
-.. automethod:: Locus.__contains__
-
-.. automethod:: Locus.__iter__
-
-.. automethod:: Locus.empty
-
-.. automethod:: Locus.add
-
-.. automethod:: Locus.discard
-
-.. automethod:: Locus.remove
-
-.. automethod:: Locus.draw
 
 
 Handlers
