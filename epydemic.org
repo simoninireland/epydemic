@@ -2,155 +2,101 @@
 
 * epydemic, epidemic simulation in Python                           :PROJECT:
 
-* Next release
+** Release planning
 
-  branch: dev
+*** Release 1.6.1
 
-** Coding [0/4]
+**** Coding [0/3]
 
-   - [ ] Configuration model generator, with both a list of node
-     degrees (as in networkx) and a distribution to draw from
-   - [ ] Extended configuration model with triangles etc
-   - [ ] Add degree-distribution-preserving rewiring functions to
-     randomise networks while preserving p_k or P(k, k')
-     cite:UnreasonableEffectiveness
-   - [ ] Integrate accelerated simulation
+    - [ ] Configuration model generator, with both a list of node
+      degrees (as in networkx) and a distribution to draw from
+    - [ ] Extended configuration model with triangles etc
+    - [ ] Add degree-distribution-preserving rewiring functions to
+      randomise networks while preserving p_k or P(k, k')
+      cite:UnreasonableEffectiveness
 
-** Bug fixes [0/0]
+**** Bug fixes [0/0]
 
-** Documentation [0/2]
+**** Documentation [0/1]
 
-   - [ ] Add discussion of moving from R-values to parameters
-
-
-* Ideas
-
-** Improving sequential Gillespie simulation [14/15]
-
-   branch: accelerating-gillespie-dynamics
-
-   There are several suggestions from the literature, many of which
-   relate solely to chemical-style systems with lots of reactions. A
-   few ideas come out, though:
-
-   1. [X] Assume that reaction rates are constant. That saves a call to
-      re-compute. Could make this an option for systems that want to
-      change the rates over time.
-   2. [X] Have the events capture their effects on the occupation of
-      compartments, to increment the counts.
-   3. [X] Embed counting into the changeCompartment() etc methods to
-      increment the counts.
-
-   Profiling the code suggests that it spends about 80% of its time in
-   Locus.draw() choosing elements to fire events on.
-
-   - [X] Re-implement Locus using a better data structure
-   - [X] Build an iterator that doesn't copy all the elements, for
-     equality testing
-   - [X] Random choice based on infinite random bitstream
-
-   The results are pretty impressive. Running
-   ~utils/profile-simulation.py~ on CPython took 580s under the old
-   implementation. It takes 122s with the new implementation. On PyPy
-   it takes 27s.
-
-   - [X] Check the statistical properties of this implementation
-
-   The draw function I did isn't completely uniform. The [[file:~/personal/notebook/20210422083620-uniform_random_choice_from_a_binary_tree.org][textbook
-   approach]] draws too many random numbers, but it might be possible to
-   do a faster version using bitwise arithmetic on a balanced tree
-   (which would also solve the possible problems due to structured
-   insertion into the set).
-
-   - [X] Re-implement as a red-black tree (simpler and faster than AVL)
-   - [X] Actually red-black is confusing and doesn't guarantee
-     minimal height, so re-implement as AVL
-   - [X] Re-implement fair draw, and check (again)
-   - [ ] Unit tests for fairness
-
-   Using a balanced tree adds about 3s to execution time. Maintaining
-   size in the set rather than in the tree (since it's not needed with
-   the new drawing algorithm) brings it back to 22s. That just goes to
-   show how even small changed add up when the code's being called
-   millions of times (6M, counting recursive calls, in the case of
-   TreeNode._updateHeight() in the performance test).
-
-   Then need larger-scale checks and tweaks to the implementation, and
-   compare with the current versions to see how performance changes.
-
-   - [X] Check simulation results on a large example
-   - [X] Randomise a large locus after first creation, before
-     simulation, to avoid problems with structured addition? -- no
-     need now we're using a balanced tree
-   - [X] Change recursive functions to iterating -- no
-   - [X] Move DrawableSet API into Locus -- no point in a separate
-     class
-
-   SIR on 10^6 nodes runs in 250s -- so ten times the nodes takes 10
-   times the time. The number of edges, and hence the number of events
-   scales as O(N^2) with the number of nodes -- but the complexity of
-   the core operations scales as O(log N), which cancels-out the
-   non-linearity.
-
-** Acceleration
-
-*** numba acceleration
-
-git branch numba-acceleration
-
-Idea: wrap StochasticDynamics.do() as a JIT-compiled function, since
-that (and the event functions) are where most of the time is spent. If
-it generate worthwhile speed-up, extend out to other elements that are
-time-consuming.
-
-The main simulation loop seems like a good place to start as it
-involves a lot of looping and drawing from probability distributions,w
-which should be accelerable.
-
-Installing the latest numba (0.51.2) installs llvmlite-0.34.0, which
-only works for versions of LLVM up to 10.0.x. The latest arch version
-is 11.x, so I downgraded to the latest compatible version (and also
-its libraries):
-
-#+BEGIN_SRC sh
-  pacman -U https://archive.archlinux.org/packages/l/llvm/llvm-10.0.1-3-x86_64.pkg.tar.zst
-  pacman -U https://archive.archlinux.org/packages/l/llvm10-libs/llvm10-libs-10.0.1-3-x86_64.pkg.tar.zst
-#+END_SRC
-
-Doesn't seem to get much speed-up, even given it's quite numerical:
-there are calls to get the event distribution and to check for
-equilibrium that perhaps could be refactored?
-
-*** GPU acceleration
-
-Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html][containerised]].
+     - [ ] Add discussion of moving from R-values to parameters
 
 
-** Containerisation
+*** Release 1.5.1                                                   :ARCHIVE:
 
-   To run in the cloud we need to be able to containerise. There are a
-   couple of options here:
+**** Coding [1/1]
 
-   1. A single container running on a multicore host, extended with
-      whatever code is needed for the application. This is
-      straightforward, but limited by the single-host performance
-      (which might be fine for a lot of applications).
-   2. Multiple containers acting together, with a virtual network
-      between them. This probably needs ~docker-compose~ and some
-      tests to see whether it's possible to run ~ipyparallel~ in this
-      way (which I think it is).
+     - [X] Integrate accelerated simulation ([[*Improving sequential Gillespie simulation][below]])
+
+**** Bug fixes [1/1]
+
+     - [X] Problem with monitor cookbook recipe code
+
+**** Documentation [1/1]
+
+     - [X] Add documentation for DrawSet
 
 
-** Generating function library
+** Sub-projects
 
-   We need a generating functions library, perhaps alongside the
-   network generator classes, so we can use this formalism easily
-   alongside epydemic's simulations. In particular we need the
-   high-order-numerical-derivative function to be able to extract
-   probabilities etc.
+*** Acceleration
 
-   The biggest challenge might be to write documentation....
+**** numba acceleration                                             :ARCHIVE:
 
-   There's another approach alongside this, which would be to write a
-   symbolic package with the generating functions in them, for use in
-   Sage. This would then complement the numerical side.
+ git branch numba-acceleration
+
+ Idea: wrap StochasticDynamics.do() as a JIT-compiled function, since
+ that (and the event functions) are where most of the time is spent. If
+ it generate worthwhile speed-up, extend out to other elements that are
+ time-consuming.
+
+ The main simulation loop seems like a good place to start as it
+ involves a lot of looping and drawing from probability distributions,w
+ which should be accelerable.
+
+ Installing the latest numba (0.51.2) installs llvmlite-0.34.0, which
+ only works for versions of LLVM up to 10.0.x. The latest arch version
+ is 11.x, so I downgraded to the latest compatible version (and also
+ its libraries):
+
+ #+BEGIN_SRC sh
+   pacman -U https://archive.archlinux.org/packages/l/llvm/llvm-10.0.1-3-x86_64.pkg.tar.zst
+   pacman -U https://archive.archlinux.org/packages/l/llvm10-libs/llvm10-libs-10.0.1-3-x86_64.pkg.tar.zst
+ #+END_SRC
+
+ Doesn't seem to get much speed-up, even given it's quite numerical:
+ there are calls to get the event distribution and to check for
+ equilibrium that perhaps could be refactored?
+
+**** GPU acceleration
+
+ Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html][containerised]].
+
+
+*** Containerisation
+
+    To run in the cloud we need to be able to containerise. There are a
+    couple of options here:
+
+    1. A single container running on a multicore host, extended with
+       whatever code is needed for the application. This is
+       straightforward, but limited by the single-host performance
+       (which might be fine for a lot of applications).
+    2. Multiple containers acting together, with a virtual network
+       between them. This probably needs ~docker-compose~ and some
+       tests to see whether it's possible to run ~ipyparallel~ in this
+       way (which I think it is).
+
+*** Generating function library
+
+    We need a generating functions library, perhaps alongside the
+    network generator classes, so we can use this formalism easily
+    alongside epydemic's simulations. In particular we need the
+    high-order-numerical-derivative function to be able to extract
+    probabilities etc.
+
+    The biggest challenge might be to write documentation....
+
+    There's another approach alongside this, which would be to write a
+    symbolic package with the generating functions in them, for use in
+    Sage. This would then complement the numerical side.
