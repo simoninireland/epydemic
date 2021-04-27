@@ -1,4 +1,4 @@
-# A AVL tree with random draw
+# An AVL tree with random draw
 #
 # Copyright (C) 2021 Simon Dobson
 #
@@ -22,8 +22,8 @@ from typing import List, Tuple, Iterator, Optional
 
 
 class TreeNode():
-    '''A node in an AVL tree. This is used within :class:`DrawableSet`
-    to maintain the contents of a locus in a way that can perform a
+    '''A node in an AVL tree. This is used within :class:`DrawSet`
+    to maintain the contents of a set in a way that can perform a
     random fair draw of its contents.
 
     :param d: the data at the tree node
