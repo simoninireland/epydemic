@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.5.1
+VERSION = 1.6.1
 
 
 # ----- Sources -----
@@ -87,6 +87,7 @@ SOURCES_DOCUMENTATION = \
 	doc/index.rst \
 	doc/install.rst \
 	doc/reference.rst \
+	doc/classes.rst \
 	doc/bibliography.rst \
 	doc/glossary.rst \
 	doc/networkdynamics.rst \
