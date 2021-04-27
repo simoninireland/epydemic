@@ -272,7 +272,7 @@ class CompartmentedModel(Process):
         for (_, p) in dist:
             a += p
         if not math.isclose(a, 1.0):
-            raise Exception('Bad initial compartment distribution (probabilities don\'t sum to one')
+            raise Exception('Bad initial compartment distribution (probabilities don\'t sum to one)')
 
         return dist
 
