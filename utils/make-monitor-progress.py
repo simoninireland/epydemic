@@ -103,7 +103,7 @@ e = epydemic.StochasticDynamics(epydemic.ProcessSequence([MonitoredSIR(), epydem
 e.process().setMaximumTime(T)
 rc = e.set(params).run()
 
-res = rc[Experiment.RESULTS]
+res = rc[epyc.Experiment.RESULTS]
 ts = res[epydemic.Monitor.OBSERVATIONS]
 er_sss = list(map(lambda v: v / N, res[epydemic.Monitor.timeSeriesForLocus(epydemic.SIR.SUSCEPTIBLE)]))
 er_iis = list(map(lambda v: v / N, res[epydemic.Monitor.timeSeriesForLocus(epydemic.SIR.INFECTED)]))
