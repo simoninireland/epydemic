@@ -19,7 +19,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependent libraries
       run: |
-        sudo apt-get install libhdf5
+        sudo apt-get install libhdf5-dev
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
