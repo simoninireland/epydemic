@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from typing import Optional, Iterable
+from typing import Optional, List, Iterable
 import numpy
 
 
@@ -44,7 +44,7 @@ class Bitstream(object):
     Dtype = numpy.int64                        #: Type for elements of the entropy pool.
     DtypeSize = 63                             #: Bits per element (excluding sign bit).
 
-    def __init__(self, size: int =100):
+    def __init__(self, size: int = 100):
         self._rng = numpy.random.default_rng()
 
         self._pool: List[int] = []                      # entropy pool
@@ -86,19 +86,3 @@ class Bitstream(object):
             self._index = 0
             self._mask = 1
         return bit
-
-    def integer(self, n : int):
-        '''Return a random integer. The integer is constructed using bits
-        from the generator.
-
-        :param n: the limit
-        :returns: a random integer on the range [0, n]'''
-        v = 0
-        m = 1
-        while True:
-            m <<= 1
-            if m >= n:
-                return v
-            else:
-                v <<= 1
-                v += next(self)
