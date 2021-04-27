@@ -48,7 +48,7 @@ class Bitstream(object):
         self._rng = numpy.random.default_rng()
 
         self._pool: List[int] = []                      # entropy pool
-        self._size = size                               # size of the pool
+        self._size: int = size                          # size of the pool
         self._max: int = 2 ** self.DtypeSize - 1        # maximum value of an entry in the pool
         self._element: int = 0                          # current element from the pool
         self._nelement: int = 0                         # index of current element
