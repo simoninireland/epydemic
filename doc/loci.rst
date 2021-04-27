@@ -27,9 +27,9 @@ won't be needed unless defining new locus sub-classes.
 
 .. automethod:: Locus.__contains__
 
-.. automethod:: Locus.empty
+.. automethod:: Locus.__iter__
 
-.. automethod:: Locus.elements
+.. automethod:: Locus.empty
 
 .. automethod:: Locus.add
 
