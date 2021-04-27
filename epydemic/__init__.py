@@ -49,6 +49,7 @@ software engineering practices.
 from .types import Node, Edge, Element
 from .bitstream import Bitstream
 from .bbt import TreeNode
+from .drawset import DrawSet
 
 # network processes
 from .loci import Locus

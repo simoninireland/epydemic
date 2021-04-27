@@ -1,6 +1,6 @@
 # Test basic loci functions
 #
-# Copyright (C) 2017--2020 Simon Dobson
+# Copyright (C) 2017--2021 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -20,10 +20,8 @@
 from epydemic import *
 import unittest
 
-class LociTest(unittest.TestCase):
 
-    # the correctness tests for the underlying tree
-    # appear in test/test_bbt.py
+class LociTest(unittest.TestCase):
 
     def testName(self):
         '''Test name retrieval.'''
@@ -76,7 +74,7 @@ class LociTest(unittest.TestCase):
         l.addHandler(None, 2)
         self.assertCountEqual(l, [1, 2])
 
-        # drawing leaves the opulation unchanged
+        # drawing leaves the population unchanged
         e = l.draw()
         self.assertIn(e, [1, 2])
         self.assertCountEqual(l, [1, 2])

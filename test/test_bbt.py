@@ -1,4 +1,4 @@
-# Test balanced binary trees
+# Test balanced binary trees and their DrawSet wrapper
 #
 # Copyright (C) 2021 Simon Dobson
 #
@@ -23,81 +23,6 @@ import numpy
 import unittest
 
 
-class BBTHelper():
-    '''Set wrapper to make testing easier.'''
-
-    def __init__(self):
-        self._root = None
-
-    def __len__(self):
-        if self._root is None:
-            return 0
-        else:
-            return len(self._root)
-
-    def __iter__(self):
-        if self._root is None:
-            return iter([])
-        else:
-            return iter(self._root)
-
-    def add(self, e):
-        if self._root is None:
-            # we're the root, store here
-            self._root = TreeNode(e)
-            self._size = 1
-        else:
-            (added, r) = self._root.add(e)
-            if added:
-                self._size += 1
-            if r is not None:
-                # the tree was rotated about the root
-                self._root = r
-
-    def __contains__(self, e  ) -> bool:
-        if self._root is None:
-            return False
-        else:
-            return self._root.find(e) is not None
-
-    def empty(self) -> bool:
-        return self._root is None
-
-    def discard(self, e  ):
-        if self._root is not None:
-            (present, empty, r) = self._root.discard(e)
-            if present:
-                self._size -= 1
-            if empty:
-                # tree has been emptied
-                self._root = None
-            elif r is not None:
-                # the tree was rotated about the root
-                self._root = r
-
-    def remove(self, e):
-        if self._root is None:
-            raise KeyError(e)
-        else:
-            (present, empty, r) = self._root.discard(e)
-            if present:
-                self._size -= 1
-            else:
-                raise KeyError(e)
-            if empty:
-                # tree has been emptied
-                self._root = None
-            elif r is not None:
-                # the tree was rotated about the root
-                self._root = r
-
-    def draw(self) -> Element:
-        if self._root is None:
-            raise ValueError('Drawing from an empty locus')
-        else:
-            return self._root.draw()
-
-
 class BBTTest(unittest.TestCase):
 
     def assertInvariant(self, s):
@@ -119,7 +44,7 @@ class BBTTest(unittest.TestCase):
 
     def testEmptySet(self):
         '''Test empty sets.'''
-        s = BBTHelper()
+        s = DrawSet()
         self.assertInvariant(s)
         self.assertEqual(len(s), 0)
         self.assertFalse(1 in s)
@@ -128,7 +53,7 @@ class BBTTest(unittest.TestCase):
 
     def testAdd(self):
         '''Test we can add individual elements.'''
-        s = BBTHelper()
+        s = DrawSet()
         self.assertTrue(s.empty())
         s.add(1)
         self.assertFalse(s.empty())
@@ -151,7 +76,7 @@ class BBTTest(unittest.TestCase):
 
     def testABCroot(self):
         '''Test the ABC rotation over the root.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(0)
         s.add(1)
         s.add(2)
@@ -161,7 +86,7 @@ class BBTTest(unittest.TestCase):
 
     def testABC(self):
         '''Test the ABC rotation below the root.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.add(0)
         s.add(2)
@@ -173,7 +98,7 @@ class BBTTest(unittest.TestCase):
 
     def testACBroot(self):
         '''Test the ACB rotation overt the root.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.add(3)
         s.add(2)
@@ -183,7 +108,7 @@ class BBTTest(unittest.TestCase):
 
     def testACB(self):
         '''Test the ACB rotation below the root.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(3)
         s.add(0)
         s.add(5)
@@ -195,7 +120,7 @@ class BBTTest(unittest.TestCase):
 
     def testCBAroot(self):
         '''Test the CBA rotation across the root.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(3)
         s.add(2)
         s.add(1)
@@ -205,7 +130,7 @@ class BBTTest(unittest.TestCase):
 
     def testCBA(self):
         '''Test the CBA rotation below the root.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(5)
         s.add(7)
         s.add(3)
@@ -217,7 +142,7 @@ class BBTTest(unittest.TestCase):
 
     def testCABroot(self):
         '''Test the CABB rotation across the root.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(4)
         s.add(2)
         s.add(3)
@@ -227,7 +152,7 @@ class BBTTest(unittest.TestCase):
 
     def testCAB(self):
         '''Test the CAB rotation below the root.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(2)
         s.add(1)
         s.add(8)
@@ -239,7 +164,7 @@ class BBTTest(unittest.TestCase):
 
     def testDiscard(self):
         '''Test we can discard elements that are present.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(2)
         s.add(3)
         s.discard(3)
@@ -249,7 +174,7 @@ class BBTTest(unittest.TestCase):
 
     def testDiscardEmpty(self):
         '''Test we can discard from an empty set.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.discard(1)
         self.assertInvariant(s)
         self.assertEqual(len(s), 0)
@@ -257,7 +182,7 @@ class BBTTest(unittest.TestCase):
 
     def testRemoveSuccess(self):
         '''Test successful removal.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.add(2)
         s.remove(2)
@@ -265,7 +190,7 @@ class BBTTest(unittest.TestCase):
 
     def testRemoveFailure(self):
         '''Test failing removal of a non-element.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.add(2)
         with self.assertRaises(KeyError):
@@ -273,13 +198,13 @@ class BBTTest(unittest.TestCase):
 
     def testRemoveEmpty(self):
         '''Test removal; from an empty set.'''
-        s = BBTHelper()
+        s = DrawSet()
         with self.assertRaises(KeyError):
             s.remove(3)
 
     def testDiscardToEmpty(self):
         '''Test we can discard the last element in the set.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.discard(1)
         self.assertInvariant(s)
@@ -289,7 +214,7 @@ class BBTTest(unittest.TestCase):
 
     def testRemoveToEmpty(self):
         '''Test we can removethe last element in the set.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.remove(1)
         self.assertInvariant(s)
@@ -299,7 +224,7 @@ class BBTTest(unittest.TestCase):
 
     def testDiscardLeaves(self):
         '''Test we can discard leaf elements.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(2)
         s.add(3)
         s.discard(3)
@@ -318,7 +243,7 @@ class BBTTest(unittest.TestCase):
 
     def testDiscardSingleSubtree(self):
         '''Test we can discard nodes with a single sub-tree.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(2)
         s.add(3)
         s.add(4)
@@ -335,7 +260,7 @@ class BBTTest(unittest.TestCase):
 
     def testDiscardTwoSubtrees(self):
         '''Test we can discard a node with two sub-trees.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(3)
         s.add(2)
         s.add(10)
@@ -349,7 +274,7 @@ class BBTTest(unittest.TestCase):
 
     def testRepeatedAdd(self):
         '''Test we can add the same element twice.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         self.assertInvariant(s)
         s.add(2)
@@ -367,7 +292,7 @@ class BBTTest(unittest.TestCase):
 
     def testNonDiscard(self):
         '''Test we can discard when the element isn't there.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.add(2)
         self.assertEqual(len(s), 2)
@@ -384,7 +309,7 @@ class BBTTest(unittest.TestCase):
 
     def testRepeatedDiscard(self):
         '''Test repeated discarding.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.add(2)
         self.assertEqual(len(s), 2)
@@ -398,7 +323,7 @@ class BBTTest(unittest.TestCase):
 
     def testRepeatedRemove(self):
         '''Test repeated removing.'''
-        s = BBTHelper()
+        s = DrawSet()
         s.add(1)
         s.add(2)
         self.assertEqual(len(s), 2)
@@ -411,7 +336,7 @@ class BBTTest(unittest.TestCase):
 
     def testLotsOfAdds(self):
         '''Test we can add loads of elements, and get the results in order.'''
-        s = BBTHelper()
+        s = DrawSet()
         es = list(range(200))
         rs = es.copy()
         numpy.random.shuffle(es)
@@ -423,7 +348,7 @@ class BBTTest(unittest.TestCase):
 
     def testAddRemoveInOrder(self):
         '''Test we can handle an maximally inbalanced tree.'''
-        s = BBTHelper()
+        s = DrawSet()
         es = list(range(20))
         for i in es:
             s.add(i)
@@ -436,7 +361,7 @@ class BBTTest(unittest.TestCase):
 
     def testAddRemoveInReverseOrder(self):
         '''Test we can handle an maximally inbalanced tree the other way.'''
-        s = BBTHelper()
+        s = DrawSet()
         es = list(range(100))
         es.reverse()
         for i in es:
@@ -450,7 +375,7 @@ class BBTTest(unittest.TestCase):
 
     def testAddRemove(self):
         '''Test we can add in random order and then remove in order.'''
-        s = BBTHelper()
+        s = DrawSet()
         es = list(range(100))
         rs = es.copy()
         numpy.random.shuffle(rs)
@@ -467,7 +392,7 @@ class BBTTest(unittest.TestCase):
 
     def testDraw(self):
         '''Test the basic draw functionality.'''
-        s = BBTHelper()
+        s = DrawSet()
         es = list(range(1000))
         numpy.random.shuffle(es)
         for e in es:
@@ -478,7 +403,7 @@ class BBTTest(unittest.TestCase):
 
     def testDrawAll(self):
         '''Test we always draw all elements.'''
-        s = BBTHelper()
+        s = DrawSet()
         es = list(range(1000))
         numpy.random.shuffle(es)
         for e in es:
