@@ -33,8 +33,11 @@ sys.path.insert(0, os.path.abspath('..'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.mathjax']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.inheritance_diagram',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -50,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'epydemic'
-copyright = u'2017--2020, Simon Dobson'
+copyright = u'2017--2021, Simon Dobson'
 author = u'Simon Dobson'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -155,6 +158,3 @@ texinfo_documents = [
      author, 'epydemic', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-
