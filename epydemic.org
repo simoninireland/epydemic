@@ -72,6 +72,12 @@
 
  Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html][containerised]].
 
+**** Cython acceleration
+
+     Using Cython requires code changes. They're only annotations, to
+     provide C types for variables and calling conventions on methods
+     -- but fairly substantial changes, and not backwards compatible,
+     meaning it'd be a commitment
 
 *** Containerisation
 
