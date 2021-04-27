@@ -31,7 +31,7 @@ class Locus(DrawSet):
     A locus is basically a set with some additional methods to allow
     or more complex behaviours, including customisable drawing random
     selection of elements. The underlying set is implemented as a
-    balanced binary tree to ensure scalability, especially of the
+    :class:`DrawSet` to ensure scalability, especially of the
     :meth:`draw` method whose performance is critical.
 
     :param name: the locus name
