@@ -1,7 +1,7 @@
 # A generator for powerlaw-with-cutoff networks
 #
 # Copyright (C) 2017--2021 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -39,31 +39,37 @@ class PLCNetwork(NetworkGenerator):
     be credible: :ref:`Newman <New02>` (and other works) use this topology extensively.
     It is characterised by two parameters, the exponent of the power law and the
     cutoff maximum degree after which the probability of finding nodes with larger degrees
-    falls off exponentially. 
+    falls off exponentially.
 
     :param params: (optional) experimental parameters
     :param limit: (optional) maximum number of independent networks to generate'''
 
     # Experimental parameters
-    N : Final[str] = 'epydemic.generators.PLCNetwork.N'                 #: Experimental parameter for the order of the network.
-    EXPONENT : Final[str] = 'epydemic.generators.PLCNetwork.exponent'   #: Experimental parameter for the exponent of the distribution.
-    CUTOFF : Final[str] = 'epydemic.generators.PLCNetwork.cutoff'       #: Experimental parameter for the cutoff of the distribution.
+    N: Final[str] = 'epydemic.generators.PLC.N'                 #: Experimental parameter for the order of the network.
+    EXPONENT: Final[str] = 'epydemic.generators.PLC.exponent'   #: Experimental parameter for the exponent of the distribution.
+    CUTOFF: Final[str] = 'epydemic.generators.PLC.cutoff'       #: Experimental parameter for the cutoff of the distribution.
 
-    def __init__(self, params : Dict[str, Any] =None, limit : Optional[int] =None):
-        super(PLCNetwork, self).__init__(params, limit)
+    def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] = None):
+        super().__init__(params, limit)
 
-    def _makePowerlawWithCutoff(self, alpha : float, kappa : float) -> Callable[[int], float]:
+    def topology(self) -> str:
+        '''Return the topoology flag for this generator.
+
+        :returns: the topology'''
+        return 'PLC'
+
+    def _makePowerlawWithCutoff(self, alpha: float, kappa: float) -> Callable[[int], float]:
         '''Create a model function for a powerlaw distribution with exponential cutoff.
 
         :param alpha: the exponent of the distribution
         :param kappa: the degree cutoff
         :returns: a model function'''
         C = polylog(alpha, exp(-1.0 / kappa))
-        def p( k : int ) -> float:
+        def p(k: int) -> float:
             return (pow((k + 0.0), -alpha) * exp(-(k + 0.0) / kappa)) / C
         return p
 
-    def _generateFrom(self, N : int, p : Callable[[int], float], maxdeg : int =100):
+    def _generateFrom(self, N: int, p: Callable[[int], float], maxdeg: int = 100):
         '''Generate a random graph with degree distribution described
         by a model function.
 
@@ -78,7 +84,7 @@ class PLCNetwork(NetworkGenerator):
             while True:
                 # draw a random degree
                 k = rng.integers(1, maxdeg)
-            
+
                 # do we include a node with this degree?
                 if rng.random() < p(k):
                     # yes, add it to the sequence; otherwise, draw again
@@ -98,12 +104,12 @@ class PLCNetwork(NetworkGenerator):
             # remove it from the sequence and from the total
             t -= ns[i]
             del ns[i]
-            
+
             # choose a new node to replace the one we removed
             while True:
                 # draw a new degree from the distribution
                 k = rng.integers(1, maxdeg)
-            
+
                 # do we include a node with this degree?
                 if rng.random() < p(k):
                     # yes, add it to the sequence; otherwise, draw again
@@ -116,7 +122,7 @@ class PLCNetwork(NetworkGenerator):
         g = configuration_model(ns, create_using=Graph())
         return g
 
-    def _generate(self, params : Dict[str, Any]) -> Graph:
+    def _generate(self, params: Dict[str, Any]) -> Graph:
         '''Generate the human contact network.
 
         :param params: the experimental parameters
@@ -125,4 +131,3 @@ class PLCNetwork(NetworkGenerator):
         alpha = params[self.EXPONENT]
         kappa = params[self.CUTOFF]
         return self._generateFrom(N, self._makePowerlawWithCutoff(alpha, kappa))
-

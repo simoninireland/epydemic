@@ -1,3 +1,10 @@
+Version 1.6.1
+
+   - Added topology marker to parameters to capture the network generator used
+   - Changed names of network generation parameters to match the topology markers
+   - Added class inheritance diagram to documentation
+   - Added speed improvements to front page
+
 Version 1.5.1 (2021-04-27)
 
    - Started maintaining simulation time in NetworkDynamics

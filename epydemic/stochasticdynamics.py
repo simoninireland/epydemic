@@ -35,10 +35,10 @@ class StochasticDynamics(Dynamics):
     :param p: the process to run
     :param g: network or network generator (optional, can be provided later)'''
 
-    def __init__(self, p : Process, g : Union[Graph, NetworkGenerator] =None):
+    def __init__(self, p: Process, g: Union[Graph, NetworkGenerator] = None):
         super().__init__(p, g)
 
-    def do(self, params : Dict[str, Any]) -> Dict[str, Any]:
+    def do(self, params: Dict[str, Any]) -> Dict[str, Any]:
         '''Run the simulation using Gillespie dynamics.
 
         :param params: the experimental parameters
@@ -56,7 +56,7 @@ class StochasticDynamics(Dynamics):
             # compute the total rate of transitions for the entire network
             a = 0.0
             for (_, r, _) in transitions:
-                a = a + r
+                a += r
             if a == 0.0:
                 break              # no events with non-zero rates
 
@@ -82,10 +82,10 @@ class StochasticDynamics(Dynamics):
                     if (xs + xsp) > xc:
                         break
                     else:
-                        xs = xs + xsp
+                        xs += xsp
 
             # increment the time
-            t = t + dt
+            t += dt
             self.setCurrentSimulationTime(t)
 
             # fire any events posted for at or before this time
@@ -104,10 +104,13 @@ class StochasticDynamics(Dynamics):
                 ef(t, e)
 
                 # increment the event counter
-                events = events + 1
+                events += 1
 
         # when we get here there may still be posted events that haven't
         # been run, and these are ignored: equilibrium overrides posting
+
+        # add topology marker
+        (self.parameters())[NetworkGenerator.TOPOLOGY] = self.networkGenerator().topology()
 
         # add some more metadata
         (self.metadata())[self.TIME] = t
