@@ -55,7 +55,11 @@ SOURCES_CODE = \
 	epydemic/percolate.py \
 	epydemic/monitor.py \
 	epydemic/statistics.py \
-	epydemic/newmanziff.py
+	epydemic/newmanziff.py \
+	epydemic/gf/__init__.py \
+	epydemic/gf/gf.py \
+	epydemic/gf/discrete_gf.py \
+	epydemic/gf/continuous_gf.py
 SOURCES_TESTS = \
 	test/__init__.py \
 	test/test_bitstream.py \
@@ -76,7 +80,8 @@ SOURCES_TESTS = \
 	test/test_adddelete.py \
 	test/test_adddeletesir.py \
 	test/test_percolate.py \
-	test/test_newmanziff.py
+	test/test_newmanziff.py \
+	test/test_gf.py
 TESTSUITE = test
 
 SOURCES_DOC_CONF = doc/conf.py
