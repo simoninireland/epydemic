@@ -1,12 +1,13 @@
 #+title: epydemic
+#+startup: content
 
-* epydemic, epidemic simulation in Python                           :PROJECT:
+* epydemic: epidemic simulation in Python                           :PROJECT:
 
 ** Release planning
 
 *** Release 1.6.1
 
-**** Coding [0/3]
+**** Coding [1/6]
 
     - [ ] Configuration model generator, with both a list of node
       degrees (as in networkx) and a distribution to draw from
@@ -14,6 +15,8 @@
     - [ ] Add degree-distribution-preserving rewiring functions to
       randomise networks while preserving p_k or P(k, k')
       cite:UnreasonableEffectiveness
+    - [X] Add flag to parameters about the network topology used
+      (branch topology-flag)
 
 **** Bug fixes [0/0]
 
@@ -72,6 +75,24 @@
 
  Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html][containerised]].
 
+*** PyPy-based compute cluster controlled from CPython [0/2]
+
+    branch pypy-compute
+
+    PyPy doesn't have a full set of library integrations: specifically
+    it can't load scipy or matplotlib. That (especially the latter)
+    makes it unsuitable for front-end use a lot of the time.
+
+    One way to address this is to run a compute cluster in a PyPy venv
+    and control it from Jupyter running in a CPython venv. That way we
+    can get the acceleration without the problems.
+
+    Of course this opens up another can of worms. The latest CPython
+    is version 3.9; the latest PyPy is on 3.7. So we'd have to run an
+    older CPython to avoid language mis-matches.
+
+    - [ ] Set up compute cluster in PyPy linked to Jupyter on CPython
+    - [ ] Check interactions between versions
 
 *** Containerisation
 
@@ -87,7 +108,9 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library
+*** Generating function library [0/1]
+
+    branch gf
 
     We need a generating functions library, perhaps alongside the
     network generator classes, so we can use this formalism easily
@@ -100,3 +123,5 @@
     There's another approach alongside this, which would be to write a
     symbolic package with the generating functions in them, for use in
     Sage. This would then complement the numerical side.
+
+    - [ ] Basic functions and integrals
