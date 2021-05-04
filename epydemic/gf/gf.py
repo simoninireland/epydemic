@@ -24,7 +24,7 @@ class GF:
     A generating function represents a formal power series. In network
     science they are usually, but not exclusively, used to represent
     probability distributions, for example of node degrees. Computing
-    with the generating functions then provides a way of woirking with
+    with the generating functions then provides a way of working with
     entire distributions, from which the individual probabilities can
     later be extracted.
 
@@ -64,6 +64,9 @@ class GF:
         :param x: the argument
         :returns: the value of the generating function'''
         raise NotImplementedError('GF.evaluate() must be overridden by sub-classes')
+
+
+    # ---------- dict and call interfaces ----------
 
     def __getitem__(self, i: int) -> float:
         '''Return the i'th coefficient. This uses :meth:`getCoefficient`

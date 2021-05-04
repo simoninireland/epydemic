@@ -108,7 +108,7 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library [0/1]
+*** Generating function library [1/4]
 
     branch gf
 
@@ -124,4 +124,25 @@
     symbolic package with the generating functions in them, for use in
     Sage. This would then complement the numerical side.
 
-    - [ ] Basic functions and integrals
+    - [X] Basic functions and derivatives
+
+    There are several ways we might want to specify a GF:
+
+    - as a single function that captures the entire series in one
+      expression
+    - as a sequence of coefficient literals, for example extracted
+      from the degree histogram of a network
+    - as a function that takes the degree of a term in the GF and
+      returns the corresponding coefficient
+    - As a function that takes the degree and the current coefficient
+      and returns a new one, for deriving GFs from one another
+    - as a derivative to some order of another GF
+    - as a composition of underlying GFs to get GFs of several
+      variables
+
+    All feel like they'd be useful for the applications you find in
+    the literature.
+
+    - [ ] Different coefficient specifiers
+    - [ ] Combinators
+    - [ ] Examples of all the above, for tests?
