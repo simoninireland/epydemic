@@ -6,6 +6,9 @@ MANIFEST
 setup.py
 epydemic/__init__.py
 epydemic/types.py
+epydemic/bitstream.py
+epydemic/bbt.py
+epydemic/drawset.py
 epydemic/networkexperiment.py
 epydemic/networkdynamics.py
 epydemic/synchronousdynamics.py
