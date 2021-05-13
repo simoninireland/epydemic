@@ -4,7 +4,7 @@ Glossary
 ========
 
 .. currentmodule:: epydemic
-		   
+
 .. glossary::
 
    addition-deletion process
@@ -16,25 +16,25 @@ Glossary
 
    compartments
       The possible dynamical states in a :term:`compartmented model of disease`.
-   
+
    compartmented model of disease
       A disease model that represents the progression of a disease as
       a set of discrete compartments with transitions possible
       between them. Transitions typically occur with some base
       probability, which might be fixed or might vary across the
       course of the simulation. See :ref:`Hethcote <Het00>` for a survey,
-   
+
    contact tree
       The way in which individuals were infected during thhe infection.
-      Each node is an infected individual, with edges representing the 
+      Each node is an infected individual, with edges representing the
       individuals that individual infected.
-      
+
       While it's common talk of a
       contact *tree*, this will only be the case if there is an identifiable
       "patient zero" from whom all infections arise. In the more general case
       of multiple people initially infected, the contact tree will actually
       be a contact *forest* of multiple independent trees, each one rooted
-      at an initially-infected individual. 
+      at an initially-infected individual.
 
    continuous time
       A simulation mode in which events occur at unique times
@@ -43,6 +43,13 @@ Glossary
       small interval. Continuous-time simulations can be made
       statistically exact and run faster for situations in which there
       are long periods where no events occur.
+
+   degree distribution
+      The way in which the numbers of neighbours each node has
+      varies. The most basic measure of network topology. More
+      precisely, the degree distribution is the probability
+      :math:`p_k` that a node chosen at random from the network will
+      have degree :math:`k`, for all values of :math:`k`.
 
    discrete time
       A simulation mode in which time progresses in single integer
@@ -74,11 +81,11 @@ Glossary
       A simulation technique developed initially for *ab initio*
       chemistry simulations. See :ref:`Gillespie 1976 <Gil76>`
       and :ref:`Gillespie 1977 <Gil77>`.
-      
+
    locus
       A "place" at which dynamics can occur, that is to say, where
       nodes can change compartments and any other tasks can happen.
-      Each :term:`event` is associated with a particular locus: the 
+      Each :term:`event` is associated with a particular locus: the
       locus contains the set of nodes or edges to which the event may
       be applied, while the event defines what happens. ALl loci
       are derived from the :class:`Locus` class.
@@ -93,7 +100,7 @@ Glossary
       An :term:`event` posted for a definite future time. The
       :term:`process dynamics` will execute the posted events at the
       appropriate time
-      
+
    process dynamics
       The simulation approach used, which selects how and when each
       :term:`event` fires. Process dynamics execute events in time
@@ -124,5 +131,3 @@ Glossary
       A :term:`process dynamics` using :term:`discrete time`, where a
       simulation passes through a sequence of discrete timesteps which
       may include several (or no) events happening.
-
-      
