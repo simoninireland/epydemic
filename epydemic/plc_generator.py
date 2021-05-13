@@ -41,6 +41,9 @@ class PLCNetwork(NetworkGenerator):
     cutoff maximum degree after which the probability of finding nodes with larger degrees
     falls off exponentially.
 
+    Internally we use the configuration model (:ref:`Molloy and Reed <MR96>` to create
+    the network.
+
     :param params: (optional) experimental parameters
     :param limit: (optional) maximum number of independent networks to generate'''
 
