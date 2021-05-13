@@ -60,8 +60,8 @@ class CompartmentedModelTest(unittest.TestCase):
         m.changeCompartmentInitialOccupancy(SIR.INFECTED, pInfected)
         m.changeCompartmentInitialOccupancy(SIR.SUSCEPTIBLE, 1.0 - pInfected)
         m.setUp(self._params)
-        self.assertAlmostEqual(len(m.compartment(SIR.INFECTED)) / self._er.order(), pInfected, places=2)
-        self.assertAlmostEqual(len(m.compartment(SIR.SUSCEPTIBLE)) / self._er.order(), (1.0 - pInfected), places=2)
+        self.assertAlmostEqual(len(m.compartment(SIR.INFECTED)) / self._er.order(), pInfected, places=1)
+        self.assertAlmostEqual(len(m.compartment(SIR.SUSCEPTIBLE)) / self._er.order(), (1.0 - pInfected), places=1)
 
     def testMissingCompartment(self):
         '''Test we catch missing compartments when changing initial occupancy.'''
