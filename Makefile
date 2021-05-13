@@ -127,6 +127,7 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/infect-specific-nodes.rst \
 	doc/cookbook/dynamic-population.rst \
 	doc/cookbook/keep-network.rst \
+	doc/cookbook/from-r-to-probabilities.rst \
 	doc/cookbook/speed.rst
 SOURCES_DIAGRAMS = \
 	doc/cookbook/powerlaw-cutoff.png \
@@ -217,7 +218,7 @@ coverage: env
 
 # Build the API documentation using Sphinx
 .PHONY: doc
-doc: $(SOURCES_DOCUMENTATION) $(SOURCES_DOC_CONF)
+doc: env $(SOURCES_DOCUMENTATION) $(SOURCES_DOC_CONF)
 	$(ACTIVATE) && $(CHDIR) doc && $(RUN_SPHINX_HTML)
 
 # Build a development venv from the requirements in the repo

@@ -9,6 +9,7 @@ This page is a cookbook-in-progress of ways to use ``epydemic`` in practice.
     cookbook/population-powerlaw-cutoff.rst
     cookbook/monitoring-progress.rst
     cookbook/infect-specific-nodes.rst
+    cookbook/from-r-to-probabilities.rst
     cookbook/dynamic-population.rst
     cookbook/keep-network.rst
     cookbook/speed.rst
