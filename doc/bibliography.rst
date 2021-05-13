@@ -64,7 +64,7 @@ Physical Review E **83**. March 2011.
 
 Michael Molloy and Bruce Reed. `A critical point for random graphs
 with a given degree sequence <https://doi.org/10.1002/rsa.3240060204>`_.
-Random Structures and Algorithms" **6**(2--3). March--May 1996.
+Random Structures and Algorithms **6** (2--3). March--May 1996.
 
 .. _New02:
 
