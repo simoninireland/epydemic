@@ -4,6 +4,7 @@ Version 1.6.1
    - Changed names of network generation parameters to match the topology markers
    - Added class inheritance diagram to documentation
    - Added speed improvements to front page
+   - Added discussion of going from R values to SIR parameters
 
 Version 1.5.1 (2021-04-27)
 
