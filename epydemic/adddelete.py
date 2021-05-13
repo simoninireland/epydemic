@@ -87,7 +87,7 @@ class AddDelete(Process):
         :param kwds: (optional) node attributes'''
         super(AddDelete, self).addNode(n, **kwds)
         self.locus(self.NODES).addHandler(self.network(), n)
-        #print('added {n}'.format(n=n))
+        #print('added {n}'.format(n=n)
 
     def newNodeName(self) -> Node:
         '''Generate a new name for a node to be added. This is guaranteed not to be
