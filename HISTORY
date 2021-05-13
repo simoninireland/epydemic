@@ -1,4 +1,4 @@
-Version 1.6.1
+Version 1.6.1 (2020-05013)
 
    - Added topology marker to parameters to capture the network generator used
    - Changed names of network generation parameters to match the topology markers
