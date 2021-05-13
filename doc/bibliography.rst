@@ -41,13 +41,6 @@ epidemics on networks <http://dx.doi.org/10.1007/978-3-319-50806-1>`_.
 Springer series on Interdisciplinary Applied Mathematics
 **46**. ISBN 978-3-319-50804-7. 2017.
 
-.. _MHP10:
-
-Sergey Melnik, Adam Hackett, Mason Porter, Peter Mucha, and James Gleeson.
-`The unreasonable effectiveness of tree-based theory for networks with
-clustering <https://doi.org/10.1103/PhysRevE.83.036112>`_.
-Physical Review E **83**. March 2011.
-
 .. _M09:
 
 Joel Miller. `Percolation and epidemics in random clustered networks
@@ -59,6 +52,19 @@ Physical Review E **80**. August 2009.
 Christopher Moore, Gourab Ghosal, and M.E.J. Newman. `Exact solutions for models of evolving
 networks with addition and deletion of nodes <https://doi.org/10.1103/PhysRevE.74.036121>`_.
 Physical Review E **74**. September 2006.
+
+.. _MHP10:
+
+Sergey Melnik, Adam Hackett, Mason Porter, Peter Mucha, and James Gleeson.
+`The unreasonable effectiveness of tree-based theory for networks with
+clustering <https://doi.org/10.1103/PhysRevE.83.036112>`_.
+Physical Review E **83**. March 2011.
+
+.. _MR96:
+
+Michael Molloy and Bruce Reed. `A critical point for random graphs
+with a given degree sequence <https://doi.org/10.1002/rsa.3240060204>`_.
+Random Structures and Algorithms **6** (2--3). March--May 1996.
 
 .. _New02:
 

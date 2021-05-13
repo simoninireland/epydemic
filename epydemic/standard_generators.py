@@ -1,7 +1,7 @@
 # Standard generators
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -33,10 +33,16 @@ class FixedNetwork(NetworkGenerator):
     :param g: the prototype network
     :param limit: (optional) maximum number of identical instances to generate'''
 
-    def __init__(self, g : Graph, limit : Optional[int] =None):
-        super(FixedNetwork, self).__init__(limit=limit)
-        self._graphPrototype : Graph = g
-    
+    def __init__(self, g: Graph, limit: Optional[int] = None):
+        super().__init__(limit=limit)
+        self._graphPrototype: Graph = g
+
+    def topology(self) -> str:
+        '''Return the topoology flag for this generator.
+
+        :returns: the topology'''
+        return 'unknown'
+
     def _generate(self, params : Dict[str, Any]) -> Graph:
         '''Return a copy of the prototype network.
 
@@ -62,14 +68,20 @@ class ERNetwork(NetworkGenerator):
     :param limit: (optional) meximum  number of instances to generate'''
 
     # Experimental parameters
-    N : Final[str] = 'epydemic.generators.ERNetwork.N'         #: Experimental parameter for the size (order) of the network.
-    PHI : Final[str] = 'epydemic.generators.ERNetwork.PHI'     #: Experimental parameter for the occupation probability of edges.
-    KMEAN : Final[str] = 'epydemic.generators.ERNetwork.KMEAN' #: Experimental parameter for the mean degree of the network.
+    N: Final[str] = 'epydemic.generators.ER.N'         #: Experimental parameter for the size (order) of the network.
+    PHI: Final[str] = 'epydemic.generators.ER.phi'     #: Experimental parameter for the occupation probability of edges.
+    KMEAN: Final[str] = 'epydemic.generators.ER.kmean' #: Experimental parameter for the mean degree of the network.
 
-    def __init__(self, params : Dict[str, Any] =None, limit : Optional[int] =None):
-        super(ERNetwork, self).__init__(params, limit)
+    def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] =None):
+        super().__init__(params, limit)
 
-    def _generate(self, params : Dict[str, Any]) -> Graph:
+    def topology(self) -> str:
+        '''Return the topoology flag for this generator.
+
+        :returns: the topology'''
+        return 'ER'
+
+    def _generate(self, params: Dict[str, Any]) -> Graph:
         '''Generate an ER network from an order (represented by the parameter :attr:`N`)
         and one of an edge occupation probability (:attr:`PHI`) or mean degree (:attr:`KMEAN`).
 
@@ -98,7 +110,7 @@ class BANetwork(NetworkGenerator):
     A BA network has node degrees distributed according to a powerlaw distribution. The construction process
     can be thought of as taking an initial set of :math:`M` nodes and then adding additional nodes
     one at a time, adding adges between the new node and :math:`M` other nodes chosen at random. This
-    continues until the network has :math:`N` nodes. This process favours attachment to nodes that are 
+    continues until the network has :math:`N` nodes. This process favours attachment to nodes that are
     in the network early, leading to "hubs" with very high degree. The node degrees will
     be uncorrelated.
 
@@ -108,13 +120,19 @@ class BANetwork(NetworkGenerator):
     :param limit: (optional) meximum  number of instances to generate'''
 
     # Experimental parameters
-    N : Final[str] = 'epydemic.generators.BANetwork.N'         #: Experimental parameter for the size (order) of the network.
-    M : Final[str] = 'epydemic.generators.BANetwork.M'         #: Experimental parameter for the number of edges added per node.
+    N: Final[str] = 'epydemic.generators.BA.N'         #: Experimental parameter for the size (order) of the network.
+    M: Final[str] = 'epydemic.generators.BA.M'         #: Experimental parameter for the number of edges added per node.
 
-    def __init__(self, params : Dict[str, Any] =None, limit : Optional[int] =None):
-        super(BANetwork, self).__init__(params, limit)
+    def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] = None):
+        super().__init__(params, limit)
 
-    def _generate(self, params : Dict[str, Any]) -> Graph:
+    def topology(self) -> str:
+        '''Return the topoology flag for this generator.
+
+        :returns: the topology'''
+        return 'BA'
+
+    def _generate(self, params: Dict[str, Any]) -> Graph:
         '''Generate a BA network from an order (represented by the parameter :attr:`N`)
         and attachment rate (:attr:`M`).
 

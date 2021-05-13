@@ -67,7 +67,3 @@ cluster. Again, this doesn't speed up each individual experiment but does
 allow multiple experiments to run simultaneously -- and since we're
 often doing lots of repetitions of experiments, this is a useful way
 of getting speedup overall.
-
-*Do both*. A PyPy-based multicore environment or compute cluster is
-perfectly possible, and will give you the speed improvements of PyPy
-on all nodes in the cluster.

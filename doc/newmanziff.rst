@@ -1,7 +1,7 @@
 Bond and site percolation
 =========================
 
-.. currentmodule :: epydemic
+.. currentmodule:: epydemic
 
 Percolation processes are common in physics as a way to study the gradual accretion of
 nodes (site percolation) or edges (bond percolation) in a network. The process itself is
@@ -19,7 +19,7 @@ are  marked as occupied, and again define a sub-graph.
 .. note ::
 
     To perform bond (edge) percolation in conjuction with epidemic processes
-    see :class:`Percolate`.  
+    see :class:`Percolate`.
 
 The reason percolation is of interest is that it provides a model of a wide range of
 interesting processes. (Originally it was used to study crack formation in crystals
@@ -68,4 +68,3 @@ The percolation process returns two values:
 .. automethod :: SitePercolation.setUp
 
 .. automethod :: SitePercolation.do
-

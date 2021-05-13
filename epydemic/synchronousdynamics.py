@@ -40,12 +40,12 @@ class SynchronousDynamics(Dynamics):
     :param g: prototype network to run over (optional)'''
 
     # additional metadata
-    TIMESTEPS_WITH_EVENTS : Final[str] = 'epydemic.dynamics.timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
+    TIMESTEPS_WITH_EVENTS: Final[str] = 'epydemic.dynamics.timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
 
-    def __init__(self, p : Process, g : Union[Graph, NetworkGenerator] =None):
+    def __init__(self, p: Process, g: Union[Graph, NetworkGenerator] =None):
         super().__init__(p, g)
 
-    def do(self, params : Dict[str, Any]) -> Dict[str, Any]:
+    def do(self, params: Dict[str, Any]) -> Dict[str, Any]:
         '''Execute the process under synchronous dynamics.
 
         :param params: the parameters of the simulation
@@ -89,10 +89,13 @@ class SynchronousDynamics(Dynamics):
             events = events + nev
             if nev > 0:
                 # we had events happen in this timestep
-                timestepEvents = timestepEvents + 1
+                timestepEvents += 1
 
             # advance to the next timestep
-            t = t + 1.0
+            t += 1.0
+
+        # add topology marker
+        (self.parameters())[NetworkGenerator.TOPOLOGY] = self.networkGenerator().topology()
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

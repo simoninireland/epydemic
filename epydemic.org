@@ -4,23 +4,28 @@
 
 ** Release planning
 
-*** Release 1.6.1
+*** Release 1.7.1
 
 **** Coding [0/3]
 
-    - [ ] Configuration model generator, with both a list of node
-      degrees (as in networkx) and a distribution to draw from
     - [ ] Extended configuration model with triangles etc
     - [ ] Add degree-distribution-preserving rewiring functions to
       randomise networks while preserving p_k or P(k, k')
       cite:UnreasonableEffectiveness
+    - [ ] Configuration model generator, with both a list of node
+      degrees (as in networkx) and a distribution to draw from (need
+      to avoid large parameter lists))
 
-**** Bug fixes [0/0]
+*** Release 1.6.1
 
-**** Documentation [0/1]
+**** Coding [1/1]
 
-     - [ ] Add discussion of moving from R-values to parameters
+     - [X] Change topology parameters and markers so we can retrieve
+       them
 
+**** Documentation [1/1]
+
+     - [X] Add discussion of moving from R-values to parameters
 
 *** Release 1.5.1                                                   :ARCHIVE:
 

@@ -32,7 +32,7 @@ class NetworkExperiment(Experiment):
     :param g: (optional) prototype network or network generator
 
     '''
-    def __init__(self, g : Union[Graph, NetworkGenerator] =None):
+    def __init__(self, g: Union[Graph, NetworkGenerator] = None):
         super().__init__()
 
         # turn a literal network into a network generator
@@ -53,7 +53,7 @@ class NetworkExperiment(Experiment):
         '''
         return self._graph
 
-    def setNetworkGenerator(self, g : Union[Graph, NetworkGenerator]):
+    def setNetworkGenerator(self, g: Union[Graph, NetworkGenerator]):
         '''Set the network or generator for the networks the dynamics will run
         over.  If a network is supplied rather than a generator it
         will be treated as an instance of :class:`FixedNetwork`.
@@ -69,7 +69,7 @@ class NetworkExperiment(Experiment):
             g = FixedNetwork(g)
         self._generator = g
 
-    def setNetwork(self, g : Graph):
+    def setNetwork(self, g: Graph):
         '''Set the working network. This changes the current working network
         immediately (i.e., within a running experiment): to change how
         initial working networks are obtained, use
@@ -89,19 +89,19 @@ class NetworkExperiment(Experiment):
 
     # ---------- Set-up and tear-down ----------
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         '''Set up the experiment for a run. This creates a working copy of the
         network (class) underlying the experiment.
 
         :params params: the experimental parameters
 
         '''
-        super(NetworkExperiment, self).setUp(params)
+        super().setUp(params)
 
         # generate a working network instance
         self._graph = self.networkGenerator().set(params).generate()
 
     def tearDown(self):
         '''At the end of each experiment, throw away the working network.'''
-        super(NetworkExperiment, self).tearDown()
+        super().tearDown()
         self._graph = None

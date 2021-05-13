@@ -1,7 +1,10 @@
 .. _reference:
 
+.. currentmodule:: epydemic
+
 API reference
 =============
+
 
 Basic concepts and classes
 --------------------------

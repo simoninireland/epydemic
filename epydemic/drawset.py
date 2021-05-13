@@ -25,7 +25,7 @@ class DrawSet():
     '''A set re-implementation.
 
     This class provides a re-implementation of sets that also provides
-    an efficient (:math:`O(\log N)`) method for drawing al element at random.
+    an efficient (:math:`O(\log N)`) method for drawing an element at random.
 
     We implement only tyhose parts of the set API that we need: perhaps
     ought to add the rest, for future-proofing.'''
@@ -121,7 +121,7 @@ class DrawSet():
                 self._root = r
 
     def draw(self) -> Element:
-        '''Draw an element from the locus at random.
+        '''Draw an element from the set at random.
 
         :returns: a random element, or none if the set is empty'''
         if self._root is None:
