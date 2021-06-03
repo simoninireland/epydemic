@@ -119,7 +119,7 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library [0/4]
+*** Generating function library [4/6]
 
     branch gf
 
@@ -127,7 +127,8 @@
     network generator classes, so we can use this formalism easily
     alongside epydemic's simulations. In particular we need the
     high-order-numerical-derivative function to be able to extract
-    probabilities etc.
+    probabilities etc. (This turns out to be perfectly possible using
+    the factorial functions from mpmath.)
 
     The biggest challenge might be to write documentation....
 
@@ -135,10 +136,12 @@
     symbolic package with the generating functions in them, for use in
     Sage. This would then complement the numerical side.
 
-    - [ ] First version
-    - [ ] Integrate with calls etc, so they behave like functions
-    - [ ] Access coefficients by index
-    - [ ] High-degree (k=1000) coefficient extraction
+    - [X] First version
+    - [X] Integrate with calls etc, so they behave like functions
+    - [X] Access coefficients by index
+    - [X] High-degree (k=1000) coefficient extraction
+    - [ ] Derivatives
+    - [ ] Test suite
 
 
 *** Paper on draw set implementation
