@@ -36,7 +36,7 @@ run. This is created either from a prototype network, or from a
 :term:`network generator`, one of which is supplied experiment's
 constructor or set with a call to
 :meth:`NetworkExperiment.setNetworkGenerator`. The working network is
-created in :meth:`NetworkGenerator.setUp` and destroyed in
+created in :meth:`NetworkExperiment.setUp` and destroyed in
 :meth:`NetworkExperiment.tearDown`. It means that a single experiment
 can be run (and re-run) on a new instance of the underlying
 class of networks.
