@@ -19,11 +19,11 @@
 
 from collections import Counter
 from typing import List
-from epydemic.gf import GF
 from networkx import Graph
+from epydemic.gf import FunctionGF
 
 
-class DiscreteGF(GF):
+class DiscreteGF(FunctionGF):
     '''A discrete generating function.
 
     This is a generating function represented as an explicit list of
@@ -31,63 +31,49 @@ class DiscreteGF(GF):
     numbers or by providing a network from which the coefficients are
     extracted as the fraction of nodes with the given degree.
 
-    If the generating function is intended to be a probability generating
-    function then the coefficients must sum to 1, and also the value
-    of the generating function at 1 must be 1.
-
-    :param network: (optional) a network
+    :param g: (optional) a network
     :param coefficients: (optional) a list of coefficients
 
     '''
 
-    def __init__(self, network: Graph = None, coefficients: List[float] = None):
-        super().__init__()
+    def __init__(self, g: Graph = None, coefficients: List[float] = None):
 
-        self._coefficients: List[float] = []
-        if coefficients is None:
-            if network is not None:
-                # a network, extract its degree histogram
-                self._setCoefficientsFromNetwork(network)
-            else:
-                # empty GF, do nothing
-                pass
-        else:
-            if network is None:
-                # list of coefficients
-                self._coefficients = coefficients.copy()
-            else:
-                # both options provided
-                raise ValueError('Only one of network and coefficients can be provided')
+        # check we have one of the approaches we need
+        ps = len([p for p in [g, coefficients] if p is not None])
+        if ps == 0:
+            raise ValueError('Must provide one of a network or a list of coefficients')
+        elif ps > 1:
+            raise ValueError('Ambbiguous parameters')
 
-    def _setCoefficientsFromNetwork(self, g: Graph):
-        '''Compute the degree histogram and use it to set the
-        coefficients of the generating function.
+        if g is not None:
+            # extract the coefficients from the degree distribution
+            coefficients = self._coefficientsFromNetwork(g)
 
-        :param g: the network'''
+        # we have a list of coefficients, wrap a function around them
+        generator = self._coefficientsWrapper(coefficients)
+
+        # create the generating function
+        super().__init__(generator, len(coefficients) + 1)
+
+    def _coefficientsFromNetwork(self, g: Graph) -> List[float]:
+        '''Compute the degree histogram.
+
+        :param g: the network
+        :returns: the fractional occurrence of each degree'''
         N = g.order()
         seq = sorted([d for (_, d) in g.degree()])
         hist = Counter(seq)
         maxk = max(seq)
-        self._collections = []
-        for i in range(maxk + 1):
-            self._coefficients.append(hist[i] / N)
+        cs = [hist[i] / N for i in range(maxk + 1)]
+        return cs
 
-    def getCoefficient(self, i:int) -> float:
-        '''Return the i'th coefficient.
+    def _coefficientsWrapper(self, cs: List[float]):
+        '''Wrap a list of coefficients in a function.
 
-        :param i: the index
-        :returns: the coefficient of x^i'''
-        if i >= len(self._coefficients):
-            return 0
-        else:
-            return self._coefficients[i]
+        :param cs: the coeffcients
+        :returns: a function from term to coefficient'''
 
-    def evaluate(self, x: float) -> float:
-        '''Evaluate the generating function.
+        def wrap(i: int) -> float:
+            return cs[i] if i < len(cs) else 0
 
-        :param x: the argument
-        :returns: the value of the generating function'''
-        v = 0
-        for i in range(len(self._coefficients)):
-            v += self[i] * x**i
-        return v
+        return wrap
