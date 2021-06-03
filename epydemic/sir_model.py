@@ -18,13 +18,13 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-from epydemic import CompartmentedModel
+from typing import Dict, Any
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict, Any
+    from typing import Final
 else:
     # backport compatibility with older typing
-    from typing import Dict, Any
     from typing_extensions import Final
+from epydemic import CompartmentedModel
 
 
 class SIR(CompartmentedModel):
@@ -48,11 +48,11 @@ class SIR(CompartmentedModel):
     def __init__(self):
         super().__init__()
 
-    def build(self, params : Dict[str, Any]):
+    def build(self, params: Dict[str, Any]):
         '''Build the SIR model.
 
         :param params: the model parameters'''
-        super(SIR, self).build(params)
+        super().build(params)
 
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
@@ -68,7 +68,7 @@ class SIR(CompartmentedModel):
         self.addEventPerElement(self.SI, pInfect, self.infect)
         self.addEventPerElement(self.INFECTED, pRemove, self.remove)
 
-    def infect(self, t : float, e : Any):
+    def infect(self, t: float, e: Any):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied.
@@ -79,7 +79,7 @@ class SIR(CompartmentedModel):
         self.changeCompartment(n, self.INFECTED)
         self.markOccupied(e, t)
 
-    def remove(self, t : float, n : Any):
+    def remove(self, t: float, n: Any):
         '''Perform a removal event. This changes the compartment of
         the node to :attr:`REMOVED`.
 
