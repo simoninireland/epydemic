@@ -92,6 +92,15 @@ Network generators
    standard_generators
 
 
+Generating functions
+--------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   gf
+   standard-gfs
+
 Supporting code
 ---------------
 
