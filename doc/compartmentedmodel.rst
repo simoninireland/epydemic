@@ -42,6 +42,8 @@ nodes into compartments. All edges are also marked as unoccupied.
 
 .. automethod:: CompartmentedModel.initialCompartments
 
+.. automethod:: CompartmentedModel.changeInitialCompartment
+
 
 Building and querying the model
 -------------------------------
@@ -49,7 +51,7 @@ Building and querying the model
 Building a model (within :meth:`CompartmentedModel.build`) means specifying
 the various compartments, loci, and events, and their associated probabilities.
 The initial occupancy of compartments can be set to allow for random initialisation,
-and the occupancy of existing components changed to allow better sub-classing. 
+and the occupancy of existing components changed to allow better sub-classing.
 
 .. automethod:: CompartmentedModel.addCompartment
 
@@ -101,7 +103,3 @@ The experiment needs to define a results dict to return when it completes.
 .. automethod:: CompartmentedModel.results
 
 .. automethod:: CompartmentedModel.skeletonise
-
-
-
-
