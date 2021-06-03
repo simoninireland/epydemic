@@ -8,8 +8,9 @@ Version 1.7.1
      more code
    - Changed the exception raised by CompartmentedModel.initialCompartmentDistribution
      in the case of an illegal distribution to ValueError
+   - Added the generating functions library
 
-Version 1.6.1 (2020-05013)
+Version 1.6.1 (2020-05-13)
 
    - Added topology marker to parameters to capture the network generator used
    - Changed names of network generation parameters to match the topology markers
