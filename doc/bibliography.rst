@@ -72,6 +72,13 @@ M.E.J. Newman. `Spread of epidemic disease on networks
 <http://dx.doi.org/10.1103/PhysRevE.66.016128>`_. Physical Review E
 **66**. July 2002.
 
+.. _NSW01:
+
+M.E.J. Newman, Steven Strogatz, and Duncan Watts. `Random graphs with
+arbitrary degree distributions and their applications
+<https://doi.org/10.1103/PhysRevE.64.026118>`_. Physical Review E
+**64**. 2001.
+
 .. _NZ00:
 
 M.E.J. Newman and R.M. Ziff. `Efficient Monte Carlo algorithm and high-precision results
@@ -82,3 +89,7 @@ November 2000.
 
 Saray Shai and Simon Dobson. `Coupled adaptive complex networks
 <http://dx.doi.org/10.1103/PhysRevE.87.042812>`_. Physical Review E **87** (4). April 2013.
+
+.. _Wil94:
+
+Herbert Wilf. generatingfunctionology. Academic Press. 1994.
