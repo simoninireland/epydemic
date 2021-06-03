@@ -27,12 +27,12 @@ class CaptureNetwork(StochasticDynamics):
     to make tests simpler.'''
 
     def __init__(self, p, g):
-        super(CaptureNetwork, self).__init__(p, g)
+        super().__init__(p, g)
 
     def tearDown(self):
         ''' Store the resulting network after running.'''
         self._residual = self.network()
-        super(CaptureNetwork, self).tearDown()
+        super().tearDown()
 
 
 class PercolationTest(unittest.TestCase):
