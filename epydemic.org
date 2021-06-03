@@ -1,21 +1,13 @@
 #+title: epydemic
 #+startup: content
 
-<<<<<<< HEAD
 * epydemic: Epidemic simulation in Python                           :PROJECT:
-=======
-* epydemic: epidemic simulation in Python                           :PROJECT:
->>>>>>> 64a8ae3 (Planning generating functions extensions)
 
 ** Release planning
 
 *** Release 1.7.1
 
-<<<<<<< HEAD
 **** Coding [0/1]
-=======
-**** Coding [1/6]
->>>>>>> 64a8ae3 (Planning generating functions extensions)
 
     - [ ] Add degree-distribution-preserving rewiring functions to
       randomise networks while preserving p_k or P(k, k')
@@ -84,7 +76,6 @@
 
  Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html][containerised]].
 
-<<<<<<< HEAD
 **** Cython acceleration
 
      Using Cython requires code changes. They're only annotations, to
@@ -93,7 +84,7 @@
      meaning it'd be a commitment
 
      Also compare against [[https://github.com/pyston/pyston][Pyston]]
-=======
+
 *** PyPy-based compute cluster controlled from CPython [0/2]
 
     branch pypy-compute
@@ -112,7 +103,7 @@
 
     - [ ] Set up compute cluster in PyPy linked to Jupyter on CPython
     - [ ] Check interactions between versions
->>>>>>> 64a8ae3 (Planning generating functions extensions)
+
 
 *** Containerisation
 
