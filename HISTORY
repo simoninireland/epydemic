@@ -1,3 +1,14 @@
+Version 1.7.1
+
+   - Changed implementation of Percolate to use the Newman-Ziff approach
+   - Refactored the setting of initial compartments in CompartmentedModel to
+     use changeInitialCompartment instead of changeCompartment, so that initial
+     behaviour can be different
+   - Changed the cookbook recipe on choosing which nodes to infect to include
+     more code
+   - Changed the exception raised by CompartmentedModel.initialCompartmentDistribution
+     in the case of an illegal distribution to ValueError
+
 Version 1.6.1 (2020-05013)
 
    - Added topology marker to parameters to capture the network generator used

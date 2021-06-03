@@ -1,22 +1,18 @@
 #+title: epydemic
 
-* epydemic, epidemic simulation in Python                           :PROJECT:
+* epydemic: Epidemic simulation in Python                           :PROJECT:
 
 ** Release planning
 
 *** Release 1.7.1
 
-**** Coding [0/3]
+**** Coding [0/1]
 
-    - [ ] Extended configuration model with triangles etc
     - [ ] Add degree-distribution-preserving rewiring functions to
       randomise networks while preserving p_k or P(k, k')
       cite:UnreasonableEffectiveness
-    - [ ] Configuration model generator, with both a list of node
-      degrees (as in networkx) and a distribution to draw from (need
-      to avoid large parameter lists))
 
-*** Release 1.6.1
+*** Release 1.6.1                                                   :ARCHIVE:
 
 **** Coding [1/1]
 
@@ -84,6 +80,8 @@
      -- but fairly substantial changes, and not backwards compatible,
      meaning it'd be a commitment
 
+     Also compare against [[https://github.com/pyston/pyston][Pyston]]
+
 *** Containerisation
 
     To run in the cloud we need to be able to containerise. There are a
@@ -111,3 +109,11 @@
     There's another approach alongside this, which would be to write a
     symbolic package with the generating functions in them, for use in
     Sage. This would then complement the numerical side.
+
+*** Paper on draw set implementation
+
+**** TODO Complete analysis of fairness
+     SCHEDULED: <2021-06-04 Fri>
+**** TODO Ask Len Thomas about other statistical tests
+**** TODO Numerical exploration
+**** TODO First draft
