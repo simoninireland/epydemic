@@ -28,24 +28,25 @@ from networkx import Graph
 from epydemic.gf import GF, DiscreteGF, ContinuousGF
 
 
-def gf_series(f: Callable[float, float]) -> GF:
+def gf_series(f: Callable[[float], float]) -> GF:
     '''Create a generating function from the function that defines
     the complete series.
 
-    :param f: the series function:returns: the generating function'''
+    :param f: the series function
+    :returns: the generating function'''
     return ContinuousGF(f)
 
-def gf_from_coefficients(cs: Union[List[float], Callable[int, float]]) -> GF:
+def gf_from_coefficients(cs: Union[List[float], Callable[[int], float]]) -> GF:
     '''Create a generating function from a list of coefficients. These
     may be provided either as a list of values or as a function that
     maps the term exponent to the coefficient. In the latter case the
-    function must return a value for /all/ terms.
+    function must return a value for *all* terms.
 
     :param cs: the coefficients, as a list or a function
     :returns: a generating function'''
     return DiscreteGF(coefficients=cs)
 
-def gf_from_network(g: Graph) -> DiscreteGF:
+def gf_from_network(g: Graph) -> GF:
     '''Create a generating function representing the actual distribution
     of degrees in the given network.
 
