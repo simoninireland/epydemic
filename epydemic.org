@@ -1,16 +1,27 @@
 #+title: epydemic
+#+startup: content
 
+<<<<<<< HEAD
 * epydemic: Epidemic simulation in Python                           :PROJECT:
+=======
+* epydemic: epidemic simulation in Python                           :PROJECT:
+>>>>>>> 64a8ae3 (Planning generating functions extensions)
 
 ** Release planning
 
 *** Release 1.7.1
 
+<<<<<<< HEAD
 **** Coding [0/1]
+=======
+**** Coding [1/6]
+>>>>>>> 64a8ae3 (Planning generating functions extensions)
 
     - [ ] Add degree-distribution-preserving rewiring functions to
       randomise networks while preserving p_k or P(k, k')
       cite:UnreasonableEffectiveness
+    - [X] Add flag to parameters about the network topology used
+      (branch topology-flag)
 
 *** Release 1.6.1                                                   :ARCHIVE:
 
@@ -73,6 +84,7 @@
 
  Will need to be [[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html][containerised]].
 
+<<<<<<< HEAD
 **** Cython acceleration
 
      Using Cython requires code changes. They're only annotations, to
@@ -81,6 +93,26 @@
      meaning it'd be a commitment
 
      Also compare against [[https://github.com/pyston/pyston][Pyston]]
+=======
+*** PyPy-based compute cluster controlled from CPython [0/2]
+
+    branch pypy-compute
+
+    PyPy doesn't have a full set of library integrations: specifically
+    it can't load scipy or matplotlib. That (especially the latter)
+    makes it unsuitable for front-end use a lot of the time.
+
+    One way to address this is to run a compute cluster in a PyPy venv
+    and control it from Jupyter running in a CPython venv. That way we
+    can get the acceleration without the problems.
+
+    Of course this opens up another can of worms. The latest CPython
+    is version 3.9; the latest PyPy is on 3.7. So we'd have to run an
+    older CPython to avoid language mis-matches.
+
+    - [ ] Set up compute cluster in PyPy linked to Jupyter on CPython
+    - [ ] Check interactions between versions
+>>>>>>> 64a8ae3 (Planning generating functions extensions)
 
 *** Containerisation
 
@@ -96,7 +128,9 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library
+*** Generating function library [0/4]
+
+    branch gf
 
     We need a generating functions library, perhaps alongside the
     network generator classes, so we can use this formalism easily
@@ -109,6 +143,12 @@
     There's another approach alongside this, which would be to write a
     symbolic package with the generating functions in them, for use in
     Sage. This would then complement the numerical side.
+
+    - [ ] First version
+    - [ ] Integrate with calls etc, so they behave like functions
+    - [ ] Access coefficients by index
+    - [ ] High-degree (k=1000) coefficient extraction
+
 
 *** Paper on draw set implementation
 
