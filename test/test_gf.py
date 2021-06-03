@@ -17,18 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from epydemic import *
 from epydemic.gf import *
+from collections import Counter
 import unittest
 import networkx
+from scipy.spatial.distance import jensenshannon
 
 
 class GFTest(unittest.TestCase):
 
+    # General API tests
+
+
+    # Discrete distributions extracted from networks
+
     def testDiscreteProbabilities(self):
         '''Test that the coefficients of a discrete GF sum to 1.'''
-        g = networkx.gnp_random_graph(1000, 0.005)
-        gf = DiscreteGF(network=g)
-        self.assertAlmostEqual(gf(1.0), 1.0, places=1)
+        g = networkx.gnp_random_graph(5000, 0.005)
+        gf = DiscreteGF(g=g)
+        self.assertAlmostEqual(gf(1.0), 1.0, places=2)
 
     def testDiscreteHistogram(self):
         '''Test we get the coefficients matching the histogram.'''
@@ -39,9 +47,9 @@ class GFTest(unittest.TestCase):
         for n in g.nodes:
             if len(list(g.neighbors(n))) == 4:
                 ns.append(n)
-        gf = DiscreteGF(network=g)
+        gf = DiscreteGF(g=g)
         N = g.order()
-        self.assertAlmostEqual(gf[4], len(ns) / N, places=1)
+        self.assertAlmostEqual(gf[4], len(ns) / N, places=2)
 
         # delete all nodes of degree 8 or less
         ns = []
@@ -49,9 +57,85 @@ class GFTest(unittest.TestCase):
             if len(list(g.neighbors(n))) <= 8:
                 ns.append(n)
         g.remove_nodes_from(ns)
-        gf = DiscreteGF(network=g)
+        gf = DiscreteGF(g=g)
         for k in range(9):
             self.assertEqual(gf[k], 0)
+
+    # Continuous series distributions
+
+    def testHighDegreeExtraction(self):
+        '''Test we can extract a range of coefficients, including very large ones.'''
+        gf = gf_er(50000, kmean=200)
+
+        # extract high-degree coefficients
+        # This relies on being abble to do high-percision computation. We
+        # don't care about the results, just that they don't cause exceptions
+        gf[0]
+        gf[5]
+        gf[10]
+        gf[200]
+        gf[400]
+        gf[1000]
+        gf[5000]
+        gf[10000]
+
+
+    # Standard distributions
+
+    def _histogram(self, g):
+        '''Return the degree distribution histogram.
+
+        :param g: the netwoprk
+        :returns: the degree distribution histogram'''
+        N = g.order()
+        seq = sorted([d for (_, d) in g.degree()])
+        hist = Counter(seq)
+        maxk = max(seq)
+        cs = [hist[i] / N for i in range(maxk + 1)]
+        return cs
+
+    def testERnormalised(self):
+        '''Test the ER GF sums to 1.'''
+        gf = gf_er(5000, phi=0.005)
+        kmean = int(5000 * 0.005)
+        v = 0.0
+        for k in range(2 * kmean):
+            v += gf[k]
+        self.assertAlmostEqual(v, 1.0, places=2)
+
+    def testERdistribution(self):
+        '''Test that the ER distribution matches its generating function.'''
+        g = networkx.gnp_random_graph(5000, 0.005)
+        gf = gf_er(5000, phi=0.005)
+
+        cs = self._histogram(g)
+        gcs = [gf[k] for k in range(len(cs))]
+        for k in range(len(cs)):
+            self.assertAlmostEqual(cs[k], gf[k], places=1)
+        print(jensenshannon(gcs, cs))
+
+    def testPLCnormalised(self):
+        '''Test that the PLC GF sums to 1.'''
+        gf = gf_plc(2.0, 20)
+        v = 0.0
+        for k in range(60):
+            v += gf[k]
+        self.assertAlmostEqual(v, 1.0, places=2)
+
+    def testPLCdistribution(self):
+        '''Test that the PLC distribution matches its generating function.'''
+        params = dict()
+        params[PLCNetwork.N] = 5000
+        params[PLCNetwork.EXPONENT] = 2.0
+        params[PLCNetwork.CUTOFF] = 20
+        g = PLCNetwork().set(params).generate()
+        gf = gf_plc(params[PLCNetwork.EXPONENT], params[PLCNetwork.CUTOFF])
+
+        cs = self._histogram(g)
+        gcs = [gf[k] for k in range(len(cs))]
+        for k in range(len(cs)):
+            self.assertAlmostEqual(cs[k], gf[k], places=1)
+        print(jensenshannon(gcs, cs))
 
 
 if __name__ == '__main__':
