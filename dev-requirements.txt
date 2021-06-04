@@ -5,6 +5,7 @@ coverage
 pylint
 rope
 sphinx
+sphinx-autodoc-typehints
 doc8
 twine
 mpmath
