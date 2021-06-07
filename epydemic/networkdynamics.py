@@ -145,7 +145,7 @@ class Dynamics(NetworkExperiment):
 
     # ---------- Stochastic events (drawn from a distribution) ----------
 
-    def addLocus(self, p: Process, n: str, l: Locus = None):
+    def addLocus(self, p: Process, n: str, l: Locus = None) -> Locus:
         """Add a named locus associated with the given process.
 
         :param p: the process

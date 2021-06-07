@@ -17,9 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-# Base class
+# base class
 from .gf import GF
 
-# Classes of generating function
+# classes of generating function
+from .function_gf import FunctionGF
 from .discrete_gf import DiscreteGF
 from .continuous_gf import ContinuousGF
+
+# public interface
+from .interface import gf_series, gf_from_coefficients, gf_from_network
+from .standard_gfs import gf_er, gf_ba, gf_plc

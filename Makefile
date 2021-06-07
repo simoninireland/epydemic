@@ -58,10 +58,10 @@ SOURCES_CODE = \
 	epydemic/newmanziff.py \
 	epydemic/gf/__init__.py \
 	epydemic/gf/gf.py \
-	epydemic/gf/interface.py \
+	epydemic/gf/function_gf.py \
 	epydemic/gf/discrete_gf.py \
 	epydemic/gf/continuous_gf.py \
-	epydemic/gf/function_gf.py \
+	epydemic/gf/interface.py \
 	epydemic/gf/standard_gfs.py
 SOURCES_TESTS = \
 	test/__init__.py \

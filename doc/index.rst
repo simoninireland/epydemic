@@ -77,11 +77,15 @@ Features
 * Support for a generic :term:`compartmented model of disease`,
   allowing complex and custom diseases to be described
 
-* Susceptible-Infected-Removed (:term:`SIR`) and
-  Susceptible-Infected-Susceptible (:term:`SIS`) models built-in, with
-  either stochastic or fixed recovery times
+* Susceptible-Infected-Removed (:term:`SIR`),
+  Susceptible-Infected-Susceptible (:term:`SIS`),
+  and Susceptible-Exposed-Infected-Susceptible (:term:`SEIR`)
+  models built-in, with variations
 
 * Addition-deletion process to model natural birth and death
+
+* Includes a library for working with :term:`generating functions`, as
+  used in many research papers in network science
 
 * Integrated with ``epyc``'s labs and experiments, including execution
   in parallel on compute clusters for doing simulations at scale

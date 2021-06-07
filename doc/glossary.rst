@@ -77,6 +77,13 @@ Glossary
       or edges, depending in the :term:`locus` at which the event
       occurs.
 
+   generating functions
+      A mathematical tool for working with entire probability
+      distributions, often used in network science research because of
+      its flexibility. See :ref:`Newman, Strogatz, and Watts 2001
+      <NSW01>` for a network science introduction and :ref:`Wilf 1994
+      <Wil94>` for a more detailed treatment.
+
    Gillespie simulation
       A simulation technique developed initially for *ab initio*
       chemistry simulations. See :ref:`Gillespie 1976 <Gil76>`
@@ -107,6 +114,12 @@ Glossary
       order from two possible sources: a random distribution that
       chooses an event based on their relative probability or rate; and
       any :term:`posted event` that has been scheduled.
+
+   SEIR
+      A :term:`compartmented model of disease` where nodes are Exposed
+      to the disease and become infectious for a period before moving
+      to being Infected. This can be used to model pre-symptomatic
+      infectivity.
 
    SIS
       A :term:`compartmented model of disease` where nodes go from being
