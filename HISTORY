@@ -8,6 +8,8 @@ Version 1.7.1
      more code
    - Changed the exception raised by CompartmentedModel.initialCompartmentDistribution
      in the case of an illegal distribution to ValueError
+   - Integrated the generating functions library
+   - Added type annotations to documentation format (makes reading the docs easier)
 
 Version 1.6.1 (2020-05013)
 

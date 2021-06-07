@@ -58,8 +58,11 @@ SOURCES_CODE = \
 	epydemic/newmanziff.py \
 	epydemic/gf/__init__.py \
 	epydemic/gf/gf.py \
+	epydemic/gf/interface.py \
 	epydemic/gf/discrete_gf.py \
-	epydemic/gf/continuous_gf.py
+	epydemic/gf/continuous_gf.py \
+	epydemic/gf/function_gf.py \
+	epydemic/gf/standard_gfs.py
 SOURCES_TESTS = \
 	test/__init__.py \
 	test/test_bitstream.py \
@@ -115,6 +118,8 @@ SOURCES_DOCUMENTATION = \
 	doc/statistics.rst \
 	doc/processsequence.rst \
 	doc/newmanziff.rst  \
+	doc/gf.rst \
+	doc/standard-gfs.rst \
 	doc/tutorial.rst \
 	doc/tutorial/simulation.rst \
 	doc/tutorial/use-standard-model.rst \
