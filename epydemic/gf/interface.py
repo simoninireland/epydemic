@@ -28,7 +28,7 @@ from networkx import Graph
 from epydemic.gf import GF, DiscreteGF, ContinuousGF
 
 
-def gf_series(f: Callable[[float], float]) -> GF:
+def gf_from_series(f: Callable[[float], float]) -> GF:
     '''Create a generating function from the function that defines
     the complete series.
 

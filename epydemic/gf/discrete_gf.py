@@ -19,13 +19,6 @@
 
 from collections import Counter
 from typing import List
-<<<<<<< HEAD
-from epydemic.gf import GF
-from networkx import Graph
-
-
-class DiscreteGF(GF):
-=======
 from networkx import Graph
 from epydemic.gf import FunctionGF
 
@@ -71,29 +64,6 @@ class DiscreteGF(FunctionGF):
         seq = sorted([d for (_, d) in g.degree()])
         hist = Counter(seq)
         maxk = max(seq)
-        self._collections = []
-        for i in range(maxk + 1):
-            self._coefficients.append(hist[i] / N)
-
-    def getCoefficient(self, i:int) -> float:
-        '''Return the i'th coefficient.
-
-        :param i: the index
-        :returns: the coefficient of x^i'''
-        if i >= len(self._coefficients):
-            return 0
-        else:
-            return self._coefficients[i]
-
-    def evaluate(self, x: float) -> float:
-        '''Evaluate the generating function.
-
-        :param x: the argument
-        :returns: the value of the generating function'''
-        v = 0
-        for i in range(len(self._coefficients)):
-            v += self[i] * x**i
-        return v
         cs = [hist[i] / N for i in range(maxk + 1)]
         return cs
 

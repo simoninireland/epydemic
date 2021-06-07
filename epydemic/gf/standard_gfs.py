@@ -22,7 +22,7 @@ from math import pow
 from cmath import exp
 from mpmath import polylog
 from scipy.special import zeta
-from epydemic.gf import GF, gf_series
+from epydemic.gf import GF, gf_from_series
 
 
 def gf_er(N: int, kmean: float = None, phi: float = None) -> GF:
@@ -45,7 +45,7 @@ def gf_er(N: int, kmean: float = None, phi: float = None) -> GF:
         kmean = N * phi
 
     # return the generating function
-    return gf_series(lambda x: exp(kmean * (x - 1)))
+    return gf_from_series(lambda x: exp(kmean * (x - 1)))
 
 def gf_ba(exponent: float) -> GF:
     '''Return the generating function of the powerlaw
@@ -53,7 +53,7 @@ def gf_ba(exponent: float) -> GF:
 
     :param exponent: the exponent of the distribution
     :returns: the generating function'''
-    return gf_series(lambda x: polylog(exponent, x) / zeta(exponent, 1))
+    return gf_from_series(lambda x: polylog(exponent, x) / zeta(exponent, 1))
 
 def gf_plc(exponent: float, cutoff: float) -> GF:
     '''Return the generating function of the powerlaw-with-cutoff
@@ -62,4 +62,4 @@ def gf_plc(exponent: float, cutoff: float) -> GF:
     :param exponent: the exponent of the distribution
     :param cutoff: the cutoff
     :returns: the generating function'''
-    return gf_series(lambda x: polylog(exponent, x * exp(-1 / cutoff)) / polylog(exponent, exp(-1 / cutoff)))
+    return gf_from_series(lambda x: polylog(exponent, x * exp(-1 / cutoff)) / polylog(exponent, exp(-1 / cutoff)))

@@ -17,48 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-<<<<<<< HEAD
-import math
-from typing import Callable
-from epydemic.gf import GF
-import numpy
-=======
 from typing import Callable
 import numpy
 from mpmath import factorial
 from epydemic.gf import GF
->>>>>>> gf
 
 
 class ContinuousGF(GF):
     '''A continuous generating function.
 
     These generating functions are constructed from power series provided
-<<<<<<< HEAD
-    by functions.
-=======
     by functions, optionally differentiated some number of times.
->>>>>>> gf
 
     Note that computing the coefficients of a continuous generating
     function uses Cauchy's method, so the function needs to be able to
     handle complex numbers in its arguments. Typically this means
     using functions from ``numpy`` or ``cmath``, rather than simply
-<<<<<<< HEAD
-    from ``math``. This approach is however able to extract coefficients
-    of high degree.
-
-    :param f: the function defining the power series
-
-    '''
-
-    def __init__(self, f: Callable[float, float]):
-        super().__init__()
-
-        self._f = f
-
-    def _differentiate(self, z: int, n: int = 1, r: float = 1.0, dx: float = 1e-2):
-=======
     from ``math``. These calculations also lead to large intermediate
     results, so functions from ``mpmath`` can also be useful. This
     approach is however able to extract coefficients of high degree.
@@ -77,7 +51,6 @@ class ContinuousGF(GF):
             self._f = numpy.vectorize(self._f)
 
     def _differentiate(self, z: float, n: int = 1, r: float = 1.0, dx: float = 1e-2) -> complex:
->>>>>>> gf
         '''Compute the n'th derivative of f at z using
         a Cauchy contour integral of radius r.
 
@@ -86,14 +59,6 @@ class ContinuousGF(GF):
         :param r: radius of contour (defaults to 1.0)
         :param dx: step size (defaults to 1e-2)'''
 
-<<<<<<< HEAD
-        # make sure the function vectorises
-        if not isinstance(self._f, numpy.vectorize):
-            self._f = numpy.vectorize(self._f)
-
-        x = r * numpy.exp(2j * numpy.pi * numpy.arange(0, 1, dx))
-        return math.factorial(n) * numpy.mean(self._f(z + x) / x**n)
-=======
         # increase the requested order of derivative by whatever we have intrinsically
         n += self._order
 
@@ -104,7 +69,6 @@ class ContinuousGF(GF):
         # perform the Cauchy contour integral
         x = r * numpy.exp(2j * numpy.pi * numpy.arange(0, 1, dx))
         return factorial(n) * numpy.mean(self._f(z + x) / x**n)
->>>>>>> gf
 
     def getCoefficient(self, i: int) -> float:
         '''Return the i'th coefficient.
