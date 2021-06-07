@@ -92,4 +92,5 @@ Saray Shai and Simon Dobson. `Coupled adaptive complex networks
 
 .. _Wil94:
 
-Herbert Wilf. generatingfunctionology. Academic Press. 1994.
+Herbert Wilf. `generatingfunctionology
+<https://www2.math.upenn.edu/~wilf/gfology2.pdf>`_. Academic Press. 1994.
