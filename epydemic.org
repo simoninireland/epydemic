@@ -104,7 +104,6 @@
     - [ ] Set up compute cluster in PyPy linked to Jupyter on CPython
     - [ ] Check interactions between versions
 
-
 *** Containerisation
 
     To run in the cloud we need to be able to containerise. There are a
@@ -142,7 +141,6 @@
     - [X] High-degree (k=1000) coefficient extraction
     - [X] Derivatives
     - [X] Test suite
-
 
 *** Paper on draw set implementation
 
