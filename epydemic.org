@@ -6,11 +6,12 @@
 
 *** Release 1.7.1
 
-**** Coding [0/1]
+**** Coding [0/2]
 
     - [ ] Add degree-distribution-preserving rewiring functions to
       randomise networks while preserving p_k or P(k, k')
       cite:UnreasonableEffectiveness
+    - [ ] Integrate GF library
 
 ** Sub-projects
 
