@@ -40,7 +40,8 @@ specify).
 `epydemic` also provides processes not directly connected with epidemic modelling
 but which are often used alongside disease models. This includes
 support for add/delete networks and percolation processes, as well as
-support for studying the percolation transition in networks. Individual
+support for studying the percolation transition in networks and using
+generating functions to analyse their behaviour. Individual
 network processes can be combined in different ways to encourage good
 software engineering practices.
 '''

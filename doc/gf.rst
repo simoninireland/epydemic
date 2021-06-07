@@ -36,7 +36,7 @@ Construction
 ways: from an explicit series, from a sequence of coefficients, or
 from a network.
 
-.. autofunction:: gf_series
+.. autofunction:: gf_from_series
 
 .. autofunction:: gf_from_coefficients
 
