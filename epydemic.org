@@ -1,4 +1,5 @@
 #+title: epydemic
+#+startup: content
 
 * epydemic: Epidemic simulation in Python                           :PROJECT:
 
@@ -12,6 +13,15 @@
       randomise networks while preserving p_k or P(k, k')
       cite:UnreasonableEffectiveness
     - [ ] Integrate GF library
+    - [X] Add flag to parameters about the network topology used
+      (branch topology-flag)
+
+**** Bug fixes [0/0]
+
+**** Documentation [1/1]
+
+     - [X] Add discussion of moving from R-values to parameters
+
 
 ** Sub-projects
 
@@ -30,6 +40,25 @@
 
      Also compare against [[https://github.com/pyston/pyston][Pyston]]
 
+*** PyPy-based compute cluster controlled from CPython [0/2]
+
+    branch pypy-compute
+
+    PyPy doesn't have a full set of library integrations: specifically
+    it can't load scipy or matplotlib. That (especially the latter)
+    makes it unsuitable for front-end use a lot of the time.
+
+    One way to address this is to run a compute cluster in a PyPy venv
+    and control it from Jupyter running in a CPython venv. That way we
+    can get the acceleration without the problems.
+
+    Of course this opens up another can of worms. The latest CPython
+    is version 3.9; the latest PyPy is on 3.7. So we'd have to run an
+    older CPython to avoid language mis-matches.
+
+    - [ ] Set up compute cluster in PyPy linked to Jupyter on CPython
+    - [ ] Check interactions between versions
+
 *** Containerisation
 
     To run in the cloud we need to be able to containerise. There are a
@@ -44,19 +73,49 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library
+*** TODO Generating function library [8/8]
+
+    branch gf
 
     We need a generating functions library, perhaps alongside the
     network generator classes, so we can use this formalism easily
     alongside epydemic's simulations. In particular we need the
     high-order-numerical-derivative function to be able to extract
-    probabilities etc.
+    probabilities etc. (This turns out to be straightforward by using
+    `mpmath`.
 
     The biggest challenge might be to write documentation....
 
     There's another approach alongside this, which would be to write a
     symbolic package with the generating functions in them, for use in
     Sage. This would then complement the numerical side.
+
+    - [X] Basic structures
+
+    There are several ways we might want to specify a GF:
+
+    - as a single function that captures the entire series in one
+      expression
+    - as a sequence of coefficient literals, for example extracted
+      from the degree histogram of a network
+    - as a function that takes the degree of a term in the GF and
+      returns the corresponding coefficient
+    - As a function that takes the degree and the current coefficient
+      and returns a new one, for deriving GFs from one another
+    - as a derivative to some order of another GF
+    - as a composition of underlying GFs to get GFs of several
+      variables
+
+    All feel like they'd be useful for the applications you find in
+    the literature.
+
+    - [X] Different coefficient specifiers
+    - [X] Differentiate to high degree
+    - [X] Derivatives
+    - [X] Extract coefficients
+    - [X] Apply
+    - [X] Standard distributions
+    - [X] Tests
 
 *** Paper on draw set implementation
 
