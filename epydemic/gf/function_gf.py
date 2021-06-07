@@ -52,3 +52,34 @@ class FunctionGF(GF):
         for i in range(self._maxTerm + 1):
             v += self[i] * x**i
         return v
+
+    def _differentiate(self, f: Callable[[int], float], order: int) -> Callable[[int], float]:
+        '''Return a coefficient function representing the n'th
+        order derivative of the function given.
+
+        :param f: the coefficient function
+        :param order: the order or derivative
+        :returns: the derivative coefficient function'''
+
+        def df(i: int) -> float:
+            # low-order terms fall away
+            if i < order:
+                return 0
+
+            # high-order terms are transformed
+            m = f(i + order)
+            for j in range(1, order + 1):
+                m *= (i + j)
+            return m
+
+        return df
+
+    def derivative(self, order: int = 1) -> GF:
+        '''Return the requested derivative. This creates a new
+        generating function over the same underlying coefficients,
+        shifted and scaled.
+
+        :param order: (optional) order of derivative (defaults to 1)
+        :returns: a generating function'''
+        df = self._differentiate(self._coefficients, order)
+        return FunctionGF(df, self._maxTerm)
