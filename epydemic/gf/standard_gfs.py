@@ -26,7 +26,7 @@ from epydemic.gf import GF, gf_series
 
 
 def gf_er(N: int, kmean: float = None, phi: float = None) -> GF:
-    '''Return the generating fuhnction for the Poisson degree distribution of
+    '''Return the generating function for the Poisson degree distribution of
     an ER network of N nodes with the given mean degree or occupation
     probbability.
 
@@ -35,7 +35,7 @@ def gf_er(N: int, kmean: float = None, phi: float = None) -> GF:
     :param phi: (optional) the occupation probability
     :returns: the generating function'''
 
-    # check we have one of kmean or phi
+    # check we have exactly one of kmean or phi
     ps = len([p for p in [kmean, phi] if p is not None])
     if ps != 1:
         raise ValueError('Must provide either a mean degree or an occupation probability')
@@ -53,7 +53,7 @@ def gf_ba(exponent: float) -> GF:
 
     :param exponent: the exponent of the distribution
     :returns: the generating function'''
-    return gf_series(lambda x: polylog(exponent, x) / zeta(x, 1))
+    return gf_series(lambda x: polylog(exponent, x) / zeta(exponent, 1))
 
 def gf_plc(exponent: float, cutoff: float) -> GF:
     '''Return the generating function of the powerlaw-with-cutoff
