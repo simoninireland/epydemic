@@ -22,12 +22,23 @@ from epydemic.gf import *
 from collections import Counter
 import unittest
 import networkx
-from scipy.spatial.distance import jensenshannon
-
+from math import factorial
 
 class GFTest(unittest.TestCase):
 
-    # General API tests
+    # Helper functions
+
+    def _histogram(self, g):
+        '''Return the degree distribution fractions histogram.
+
+        :param g: the network
+        :returns: the degree distribution histogram'''
+        N = g.order()
+        seq = sorted([d for (_, d) in g.degree()])
+        hist = Counter(seq)
+        maxk = max(seq)
+        cs = [hist[i] / N for i in range(maxk + 1)]
+        return cs
 
 
     # Discrete distributions extracted from networks
@@ -61,6 +72,24 @@ class GFTest(unittest.TestCase):
         for k in range(9):
             self.assertEqual(gf[k], 0)
 
+    def testNetworkDerivative(self):
+        '''Test differentiation for networks.'''
+        g = networkx.gnp_random_graph(5000, 0.005)
+        gf = gf_from_network(g)
+        gfprime = gf.dx()
+        self.assertAlmostEqual(gfprime(1), (5000 * 0.005), places=0)
+
+    def testNetworkCoefficientsByDifferentiation(self):
+        '''Test that coefficients are retrieved correctly by differentiation.'''
+        g = networkx.fast_gnp_random_graph(10000, 0.005)
+        gf = gf_from_network(g)
+
+        cs = self._histogram(g)
+        gcs = [(gf.dx(k))(0) / factorial(k) for k in range(len(cs))]
+        for k in range(len(cs)):
+            self.assertAlmostEqual(cs[k], gf[k], places=1)
+
+
     # Continuous series distributions
 
     def testHighDegreeExtraction(self):
@@ -79,20 +108,19 @@ class GFTest(unittest.TestCase):
         gf[5000]
         gf[10000]
 
+    def testSeriesDerivative(self):
+        '''Test differentiation for series.'''
+        gf = gf_er(5000, phi=0.005)
+        gfprime = gf.dx()
+        self.assertAlmostEqual(gfprime(1), (5000 * 0.005), places=2)
+
 
     # Standard distributions
 
-    def _histogram(self, g):
-        '''Return the degree distribution histogram.
-
-        :param g: the netwoprk
-        :returns: the degree distribution histogram'''
-        N = g.order()
-        seq = sorted([d for (_, d) in g.degree()])
-        hist = Counter(seq)
-        maxk = max(seq)
-        cs = [hist[i] / N for i in range(maxk + 1)]
-        return cs
+    def testERProbabilities(self):
+        '''Test that the ER GF evaluates to 1.'''
+        gf = gf_er(5000, 0.005)
+        self.assertAlmostEqual(gf(1.0), 1.0, places=2)
 
     def testERnormalised(self):
         '''Test the ER GF sums to 1.'''
@@ -112,7 +140,16 @@ class GFTest(unittest.TestCase):
         gcs = [gf[k] for k in range(len(cs))]
         for k in range(len(cs)):
             self.assertAlmostEqual(cs[k], gf[k], places=1)
-        print(jensenshannon(gcs, cs))
+
+    def testBAProbabilities(self):
+        '''Test that the BA GF evaluates to 1.'''
+        gf = gf_ba(3.0)
+        self.assertAlmostEqual(gf(1.0), 1.0, places=2)
+
+    def testPLCProbabilities(self):
+        '''Test that the PLC GF evaluates to 1.'''
+        gf = gf_plc(2.5, 60)
+        self.assertAlmostEqual(gf(1.0), 1.0, places=2)
 
     def testPLCnormalised(self):
         '''Test that the PLC GF sums to 1.'''
@@ -135,7 +172,6 @@ class GFTest(unittest.TestCase):
         gcs = [gf[k] for k in range(len(cs))]
         for k in range(len(cs)):
             self.assertAlmostEqual(cs[k], gf[k], places=1)
-        print(jensenshannon(gcs, cs))
 
 
 if __name__ == '__main__':
