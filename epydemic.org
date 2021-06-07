@@ -12,62 +12,9 @@
       randomise networks while preserving p_k or P(k, k')
       cite:UnreasonableEffectiveness
 
-*** Release 1.6.1                                                   :ARCHIVE:
-
-**** Coding [1/1]
-
-     - [X] Change topology parameters and markers so we can retrieve
-       them
-
-**** Documentation [1/1]
-
-     - [X] Add discussion of moving from R-values to parameters
-
-*** Release 1.5.1                                                   :ARCHIVE:
-
-**** Coding [1/1]
-
-     - [X] Integrate accelerated simulation ([[*Improving sequential Gillespie simulation][below]])
-
-**** Bug fixes [1/1]
-
-     - [X] Problem with monitor cookbook recipe code
-
-**** Documentation [1/1]
-
-     - [X] Add documentation for DrawSet
-
-
 ** Sub-projects
 
 *** Acceleration
-
-**** numba acceleration                                             :ARCHIVE:
-
- git branch numba-acceleration
-
- Idea: wrap StochasticDynamics.do() as a JIT-compiled function, since
- that (and the event functions) are where most of the time is spent. If
- it generate worthwhile speed-up, extend out to other elements that are
- time-consuming.
-
- The main simulation loop seems like a good place to start as it
- involves a lot of looping and drawing from probability distributions,w
- which should be accelerable.
-
- Installing the latest numba (0.51.2) installs llvmlite-0.34.0, which
- only works for versions of LLVM up to 10.0.x. The latest arch version
- is 11.x, so I downgraded to the latest compatible version (and also
- its libraries):
-
- #+BEGIN_SRC sh
-   pacman -U https://archive.archlinux.org/packages/l/llvm/llvm-10.0.1-3-x86_64.pkg.tar.zst
-   pacman -U https://archive.archlinux.org/packages/l/llvm10-libs/llvm10-libs-10.0.1-3-x86_64.pkg.tar.zst
- #+END_SRC
-
- Doesn't seem to get much speed-up, even given it's quite numerical:
- there are calls to get the event distribution and to check for
- equilibrium that perhaps could be refactored?
 
 **** GPU acceleration
 
