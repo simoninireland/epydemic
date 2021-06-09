@@ -41,6 +41,14 @@ epidemics on networks <http://dx.doi.org/10.1007/978-3-319-50806-1>`_.
 Springer series on Interdisciplinary Applied Mathematics
 **46**. ISBN 978-3-319-50804-7. 2017.
 
+.. _MHP11:
+
+Sergey Melnik, Adam Hackett, Mason Porter, Peter Mucha, and James
+Gleeson. `The unreasonable effectiveness of tree-based theory for
+networks with clustering
+<https://journals.aps.org/pre/abstract/10.1103/PhysRevE.83.036112>`_. Physical
+Review E **83**. March 2011.
+
 .. _M09:
 
 Joel Miller. `Percolation and epidemics in random clustered networks
