@@ -17,14 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Process, Node, Element
 import sys
+from typing import Any, Dict
 if sys.version_info >= (3, 8):
-    from typing import Any, Dict, Final
+    from typing import Final
 else:
     # backport compatibility with older typing
-    from typing import Any, Dict
     from typing_extensions import Final
+from epydemic import Process, Node, Element
 
 
 class AddDelete(Process):
@@ -36,25 +36,25 @@ class AddDelete(Process):
     of the size of the network, and a fixed degree for added nodes.'''
 
     # parameters
-    P_ADD : Final[str] = "epydemic.AddDelete.pAdd"        #: Parameter for the node addition probability
-    P_DELETE : Final[str] = "epydemic.AddDelete.pDelete"  #: Parameter for the node deletion probability
-    DEGREE : Final[str] = "epydemic.AddDelete.addDegree"  #: Degree of newly-added nodes
+    P_ADD : Final[str] = "epydemic.adddelete.pAdd"        #: Parameter for the node addition probability
+    P_DELETE : Final[str] = "epydemic.adddelete.pDelete"  #: Parameter for the node deletion probability
+    DEGREE : Final[str] = "epydemic.adddelete.addDegree"  #: Degree of newly-added nodes
 
     # loci
     NODES : Final[str] = "allnodes"       #: Name of the locus holding all nodes in the network
 
     def __init__(self):
-        super(AddDelete, self).__init__()
+        super().__init__()
 
 
     # ---------- Setup and initialisation ----------
 
-    def build(self, params : Dict[str, Any]):
+    def build(self, params: Dict[str, Any]):
         '''Build the model. This method expects parameters for the node addition
         and deletion probabilities, and for the degree of newly-created nodes.
 
         :param params: the model parameters'''
-        super(AddDelete, self).build(params)
+        super().build(params)
 
         # stash the degree of new nodes for the events
         self._c = params[self.DEGREE]
@@ -69,7 +69,7 @@ class AddDelete(Process):
         self.addFixedRateEvent(self.NODES, pDelete, self.delete)
 
     def setUp(self, params : Dict[str, Any]):
-        super(AddDelete, self).setUp(params)
+        super().setUp(params)
 
         # add all nodes to the all-nodes locus
         l = self.locus(self.NODES)
@@ -80,12 +80,12 @@ class AddDelete(Process):
 
     # ---------- Accessing and evolving the network ----------
 
-    def addNode(self, n : Node, **kwds):
+    def addNode(self, n: Node, **kwds):
         '''Add a node to the working network. Any keyword arguments added as node attributes.
 
         :param n: the new node
         :param kwds: (optional) node attributes'''
-        super(AddDelete, self).addNode(n, **kwds)
+        super().addNode(n, **kwds)
         self.locus(self.NODES).addHandler(self.network(), n)
         #print('added {n}'.format(n=n)
 
@@ -112,18 +112,18 @@ class AddDelete(Process):
         self.addNode(n, **kwds)
         return n
 
-    def removeNode(self, n : Node):
+    def removeNode(self, n: Node):
         '''Remove a node from the working network.
 
         :param n: the node'''
         self.locus(self.NODES).removeHandler(self.network(), n)
-        super(AddDelete, self).removeNode(n)
+        super().removeNode(n)
         #print('removed {n}'.format(n=n))
 
 
     # ---------- Events ----------
 
-    def add(self, t : float, e : Element):
+    def add(self, t: float, e: Element):
         '''Add a node to the network, connecting it at random to
         other nodes. The degree of the new node is given by the :attr:`DEGREE` parameter,
         with the nodes being selected at random from the entire network.
@@ -149,7 +149,7 @@ class AddDelete(Process):
         for j in es:
             self.addEdge(i, j)
 
-    def delete(self, t : float, n : Node):
+    def delete(self, t: float, n: Node):
         '''Delete a node from the network. The node is
         deleted from the network by calling :meth:`removeNode`.
 
