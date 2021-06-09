@@ -420,6 +420,13 @@ class BBTTest(unittest.TestCase):
         self.assertEqual(len(s), 0)
         self.assertCountEqual(es, ns)
 
+    def testInitial(self):
+        '''Test adding an initial value from an iterator.'''
+        l = [1, 2, 3, 4, 5]
+        s = DrawSet(l)
+        self.assertEqual(len(l), len(s))
+        self.assertCountEqual(l, s)
+
 
 if __name__ == '__main__':
     unittest.main()

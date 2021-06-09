@@ -28,11 +28,19 @@ class DrawSet():
     an efficient (:math:`O(\log N)`) method for drawing an element at random.
 
     We implement only those parts of the set API that we need: perhaps
-    ought to add the rest, for future-proofing.'''
+    ought to add the rest, for future-proofing.
 
-    def __init__(self):
+    :param os: (optional) iterator of elements to add
+    '''
+
+    def __init__(self, os: Iterator[Element] = None):
         self._root = None
         self._size = 0
+
+        # if we have an initial value, add all elements from the iterator
+        if os is not None:
+            for e in os:
+                self.add(e)
 
     def add(self, e: Element):
         '''Add an element to the set. This is a no-op if the element is already
