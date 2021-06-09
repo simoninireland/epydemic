@@ -18,14 +18,14 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-from epydemic import Process
-from networkx import degree_histogram, connected_components
+from typing import Dict, Any
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict, Any
+    from typing import Final
 else:
     # backport compatibility with older typing
-    from typing import Dict, Any
     from typing_extensions import Final
+from networkx import degree_histogram, connected_components
+from epydemic import Process
 
 
 class NetworkStatistics(Process):
