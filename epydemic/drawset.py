@@ -60,25 +60,25 @@ class DrawSet():
                 self._root = r
 
     def __contains__(self, e: Element) -> bool:
-        '''Check whether the given element is a member of the locus.
+        '''Check whether the given element is a member of the set.
 
         :param e: the element
-        :returns: True if the element is in the locus'''
+        :returns: True if the element is in the set'''
         if self._root is None:
             return False
         else:
             return self._root.find(e) is not None
 
     def empty(self) -> bool:
-        '''Test if the locus is empty.
+        '''Test if the set is empty.
 
-        :returns: True if the locus is empty'''
+        :returns: True if the set is empty'''
         return self._root is None
 
     def __len__(self) -> int:
-        '''Return the size of the locus.
+        '''Return the size of the set.
 
-        :returns: the size of the locus'''
+        :returns: the size of the set'''
         return self._size
 
     def __iter__(self) -> Iterator[Element]:
@@ -108,7 +108,7 @@ class DrawSet():
                 self._root = r
 
     def remove(self, e: Element):
-        '''Remove the given element from the locus, raising
+        '''Remove the given element from the set, raising
         an exception if it wasn't present: use :meth:`discard`
         to allow the removal of non-elements.
 
@@ -133,6 +133,6 @@ class DrawSet():
 
         :returns: a random element, or none if the set is empty'''
         if self._root is None:
-            raise ValueError('Drawing from an empty locus')
+            raise ValueError('Drawing from an empty set')
         else:
             return self._root.draw()
