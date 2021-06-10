@@ -8,7 +8,7 @@ Modelling human contact networks
 **Problem**: You want to work with a realistic model of a human contact network. What is the appropriate topology?
 
 **Solution**: This is an active area of research, but a common answer is to use the approach given by
-:ref:`Newman <New02>`, which is to use a powerlaw network with exponential cut-off. 
+:ref:`Newman <New02>`, which is to use a powerlaw network with exponential cut-off.
 
 .. note ::
 
@@ -75,90 +75,90 @@ this class of network:
 
     def PowerLawWithCutoffNetwork(epydemic.NetworkGenerator):
 
-        N = 'hcn.N'           #: Experimental parameter for the order of the network
-        ALPHA = 'hcn.alpha'   #: Experimental parameter for the exponent of the distribution
-        KAPPA = 'hcn.kappa'   #: Experimewntal parameter for the cutoff of the distribution
+	N = 'hcn.N'           #: Experimental parameter for the order of the network
+	ALPHA = 'hcn.alpha'   #: Experimental parameter for the exponent of the distribution
+	KAPPA = 'hcn.kappa'   #: Experimewntal parameter for the cutoff of the distribution
 
-        def __init__(self, params=None, limit=None):
-            super(PowerLawWithCutoffNetwork, self).__init__(params, limit)
+	def __init__(self, params=None, limit=None):
+	    super(PowerLawWithCutoffNetwork, self).__init__(params, limit)
 
-        def _makePowerlawWithCutoff(self, alpha, kappa):
-            '''Create a model function for a powerlaw distribution with exponential cutoff.
+	def _makePowerlawWithCutoff(self, alpha, kappa):
+	    '''Create a model function for a powerlaw distribution with exponential cutoff.
 
-            :param alpha: the exponent of the distribution
-            :param kappa: the degree cutoff
-            :returns: a model function'''
-            C = polylog(alpha, math.exp(-1.0 / kappa))
-            def p( k ):
-                return (pow((k + 0.0), -alpha) * math.exp(-(k + 0.0) / kappa)) / C
-            return p
+	    :param alpha: the exponent of the distribution
+	    :param kappa: the degree cutoff
+	    :returns: a model function'''
+	    C = polylog(alpha, math.exp(-1.0 / kappa))
+	    def p( k ):
+		return (pow((k + 0.0), -alpha) * math.exp(-(k + 0.0) / kappa)) / C
+	    return p
 
-        def _generateFrom(self, N, p, maxdeg=100):
-            '''Generate a random graph with degree distribution described
-            by a model function.
+	def _generateFrom(self, N, p, maxdeg=100):
+	    '''Generate a random graph with degree distribution described
+	    by a model function.
 
-            :param N: number of numbers to generate
-            :param p: model function
-            :param maxdeg: maximum node degree we'll consider (defaults to 100)
-            :returns: a network with the given degree distribution'''
-            rng = numpy.random.default_rng()
-            ns = []
-            t = 0
-            for i in range(N):
-                while True:
-                    # draw a random degree
-                    k = rng.integers(1, maxdeg)
-            
-                    # do we include a node with this degree?
-                    if rng.random() < p(k):
-                        # yes, add it to the sequence; otherwise,
-                        # draw again
-                        ns.append(k)
-                        t += k
-                        break
+	    :param N: number of numbers to generate
+	    :param p: model function
+	    :param maxdeg: maximum node degree we'll consider (defaults to 100)
+	    :returns: a network with the given degree distribution'''
+	    rng = numpy.random.default_rng()
+	    ns = []
+	    t = 0
+	    for i in range(N):
+		while True:
+		    # draw a random degree
+		    k = rng.integers(1, maxdeg)
 
-            # the final sequence of degrees has to sum to an even
-            # number, as each edge has two endpoints
-            # if the sequence is odd, remove an element and draw
-            # another from the distribution, repeating until the
-            # overall sequence is even
-            while t % 2 != 0:
-                # pick a node at random
-                i = rng.integers(0, len(ns) - 1)
+		    # do we include a node with this degree?
+		    if rng.random() < p(k):
+			# yes, add it to the sequence; otherwise,
+			# draw again
+			ns.append(k)
+			t += k
+			break
 
-                # remove it from the sequence and from the total
-                t -= ns[i]
-                del ns[i]
-            
-                # choose a new node to replace the one we removed
-                while True:
-                    # draw a new degree from the distribution
-                    k = rng.integers(1, maxdeg)
-            
-                    # do we include a node with this degree?
-                    if rng.random() < p(k):
-                        # yes, add it to the sequence; otherwise,
-                        # draw again
-                        ns.append(k)
-                        t += k
-                        break
+	    # the final sequence of degrees has to sum to an even
+	    # number, as each edge has two endpoints
+	    # if the sequence is odd, remove an element and draw
+	    # another from the distribution, repeating until the
+	    # overall sequence is even
+	    while t % 2 != 0:
+		# pick a node at random
+		i = rng.integers(0, len(ns) - 1)
 
-            # populate the network using the configuration
-            # model with the given degree distribution
-            g = networkx.configuration_model(ns,
-                                             create_using=networkx.Graph())
-            return g
+		# remove it from the sequence and from the total
+		t -= ns[i]
+		del ns[i]
 
-        def _generate(self, params):
-            '''Generate the human contact network.
+		# choose a new node to replace the one we removed
+		while True:
+		    # draw a new degree from the distribution
+		    k = rng.integers(1, maxdeg)
 
-            :param params: the experimental parameters
-            :returns: a network'''
-            N = params[self.N]
-            alpha = paramns[self.ALPHA]
-            kappa = params[self.KAPPA]
+		    # do we include a node with this degree?
+		    if rng.random() < p(k):
+			# yes, add it to the sequence; otherwise,
+			# draw again
+			ns.append(k)
+			t += k
+			break
 
-            return self._generateFrom(N, self._makePowerlawWithCutoff(alpha, kappa))
+	    # populate the network using the configuration
+	    # model with the given degree distribution
+	    g = networkx.configuration_model(ns,
+					     create_using=networkx.Graph())
+	    return g
+
+	def _generate(self, params):
+	    '''Generate the human contact network.
+
+	    :param params: the experimental parameters
+	    :returns: a network'''
+	    N = params[self.N]
+	    alpha = paramns[self.ALPHA]
+	    kappa = params[self.KAPPA]
+
+	    return self._generateFrom(N, self._makePowerlawWithCutoff(alpha, kappa))
 
 The ``_makePowerlawWithCutoff()`` method just transcribes the definition of the distribution from above, taking the
 distribution parameters :math:`\alpha` and :math:`\kappa` and returning a model function that, for any
@@ -209,6 +209,6 @@ definitely observable.
 
 There is a substantial more recent literature on clustered networks that is essential
 for handling this problem: :ref:`Miller <M09>` is a good starting point.
-:ref:`Dobson <D20>` presents a method for creating networks that mimic physical distancing
-countermeasures to epidemics. 
-Also see :ref:`Melnik <MHP10>` *et alia* for a discussion of why clustering often *doesn't* matter.
+:ref:`Dobson <Dob20>` presents a method for creating networks that mimic physical distancing
+countermeasures to epidemics.
+Also see :ref:`Melnik <MHP11>` *et alia* for a discussion of why clustering often *doesn't* matter.

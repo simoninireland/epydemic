@@ -3,11 +3,16 @@
 Bibliography
 ============
 
-.. _D20:
+.. _Dob20:
 
 Simon Dobson. `Epidemic modelling: Some notes, maths, and code
 <https://simondobson.org/introduction-to-epidemics/>`_.
 Independent Publishing Network. ISBN 978-183853-565-0. 2020.
+
+.. _Dob21:
+
+Simon Dobson. `Complex networks, complex processes: A network science
+miscellany <https://simondobson.org/cncp/>`_. Work in progress.
 
 .. _Gil76:
 
@@ -41,14 +46,6 @@ epidemics on networks <http://dx.doi.org/10.1007/978-3-319-50806-1>`_.
 Springer series on Interdisciplinary Applied Mathematics
 **46**. ISBN 978-3-319-50804-7. 2017.
 
-.. _MHP11:
-
-Sergey Melnik, Adam Hackett, Mason Porter, Peter Mucha, and James
-Gleeson. `The unreasonable effectiveness of tree-based theory for
-networks with clustering
-<https://journals.aps.org/pre/abstract/10.1103/PhysRevE.83.036112>`_. Physical
-Review E **83**. March 2011.
-
 .. _M09:
 
 Joel Miller. `Percolation and epidemics in random clustered networks
@@ -61,7 +58,7 @@ Christopher Moore, Gourab Ghosal, and M.E.J. Newman. `Exact solutions for models
 networks with addition and deletion of nodes <https://doi.org/10.1103/PhysRevE.74.036121>`_.
 Physical Review E **74**. September 2006.
 
-.. _MHP10:
+.. _MHP11:
 
 Sergey Melnik, Adam Hackett, Mason Porter, Peter Mucha, and James Gleeson.
 `The unreasonable effectiveness of tree-based theory for networks with

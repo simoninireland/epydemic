@@ -30,7 +30,7 @@ next generation will be larger, and the disease will become epidemic.
 population becoming gradually immune (if this happens with the disease
 model in question), and as a result of countermeasures that seek to`
 reduce infection. (Both of these effects are explored experimentally
-by :ref:`Dobson <D20>`.) At the very start of an epidemic we have the
+by :ref:`Dobson <Dob20>`.) At the very start of an epidemic we have the
 disease spreading without immunity (in what epidemiologists refer to
 as a **naive population**), and we speak of :math:`\mathcal{R}` at this
 point as :math:`\mathcal{R}_0` -- :math:`\mathcal{R}` at time
