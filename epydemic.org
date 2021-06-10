@@ -7,7 +7,7 @@
 
 *** Release 1.7.1
 
-**** Coding [3/4]
+**** Coding [4/4]
 
     - [X] Add degree-distribution-preserving rewiring functions to
       randomise networks while preserving p_k
@@ -15,7 +15,7 @@
     - [X] Integrate GF library
     - [X] Add flag to parameters about the network topology used
       (branch topology-flag)
-    - [ ] Add memoisation to GF functions
+    - [X] Add memoisation to GF functions
 
 **** Bug fixes [0/0]
 
@@ -81,7 +81,7 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library [6/6]
+*** Generating function library [7/7]
 
     branch gf
 
@@ -104,6 +104,7 @@
     - [X] High-degree (k=1000) coefficient extraction
     - [X] Derivatives
     - [X] Test suite
+    - [X] Memoisation
 
 *** Paper on draw set implementation
 
