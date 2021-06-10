@@ -61,6 +61,7 @@ Other processes
 
    adddelete
    percolate
+   shuffle
    monitor
    statistics
 

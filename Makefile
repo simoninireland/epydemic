@@ -55,6 +55,7 @@ SOURCES_CODE = \
 	epydemic/percolate.py \
 	epydemic/monitor.py \
 	epydemic/statistics.py \
+	epydemic/shuffle.py \
 	epydemic/newmanziff.py \
 	epydemic/gf/__init__.py \
 	epydemic/gf/gf.py \
@@ -83,6 +84,7 @@ SOURCES_TESTS = \
 	test/test_adddelete.py \
 	test/test_adddeletesir.py \
 	test/test_percolate.py \
+	test/test_shuffle.py \
 	test/test_newmanziff.py \
 	test/test_gf.py
 TESTSUITE = test
@@ -116,6 +118,7 @@ SOURCES_DOCUMENTATION = \
 	doc/percolate.rst \
 	doc/monitor.rst \
 	doc/statistics.rst \
+	doc/shuffle.rst \
 	doc/processsequence.rst \
 	doc/newmanziff.rst  \
 	doc/gf.rst \
@@ -131,6 +134,7 @@ SOURCES_DOCUMENTATION = \
 	doc/implementation.rst \
 	doc/implementation/challenges.rst \
 	doc/implementation/events.rst \
+	doc/implementation/gf-maths.rst \
 	doc/cookbook.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
 	doc/cookbook/monitoring-progress.rst \

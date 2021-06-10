@@ -85,6 +85,7 @@ from .adddelete import AddDelete
 from .percolate import Percolate
 from .monitor import Monitor
 from .statistics import NetworkStatistics
+from .shuffle import ShuffleK
 
 # process combinators
 from .processsequence import ProcessSequence
