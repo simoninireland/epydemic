@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from functools import cache
+from functools import lru_cache
 
 
 class GF:
@@ -80,7 +80,7 @@ class GF:
 
     # ---------- Client API ----------
 
-    @cache
+    @lru_cache
     def __getitem__(self, i: int) -> float:
         '''Return the i'th coefficient. This uses :meth:`getCoefficient`
         but with an array-like interface.
@@ -89,7 +89,7 @@ class GF:
         :returns: the i'th coefficient'''
         return self.getCoefficient(i)
 
-    @cache
+    @lru_cache
     def __call__(self, x: float) -> float:
         '''Evaluate the generating function. This uses :meth:`evaluate`
         but with a call interface.
@@ -98,7 +98,7 @@ class GF:
         :returns: the value of the generating function'''
         return self.evaluate(x)
 
-    @cache
+    @lru_cache
     def dx(self, order: int = 1):
         '''Return the derivative of the generating function to the desired order.
 
