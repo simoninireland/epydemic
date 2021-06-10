@@ -77,7 +77,8 @@ Glossary
       or edges, depending in the :term:`locus` at which the event
       occurs.
 
-   generating functions A mathematical tool for working with entire
+   generating functions
+      A mathematical tool for working with entire
       probability distributions, often used in network science
       research because of its flexibility. They're often used when
       describing the :term:`degree distribution` of a network. See
