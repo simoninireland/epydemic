@@ -80,7 +80,7 @@ class GF:
 
     # ---------- Client API ----------
 
-    @lru_cache
+    @lru_cache(maxsize=None)
     def __getitem__(self, i: int) -> float:
         '''Return the i'th coefficient. This uses :meth:`getCoefficient`
         but with an array-like interface.
@@ -89,7 +89,7 @@ class GF:
         :returns: the i'th coefficient'''
         return self.getCoefficient(i)
 
-    @lru_cache
+    @lru_cache(maxsize=None)
     def __call__(self, x: float) -> float:
         '''Evaluate the generating function. This uses :meth:`evaluate`
         but with a call interface.
@@ -98,7 +98,7 @@ class GF:
         :returns: the value of the generating function'''
         return self.evaluate(x)
 
-    @lru_cache
+    @lru_cache(maxsize=None)
     def dx(self, order: int = 1):
         '''Return the derivative of the generating function to the desired order.
 
