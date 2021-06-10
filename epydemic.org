@@ -12,7 +12,7 @@
     - [X] Add degree-distribution-preserving rewiring functions to
       randomise networks while preserving p_k
       cite:UnreasonableEffectiveness
-    - [X] Integrate GF library
+    - [X] Integrate GF library (branch gf)
     - [X] Add flag to parameters about the network topology used
       (branch topology-flag)
     - [X] Add memoisation to GF functions
@@ -28,7 +28,8 @@
 **** Coding [0/1]
 
     - [ ] Add degree-distribution-preserving rewiring functions
-      preserving P(k, k') cite:UnreasonableEffectiveness
+      preserving P(k, k') cite:UnreasonableEffectiveness (branch
+      rewiring-processes)
 
 
 ** Sub-projects
