@@ -34,7 +34,9 @@ event).
 A more subtle situation occurs with core data structures, whose
 performance (and more significantly their computational complexity) is
 critical to the performance overall. Several data structures have been
-re-designed when profiling has shown them to be bottlenecks.
+re-designed when profiling has shown them to be bottlenecks. Notably
+the :class:`Locus` uses a specially-coded balanced binary tree so as
+to support efficient random drawing from a set.
 
 The cost of running multiple simulations reduced by using parallelism, and this is why
 ``epydemic`` is built on top of ``epyc``, a library for managing computational
