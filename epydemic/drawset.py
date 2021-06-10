@@ -30,15 +30,23 @@ class DrawSet():
     We implement only those parts of the set API that we need: perhaps
     ought to add the rest, for future-proofing.
 
-    :param os: (optional) iterator of elements to add
+    :param including: (optional) iterator of elements to add
+    :param excluding: (optional) elements to exclude from the initialisation
     '''
 
-    def __init__(self, os: Iterator[Element] = None):
+    def __init__(self, including: Iterator[Element] = None, excluding: Iterator[Element] = None):
         self._root = None
         self._size = 0
 
         # if we have an initial value, add all elements from the iterator
-        if os is not None:
+        if including is not None:
+            os = set(including)
+
+            # exclude any excluded elements
+            if excluding is not None:
+                es = set(excluding)
+                os.difference_update(es)
+
             for e in os:
                 self.add(e)
 

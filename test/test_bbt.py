@@ -427,6 +427,14 @@ class BBTTest(unittest.TestCase):
         self.assertEqual(len(l), len(s))
         self.assertCountEqual(l, s)
 
+    def testInitialExcluding(self):
+        '''Test we exclude initial elements correctly.'''
+        l = [1, 2, 3, 4, 5]
+        e = [1, 3, 5]
+        s = DrawSet(l, e)
+        self.assertEqual(len(s), len(l) - len(e))
+        self.assertCountEqual(s, set(l) - set(e))
+
 
 if __name__ == '__main__':
     unittest.main()
