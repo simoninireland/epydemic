@@ -42,6 +42,6 @@ setup(name = 'epydemic',
       packages = [ 'epydemic' ],
       package_data = { 'epydemic': [ 'py.typed' ] },
       zip_safe = False,
-      install_requires = [ "networkx >= 2.4", "epyc >= 1.2.1", "pandas", "numpy >= 1.18", "mpmath",  ],
+      install_requires = [ "networkx >= 2.4", "epyc >= 1.2.1", "pandas", "numpy >= 1.18", "scipy", "mpmath",  ],
       extra_requires = { ':python_version < 3.8': [ 'typing_extensions' ] },
 )

@@ -1,4 +1,4 @@
-Version 1.7.1
+Version 1.7.1 (2021-06-10)
 
    - Changed implementation of Percolate to use the Newman-Ziff approach
    - Refactored the setting of initial compartments in CompartmentedModel to
@@ -10,8 +10,10 @@ Version 1.7.1
      in the case of an illegal distribution to ValueError
    - Integrated the generating functions library
    - Added type annotations to documentation format (makes reading the docs easier)
+   - Added "shuffle" process for rewiring edges
+   - Write implementation note on generating functions
 
-Version 1.6.1 (2020-05-13)
+Version 1.6.1 (2021-05-13)
 
    - Added topology marker to parameters to capture the network generator used
    - Changed names of network generation parameters to match the topology markers
