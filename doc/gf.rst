@@ -45,6 +45,14 @@ from a network.
 There are also :ref:`standard constructors for common generating
 functions <standard-gfs>` corresponding to common degree distributions.
 
+.. warning::
+
+   When implementing a generating function using a series with
+   :func:`gf_from_series` it's important that the series can be
+   manipulated and computed in certain specific ways. See
+   :ref:`gf-maths-constraints` for details. (The other construction methods
+   have no similar traps for the unwary.)
+
 
 In use
 ------

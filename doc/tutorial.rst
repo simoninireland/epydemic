@@ -6,7 +6,7 @@ class class structure of the library, and then uses it to build and run a simula
 of an epidemic.
 
 If you want more examples of ``epydemic`` in action, it forms the basis for a
-:ref:`book <D20>` on epidemic modelling. 
+:ref:`book <Dob20>` on epidemic modelling.
 
 .. toctree::
     :maxdepth: 2
@@ -17,4 +17,3 @@ If you want more examples of ``epydemic`` in action, it forms the basis for a
     tutorial/run-at-scale.rst
     tutorial/process-composition.rst
     tutorial/advanced-topics.rst
-
