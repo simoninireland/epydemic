@@ -97,7 +97,7 @@ class GFTest(unittest.TestCase):
         gf = gf_er(50000, kmean=200)
 
         # extract high-degree coefficients
-        # This relies on being abble to do high-percision computation. We
+        # This relies on being able to do high-percision computation. We
         # don't care about the results, just that they don't cause exceptions
         gf[0]
         gf[5]
