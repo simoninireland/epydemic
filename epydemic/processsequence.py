@@ -1,7 +1,7 @@
 # Process combinator to build sequences of processes
 #
 # Copyright (C) 2017--2021 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,24 +17,24 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Process, Dynamics
 from typing import List, Dict, Any
+from epydemic import Process, Dynamics
 
 class ProcessSequence(Process):
     '''A process build from a sequence of other processes. This allows separate process
     behaviour to be defined independently and then combined in different ways.
-    
+
     :param ps: the processes'''
 
-    def __init__(self, ps : List[Process]):
+    def __init__(self, ps: List[Process]):
         self._processes = ps
-        super(ProcessSequence, self).__init__()
-        
-    def setDynamics(self, d : Dynamics):
+        super().__init__()
+
+    def setDynamics(self, d: Dynamics):
         '''Set the dynamics.
 
         :param d: the dynamics'''
-        super(ProcessSequence, self).setDynamics(d)
+        super().setDynamics(d)
         for p in self._processes:
             p.setDynamics(d)
 
@@ -42,30 +42,30 @@ class ProcessSequence(Process):
         '''Reset the processes.'''
         for p in self._processes:
             p.reset()
-            
-    def build(self, params : Dict[str, Any]):
+
+    def build(self, params: Dict[str, Any]):
         '''Build the proceses.
-        
+
         :param params: the experimental parameters'''
         for p in self._processes:
             p.build(params)
-            
-    def setUp(self, params : Dict[str, Any]):
+
+    def setUp(self, params: Dict[str, Any]):
         '''Set up the proceses.
-        
+
         :param params: the experimental parameters'''
         for p in self._processes:
             p.setUp(params)
-            
+
     def tearDown(self):
         '''Tear down the processes.'''
         for p in self._processes:
             p.tearDown()
-            
+
     def atEquilibrium(self, t : float):
         '''Test for equilibrium. A process sequence is at equilibrium if and when all
         its component processes are.
-        
+
         :param t: the simulation time
         :returns: True if all the processes are at equilibrium'''
         for p in self._processes:
@@ -73,7 +73,7 @@ class ProcessSequence(Process):
                 return False
         return True
 
-    def setMaximumTime(self, t : float):
+    def setMaximumTime(self, t: float):
         '''Set the maximum default simulation time for all processes
 
         :param t: the maximum simulation time'''
@@ -94,10 +94,9 @@ class ProcessSequence(Process):
         '''Return all the experimental results from all the processes. The dict
         is created in process order, meaning that later processes may alter or overwrite
         the results of earlier ones, accidentally or deliberately.
-        
+
         :returns: a dict of experimental results'''
-        res = super(ProcessSequence, self).results()
+        res = super().results()
         for p in self._processes:
             res.update(p.results())
         return res
-        
