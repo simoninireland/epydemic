@@ -7,20 +7,28 @@
 
 *** Release 1.7.1
 
-**** Coding [2/3]
+**** Coding [3/4]
 
-    - [ ] Add degree-distribution-preserving rewiring functions to
-      randomise networks while preserving p_k or P(k, k')
+    - [X] Add degree-distribution-preserving rewiring functions to
+      randomise networks while preserving p_k
       cite:UnreasonableEffectiveness
     - [X] Integrate GF library
     - [X] Add flag to parameters about the network topology used
       (branch topology-flag)
+    - [ ] Add memoisation to GF functions
 
 **** Bug fixes [0/0]
 
 **** Documentation [1/1]
 
      - [X] Add discussion of moving from R-values to parameters
+
+*** Release 1.8.1
+
+**** Coding [0/1]
+
+    - [ ] Add degree-distribution-preserving rewiring functions
+      preserving P(k, k') cite:UnreasonableEffectiveness
 
 
 ** Sub-projects
