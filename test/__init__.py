@@ -1,7 +1,7 @@
 # Initialisation for epydemic tests package
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify

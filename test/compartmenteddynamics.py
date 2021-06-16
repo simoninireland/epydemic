@@ -31,14 +31,16 @@ class CompartmentedDynamicsTest():
     def testRunSingleStochastic( self ):
         '''Test a single run of a stochastic dynamics.'''
         e = StochasticDynamics(self._model, self._network)
-        rc = e.set(self._params).run()
+        rc = e.set(self._params).run(fatal=True)
         self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
+        self.assertEpidemic(rc[epyc.Experiment.RESULTS])
 
     def testRunSingleSynchronous( self ):
         '''Test a single run of a synchronous dynamics.'''
         e = SynchronousDynamics(self._model, self._network)
-        rc = e.set(self._params).run()
+        rc = e.set(self._params).run(fatal=True)
         self.assertTrue(rc[epyc.Experiment.METADATA][epyc.Experiment.STATUS])
+        self.assertEpidemic(rc[epyc.Experiment.RESULTS])
 
     def testRunMultipleStochastic( self ):
         '''Test a stochastic dynamics run of a model over a (small) parameter space.'''

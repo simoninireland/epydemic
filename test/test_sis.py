@@ -1,7 +1,7 @@
 # Test SIS under different dynamics
 #
 # Copyright (C) 2017 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -28,10 +28,10 @@ class SISTest(unittest.TestCase, CompartmentedDynamicsTest):
 
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''
-        
+
         # single experiment
         self._params = dict()
-        self._params[SIS.P_INFECT] = 0.1
+        self._params[SIS.P_INFECT] = 0.3
         self._params[SIS.P_INFECTED] = 0.01
         self._params[SIS.P_RECOVER] = 0.05
         self._network = networkx.erdos_renyi_graph(1000, 0.005)
@@ -47,6 +47,13 @@ class SISTest(unittest.TestCase, CompartmentedDynamicsTest):
 
         # maximum time needed as disease may be endemic
         self._model.setMaximumTime(200)
+
+    def assertEpidemic(self, rc):
+        self.assertCountEqual(rc, [SIS.SUSCEPTIBLE, SIS.INFECTED])
+        self.assertTrue(rc[SIS.SUSCEPTIBLE] >= 0)
+        self.assertTrue(rc[SIS.INFECTED] >= 0)
+        self.assertEqual(rc[SIS.SUSCEPTIBLE] + rc[SIS.INFECTED], self._network.order())
+
 
 if __name__ == '__main__':
     unittest.main()

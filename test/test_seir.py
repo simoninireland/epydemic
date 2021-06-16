@@ -1,7 +1,7 @@
 # Test SEIR under different dynamics
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -27,11 +27,11 @@ class SEIRTest(unittest.TestCase, CompartmentedDynamicsTest):
 
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''
-        
+
         # single experiment
         self._params = dict()
-        self._params[SEIR.P_INFECT_SYMPTOMATIC] = 0.2
-        self._params[SEIR.P_INFECT_ASYMPTOMATIC] = 0.1
+        self._params[SEIR.P_INFECT_SYMPTOMATIC] = 0.3
+        self._params[SEIR.P_INFECT_ASYMPTOMATIC] = 0.3
         self._params[SEIR.P_EXPOSED] = 0.01
         self._params[SEIR.P_SYMPTOMS] = 0.05
         self._params[SEIR.P_REMOVE] = 0.05
@@ -48,24 +48,13 @@ class SEIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         # model
         self._model = SEIR()
 
-    def testEpidemic( self ):
-        '''Test we get an epidemic'''
-        self._lab = epyc.Lab()
-        self._lab[SEIR.P_INFECT_SYMPTOMATIC] = 0.3
-        self._lab[SEIR.P_INFECT_ASYMPTOMATIC] = 0.3
-        self._lab[SEIR.P_EXPOSED] = 0.01
-        self._lab[SEIR.P_SYMPTOMS] = 0.05
-        self._lab[SEIR.P_REMOVE] = 0.05
-        e = StochasticDynamics(self._model, self._network)
-        self._lab.runExperiment(e)
-        rc = (self._lab.results())[0]
-
-        self.assertCountEqual(rc[epyc.Experiment.RESULTS], [SEIR.SUSCEPTIBLE, SEIR.EXPOSED, SEIR.INFECTED, SEIR.REMOVED])
-        self.assertTrue(rc[epyc.Experiment.RESULTS][SEIR.SUSCEPTIBLE] > 0)
-        self.assertTrue(rc[epyc.Experiment.RESULTS][SEIR.EXPOSED] == 0)
-        self.assertTrue(rc[epyc.Experiment.RESULTS][SEIR.INFECTED] == 0)
-        self.assertTrue(rc[epyc.Experiment.RESULTS][SEIR.REMOVED] > 0)
-        self.assertEqual(rc[epyc.Experiment.RESULTS][SEIR.SUSCEPTIBLE] + rc[epyc.Experiment.RESULTS][SEIR.REMOVED], self._network.order())
+    def assertEpidemic(self, rc):
+        self.assertCountEqual(rc, [SEIR.SUSCEPTIBLE, SEIR.EXPOSED, SEIR.INFECTED, SEIR.REMOVED])
+        self.assertTrue(rc[SEIR.SUSCEPTIBLE] > 0)
+        self.assertTrue(rc[SEIR.EXPOSED] == 0)
+        self.assertTrue(rc[SEIR.INFECTED] == 0)
+        self.assertTrue(rc[SEIR.REMOVED] > 0)
+        self.assertEqual(rc[SEIR.SUSCEPTIBLE] + rc[SEIR.REMOVED], self._network.order())
 
 if __name__ == '__main__':
     unittest.main()

@@ -28,9 +28,9 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
     def setUp( self ):
         '''Set up the experimental parameters and experiment.'''
 
-        # single experiment
+        # single epidemic-causing experiment
         self._params = dict()
-        self._params[SIR.P_INFECT] = 0.1
+        self._params[SIR.P_INFECT] = 0.3
         self._params[SIR.P_INFECTED] = 0.01
         self._params[SIR.P_REMOVE] = 0.05
         self._network = networkx.erdos_renyi_graph(1000, 0.005)
@@ -44,21 +44,12 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         # model
         self._model = SIR()
 
-    def testEpidemic( self ):
-        '''Test we get an epidemic'''
-        self._lab = epyc.Lab()
-        self._lab[SIR.P_INFECT] = 0.3
-        self._lab[SIR.P_INFECTED] = 0.01
-        self._lab[SIR.P_REMOVE] = 0.05
-        e = StochasticDynamics(self._model, self._network)
-        self._lab.runExperiment(e)
-        rc = (self._lab.results())[0]
-
-        self.assertCountEqual(rc[epyc.Experiment.RESULTS], [SIR.SUSCEPTIBLE, SIR.INFECTED, SIR.REMOVED])
-        self.assertTrue(rc[epyc.Experiment.RESULTS][SIR.SUSCEPTIBLE] > 0)
-        self.assertTrue(rc[epyc.Experiment.RESULTS][SIR.INFECTED] == 0)
-        self.assertTrue(rc[epyc.Experiment.RESULTS][SIR.REMOVED] > 0)
-        self.assertEqual(rc[epyc.Experiment.RESULTS][SIR.SUSCEPTIBLE] + rc[epyc.Experiment.RESULTS][SIR.REMOVED], self._network.order())
+    def assertEpidemic(self, rc):
+        self.assertCountEqual(rc, [SIR.SUSCEPTIBLE, SIR.INFECTED, SIR.REMOVED])
+        self.assertTrue(rc[SIR.SUSCEPTIBLE] > 0)
+        self.assertTrue(rc[SIR.INFECTED] == 0)
+        self.assertTrue(rc[SIR.REMOVED] > 0)
+        self.assertEqual(rc[SIR.SUSCEPTIBLE] + rc[SIR.REMOVED], self._network.order())
 
 
 if __name__ == '__main__':
