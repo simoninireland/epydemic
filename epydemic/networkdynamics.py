@@ -209,10 +209,12 @@ class Dynamics(NetworkExperiment):
             l = self.locus(l)
         self._perElementEvents[p].append((l, pr, ef))
 
-    def perElementEventDistribution(self, p: Process) -> EventDistribution:
-        """Return the distribution of per-element events for the given process' loci.
+    def perElementEventDistribution(self, p: Process, t: float) -> EventDistribution:
+        """Return the distribution of per-element events for the given process' loci
+        at the given time. By default the distribution is time-independent.
 
         :param p: the process
+        :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
         if p in self._perElementEvents:
             return self._perElementEvents[p]
@@ -231,10 +233,12 @@ class Dynamics(NetworkExperiment):
             l = self.locus(l)
         self._perLocusEvents[p].append((l, pr, ef))
 
-    def fixedRateEventDistribution(self, p: Process) -> EventDistribution:
-        """Return the distribution of fixed-rate events for the given process' loci.
+    def fixedRateEventDistribution(self, p: Process, t: float) -> EventDistribution:
+        """Return the distribution of fixed-rate events for the given process' loci
+        at the given time. By default the distribution is time-independent.
 
         :param p: the process
+        :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
         if p in self._perElementEvents:
             return self._perLocusEvents[p]

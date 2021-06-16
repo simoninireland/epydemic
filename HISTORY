@@ -1,5 +1,10 @@
 Version 1.8.1
 
+   - Added recording of first hitting time for nodes
+   - Added options to CompartmentedMode.markOccupied() and CompartmentedModel.markHit()
+     to only record the first occupation and hitting times respectively,
+     and to ignore subsequent re-transmission or -infection
+
 Version 1.7.1 (2021-06-10)
 
    - Changed implementation of Percolate to use the Newman-Ziff approach
@@ -13,7 +18,7 @@ Version 1.7.1 (2021-06-10)
    - Integrated the generating functions library
    - Added type annotations to documentation format (makes reading the docs easier)
    - Added "shuffle" process for rewiring edges
-   - Write implementation note on generating functions
+   - Wrote implementation note on generating functions
 
 Version 1.6.1 (2021-05-13)
 

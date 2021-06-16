@@ -25,6 +25,10 @@ Attributes
 
 .. autoattribute:: CompartmentedModel.OCCUPIED
 
+.. autoattribute:: CompartmentedModel.T_OCCUPIED
+
+.. autoattribute:: CompartmentedModel.T_HITTING
+
 
 Model setup
 -----------
@@ -72,8 +76,9 @@ and when generating results in :meth:`CompartmentedModel.results`
 Evolving the network
 --------------------
 
-Events in compartmented models need an interafce to change the compartment of nodes
-and to mark edges used in transmitting the epidemic.
+Events in compartmented models need an interface to change the
+compartment of nodes, to mark edges used in transmitting the epidemic,
+and to record the hitting time of nodes.
 
 .. automethod:: CompartmentedModel.setCompartment
 
@@ -82,6 +87,8 @@ and to mark edges used in transmitting the epidemic.
 .. automethod:: CompartmentedModel.changeCompartment
 
 .. automethod:: CompartmentedModel.markOccupied
+
+.. automethod:: CompartmentedModel.markHit
 
 The network access interface of :class:`Process` is extended with methods that
 understand the mappings between nodes, edges, and compartments.

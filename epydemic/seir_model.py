@@ -1,7 +1,7 @@
 # SEIR as a compartmented model
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 
 from epydemic import CompartmentedModel, Node, Edge
 import sys
+from typing import Dict, Any
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict, Any
+    from typing import Final
 else:
     # backport compatibility with older typing
-    from typing import Dict, Any
     from typing_extensions import Final
 
 class SEIR(CompartmentedModel):
@@ -31,7 +31,7 @@ class SEIR(CompartmentedModel):
     A susceptible node becomes exposed when infected by either an exposed or an infected
     neighbour. Exposed nodes become infected (symptomatic) to infected and then recover
     to removed.
-    
+
     In contrast to the more familiar :class:`SIR` model, SEIR has two
     compartments that can pass infection. The utility of the model from two aspects:
     exploring what fraction of the contract tree arises from infected individuals
@@ -43,32 +43,32 @@ class SEIR(CompartmentedModel):
     for susceptible-exposed or susceptible-infected interactions. The initial seed population
     is placed into :attr:`EXPOSED`, rather than into :attr:`INFECTED` as happens
     for :class:`SIR`.'''
-    
+
     # Model parameters
-    P_EXPOSED : Final[str] = 'epydemic.SEIR.pExposed'              #: Parameter for probability of initially being exposed.
-    P_INFECT_ASYMPTOMATIC : Final[str] = 'epydemic.SEIR.pInfectA'  #: Parameter for probability of infection on contact with an exposed individual
-    P_INFECT_SYMPTOMATIC : Final[str] = 'epydemic.SEIR.pInfect'    #: Parameter for probability of infection on contact with a symptomatic individual.
-    P_SYMPTOMS : Final[str] = 'epydemic.SEIR.pSymptoms'            #: Parameter for probability of becoming symptomatic after exposure. 
-    P_REMOVE : Final[str] = 'epydemic.SEIR.pRemove'                #: Parameter for probability of removal (recovery).
-    
+    P_EXPOSED: Final[str] = 'epydemic.SEIR.pExposed'              #: Parameter for probability of initially being exposed.
+    P_INFECT_ASYMPTOMATIC: Final[str] = 'epydemic.SEIR.pInfectA'  #: Parameter for probability of infection on contact with an exposed individual
+    P_INFECT_SYMPTOMATIC: Final[str] = 'epydemic.SEIR.pInfect'    #: Parameter for probability of infection on contact with a symptomatic individual.
+    P_SYMPTOMS: Final[str] = 'epydemic.SEIR.pSymptoms'            #: Parameter for probability of becoming symptomatic after exposure.
+    P_REMOVE: Final[str] = 'epydemic.SEIR.pRemove'                #: Parameter for probability of removal (recovery).
+
     # Possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE : Final[str] = 'epydemic.SEIR.S'        #: Compartment for nodes susceptible to infection.
-    EXPOSED : Final[str] = 'epydemic.SEIR.E'            #: Compartment for nodes exposed and infectious.
-    INFECTED : Final[str] = 'epydemic.SEIR.I'           #: Compartment for nodes symptomatic and infectious.
-    REMOVED : Final[str] = 'epydemic.SEIR.R'            #: Compartment for nodes recovered/removed.
+    SUSCEPTIBLE: Final[str] = 'epydemic.SEIR.S'        #: Compartment for nodes susceptible to infection.
+    EXPOSED: Final[str] = 'epydemic.SEIR.E'            #: Compartment for nodes exposed and infectious.
+    INFECTED: Final[str] = 'epydemic.SEIR.I'           #: Compartment for nodes symptomatic and infectious.
+    REMOVED: Final[str] = 'epydemic.SEIR.R'            #: Compartment for nodes recovered/removed.
 
     # Loci containing the edges at which dynamics can occur
-    SE : Final[str] = 'epydemic.SEIR.SE'                #: Edge able to transmit infection from an exposed individual.
-    SI : Final[str] = 'epydemic.SEIR.SI'                #: Edge able to transmit infection from an infected individual.
+    SE: Final[str] = 'epydemic.SEIR.SE'                #: Edge able to transmit infection from an exposed individual.
+    SI: Final[str] = 'epydemic.SEIR.SI'                #: Edge able to transmit infection from an infected individual.
 
     def __init__(self):
-        super(SEIR, self).__init__()
+        super().__init__()
 
     def build(self, params : Dict[str, Any]):
         '''Build the SEIR model.
 
         :param params: the model parameters'''
-        super(SEIR, self).build(params)
+        super().build(params)
 
         pExposed = params[self.P_EXPOSED]
         pInfectA = params[self.P_INFECT_ASYMPTOMATIC]
@@ -91,9 +91,9 @@ class SEIR(CompartmentedModel):
         self.addEventPerElement(self.EXPOSED, pSymptoms, self.symptoms)
         self.addEventPerElement(self.INFECTED, pRemove, self.remove)
 
-    def infectAsymptomatic(self, t : float, e : Node):
+    def infectAsymptomatic(self, t: float, e: Edge):
         '''Perform an infection event when an :attr:`EXPOSED` individual infects
-        a neighbouring :attr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.  
+        a neighbouring :attr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.
         The default calls :meth:`infect` so that infections by way of exposed or
         symptomatic individuals are treated in the same way. Sub-classes can override this
         to, for example, record that the infection was passed asymptomatically.
@@ -102,31 +102,29 @@ class SEIR(CompartmentedModel):
         :param e: the edge transmitting the infection'''
         self.infect(t, e)
 
-    def infect(self, t : float, e : Edge):
+    def infect(self, t: float, e: Edge):
         '''Perform an infection event when an :attr:`INFECTED` individual infects
-        a neighbouring :attr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.  
-        
+        a neighbouring :attr:`SUSCEPTIBLE`, rendering them :attr:`EXPOSED` in turn.
+
         :param t: the simulation time
         :param e: the edge transmitting the infection'''
         (n, _) = e
         self.changeCompartment(n, self.EXPOSED)
-        self.markOccupied(e, t)
+        self.markOccupied(e, t, firstOnly=True)
+        self.markHit(n, t, firstOnly=True)
 
-    def symptoms(self, t : float, n : Node):
+    def symptoms(self, t: float, n: Node):
         '''Perform the symptoms-developing event. This changes the compartment of
         the node to :attr:`INFECTED`.
 
-        :param t: the simulation time (unused)
+        :param t: the simulation time
         :param n: the node'''
         self.changeCompartment(n, self.INFECTED)
 
-    def remove(self, t : float, n : Node):
+    def remove(self, t: float, n: Node):
         '''Perform a removal event. This changes the compartment of
         the node to :attr:`REMOVED`.
 
-        :param t: the simulation time (unused)
+        :param t: the simulation time
         :param n: the node'''
         self.changeCompartment(n, self.REMOVED)
-    
-                
-   
