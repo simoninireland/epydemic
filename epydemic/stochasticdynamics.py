@@ -31,7 +31,6 @@ class StochasticDynamics(Dynamics):
     :ref:`Gillespie 1976 <Gil76>` and :ref:`Gillespie 1977 <Gil77>` for a discussion
     of the technique.
 
-
     :param p: the process to run
     :param g: network or network generator (optional, can be provided later)'''
 
@@ -43,8 +42,6 @@ class StochasticDynamics(Dynamics):
 
         :param params: the experimental parameters
         :returns: the experimental results dict'''
-
-        # run the dynamics
         proc = self.process()
         rng = numpy.random.default_rng()
         t = 0
