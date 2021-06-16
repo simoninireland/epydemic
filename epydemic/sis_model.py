@@ -114,7 +114,7 @@ class SIS(CompartmentedModel):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
         traversed as occupied, records the hitting time for the node
-        if it is the first, and the number of times a node has bbeen infected,
+        if it is the first, and the number of times a node has been infected,
 
         :param t: the simulation time
         :param e: the edge transmitting the infection, susceptible-infected'''
