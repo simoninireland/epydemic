@@ -36,7 +36,7 @@ class SynchronousDynamics(Dynamics):
     simple to code for many cases, but can be statistically inexact and slow
     for large systems.
 
-    :pafram p: the network process to run
+    :param p: the network process to run
     :param g: prototype network to run over (optional)'''
 
     # additional metadata
@@ -50,8 +50,6 @@ class SynchronousDynamics(Dynamics):
 
         :param params: the parameters of the simulation
         :returns: a dict of experimental results'''
-
-        # run the
         rng = numpy.random.default_rng()
         proc = self.process()
         t = 1.0
@@ -64,11 +62,11 @@ class SynchronousDynamics(Dynamics):
             nev = self.runPendingEvents(t)
 
             # run through all the events in the distribution
-            dist = self.perElementEventDistribution(t)
+            dist = self.perElementEventDistribution(proc, t)
             for (l, p, ef) in dist:
                 if (len(l) > 0) and (p > 0.0):
                     # run through every possible element on which this event may occur
-                    for e in copy(l.elements()):
+                    for e in copy(l):
                         # test for occurrance of the event on this element
                         if rng.random() <= p:
                             # yes, perform the event
@@ -76,7 +74,7 @@ class SynchronousDynamics(Dynamics):
                             nev = nev + 1
 
             # run through all the fixed-rate events for this timestep
-            dist = self.fixedRateEventDistribution(t)
+            dist = self.fixedRateEventDistribution(proc, t)
             for (l, p, ef) in dist:
                 if (len(l) > 0) and (p > 0.0):
                     if rng.random() <= p:
