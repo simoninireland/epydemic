@@ -542,24 +542,27 @@ class CompartmentedModel(Process):
         # propagate effects of entering new compartment
         self._callEnterHandlers(n, c)
 
-    def markOccupied(self, e: Edge, t: float, firstOnly: bool = False):
+    def markOccupied(self, e: Edge, t: float, firstOnly: bool = True):
         '''Mark the given edge as having been occupied by the dynamics, i.e., to
-        have been traversed in transmitting the disease, at time t. If
-        firstOnly is True then only the first occupation time is recorded.
+        have been traversed in transmitting the disease, at time t. By default
+        the time of first occupation is recorded: if firstOnly is False then
+        subsequent occupations overwrite the ealier ones.
 
         :param e: the edge
         :param t: the simulation time at which it was occupied
-        :param firstOnly: (optional) only record the first occupation time (defaults to False)'''
+        :param firstOnly: (optional) only record the first occupation time (defaults to True)'''
         g = self.network()
         (n, m) = e
         data = g.get_edge_data(n, m)
-        data[self.OCCUPIED] = True
-        data[self.T_OCCUPIED] = t
+        if (not firstOnly) or (not data[self.OCCUPIED]):
+            data[self.OCCUPIED] = True
+            data[self.T_OCCUPIED] = t
 
-    def markHit(self, n: Node, t: float, firstOnly: bool = False):
+    def markHit(self, n: Node, t: float, firstOnly: bool = True):
         '''Mark the node as "hit", which happens when the epidemic first
-        reaches the node. If firstOnly is True then only the first
-        hitting time is recorded, with subsequent hits being ignored.
+        reaches the node. By default the first hitting time is
+        recorded: if firstOnly is False then subsequent infections
+        overwrite the ealier ones.
 
         For :class:`SIR` the hitting time is the time of infection;
         for :class:`SIS` the time of first infection; for
@@ -567,14 +570,14 @@ class CompartmentedModel(Process):
 
         :param n: the node
         :param t: the simulation time
-        :param firstOnly: (optional) only record the first hitting time (defaults to False)
+        :param firstOnly: (optional) only record the first hitting time (defaults to True)
 
         '''
         g = self.network()
-        g.nodes[n][self.T_HITTING] = t
+        if (not firstOnly) or self.T_HITTING not in g.nodes[n]:
+            g.nodes[n][self.T_HITTING] = t
 
     def addNode(self, n: Node, c: str = None, **kwds):
-
         '''Add a node to the working network, adding it to the appropriate compartment
         if one is provided].
 
