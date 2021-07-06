@@ -7,6 +7,10 @@ Version 1.8.1
    - Added tests to make sure epidemics happend (when they should) on a per-model
      basis but under both dynamics
 
+Version 1.7.2 (2021-07-06)
+
+   - Fixed generating functions library not installing
+
 Version 1.7.1 (2021-06-10)
 
    - Changed implementation of Percolate to use the Newman-Ziff approach
