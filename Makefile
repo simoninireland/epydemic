@@ -86,7 +86,8 @@ SOURCES_TESTS = \
 	test/test_percolate.py \
 	test/test_shuffle.py \
 	test/test_newmanziff.py \
-	test/test_gf.py
+	test/test_gf.py \
+	test/test_gof.py
 TESTSUITE = test
 
 SOURCES_DOC_CONF = doc/conf.py
