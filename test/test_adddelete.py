@@ -22,19 +22,33 @@ import epyc
 import unittest
 import networkx
 
+
 class AddDeleteRecorder(AddDelete):
 
     N = 'networkSize'
 
     def __init__(self):
-        super(AddDeleteRecorder, self).__init__()
+        super().__init__()
+        self._finalNetwork = None
+
+    def setUp(self, params):
+        super().setUp(params)
+        self._finalNetwork = None
+
+    def finalNetwork(self):
+        '''Return the final network that we saved.
+
+        :returns: the network'''
+        return self._finalNetwork
 
     def results( self ):
-        '''Save the size of the resulting network.
+        '''Save the size of the resulting network and the final
+        network itself for further analysis.
 
         :returns: a dict of experimental results'''
-        rc = super(AddDeleteRecorder, self).results()
+        rc = super().results()
         rc[self.N] = self.network().order()
+        self._finalNetwork = self.network()
         return rc
 
 
@@ -58,17 +72,18 @@ class AddDeleteTest(unittest.TestCase):
         '''Test that the process runs and adds and deletes at roughly equal rates.'''
         self._params[AddDelete.P_ADD] = 1
         self._params[AddDelete.P_DELETE] = 1
-        rc = self._e.set(self._params).run()
+        rc = self._e.set(self._params).run(fatal=True)
         self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order(), delta = int((self._network.order() + 0.0) * 0.1))
 
     def testRunFaster(self):
         '''Test that the process runs and adds faster than it deletes.'''
         self._params[AddDelete.P_ADD] = 1
         self._params[AddDelete.P_DELETE] = 0.5
-        rc = self._e.set(self._params).run()
+        rc = self._e.set(self._params).run(fatal=True)
         dn = self._maxTime * (self._params[AddDelete.P_ADD] - self._params[AddDelete.P_DELETE])
-        print(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order(), dn)
+        #print(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order(), dn)
         self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][AddDeleteRecorder.N], self._network.order() + dn, delta = int((self._network.order() + 0.0) * 2 * 0.1))
+
 
 if __name__ == '__main__':
     unittest.main()

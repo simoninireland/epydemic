@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-import sys
-from math import pow
 from cmath import exp
 from mpmath import polylog
 from scipy.special import zeta

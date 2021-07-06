@@ -36,9 +36,9 @@ class AddDelete(Process):
     of the size of the network, and a fixed degree for added nodes.'''
 
     # parameters
-    P_ADD : Final[str] = "epydemic.adddelete.pAdd"        #: Parameter for the node addition probability
-    P_DELETE : Final[str] = "epydemic.adddelete.pDelete"  #: Parameter for the node deletion probability
-    DEGREE : Final[str] = "epydemic.adddelete.addDegree"  #: Degree of newly-added nodes
+    P_ADD: Final[str] = "epydemic.adddelete.pAdd"        #: Parameter for the node addition probability
+    P_DELETE: Final[str] = "epydemic.adddelete.pDelete"  #: Parameter for the node deletion probability
+    DEGREE: Final[str] = "epydemic.adddelete.addDegree"  #: Degree of newly-added nodes
 
     # loci
     NODES : Final[str] = "allnodes"       #: Name of the locus holding all nodes in the network
