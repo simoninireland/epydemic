@@ -7,11 +7,16 @@
 
 *** Release 1.8.1
 
-**** Coding [0/1]
+**** Coding [0/2]
 
     - [ ] Add degree-distribution-preserving rewiring functions
       preserving P(k, k') cite:UnreasonableEffectiveness (branch
       rewiring-processes)
+    - [ ] Constructing derived generating functions
+
+**** Bugs [0/1]
+
+     - [ ] Import of gf library from pip?
 
 
 ** Sub-projects
@@ -64,7 +69,7 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library [7/7]
+*** Generating function library [7/8]
 
     branch gf
 
@@ -77,10 +82,6 @@
 
     The biggest challenge might be to write documentation....
 
-    There's another approach alongside this, which would be to write a
-    symbolic package with the generating functions in them, for use in
-    Sage. This would then complement the numerical side.
-
     - [X] First version
     - [X] Integrate with calls etc, so they behave like functions
     - [X] Access coefficients by index
@@ -88,11 +89,17 @@
     - [X] Derivatives
     - [X] Test suite
     - [X] Memoisation
+    - [ ] Deriving new generating functions, with more complex
+      (functional) values for X
+
+    There's another approach alongside this, which would be to write a
+    symbolic package with the generating functions in them, for use in
+    Sage. This would then complement the numerical side.
 
 *** Paper on draw set implementation
 
 **** TODO Complete analysis of fairness
-     SCHEDULED: <2021-06-04 Fri>
+     SCHEDULED: <2021-07-07 Wed>
 **** TODO Ask Len Thomas about other statistical tests
 **** TODO Numerical exploration
 **** TODO First draft
