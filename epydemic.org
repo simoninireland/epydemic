@@ -14,9 +14,9 @@
       rewiring-processes)
     - [ ] Constructing derived generating functions
 
-**** Bugs [0/1]
+**** Bugs [1/1]
 
-     - [ ] Import of gf library from pip?
+     - [X] Import of gf library from pip?
 
 
 ** Sub-projects
@@ -54,6 +54,7 @@
 
     - [ ] Set up compute cluster in PyPy linked to Jupyter on CPython
     - [ ] Check interactions between versions
+    - [ ] Does PyPy work with ParallelLab?
 
 *** Containerisation
 
@@ -69,7 +70,7 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library [7/8]
+*** Generating function library [7/9]
 
     branch gf
 
@@ -91,15 +92,42 @@
     - [X] Memoisation
     - [ ] Deriving new generating functions, with more complex
       (functional) values for X
+    - [ ] Multi-variable generating functions
 
     There's another approach alongside this, which would be to write a
     symbolic package with the generating functions in them, for use in
     Sage. This would then complement the numerical side.
 
+*** Multilayer networks
+
+    A useful extra composition is to have multiple processes running on
+    different layers of the network, where (for example) edges are
+    "coloured" and processes only make use of edges of their
+    colour. Edges can change colour.
+
+    The basic problem is t keep the edges straight in the right loci,
+    but also to provide an API for getting (for example) incident
+    edges of a given colour and adjacent nodes accessed by traversing
+    edges of a given colour.
+
+*** TODO JOSS paper
+    SCHEDULED: <2021-08-04 Wed>
+
+    Complete the JOSS paper to give people something to cite when
+    using epydemic. The push a citation.cff file so that there's an
+    automatic citation widget in the repo. (Need to explore what this
+    contains.)
+
+*** A message-passing dynamics
+
+    Compare the message-passing dynamics of
+    cite:MessagePassingEpidemicModels to the usual Gillespie approach,
+    to allow more general distributions in infection and recovery
+    times. This would probably require an API change for models.
+
 *** Paper on draw set implementation
 
 **** TODO Complete analysis of fairness
-     SCHEDULED: <2021-07-07 Wed>
-**** TODO Ask Len Thomas about other statistical tests
+     SCHEDULED: <2021-08-16 Mon>
 **** TODO Numerical exploration
 **** TODO First draft

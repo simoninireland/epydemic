@@ -77,7 +77,7 @@ class GFTest(unittest.TestCase):
         g = networkx.gnp_random_graph(5000, 0.005)
         gf = gf_from_network(g)
         gfprime = gf.dx()
-        self.assertAlmostEqual(gfprime(1), (5000 * 0.005), places=0)
+        self.assertAlmostEqual(gfprime(1), (5000 * 0.005), delta=1)
 
     def testNetworkCoefficientsByDifferentiation(self):
         '''Test that coefficients are retrieved correctly by differentiation.'''
@@ -97,16 +97,10 @@ class GFTest(unittest.TestCase):
         gf = gf_er(50000, kmean=200)
 
         # extract high-degree coefficients
-        # This relies on being able to do high-percision computation. We
+        # This relies on being able to do high-precision computation. We
         # don't care about the results, just that they don't cause exceptions
-        gf[0]
-        gf[5]
-        gf[10]
-        gf[200]
-        gf[400]
-        gf[1000]
-        gf[5000]
-        gf[10000]
+        for k in [0, 5, 10, 100, 200, 400, 1000, 5000, 10000]:
+            gf[k]
 
     def testSeriesDerivative(self):
         '''Test differentiation for series.'''
@@ -141,10 +135,33 @@ class GFTest(unittest.TestCase):
         for k in range(len(cs)):
             self.assertAlmostEqual(cs[k], gf[k], places=1)
 
+    def testERmean(self):
+        '''Test extraction of the mean degree for ER networks.'''
+        g = networkx.gnp_random_graph(5000, 0.005)
+        gf = gf_er(5000, phi=0.005)
+        gf_prime = gf.dx()
+
+        kmean = 5000 * 0.005
+        self.assertAlmostEqual(gf_prime(1), kmean, delta=1)
+
+        degrees = [d for (_, d) in g.degree()]
+        kmean_empirical = sum(degrees) / 5000
+        self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
+
     def testBAProbabilities(self):
         '''Test that the BA GF evaluates to 1.'''
         gf = gf_ba(3.0)
         self.assertAlmostEqual(gf(1.0), 1.0, places=2)
+
+    def testBAmean(self):
+        '''Test extraction of the mean degree for BA neworks.'''
+        g = networkx.barabasi_albert_graph(10000, 3)
+        gf = gf_ba(3)
+        gf_prime = gf.dx()
+
+        degrees = [d for (_, d) in g.degree()]
+        kmean_empirical = sum(degrees) / 10000
+        self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
 
     def testPLCProbabilities(self):
         '''Test that the PLC GF evaluates to 1.'''
@@ -172,6 +189,20 @@ class GFTest(unittest.TestCase):
         gcs = [gf[k] for k in range(len(cs))]
         for k in range(len(cs)):
             self.assertAlmostEqual(cs[k], gf[k], places=1)
+
+    def testPLCmean(self):
+        '''Test extraction of the mean degree for PLC neworks.'''
+        param = dict()
+        param[PLCNetwork.N] = 10000
+        param[PLCNetwork.EXPONENT] = 3.0
+        param[PLCNetwork.CUTOFF] = 25
+        g = PLCNetwork().set(param).generate()
+        gf = gf_plc(3.0, 25)
+        gf_prime = gf.dx()
+
+        degrees = [d for (_, d) in g.degree()]
+        kmean_empirical = sum(degrees) / 10000
+        self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
 
 
 if __name__ == '__main__':
