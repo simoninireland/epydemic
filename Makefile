@@ -63,7 +63,9 @@ SOURCES_CODE = \
 	epydemic/gf/discrete_gf.py \
 	epydemic/gf/continuous_gf.py \
 	epydemic/gf/interface.py \
-	epydemic/gf/standard_gfs.py
+	epydemic/gf/standard_gfs.py \
+	epydemic/archive/__init__.py \
+	epydemic/archive/builder.py
 SOURCES_TESTS = \
 	test/__init__.py \
 	test/test_bitstream.py \
@@ -157,6 +159,7 @@ SOURCES_PAPER = \
 SOURCES_UTILS = \
 	utils/make-powerlaw-cutoff.py \
 	utils/make-monitor-progress.py \
+	utils/make-networks.py \
 	utils/profile-simulation.py
 
 # Extras for the build and packaging system
