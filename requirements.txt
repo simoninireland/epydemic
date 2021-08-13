@@ -5,3 +5,4 @@ pandas
 numpy >= 1.18
 scipy
 mpmath
+epydemicarchive_client
