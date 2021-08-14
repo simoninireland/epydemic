@@ -26,14 +26,15 @@ class GF:
     A generating function represents a formal power series. In network
     science they are usually, but not exclusively, used to represent
     probability distributions, for example of node degrees. Computing
-    with the generating functions then provides a way of woirking with
+    with the generating functions then provides a way of working with
     entire distributions, from which the individual probabilities can
     later be extracted.
 
-    Generating functions can be treated in two ways:
+    Generating functions can be treated in three ways:
 
     1. As arrays of coefficients that can be extracted
     2. As functions that can be called
+    3. As functions to be differentiated one or more times
 
     In the first approach, use the array interface, for example:
 
@@ -46,6 +47,16 @@ class GF:
     .. code-block:: python
 
        p_0 = gf(0)
+
+    In the third, use the :meth:`dx` method, for example:
+
+    .. code-block:: python
+
+       gf_prime_prime = gf.dx(2)
+
+    All three cases are memoised to improve performance, relying on
+    the fact that the generating function class is immutable.
+
     '''
 
     def __init__(self):
@@ -55,7 +66,9 @@ class GF:
 
     def getCoefficient(self, i: int) -> float:
         '''Return the 'th coefficient, that is the coefficient of the
-        term in :math:`x^i`. This should be overridden by sub-classes.
+        term in :math:`x^i`.
+
+        This method should be overridden by sub-classes.
 
         :param i: the index
         :returns: the i'th coefficient'''
@@ -63,7 +76,9 @@ class GF:
 
     def evaluate(self, x: float) -> float:
         '''Evaluate the generating function at x. This is always a number
-        on the range :math:`[0, 1]]`. This method must be overridden by sub-classes.
+        on the range :math:`[0, 1]`.
+
+        This method must be overridden by sub-classes.
 
         :param x: the argument
         :returns: the value of the generating function'''
@@ -72,6 +87,8 @@ class GF:
     def derivative(self, order: int = 1) -> 'GF':
         '''Return a new generating function representing the derivative
         (to any order, the first by default).
+
+        This method should be overridden by sub-classes.
 
         :param order: (optional) the order of derivative (defaults to 1)
         :returns: the dserivative generating function'''
