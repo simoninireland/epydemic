@@ -43,7 +43,7 @@ class DiscreteGF(FunctionGF):
         if ps == 0:
             raise ValueError('Must provide one of a network or a list of coefficients')
         elif ps > 1:
-            raise ValueError('Ambbiguous parameters')
+            raise ValueError('Ambiguous parameters')
 
         if g is not None:
             # extract the coefficients from the degree distribution
