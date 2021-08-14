@@ -76,9 +76,9 @@ SOURCES_TESTS = \
 	test/compartmenteddynamics.py \
 	test/test_loci.py \
 	test/test_sir.py \
-	test/test_sir_fixed_recovery.py \
+	test/test_sir_fixedrecovery.py \
 	test/test_sis.py \
-	test/test_sis_fixed_recovery.py \
+	test/test_sis_fixedrecovery.py \
 	test/test_sirs.py \
 	test/test_seir.py \
 	test/test_process.py \
@@ -150,7 +150,9 @@ SOURCES_DIAGRAMS = \
 	doc/cookbook/powerlaw-cutoff.png \
 	doc/cookbook/sir-progress-dt.png \
 	doc/cookbook/sir-progress-er.png \
-	doc/cookbook/sir-progress-plc.png
+	doc/cookbook/sir-progress-plc.png \
+	doc/cookbook/bond-percolation-plc.png \
+	doc/cookbook/site-percolation-plc.png
 SOURCES_PAPER = \
 	paper.md \
 	paper.bib
@@ -159,6 +161,7 @@ SOURCES_PAPER = \
 SOURCES_UTILS = \
 	utils/make-powerlaw-cutoff.py \
 	utils/make-monitor-progress.py \
+	utils/make-percolation.py \
 	utils/make-networks.py \
 	utils/profile-simulation.py
 
@@ -186,6 +189,7 @@ PIP = pip
 TWINE = twine
 GPG = gpg
 GIT = git
+ETAGS = etags
 VIRTUALENV = $(PYTHON) -m venv
 ACTIVATE = . $(VENV)/bin/activate
 TR = tr
@@ -225,6 +229,10 @@ RUN_TWINE = $(TWINE) upload dist/*
 # Default prints a help message
 help:
 	@make usage
+
+# Build the tags file
+tags:
+	$(ETAGS) -o TAGS $(SOURCES_CODE) $(SOURCES_TESTS)
 
 # Run tests for all versions of Python we're interested in
 test: env Makefile setup.py
@@ -273,10 +281,11 @@ check-local-repo-clean:
 diagrams:
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-monitor-progress.py
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-powerlaw-cutoff.py
+	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-percolation.py
 
 # Clean up the distribution build
 clean:
-	$(RM) $(SOURCES_GENERATED) $(SOURCES_DIST_DIR) epydemic.egg-info dist $(SOURCES_DOC_BUILD_DIR) $(SOURCES_DOC_ZIP) dist build
+	$(RM) $(SOURCES_GENERATED) $(SOURCES_DIST_DIR) $(PACKAGENAME).egg-info dist $(SOURCES_DOC_BUILD_DIR) $(SOURCES_DOC_ZIP) dist build
 
 # Clean up everything, including the computational environment (which is expensive to rebuild)
 reallyclean: clean
@@ -308,6 +317,7 @@ define HELP_MESSAGE
 Available targets:
    make test         run the test suite for all Python versions we support
    make coverage     run coverage checks of the test suite
+   make tags         build the TAGS file
    make doc          build the API documentation using Sphinx
    make diagrams     create the diagrams for the API documentation
    make env          create a development virtual environment
