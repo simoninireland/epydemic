@@ -17,9 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from collections import Counter
 from typing import Callable
-from networkx import Graph
 from epydemic.gf import GF
 
 
