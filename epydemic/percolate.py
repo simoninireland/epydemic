@@ -57,7 +57,10 @@ class Percolate(Process):
         two sets based on occupation, and then passed to the
         corresponding action method: :meth:`Percolation.occupy` for
         the occupied edges and :meth:`Percolation.unoccupy` for the
-        unoccupied edges.
+        unoccupied edges. (These two methods are called in that order,
+        which may be important for sub-classes that need to, for example,
+        examine or manipulate the network before :meth:`Percolation.unoccupy`
+        removes the unoccupied edges..)
 
         The implementation of the percolation process borrows heavily from
         the Newman-Ziff approach, whereby the set of edges is shuffled
