@@ -58,7 +58,7 @@ class PLCNetwork(NetworkGenerator):
     def topology(self) -> str:
         '''Return the topoology flag for this generator.
 
-        :returns: the topology'''
+        :returns: the topology mmarker ("PLC")'''
         return 'PLC'
 
     def _makePowerlawWithCutoff(self, alpha: float, kappa: float) -> Callable[[int], float]:

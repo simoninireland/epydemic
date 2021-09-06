@@ -40,7 +40,7 @@ class FixedNetwork(NetworkGenerator):
     def topology(self) -> str:
         '''Return the topoology flag for this generator.
 
-        :returns: the topology'''
+        :returns: the topology marker ("Arbitrary")'''
         return 'Arbitrary'
 
     def _generate(self, params: Dict[str, Any]) -> Graph:
@@ -78,7 +78,7 @@ class ERNetwork(NetworkGenerator):
     def topology(self) -> str:
         '''Return the topoology flag for this generator.
 
-        :returns: the topology'''
+        :returns: the topology marker ("ER")'''
         return 'ER'
 
     def _generate(self, params: Dict[str, Any]) -> Graph:
@@ -129,7 +129,7 @@ class BANetwork(NetworkGenerator):
     def topology(self) -> str:
         '''Return the topoology flag for this generator.
 
-        :returns: the topology'''
+        :returns: the topology marker ("BA")'''
         return 'BA'
 
     def _generate(self, params: Dict[str, Any]) -> Graph:
