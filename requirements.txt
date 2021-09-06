@@ -5,4 +5,5 @@ pandas
 numpy >= 1.18
 scipy
 mpmath
+python-dotenv
 epydemicarchive_client
