@@ -34,7 +34,7 @@ class ShuffleK(Process):
     network while maintaiing the node degrees.'''
 
     # Experimental parameters
-    REWIRE_FRACTION : Final[str] = "epydemic.shuffle-k.rewire"        #: Parameter for the fraction of edges to rewire.
+    REWIRE_FRACTION : Final[str] = "rewire"        #: Parameter for the fraction of edges to rewire.
 
     def __init__(self):
         super().__init__()

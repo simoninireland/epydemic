@@ -68,9 +68,9 @@ class ERNetwork(NetworkGenerator):
     :param limit: (optional) meximum  number of instances to generate'''
 
     # Experimental parameters
-    N: Final[str] = 'epydemic.generators.ER.N'         #: Experimental parameter for the size (order) of the network.
-    PHI: Final[str] = 'epydemic.generators.ER.phi'     #: Experimental parameter for the occupation probability of edges.
-    KMEAN: Final[str] = 'epydemic.generators.ER.kmean' #: Experimental parameter for the mean degree of the network.
+    N: Final[str] = 'N'         #: Experimental parameter for the size (order) of the network.
+    PHI: Final[str] = 'phi'     #: Experimental parameter for the occupation probability of edges.
+    KMEAN: Final[str] = 'kmean' #: Experimental parameter for the mean degree of the network.
 
     def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] =None):
         super().__init__(params, limit)
@@ -120,8 +120,8 @@ class BANetwork(NetworkGenerator):
     :param limit: (optional) meximum  number of instances to generate'''
 
     # Experimental parameters
-    N: Final[str] = 'epydemic.generators.BA.N'         #: Experimental parameter for the size (order) of the network.
-    M: Final[str] = 'epydemic.generators.BA.M'         #: Experimental parameter for the number of edges added per node.
+    N: Final[str] = 'N'         #: Experimental parameter for the size (order) of the network.
+    M: Final[str] = 'MperNode'  #: Experimental parameter for the number of edges added per node.
 
     def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] = None):
         super().__init__(params, limit)

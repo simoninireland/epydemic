@@ -48,9 +48,9 @@ class PLCNetwork(NetworkGenerator):
     :param limit: (optional) maximum number of independent networks to generate'''
 
     # Experimental parameters
-    N: Final[str] = 'epydemic.generators.PLC.N'                 #: Experimental parameter for the order of the network.
-    EXPONENT: Final[str] = 'epydemic.generators.PLC.exponent'   #: Experimental parameter for the exponent of the distribution.
-    CUTOFF: Final[str] = 'epydemic.generators.PLC.cutoff'       #: Experimental parameter for the cutoff of the distribution.
+    N: Final[str] = 'N'                 #: Experimental parameter for the order of the network.
+    EXPONENT: Final[str] = 'exponent'   #: Experimental parameter for the exponent of the distribution.
+    CUTOFF: Final[str] = 'cutoff'       #: Experimental parameter for the cutoff of the distribution.
 
     def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] = None):
         super().__init__(params, limit)

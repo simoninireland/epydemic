@@ -1,7 +1,7 @@
 # SIR with a fixed recovery time
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -30,13 +30,13 @@ class SIR_FixedRecovery(SIR):
     '''The Susceptible-Infected-Removed :term:`compartmented model of disease`,
     in the variation where the time spent infected is fixed rather than happening
     with some probability.'''
-    
+
     # the additional model parameter
-    T_INFECTED : Final[str] = 'epydemic.SIR_FR.tInfected'    #: Parameter for the time spent infected before removal/recovery.
+    T_INFECTED : Final[str] = 'tInfected'    #: Parameter for the time spent infected before removal/recovery.
 
     # node attribute for infection time
     INFECTION_TIME : Final[str] = 'infection_time'           #: Attribute recording when a node became infected
-    
+
     def __init__(self):
         super(SIR_FixedRecovery, self).__init__()
 
@@ -50,7 +50,7 @@ class SIR_FixedRecovery(SIR):
         pInfected = params[self.P_INFECTED]
         pInfect = params[self.P_INFECT]
         self._tInfected = params[self.T_INFECTED]
-        
+
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
         self.addCompartment(self.REMOVED, 0.0)
@@ -71,10 +71,10 @@ class SIR_FixedRecovery(SIR):
         for n in self.compartment(self.INFECTED):
             # record that the node was initially infected
             g.nodes[n][self.INFECTION_TIME] = 0.0
-        
+
             # post the corresponding removal event
             self.postEvent(tInfected, n, self.remove)
-        
+
     def infect(self, t : float, e : Any):
         '''Perform the normal infection event, and then post an event to remove the
         infected node at the appropriate time.
@@ -88,7 +88,6 @@ class SIR_FixedRecovery(SIR):
         # record the infection time
         (n, _) = e
         self.network().nodes[n][self.INFECTION_TIME] = t
-        
+
         # post the removal event for the appropriate time in the future
         self.postEvent(t + self._tInfected, n, self.remove)
-   

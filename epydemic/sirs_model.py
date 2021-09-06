@@ -35,7 +35,7 @@ class SIRS(SIR):
     (as for :class:`SIR`) or no immunity ( as for :class:`SIS`).'''
 
     # Extra model parameter
-    P_RESUSCEPT : Final[str] = 'epydemic.SIRS.pResuscept'    #: Parameter for probability of losing immunity
+    P_RESUSCEPT : Final[str] = 'pResuscept'    #: Parameter for probability of losing immunity
 
     def __init__(self):
         super(SIRS, self).__init__()
@@ -59,6 +59,3 @@ class SIRS(SIR):
         :param t: the simulation time (unused)
         :param n: the node'''
         self.changeCompartment(n, self.SUSCEPTIBLE)
-
-
-

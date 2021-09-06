@@ -45,21 +45,21 @@ class SEIR(CompartmentedModel):
     for :class:`SIR`.'''
 
     # Model parameters
-    P_EXPOSED: Final[str] = 'epydemic.SEIR.pExposed'              #: Parameter for probability of initially being exposed.
-    P_INFECT_ASYMPTOMATIC: Final[str] = 'epydemic.SEIR.pInfectA'  #: Parameter for probability of infection on contact with an exposed individual
-    P_INFECT_SYMPTOMATIC: Final[str] = 'epydemic.SEIR.pInfect'    #: Parameter for probability of infection on contact with a symptomatic individual.
-    P_SYMPTOMS: Final[str] = 'epydemic.SEIR.pSymptoms'            #: Parameter for probability of becoming symptomatic after exposure.
-    P_REMOVE: Final[str] = 'epydemic.SEIR.pRemove'                #: Parameter for probability of removal (recovery).
+    P_EXPOSED: Final[str] = 'pExposed'                  #: Parameter for probability of initially being exposed.
+    P_INFECT_ASYMPTOMATIC: Final[str] = 'pInfectAsymp'  #: Parameter for probability of infection on contact with an exposed individual
+    P_INFECT_SYMPTOMATIC: Final[str] = 'pInfect'        #: Parameter for probability of infection on contact with a symptomatic individual.
+    P_SYMPTOMS: Final[str] = 'pSymptoms'                #: Parameter for probability of becoming symptomatic after exposure.
+    P_REMOVE: Final[str] = 'pRemove'                    #: Parameter for probability of removal (recovery).
 
     # Possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE: Final[str] = 'epydemic.SEIR.S'        #: Compartment for nodes susceptible to infection.
-    EXPOSED: Final[str] = 'epydemic.SEIR.E'            #: Compartment for nodes exposed and infectious.
-    INFECTED: Final[str] = 'epydemic.SEIR.I'           #: Compartment for nodes symptomatic and infectious.
-    REMOVED: Final[str] = 'epydemic.SEIR.R'            #: Compartment for nodes recovered/removed.
+    SUSCEPTIBLE: Final[str] = 'SEIR.S'        #: Compartment for nodes susceptible to infection.
+    EXPOSED: Final[str] = 'SEIR.E'            #: Compartment for nodes exposed and infectious.
+    INFECTED: Final[str] = 'SEIR.I'           #: Compartment for nodes symptomatic and infectious.
+    REMOVED: Final[str] = 'SEIR.R'            #: Compartment for nodes recovered/removed.
 
     # Loci containing the edges at which dynamics can occur
-    SE: Final[str] = 'epydemic.SEIR.SE'                #: Edge able to transmit infection from an exposed individual.
-    SI: Final[str] = 'epydemic.SEIR.SI'                #: Edge able to transmit infection from an infected individual.
+    SE: Final[str] = 'SEIR.SE'                #: Edge able to transmit infection from an exposed individual.
+    SI: Final[str] = 'SEIR.SI'                #: Edge able to transmit infection from an infected individual.
 
     def __init__(self):
         super().__init__()

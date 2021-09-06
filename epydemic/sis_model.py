@@ -49,16 +49,16 @@ class SIS(CompartmentedModel):
     N_OCCUPIED: Final[int] = 'nOccupied'               #: Edge attribute storing the number of times the edge was occupied (i.e., used to transmit the infection).
 
     # Model  parameters
-    P_INFECTED: Final[str] = 'epydemic.SIS.pInfected'  #: Parameter for probability of initially being infected.
-    P_INFECT: Final[str] = 'epydemic.SIS.pInfect'      #: Parameter for probability of infection on contact.
-    P_RECOVER: Final[str] = 'epydemic.SIS.pRecover'    #: Parameter for probability of recovery (returning to susceptible).
+    P_INFECTED: Final[str] = 'pInfected'  #: Parameter for probability of initially being infected.
+    P_INFECT: Final[str] = 'pInfect'      #: Parameter for probability of infection on contact.
+    P_RECOVER: Final[str] = 'pRecover'    #: Parameter for probability of recovery (returning to susceptible).
 
     # Possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE: Final[str] = 'epydemic.SIS.S'         #: Compartment for nodes susceptible to infection.
-    INFECTED: Final[str] = 'epydemic.SIS.I'            #: Compartment for nodes infected.
+    SUSCEPTIBLE: Final[str] = 'SIS.S'         #: Compartment for nodes susceptible to infection.
+    INFECTED: Final[str] = 'SIS.I'            #: Compartment for nodes infected.
 
     # Locus containing the edges at which dynamics can occur
-    SI: Final[str] = 'epydemic.SIS.SI'                 #: Edge able to transmit infection.
+    SI: Final[str] = 'SIS.SI'                 #: Edge able to transmit infection.
 
     def __init__(self):
         super().__init__()

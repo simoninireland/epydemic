@@ -39,13 +39,13 @@ class NetworkStatistics(Process):
     '''
 
     # Experimental results
-    N : Final[str] = 'epydemic.networkstatistics.N'                    #: Result holding the order of the network.
-    M : Final[str] = 'epydemic.networkstatistics.M'                    #: Result holding the total number of edges in the network.
-    KMEAN : Final[str] = 'epydemic.networkstatistics.kmean'            #: Result holding the mean degree of nodes in the network.
-    KDIST : Final[str] = 'epydemic.networkstatistics.k_distribution'   #: Result holding the degree histogram as an array.
-    COMPONENTS : Final[str] = 'epydemic.networkstatistics.components'  #: Result holding the number of connected components in the network.
-    LCC : Final[str] = 'epydemic.networkstatistics.lcc'                #: Result holding the size of the largest (giant) component
-    SLCC : Final[str] = 'epydemic.networkstatistics.slcc'              #: Result holding the size of the second-largest component
+    N : Final[str] = 'N'                    #: Result holding the order of the network.
+    M : Final[str] = 'M'                    #: Result holding the total number of edges in the network.
+    KMEAN : Final[str] = 'kmean'            #: Result holding the mean degree of nodes in the network.
+    KDIST : Final[str] = 'k_distribution'   #: Result holding the degree histogram as an array.
+    COMPONENTS : Final[str] = 'ncomponents' #: Result holding the number of connected components in the network.
+    LCC : Final[str] = 'lcc'                #: Result holding the size of the largest (giant) component
+    SLCC : Final[str] = 'slcc'              #: Result holding the size of the second-largest component
 
     def __init__(self):
         super().__init__()
