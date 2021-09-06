@@ -19,6 +19,7 @@
 
 import unittest
 from epydemic import *
+from epyc import Experiment
 
 
 class NetworkDynamicsTest(unittest.TestCase):
@@ -155,6 +156,23 @@ class NetworkDynamicsTest(unittest.TestCase):
         p = Process()
         dyn = Dynamics(p)
         self.assertCountEqual(dyn.lociForProcess(p), dict())
+
+    def testTopologyMarjer(self):
+        '''Test we get a topology marker in the experimental parameters.'''
+        params = dict()
+        params[SIR.P_INFECTED] = 0.01
+        params[SIR.P_INFECT] = 0.02
+        params[SIR.P_REMOVE] = 0.01
+        params[ERNetwork.N] = 2000
+        params[ERNetwork.KMEAN] = 5
+
+        p = SIR()
+        gen = ERNetwork()
+        e = StochasticDynamics(p, gen)
+        rc = e.set(params).run()
+
+        self.assertIn(NetworkGenerator.TOPOLOGY, rc[Experiment.PARAMETERS])
+        self.assertEqual(rc[Experiment.PARAMETERS][NetworkGenerator.TOPOLOGY], gen.topology())
 
 
 if __name__ == '__main__':

@@ -99,7 +99,11 @@ class NetworkExperiment(Experiment):
         super().setUp(params)
 
         # generate a working network instance
-        self._graph = self.networkGenerator().set(params).generate()
+        gen =self.networkGenerator()
+        self._graph = gen.set(params).generate()
+
+        # update the paraneters with the topology marker for the generator
+        params[NetworkGenerator.TOPOLOGY] = gen.topology()
 
     def tearDown(self):
         '''At the end of each experiment, throw away the working network.'''

@@ -51,7 +51,7 @@ class NetworkGenerator(object):
     :param limit: (optional) maximum number of network instances to generate (defaults to unbounded)'''
 
     # Extra parameter added automatically
-    TOPOLOGY: Final[str] = 'epydemic.generators.topology'   #: Experimental parameter flagging the network topology.
+    TOPOLOGY: Final[str] = 'topology'   #: Experimental parameter flagging the network's topology.
 
     def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] = None):
         if params is None:

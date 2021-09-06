@@ -41,9 +41,9 @@ class FixedNetwork(NetworkGenerator):
         '''Return the topoology flag for this generator.
 
         :returns: the topology'''
-        return 'unknown'
+        return 'Arbitrary'
 
-    def _generate(self, params : Dict[str, Any]) -> Graph:
+    def _generate(self, params: Dict[str, Any]) -> Graph:
         '''Return a copy of the prototype network.
 
         :param params: experimental parameters (ignored)
@@ -137,7 +137,7 @@ class BANetwork(NetworkGenerator):
         and attachment rate (:attr:`M`).
 
         :param params: experimental parameters
-        :returns: the ER network'''
+        :returns: the BA network'''
 
         # extract the parameters
         N = params[self.N]

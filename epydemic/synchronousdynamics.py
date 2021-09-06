@@ -92,9 +92,6 @@ class SynchronousDynamics(Dynamics):
             # advance to the next timestep
             t += 1.0
 
-        # add topology marker
-        (self.parameters())[NetworkGenerator.TOPOLOGY] = self.networkGenerator().topology()
-
         # add some more metadata
         (self.metadata())[self.TIME] = t
         (self.metadata())[self.EVENTS] = events
