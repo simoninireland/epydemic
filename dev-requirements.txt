@@ -5,6 +5,7 @@ coverage
 pylint
 rope
 sphinx
+sphinx_rtd_theme
 sphinx-autodoc-typehints
 doc8
 twine
