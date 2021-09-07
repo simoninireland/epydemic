@@ -36,7 +36,7 @@ class NetworkGenerator(object):
     :cite:`StatPhy`.  In network science we often deal with ensembles
     of networks, for example the ensemble of all networks constructed
     by independently removing edges with some fixed probability (the
-    ER networks., and are looking to find the "ensemble average" of
+    ER networks), and are looking to find the "ensemble average" of
     some property, the value it takes on a "representative" network.
 
     In ``epydemic``, a network generator represents an ensemble of networks
