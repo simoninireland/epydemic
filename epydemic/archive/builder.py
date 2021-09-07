@@ -51,12 +51,21 @@ class ArchiveBuilder(NetworkGenerator):
 
     '''
 
-    def __init__(self, gen: NetworkGenerator, uri: str = None, api_key: str = None, tags: List[str] = []):
+    def __init__(self,
+                 gen: NetworkGenerator,
+                 uri: str = None, api_key: str = None,
+                 tags: List[str] = []):
         super().__init__()
         self._generator: NetworkGenerator = gen
         self._archive = Archive(uri, api_key)
         self._tags = tags
         self._uuids = []
+
+    def archive(self) -> Archive:
+        '''Return the archive being used.
+
+        :returns: the archive'''
+        return self._archive
 
     def topology(self) -> str:
         '''Return the topology flag for this generator. This is the same

@@ -4,9 +4,11 @@ Version 1.8.1
    - Added options to CompartmentedMode.markOccupied() and CompartmentedModel.markHit()
      to only record the first occupation and hitting times respectively,
      and to ignore subsequent re-transmission or -infection
-   - Added tests to make sure epidemics happend (when they should) on a per-model
+   - Added tests to make sure epidemics happen (when they should) on a per-model
      basis but under both dynamics
    - Added more tests for generating functions
+   - Simplified experimental parameter names
+   - Small changes to the way topologies are marked in parameters
 
 Version 1.7.2 (2021-07-06)
 

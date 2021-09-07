@@ -69,7 +69,6 @@ SOURCES_CODE = \
 SOURCES_TESTS = \
 	test/__init__.py \
 	test/test_bitstream.py \
-	test/test_bbt.py \
 	test/test_networkdynamics.py \
 	test/test_stochasticrates.py \
 	test/test_compartmentedmodel.py \
@@ -222,6 +221,7 @@ RUN_COVERAGE = $(COVERAGE) erase && $(COVERAGE) run -a setup.py test && $(COVERA
 RUN_SETUP = $(PYTHON) setup.py
 RUN_SPHINX_HTML = PYTHONPATH=$(ROOT) make html
 RUN_TWINE = $(TWINE) upload dist/*
+RUN_JOSS_PREVIEW = docker run --rm --volume $(ROOT):/data --user $(id -u):$(id -g) --env JOURNAL=joss openjournals/paperdraft
 
 
 # ----- Top-level targets -----
@@ -282,6 +282,10 @@ diagrams:
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-monitor-progress.py
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-powerlaw-cutoff.py
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-percolation.py
+
+# Preview the JOSS paper
+joss-paper:
+	$(RUN_JOSS_PREVIEW)
 
 # Clean up the distribution build
 clean:

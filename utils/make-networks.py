@@ -20,19 +20,16 @@
 import os
 from sys import argv, exit
 import json
-from epyc import ParallelLab, Experiment, RepeatedExperiment
+from dotenv import load_dotenv
+from epyc import Lab, ParallelLab, Experiment, RepeatedExperiment
 from epydemic import ERNetwork, BANetwork, PLCNetwork
 from epydemic.archive import ArchiveBuilder
 
 
 class CreateNetwork(Experiment):
 
-    def __init__(self, uri, api_key, topology):
+    def __init__(self, topology, tags):
         super().__init__()
-
-        # store parameters for connecting to the archive
-        self._uri = uri
-        self._api_key = api_key
 
         # construct the underlying network generator
         if topology == 'ER':
@@ -44,13 +41,12 @@ class CreateNetwork(Experiment):
         else:
             raise Exception(f'Unrecognised topology {topology}')
         self._generator = None
+        self._tags = tags
 
     def configure(self, params):
         super().configure(params)
         self._generator = ArchiveBuilder(self._gen,
-                                         self._uri,
-                                         self._api_key,
-                                         tags=['random'])
+                                         tags=self._tags)
 
     def do(self, params):
         _ = self._generator.set(params).generate()
@@ -66,12 +62,11 @@ with open(configfile, 'r') as rh:
     config = json.load(rh)
 specs = config['networks']
 
-# Extract the values needed to connect to the archive
-uri = os.environ.get('SERVER_URI', None)
-api_key = os.environ.get('API_KEY', None)
+# Load environment from .env if present
+load_dotenv(dotenv_path='.env')
 
 # Create the lab
-lab = ParallelLab(cores=8)
+lab = ParallelLab(cores=-2)
 nb = lab.notebook()
 
 # Process each network specification
@@ -82,8 +77,9 @@ for spec in specs:
 
     # construct the networks
     topology = spec['topology']
+    tags = spec.get('tags', ['random'])
     repetitions = spec.get('repetitions', 1)
-    e = CreateNetwork(uri, api_key, topology)
+    e = CreateNetwork(topology, tags)
     params = spec['matrix']
     for k in params:
         lab[k] = params[k]
