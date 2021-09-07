@@ -6,8 +6,8 @@
 .. autoclass:: SIR
 
 The Susceptible-Infected-Recovered or SIR process is one of the oldest
-models of disease, first arising in a paper by :ref:`Kermack and
-McKendrick <KMcK27>` in 1927.
+models of disease, first arising in a paper by Kermack and McKendrick
+in 1927 :cite:`KermackMcKendrick`.
 
 Nodes in the network represent individuals, with edges representing
 contacts between them. Each individual is assigned a dynamical state
@@ -30,9 +30,9 @@ Dynamical states
 SIR simulation places nodes into one of three compartments:
 
 .. autoattribute:: SIR.SUSCEPTIBLE
-		   
+
 .. autoattribute:: SIR.INFECTED
-		   
+
 .. autoattribute:: SIR.REMOVED
 
 
@@ -69,7 +69,7 @@ These two options define the loci for the SIR model.
 The other locus is named :attr:`SIR.INFECTED`, the same as the
 compartment.
 
-		   
+
 Building the model
 ------------------
 
@@ -78,8 +78,8 @@ installs the necessary loci and events to define the disease
 dynamics. The event methods are described more thoroughly below.
 
 .. automethod:: SIR.build
-		
-		   
+
+
 Event methods
 -------------
 
@@ -87,7 +87,5 @@ Event methods are defined for each of the two dynamical rules for the
 process: infection and removal.
 
 .. automethod:: SIR.infect
-		
+
 .. automethod:: SIR.remove
-		
-		

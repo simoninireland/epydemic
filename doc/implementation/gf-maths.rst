@@ -127,10 +127,10 @@ instability. Since we might want to differentiate hundreds of
 thousands of times when analysing large networks, this clearly is a
 limitation.
 
-The solution, suggested in a throwaway comment in :ref:`Newman 2002
-<New02>`, is to change the differentiation algorithm to one developed
-by Cauchy, involving a contour integral in the complex plane. That is,
-we compute:
+The solution, suggested in a throwaway comment by Newman
+:cite:`NewmanEpidemicDisease`, is to change the differentiation
+algorithm to one developed by Cauchy, involving a contour integral in
+the complex plane. That is, we compute:
 
 .. math::
 
@@ -138,7 +138,7 @@ we compute:
 
 Getting from here to an implementation is quite involved, but we can
 implement the Cauchy procedure in Python quite easily (see
-:ref:`Dobson 2021 <Dob21>` for the details).
+Dobson :cite:`cncp` for the details).
 
 
 .. _gf-maths-constraints:

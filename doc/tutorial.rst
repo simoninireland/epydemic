@@ -6,7 +6,7 @@ class class structure of the library, and then uses it to build and run a simula
 of an epidemic.
 
 If you want more examples of ``epydemic`` in action, it forms the basis for a
-:ref:`book <Dob20>` on epidemic modelling.
+book on epidemic modelling :cite:`em`.
 
 .. toctree::
     :maxdepth: 2

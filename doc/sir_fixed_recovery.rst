@@ -8,7 +8,7 @@
 Models of this kind have slightly more predictable behaviour (since
 they use a fixed rather than randomly-distributed recovery time), and
 so can be useful for some kinds of analysis. For example,
-:ref:`Newman <New02>` uses fixed-time recovery for his seminal analysis
+Newman :cite:`NewmanEpidemicDisease` uses fixed-time recovery for his seminal analysis
 of epidemic spreading processes.
 
 
@@ -26,7 +26,7 @@ We also record the infection time of a node explicitly:
 
 .. autoattribute:: SIR_FixedRecovery.INFECTION_TIME
 
-		   
+
 Building the model
 ------------------
 
@@ -46,5 +46,3 @@ Only a single event method needs overriding, with :meth:`SIR.remove` being
 inherited.
 
 .. automethod:: SIR_FixedRecovery.infect
-		
-		

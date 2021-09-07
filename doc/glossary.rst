@@ -9,7 +9,7 @@ Glossary
 
    addition-deletion process
       A process that adds and removes nodes from a network. The usual
-      model (due to :ref:`Moore et alia <MGN06>`) adds nodes at a
+      model :cite:`AdditionDeletionNetworks` adds nodes at a
       constant rate and with constant degree, removes nodes randomly
       at a constant rate, and connects new nodes to existing nodes according
       to some probabilistic attachment kernel.
@@ -22,7 +22,7 @@ Glossary
       a set of discrete compartments with transitions possible
       between them. Transitions typically occur with some base
       probability, which might be fixed or might vary across the
-      course of the simulation. See :ref:`Hethcote <Het00>` for a survey,
+      course of the simulation. See Hethcote :cite:`Hethcote-CompartmentedModels` for a survey,
 
    contact tree
       The way in which individuals were infected during thhe infection.
@@ -82,14 +82,13 @@ Glossary
       probability distributions, often used in network science
       research because of its flexibility. They're often used when
       describing the :term:`degree distribution` of a network. See
-      :ref:`Newman, Strogatz, and Watts 2001 <NSW01>` for a network
-      science introduction and :ref:`Wilf 1994 <Wil94>` for a more
-      detailed treatment.
+      Newman *et alia* :cite:`ArbitraryDegreeDistributions` for a
+      network science introduction and Wilf
+      :cite:`generatingfunctionology` for a more detailed treatment.
 
    Gillespie simulation
       A simulation technique developed initially for *ab initio*
-      chemistry simulations. See :ref:`Gillespie 1976 <Gil76>`
-      and :ref:`Gillespie 1977 <Gil77>`.
+      chemistry simulations :cite:`Gillespie76,Gillespie77`.
 
    locus
       A "place" at which dynamics can occur, that is to say, where

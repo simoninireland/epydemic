@@ -30,7 +30,7 @@ next generation will be larger, and the disease will become epidemic.
 population becoming gradually immune (if this happens with the disease
 model in question), and as a result of countermeasures that seek to`
 reduce infection. (Both of these effects are explored experimentally
-by :ref:`Dobson <Dob20>`.) At the very start of an epidemic we have the
+by Dobson :cite:`em`.) At the very start of an epidemic we have the
 disease spreading without immunity (in what epidemiologists refer to
 as a **naive population**), and we speak of :math:`\mathcal{R}` at this
 point as :math:`\mathcal{R}_0` -- :math:`\mathcal{R}` at time
@@ -111,7 +111,7 @@ from the last equation implies a threshold
 
 which is the **epidemic threshold** for the network, often denotes
 :math:`\phi_c`: below this no epidemic will take hold. This is known
-as the **Molloy-Reed criterion** (:ref:`Molloy and Reed 1996 <MR96>`) for
+as the **Molloy-Reed criterion** :cite:`MolloyReed` for
 epidemics to spread on networks.
 
 The third observation pertains to the second. If we have

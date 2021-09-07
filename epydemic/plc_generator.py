@@ -36,16 +36,18 @@ class PLCNetwork(NetworkGenerator):
 
     PLC networks are commonly used to represent the basic structure of human contact
     networks, where we want to cutoff the degree to stop it becoming "too high" to
-    be credible: :ref:`Newman <New02>` (and other works) use this topology extensively.
+    be credible: Newman :cite:`NewmanEpidemicDisease` (and other works) use this topology extensively.
     It is characterised by two parameters, the exponent of the power law and the
     cutoff maximum degree after which the probability of finding nodes with larger degrees
     falls off exponentially.
 
-    Internally we use the configuration model (:ref:`Molloy and Reed <MR96>` to create
-    the network.
+    Internally we use the configuration model :cite:`MolloyReed` to
+    create the network.
 
     :param params: (optional) experimental parameters
-    :param limit: (optional) maximum number of independent networks to generate'''
+    :param limit: (optional) maximum number of independent networks to generate
+
+    '''
 
     # Experimental parameters
     N: Final[str] = 'N'                 #: Experimental parameter for the order of the network.

@@ -10,8 +10,8 @@ random process. They can be used for a number of purposes, perhaps most obviousl
 model births and deaths, They can be combined (with care) with disease processes to model
 situations where the underlying network is changing independently of the disease itself.
 
-The canonical work on addition-deletion networks is :ref:`Moore, Ghosal, and Newman
-<MGN06>`, which also showed that the process is very complex in its most general case.
+The canonical work on addition-deletion networks is Moore *et alias*
+:cite:`AdditionDeletionNetworks`, which also showed that the process is very complex in its most general case.
 Specific solutions are analytically solvable, however: most notably the case where
 newly-added nodes are connected to a fixed number of neighbours selected randomly, which
 is the default behaviour of this class. Other behaviours can be implemented by overriding

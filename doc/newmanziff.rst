@@ -26,11 +26,11 @@ interesting processes. (Originally it was used to study crack formation in cryst
 and waterflow in soils.) It also bears a striking similarity to the ways in which
 epidemics form, with the final occupied sub-graph being mathematically related to the
 contact tree of an epidemic. This lets us stidy epidemics using percolation, an approach
-pioneered by :ref:`Newman <New02>`.
+pioneered by Newman :cite:`NewmanEpidemicDisease`.
 
 While percolation can also be used in conjunction with epidemic processes, it is often
 used standalone to study the size of the giant connected component (GCC) formed by the
-occupied sub-graph. An algorithm due to :ref:`Newman and Ziff <NZ00>` can generate
+occupied sub-graph. An algorithm due to Newman and Ziff :cite:`NewmanZiff` can generate
 instances of percolated sub-graphs for *every* value of :math:`\phi` in a single
 sweep through the network. The algorithm is very fast, performing (for example) a
 site percolation experiment on a million-node network in under 30s.

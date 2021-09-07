@@ -5,7 +5,7 @@ Shuffle processes: Degree-preserving rewirings of networks
 
 ``epydemic`` includes processes that rewire networks ahead of
 experiments. These processes are inspired by the work reported in
-:ref:`Melnik 2011 <MHP11>` and can be used for a number of different
+Melnik *et alia* :cite:`UnreasonableEffectiveness` and can be used for a number of different
 purposes, for example creating a "random" version of an empirical
 network or for reducing clustering and other structures without
 changing the degree distribution.

@@ -100,7 +100,7 @@ SOURCES_DOCUMENTATION = \
 	doc/install.rst \
 	doc/reference.rst \
 	doc/classes.rst \
-	doc/bibliography.rst \
+	doc/zbibliography.rst \
 	doc/glossary.rst \
 	doc/networkdynamics.rst \
 	doc/synchronousdynamics.rst \

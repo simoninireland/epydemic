@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.inheritance_diagram',
     'sphinx_autodoc_typehints',
+    'sphinxcontrib.bibtex',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -83,6 +84,13 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+# Master bbibfile
+bibtex_bibfiles = ['bibliography.bib']
+
+# Style
+bibtex_reference_style = 'label'
+bibtex_default_style = 'alpha'
 
 
 # -- Options for HTML output ----------------------------------------------

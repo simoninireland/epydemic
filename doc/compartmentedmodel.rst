@@ -15,7 +15,7 @@ or in :term:`continuous time` using :term:`stochastic dynamics`.
 sub-classed to define actual disease models. `epydemic` provides
 implementations of the two "reference" compartmented models,
 :class:`SIR` and :class:`SIS`, as well as several variants of them:
-:ref:`Hethcote <Het00>` provides a survey of a huge range of others.
+Hethcote :cite:`Hethcote-CompartmentedModels` provides a survey of a huge range of others.
 
 
 Attributes

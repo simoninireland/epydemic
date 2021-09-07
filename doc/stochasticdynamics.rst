@@ -5,15 +5,14 @@
 
 .. autoclass:: StochasticDynamics
    :show-inheritance:
-	 
+
 
 Running a dynamics
 ------------------
 
 The idea of stochastic event-based simulation arose in *ab initio*
 chemistry to simulate interactions between molecules. The basic
-technique is due to :ref:`Gillespie <Gil76>` and was later
-:ref:`refined further <Gil77>` by him.
+technique is due to Gillespie :cite:`Gillespie76,Gillespie77`.
 
 The basic idea of Gillespie simulation is to structure an experiment
 in terms of events which occur with some probability over continuous

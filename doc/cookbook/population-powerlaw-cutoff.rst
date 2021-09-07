@@ -5,34 +5,43 @@
 Modelling human contact networks
 ================================
 
-**Problem**: You want to work with a realistic model of a human contact network. What is the appropriate topology?
+**Problem**: You want to work with a realistic model of a human
+ contact network. What is the appropriate topology?
 
-**Solution**: This is an active area of research, but a common answer is to use the approach given by
-:ref:`Newman <New02>`, which is to use a powerlaw network with exponential cut-off.
+**Solution**: This is an active area of research, but a common answer
+is to use the approach given by Newman :cite:`NewmanEpidemicDisease`,
+which is to use a powerlaw network with exponential cut-off.
 
 .. note ::
 
-    This class of network is now built-in to ``epydemic`` in the form of the :class:`PLCNetwork`
-    network generator. The details below explain how this class of networks is constructed.
+    This ensemble of networks is built-in to ``epydemic`` in the form
+    of the :class:`PLCNetwork` network generator. The details below
+    explain how this class of networks is constructed.
 
 The theory
 ----------
 
-A powerlaw network with exponent :math:`\alpha` has a degree distibution given by
+A powerlaw network with exponent :math:`\alpha` has a degree
+distibution given by
 
 .. math::
 
     p_k \propto k^{-\alpha}
 
-where :math:`p_k` is the probability that a randomly-chosen node in the network will have degree :math:`k`. This
-degree distribution has the property that some nodes can have very high degrees with non-zero probability, leading
-to very large hubs with high centrality. In a population network this would introduce individuals who were
-massively better connected than the others, which is generally considered undesirable: therre are limits to how
-many people even the most popular person can actually come into physical contact with.
+where :math:`p_k` is the probability that a randomly-chosen node in
+the network will have degree :math:`k`. This degree distribution has
+the property that some nodes can have very high degrees with non-zero
+probability, leading to very large hubs with high centrality. In a
+population network this would introduce individuals who were massively
+better connected than the others, which is generally considered
+undesirable: therre are limits to how many people even the most
+popular person can actually come into physical contact with.
 
-A powerlaw-with-cutoff network, by contrast, place a limit (denoted :math:`\kappa`) on the "likely" highest degree.
-Up to the cutoff the degree distribution behaves like a powerlaw network; above the cutoff, the probability drops
-off exponentially quickly, making large hubs highly unlikely. This degree distribution is given by
+A powerlaw-with-cutoff network, by contrast, place a limit (denoted
+:math:`\kappa`) on the "likely" highest degree.  Up to the cutoff the
+degree distribution behaves like a powerlaw network; above the cutoff,
+the probability drops off exponentially quickly, making large hubs
+highly unlikely. This degree distribution is given by
 
 .. math::
 
@@ -160,55 +169,69 @@ this class of network:
 
 	    return self._generateFrom(N, self._makePowerlawWithCutoff(alpha, kappa))
 
-The ``_makePowerlawWithCutoff()`` method just transcribes the definition of the distribution from above, taking the
-distribution parameters :math:`\alpha` and :math:`\kappa` and returning a model function that, for any
-degree :math:`k`, returns the probability :math:`p_k` of encountering a node of that degree.
+The ``_makePowerlawWithCutoff()`` method just transcribes the
+definition of the distribution from above, taking the distribution
+parameters :math:`\alpha` and :math:`\kappa` and returning a model
+function that, for any degree :math:`k`, returns the probability
+:math:`p_k` of encountering a node of that degree.
 
-The actual construction of the network is done in the ``_generateFrom()`` method using the configuration model, where we
-first build a list of :math:`N` node degrees by repeatedly drawing from the powerlaw-with-cutoff distribution. (Actually
-this function will construct a network with *any* desired degree distribution by defining an appropriate model
-function.)
+The actual construction of the network is done in the
+``_generateFrom()`` method using the configuration model, where we
+first build a list of :math:`N` node degrees by repeatedly drawing
+from the powerlaw-with-cutoff distribution. (Actually this function
+will construct a network with *any* desired degree distribution by
+defining an appropriate model function.)
 
-The ``_generate()`` method unpacks the order, exponent, and cutoff parameters and passes them to the methods that
-actually do the work.
+The ``_generate()`` method unpacks the order, exponent, and cutoff
+parameters and passes them to the methods that actually do the work.
 
-You can use this code to create human population models that you then pass to an experiment (an instance of :class:`Dynamics`)
-that runs the appropriate network process over the network.
+You can use this code to create human population models that you then
+pass to an experiment (an instance of :class:`Dynamics`) that runs the
+appropriate network process over the network.
 
 
 The limitations
 ---------------
 
-The reason for the lack of agreement on the structure of human contact networks is due to a
-detailed feature of the above formulation. If you're interested, read on....
+The reason for the lack of agreement on the structure of human contact
+networks is due to a detailed feature of the above formulation. If
+you're interested, read on....
 
-If you think about your own friends, two of them chosen at random are more likely to be
-friends of each other than are two people chosen from the population at large: there's a
-*conditional probability* at work that makes people with a mutual friend more likely
-to be friends of each other. This isn't always the case -- lots of people have largely disjoint
-sets of friends -- but in general the conditional probability is significantly higher than
-the general population probability.
+If you think about your own friends, two of them chosen at random are
+more likely to be friends of each other than are two people chosen
+from the population at large: there's a *conditional probability* at
+work that makes people with a mutual friend more likely to be friends
+of each other. This isn't always the case -- lots of people have
+largely disjoint sets of friends -- but in general the conditional
+probability is significantly higher than the general population
+probability.
 
-In a network, this phenomenon manifests itself as clusters in the network: groups of individuals
-who are more connected than you might expect to each other. Often this manifests itself as
-triangles of three friends, or even larger clusters for family groups or school classes, where
-everyone is in contact with everyone else.
+In a network, this phenomenon manifests itself as clusters in the
+network: groups of individuals who are more connected than you might
+expect to each other. Often this manifests itself as triangles of
+three friends, or even larger clusters for family groups or school
+classes, where everyone is in contact with everyone else.
 
-The problem that arises is that the configuration model, which we use above to create the network
-from the degree probabilities, *almost never* generates these sorts of clusters. The networks it
-generates are referred to as *locally tree-like* and don't have triangles or higher-order
-clusters. (In fact they don't have cycles either, which are weaker than clusters.)
+The problem that arises is that the configuration model, which we use
+above to create the network from the degree probabilities, *almost
+never* generates these sorts of clusters. The networks it generates
+are referred to as *locally tree-like* and don't have triangles or
+higher-order clusters. (In fact they don't have cycles either, which
+are weaker than clusters.)
 
-This wouldn't matter except that clustering is now known to affect the spread of epidemic
-diseases through a population. In a clustered network, if a neighbour of a node becomes infected,
-then it can infect the node directly (as one would expect) *or* it can infect one of its
-other neighbours who *then* (because of clustering) infects the node -- and there might be
-multiple opportunities for this to happen in a large cluster. The net result is an epidemic
-that's larger and faster in the preesence of clustering: not radically different, but
+This wouldn't matter except that clustering is now known to affect the
+spread of epidemic diseases through a population. In a clustered
+network, if a neighbour of a node becomes infected, then it can infect
+the node directly (as one would expect) *or* it can infect one of its
+other neighbours who *then* (because of clustering) infects the node
+-- and there might be multiple opportunities for this to happen in a
+large cluster. The net result is an epidemic that's larger and faster
+in the preesence of clustering: not radically different, but
 definitely observable.
 
-There is a substantial more recent literature on clustered networks that is essential
-for handling this problem: :ref:`Miller <M09>` is a good starting point.
-:ref:`Dobson <Dob20>` presents a method for creating networks that mimic physical distancing
-countermeasures to epidemics.
-Also see :ref:`Melnik <MHP11>` *et alia* for a discussion of why clustering often *doesn't* matter.
+There is a substantial more recent literature on clustered networks
+that is essential for handling this problem: Miller :cite:`MilllerClusteredPercolation` is a
+good starting point. Dobson :cite:`em` presents a method for
+creating networks that mimic physical distancing countermeasures to
+epidemics.  Also see Melnik *et alia* :cite:`UnreasonableEffectiveness` for a discussion
+of why clustering often *doesn't* matter.

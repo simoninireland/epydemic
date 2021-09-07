@@ -12,7 +12,8 @@ with the same parameter values so as to squeeze-out variance in the results that
 interactions between processes and network. (As a simple, if unlikely, example, consider the case
 where the network consists of two components with only a single edge between them and all the infected
 nodes start in one of the components. It's likely that the epidemic will die out without crossing
-into the other component. (A less extreme example of the same thing is studied by :ref:`Shai and Dobson <SD13>`.)
+into the other component. (A less extreme example of the same thing is
+studied by Shai and Dobson :cite:`CoupledAdaptive-13`.)
 
 
 Run the epidemic
@@ -127,7 +128,3 @@ and import them directly into ``pandas`` for analysis:
 
 You'll see the results of the experiments loaded into this DataFrame, including the sizes of compartments, along with
 the experimental parameters that gave rise to those results anmd some other metadata about the simulation.
-
-
-
-

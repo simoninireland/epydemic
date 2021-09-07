@@ -105,4 +105,4 @@ Features
    classes
    implementation
    glossary
-   bibliography
+   zbibliography
