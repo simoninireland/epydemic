@@ -7,16 +7,26 @@
 
 *** Release 1.8.1
 
-**** Coding [0/2]
+**** Coding [3/6]
 
     - [ ] Add degree-distribution-preserving rewiring functions
       preserving P(k, k') cite:UnreasonableEffectiveness (branch
       rewiring-processes)
     - [ ] Constructing derived generating functions
+    - [ ] Add clients for the archive
+    - [X] Simplify parameter names (to match archive)
+    - [X] Generators should have an ordinary iterator interface
+    - [X] Change generators to update experimental parameters, remove
+      reference to topology from StochasticDynamics
 
 **** Bugs [1/1]
 
      - [X] Import of gf library from pip?
+
+**** Documentation [1/3]
+
+     - [X] Change references to network generators to ensembles
+     - [ ] Use proper BibTeX file and citations
 
 
 ** Sub-projects
@@ -110,13 +120,31 @@
     edges of a given colour and adjacent nodes accessed by traversing
     edges of a given colour.
 
-*** TODO JOSS paper
-    SCHEDULED: <2021-08-04 Wed>
+*** DOING JOSS paper
+    DEADLINE: <2021-09-10 Fri> SCHEDULED: <2021-08-20 Fri>
 
     Complete the JOSS paper to give people something to cite when
     using epydemic. The push a citation.cff file so that there's an
     automatic citation widget in the repo. (Need to explore what this
     contains.)
+
+*** TODO API interface to the epydemic archive [1/3]
+
+    branch archive
+
+    The idea here is that there is a network generator that can
+    attach to an epydemic archive server and download a network
+    instead of building one. That way we can have a range of pre-built
+    networks -- maybe real-world, maybe very large and time-consuming
+    random networks -- and re-use them.
+
+    To do this we need to be able to ensure that we're sampling from a
+    large enough set of possible networks, and make sure we don't
+    repeatedly download a small subset accidentally.
+
+    - [X] Client interface to submit a network
+    - [ ] Client interface to download specific network by UUID
+    - [ ] Search interface
 
 *** A message-passing dynamics
 
@@ -127,7 +155,7 @@
 
 *** Paper on draw set implementation
 
-**** TODO Complete analysis of fairness
-     SCHEDULED: <2021-08-16 Mon>
+*** TODO Complete analysis of fairness
+    SCHEDULED: <2021-08-23 Mon>
 **** TODO Numerical exploration
 **** TODO First draft
