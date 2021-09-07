@@ -6,7 +6,7 @@ Modelling human contact networks
 ================================
 
 **Problem**: You want to work with a realistic model of a human
- contact network. What is the appropriate topology?
+contact network. What is the appropriate topology?
 
 **Solution**: This is an active area of research, but a common answer
 is to use the approach given by Newman :cite:`NewmanEpidemicDisease`,
