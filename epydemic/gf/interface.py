@@ -50,5 +50,6 @@ def gf_from_network(g: Graph) -> GF:
     '''Create a generating function representing the actual distribution
     of degrees in the given network.
 
-    :param g: the network:returns: a generating function'''
+    :param g: the network
+    :returns: a generating function'''
     return DiscreteGF(g=g)
