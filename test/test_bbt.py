@@ -435,6 +435,13 @@ class BBTTest(unittest.TestCase):
         self.assertEqual(len(s), len(l) - len(e))
         self.assertCountEqual(s, set(l) - set(e))
 
+    def testInitialExcludingNoIncluding(self):
+        '''Test that excluding works with empty including (even though that's stupid).'''
+        l = None
+        e = [1, 3, 5]
+        s = DrawSet(l, e)
+        self.assertEqual(len(s), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
