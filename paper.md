@@ -7,11 +7,11 @@ tags:
   - epidemic spreading
 authors:
   - name: Simon Dobson
-	orcid: 0000-0001-9633-2103
-	affiliation: 1
+    orcid: 0000-0001-9633-2103
+    affiliation: 1
 affiliations:
   - name: School of Computer Science, University of St Andrews UK
-	index: 1
+    index: 1
 date: 6 September 2021
 bibliography: paper.bib
 ---
