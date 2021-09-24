@@ -21,6 +21,7 @@ import unittest
 from collections import Counter
 from scipy.stats import chisquare
 from mpmath import gammainc
+from numpy.random import default_rng
 from numpy import exp
 from epydemic import *
 from epydemic.gf import *
@@ -43,6 +44,24 @@ class CaptureNetwork(Process):
         rc = super().results()
         self._finalNetwork = self.network()
         return rc
+
+
+class ProcessGeneratedNetwork(NetworkGenerator):
+
+    def __init__(self, g, p, params):
+        super().__init__(params)
+        self._generator = g
+        self._process = p
+
+    def _generate(self, params):
+        capture = CaptureNetwork()
+        seq = ProcessSequence([self._process, capture])
+
+        e = StochasticDynamics(seq, self._generator)
+        _ = e.set(params).run(fatal=True)
+
+        h = capture.finalNetwork()
+        return h
 
 
 class GFTest(unittest.TestCase):
@@ -81,9 +100,22 @@ class GFTest(unittest.TestCase):
             del d_network[k]
             del d_theory[k]
 
+        # normalise the observed and expected frequenciy sums by
+        # adjusting the observed uniformly at random
+        # sd: again, not sure this is right, but scipy needs the
+        # two samples to be the same size to high tolerance
+        diff = sum(d_network) - sum(d_theory)
+        inc = -1 if diff > 0 else 1
+        rng = default_rng()
+        for _ in range(abs(diff)):
+            i = rng.integers(len(d_network))
+            d_network[i] += inc
+
         # perform a chi-squared test on the samples
         (_, p) = chisquare(d_network, d_theory)
-        #print(p)
+        print(d_network)
+        print(d_theory)
+        print(p)
 
         # for a goodness-of-fit test we reject the null hypothesis (that
         # the samples come from the expected distribution) for p-values
@@ -92,7 +124,7 @@ class GFTest(unittest.TestCase):
 
     # ---------- Network generators ----------
 
-    def _testSignificance(self, gen, gf, reps = None):
+    def _testSignificance(self, gen, gf, reps=None):
         '''Perform repeated tests against random networks. We pass if the
         majority pass.
 
@@ -110,7 +142,7 @@ class GFTest(unittest.TestCase):
                 return
 
         # if we get here we didn't pass enough tests
-        self.assertTrue(False, f'only passed {passes} tests')
+        self.assertTrue(False, f'only passed {passes}/{reps} tests')
 
     def testERDistribution(self):
         '''Test the ER network generator constructs the right degree distribution.'''
@@ -140,34 +172,36 @@ class GFTest(unittest.TestCase):
 
         :param c: the degree of new nodes
         :returns: the generating function'''
+        norm = pow(c, -(c + 1))
 
         def series(z):
             if z == 1:
-                # avoid a division by zero by computing at nearly 0....
-                z = 1e-19
-            return (exp(c * z) / (1 - z)) * (gammainc(c + 1, c * z) - gammainc(c + 1, c))
+                z = 1 - 1e-8    # avoid a division by zero
+
+            # sd: the definitions of gamma functions differ between packages,
+            # and specifically between mpmath (used here) and scipy.special
+            # See https://mpmath.org/doc/current/functions/expintegrals.html
+            return (exp(c * z) / (1 - z)) * norm * (gammainc(c + 1, c * z) - gammainc(c + 1, c))
 
         return gf_from_series(series)
 
     def testAddDeleteDistribution(self):
         '''Test the the addition-deletion process converges as predicted by the theory.'''
-        param = dict()
-        param[ERNetwork.N] = 20000
-        param[ERNetwork.KMEAN] = 20
-        gen = ERNetwork().set(param)
-        network = gen.generate()
         process = AddDelete()
-        process.setMaximumTime(2500)
-        capture = CaptureNetwork()
-        param[AddDelete.P_ADD] = 1
-        param[AddDelete.P_DELETE] = 1
-        param[AddDelete.DEGREE] = 10
-        e = StochasticDynamics(ProcessSequence([process, capture]), network)
-        rc = e.set(param).run(fatal=True)
-        g = capture.finalNetwork()
+        process.setMaximumTime(50000)
 
-        gf = self._make_addition_deletion_gf(param[AddDelete.DEGREE])
-        self._significance(g, gf)
+        params = dict()
+        params[ERNetwork.N] = 20000
+        params[ERNetwork.KMEAN] = 20
+        params[AddDelete.P_ADD] = 1
+        params[AddDelete.P_DELETE] = 1
+        params[AddDelete.DEGREE] = 10
+
+        gen = ProcessGeneratedNetwork(ERNetwork(), process, params)
+
+        gf = self._make_addition_deletion_gf(params[AddDelete.DEGREE])
+        self.assertAlmostEqual(int(gf.dx()(1)), params[AddDelete.DEGREE], delta=1)
+        self.assertTrue(self._testSignificance(gen, gf))
 
 
 if __name__ == '__main__':
