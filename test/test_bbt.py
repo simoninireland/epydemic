@@ -28,13 +28,30 @@ class BBTTest(unittest.TestCase):
     def assertInvariant(self, s):
         '''Test the invariant of tree is satisfied.'''
         if s._root is not None:
+            self.assertIsNone(s._root._parent)
             self.assertAVLInvariant(s._root)
 
     def assertAVLInvariant(self, n):
         lh = n._left._height + 1 if n._left is not None else 0
         rh = n._right._height + 1 if n._right is not None else 0
+
+        # balance
         self.assertTrue(abs(lh - rh) <= 1)
+
+        # correct local height
         self.assertEqual(n._height, max(lh, rh))
+
+        # correct sub-tree sizes
+        self.assertEqual(n._leftSize, len(n._left) if n._left is not None else 0)
+        self.assertEqual(n._rightSize, len(n._right) if n._right is not None else 0)
+
+        # correct linkage
+        if n._left is not None:
+            self.assertEqual(n._left._parent, n)
+        if n._right is not None:
+            self.assertEqual(n._right._parent, n)
+
+        # recurse
         if lh > 0:
             self.assertIsNotNone(n._left)
             self.assertAVLInvariant(n._left)
@@ -73,6 +90,31 @@ class BBTTest(unittest.TestCase):
         self.assertTrue(2 in s)
         self.assertTrue(3 in s)
         self.assertCountEqual(list(s), [1, 2, 3])
+
+    def testSizeOneAdd(self):
+        '''Test we get the size right after one addition.'''
+        s = DrawSet()
+        s.add(1)
+        self.assertEqual(len(s), 1)
+
+    def testSizeMultipleAdd(self):
+        '''Test we get the size right after several additions.'''
+        s = DrawSet()
+        s.add(1)
+        s.add(2)
+        s.add(3)
+        s.add(4)
+        self.assertEqual(len(s), 4)
+
+    def testSizeOneRemove(self):
+        '''Test the size shrinks down to zero.'''
+        s = DrawSet()
+        for i in range(100):
+            s.add(i)
+        self.assertEqual(len(s), 100)
+        for i in range(100):
+            s.remove(i)
+            self.assertEqual(len(s), 100 - (i + 1))
 
     def testABCroot(self):
         '''Test the ABC rotation over the root.'''
@@ -213,7 +255,7 @@ class BBTTest(unittest.TestCase):
         self.assertTrue(s.empty())
 
     def testRemoveToEmpty(self):
-        '''Test we can removethe last element in the set.'''
+        '''Test we can remove the last element in the set.'''
         s = DrawSet()
         s.add(1)
         s.remove(1)
@@ -360,7 +402,7 @@ class BBTTest(unittest.TestCase):
         self.assertEqual(len(s), 0)
 
     def testAddRemoveInReverseOrder(self):
-        '''Test we can handle an maximally inbalanced tree the other way.'''
+        '''Test we can handle a maximally inbalanced tree the other way.'''
         s = DrawSet()
         es = list(range(100))
         es.reverse()
@@ -410,11 +452,15 @@ class BBTTest(unittest.TestCase):
             s.add(e)
         ns = []
         for _ in range(len(es)):
+            l = len(s)
+            self.assertTrue(l > 0)
             n = s.draw()
             self.assertIsNotNone(n)
             self.assertNotIn(n, ns)
             ns.append(n)
             s.remove(n)
+            self.assertInvariant(s)
+            self.assertEqual(len(s), l - 1)
             self.assertInvariant(s)
             self.assertNotIn(n, s)
         self.assertEqual(len(s), 0)

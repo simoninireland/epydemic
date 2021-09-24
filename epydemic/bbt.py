@@ -1,4 +1,4 @@
-# An AVL tree with random draw
+2# An AVL tree with random draw
 #
 # Copyright (C) 2021 Simon Dobson
 #
@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from numpy.random import default_rng
 from epydemic import Bitstream, Element
 from typing import List, Tuple, Iterator, Optional
 
@@ -31,31 +32,32 @@ class TreeNode():
 
     '''
 
+    # Random number generator shared by all instances
+    rng = default_rng()
+
+
     def __init__(self, d: Element, p: Optional['TreeNode'] = None):
         self._left: Optional['TreeNode'] = None    # left sub-tree
         self._right: Optional['TreeNode'] = None   # right sub-tree
         self._parent: Optional['TreeNode'] = p     # parent nodes
         self._data: Element = d                    # value at this node
         self._height: int = 0                      # height of the tree
+        self._leftSize: int = 0                    # left sub-tree size
+        self._rightSize: int = 0                   # right sub-tree size
 
     def __len__(self) -> int:
-        '''Return the size of the tree. This is intended for testing only,
-        as it's a slow recursive count.
+        '''Return the size of the tree. This is a local operation
+        as the left and right sub-tree sizes are maintained locally.
 
         :returns: the size of the tree'''
-        s = 1
-        if self._left is not None:
-            s += len(self._left)
-        if self._right is not None:
-            s += len(self._right)
-        return s
+        return self._leftSize + 1 + self._rightSize
 
     def add(self, e: Element) -> Tuple[bool, Optional['TreeNode']]:
         '''Add an element to the tree.
 
         This method performs two tasks. It adds the element, testing
         whether it was in fact added or was a repetition; and it
-        potentially replaces trhe overall tree root.
+        potentially replaces the overall tree root.
 
         :returns: a pair (wasadded, newroot)'''
         if e == self._data:
@@ -76,22 +78,24 @@ class TreeNode():
                 return self._right.add(e)
 
     def _updateHeights(self):
-        '''Walk back to the root updating the heights of nodes.'''
-        if self._updateHeight() and self._parent is not None:
-            self._parent._updateHeights()
+        '''Walk back to the root updating the heights and sizes of nodes.'''
+        n = self
+        while n is not None:
+            n._updateHeightAndSizes()
+            assert(n._parent != n)
+            n = n._parent
 
-    def _updateHeight(self) -> bool:
-        '''Update the node height.
+    def _updateHeightAndSizes(self):
+        '''Update the node height and its left and right sizes.'''
 
-        :returns: True if the height of the node changed'''
+        # heights
         lh = self._left._height + 1 if self._left is not None else 0
         rh = self._right._height + 1 if self._right is not None else 0
-        h = max(lh, rh)
-        if h != self._height:
-            self._height = h
-            return True
-        else:
-            return False
+        self._height = max(lh, rh)
+
+        # sizes
+        self._leftSize = len(self._left) if self._left is not None else 0
+        self._rightSize = len(self._right) if self._right is not None else 0
 
     def isUnbalanced(self) -> bool:
         '''Test whether the node is unbalanced, defined as its
@@ -115,7 +119,7 @@ class TreeNode():
             return self._parent._findUnbalanced()
 
     def _tallerSubtree(self) -> 'TreeNode':
-        '''Return the taller of teh node's sub-trees.
+        '''Return the taller of the node's sub-trees.
 
         :returns: the smaller sub-tree'''
         lh = self._left._height + 1 if self._left is not None else 0
@@ -126,10 +130,10 @@ class TreeNode():
             return self._right
 
     def _rebalance(self, recursive: bool = False) -> Optional['TreeNode']:
-        '''Re-balance the tree after addition of a node. If the re-balancing
-        is recursive (which is needed after deletions, but not after
-        additions) then the re-balancing proceeds up the tree to the
-        root.
+        '''Re-balance the tree after addition or deletion of a node. If the
+        re-balancing is recursive (which is needed after deletions,
+        but not after additions) then the re-balancing proceeds up the
+        tree to the root.
 
         :param recursive: (optional) True to recursively re-balance (defaults to False)
         :returns: the new overall root, or None if the root hasn't been changed
@@ -142,14 +146,17 @@ class TreeNode():
             # tree is balanced all the way up
             return None
         else:
+            # tree is unbalanced, rotate and find the (local) root
             root = z._rotate()
 
             if root._parent is None:
+                # we have a new global root
                 return root
             elif recursive:
                 # call again on the parent
                 return root._parent._rebalance(True)
             else:
+                # root is unchanged
                 return None
 
     def _rotate(z) -> Optional['TreeNode']:
@@ -162,7 +169,7 @@ class TreeNode():
         # we use z instead of the more usual self as the name for
         # the node on which the method is called, to match the
         # normal usage when describing AVL operations for which
-        # z is always the root node.
+        # z is always the root node of the rotation.
 
         # find the two other nodes for the rotation
         y = z._tallerSubtree()
@@ -173,9 +180,12 @@ class TreeNode():
         parent = z._parent
 
         # perform the appropriate rotation
+        # we disconbnect the root node from the rest of the tree
+        # to prevent infinite recursions when re-computing sizes
         if z._data < y._data:
             if x._data < y._data:
                 root = x
+                root._parent = None
                 #print('a-c-b about ' + str(z._data))
                 y._left = x._right
                 if x._right is not None:
@@ -187,27 +197,27 @@ class TreeNode():
                 z._parent = x
                 x._right = y
                 y._parent = x
-                z._updateHeight()
-                y._updateHeight()
+                z._updateHeightAndSizes()
+                y._updateHeightAndSizes()
                 if z.isUnbalanced():
                     z._rotate()
                 if y.isUnbalanced():
                     y._rotate()
-                x._updateHeight()
             else:
                 root = y
+                root._parent = None
                 #print('a-b-c about ' + str(z._data))
                 z._right = y._left
                 if y._left is not None:
                     y._left._parent = z
                 y._left = z
                 z._parent = y
-                z._updateHeight()
+                z._updateHeightAndSizes()
                 if z.isUnbalanced():
                     z._rotate()
-                y._updateHeight()
         elif x._data < y._data:
             root = y
+            root._parent = None
             #print('c-b-a about ' + str(z._data))
             z._left = y._right
             if y._right is not None:
@@ -216,12 +226,12 @@ class TreeNode():
             x._parent = y
             y._right = z
             z._parent = y
-            z._updateHeight()
+            z._updateHeightAndSizes()
             if z.isUnbalanced():
                 z._rotate()
-            y._updateHeight()
         else:
             root = x
+            root._parent = None
             #print('c-a-b about ' + str(z._data))
             y._right = x._left
             if x._left is not None:
@@ -233,13 +243,15 @@ class TreeNode():
             y._parent = x
             x._right = z
             z._parent = x
-            z._updateHeight()
-            y._updateHeight()
+            z._updateHeightAndSizes()
+            y._updateHeightAndSizes()
             if z.isUnbalanced():
                 z._rotate()
             if y.isUnbalanced():
                 y._rotate()
-            x._updateHeight()
+
+        # update heights and sizes on the new root
+        root._updateHeightAndSizes()
 
         # re-parent the new root
         root._parent = parent
@@ -251,7 +263,7 @@ class TreeNode():
             else:
                 parent._right = root
 
-            # update the heights back up to the root
+            # update the heights and sizes back up to the root
             parent._updateHeights()
 
         # return the new root of the rotated tree
@@ -403,21 +415,27 @@ class TreeNode():
                 return self._right.discard(e)
 
     def draw(self) -> Element:
-        '''Draw an element from the tree at random.
+        '''Draw an element from the tree at random. This is the "textbook"
+        solution to random draw:
 
-        :returns: a random element, or none if the set is empty'''
-        h = self._height
-        if h == 0:
+        0.  If this node is a leaf, return the data on this node
+        1.  Compute the total nodes beneath this one, including itself
+        2.  Pick a random number between 0 and this value inclusive
+        3a. If the value is less than or equal to the number of nodes
+            in the left sub-tree, recursively draw from that sub-tree
+        3b. Else, if the value is equal to one more than the number of nodes
+            in the left sub-tree, return the data on this node
+        3c. Else, recursively draw from the right sub-tree
+
+        :returns: a random element'''
+        l = len(self)
+        if l == 1:
             return self._data
-
-        bs = Bitstream.default_rng
-        if self._left != None:
-            if next(bs) == 0:
+        else:
+            i = self.rng.integers(l)
+            if i < self._leftSize:
                 return self._left.draw()
-
-        if self._right is not None:
-            for _ in range(h):
-                if next(bs) == 1:
-                    return self._right.draw()
-
-        return self._data
+            elif i == self._leftSize:
+                return self._data
+            else:
+                return self._right.draw()

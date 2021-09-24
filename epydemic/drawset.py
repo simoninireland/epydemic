@@ -36,7 +36,6 @@ class DrawSet():
 
     def __init__(self, including: Iterator[Element] = None, excluding: Iterator[Element] = None):
         self._root = None
-        self._size = 0
 
         # if we have an initial value, add all elements from the iterator
         if including is not None:
@@ -58,11 +57,8 @@ class DrawSet():
         if self._root is None:
             # we're the root, store here
             self._root = TreeNode(e)
-            self._size = 1
         else:
             (added, r) = self._root.add(e)
-            if added:
-                self._size += 1
             if r is not None:
                 # the tree was rotated about the root
                 self._root = r
@@ -87,7 +83,7 @@ class DrawSet():
         '''Return the size of the set.
 
         :returns: the size of the set'''
-        return self._size
+        return len(self._root) if self._root is not None else 0
 
     def __iter__(self) -> Iterator[Element]:
         '''Return an iterator that returns elements in order.
@@ -105,9 +101,7 @@ class DrawSet():
 
         :param e: the element'''
         if self._root is not None:
-            (present, empty, r) = self._root.discard(e)
-            if present:
-                self._size -= 1
+            (_, empty, r) = self._root.discard(e)
             if empty:
                 # tree has been emptied
                 self._root = None
@@ -125,9 +119,7 @@ class DrawSet():
             raise KeyError(e)
         else:
             (present, empty, r) = self._root.discard(e)
-            if present:
-                self._size -= 1
-            else:
+            if not present:
                 raise KeyError(e)
             if empty:
                 # tree has been emptied
