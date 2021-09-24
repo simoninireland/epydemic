@@ -45,11 +45,11 @@ class SEIR(CompartmentedModel):
     for :class:`SIR`.'''
 
     # Model parameters
-    P_EXPOSED: Final[str] = 'pExposed'                  #: Parameter for probability of initially being exposed.
-    P_INFECT_ASYMPTOMATIC: Final[str] = 'pInfectAsymp'  #: Parameter for probability of infection on contact with an exposed individual
-    P_INFECT_SYMPTOMATIC: Final[str] = 'pInfect'        #: Parameter for probability of infection on contact with a symptomatic individual.
-    P_SYMPTOMS: Final[str] = 'pSymptoms'                #: Parameter for probability of becoming symptomatic after exposure.
-    P_REMOVE: Final[str] = 'pRemove'                    #: Parameter for probability of removal (recovery).
+    P_EXPOSED: Final[str] = 'epydemic.seir.pExposed'                  #: Parameter for probability of initially being exposed.
+    P_INFECT_ASYMPTOMATIC: Final[str] = 'epydemic.seir.pInfectAsymp'  #: Parameter for probability of infection on contact with an exposed individual
+    P_INFECT_SYMPTOMATIC: Final[str] = 'epydemic.seir.pInfect'        #: Parameter for probability of infection on contact with a symptomatic individual.
+    P_SYMPTOMS: Final[str] = 'epydemic.seir.pSymptoms'                #: Parameter for probability of becoming symptomatic after exposure.
+    P_REMOVE: Final[str] = 'epydemic.seir.pRemove'                    #: Parameter for probability of removal (recovery).
 
     # Possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE: Final[str] = 'SEIR.S'        #: Compartment for nodes susceptible to infection.

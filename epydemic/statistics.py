@@ -39,16 +39,25 @@ class NetworkStatistics(Process):
     '''
 
     # Experimental results
-    N : Final[str] = 'N'                    #: Result holding the order of the network.
-    M : Final[str] = 'M'                    #: Result holding the total number of edges in the network.
-    KMEAN : Final[str] = 'kmean'            #: Result holding the mean degree of nodes in the network.
-    KDIST : Final[str] = 'k_distribution'   #: Result holding the degree histogram as an array.
-    COMPONENTS : Final[str] = 'ncomponents' #: Result holding the number of connected components in the network.
-    LCC : Final[str] = 'lcc'                #: Result holding the size of the largest (giant) component
-    SLCC : Final[str] = 'slcc'              #: Result holding the size of the second-largest component
+    N: Final[str] = 'epydemic.statistics.N'                    #: Result holding the order of the network.
+    M: Final[str] = 'epydemic.statistics.M'                    #: Result holding the total number of edges in the network.
+    KMEAN: Final[str] = 'epydemic.statistics.kmean'            #: Result holding the mean degree of nodes in the network.
+    KMAX: Final[str] = 'epydemic.statistics.kmax'              #: Result holding the largest node degree.
+    KDIST: Final[str] = 'epydemic.statistics.k_distribution'   #: Result holding the degree histogram as an array.
+    COMPONENTS: Final[str] = 'epydemic.statistics.ncomponents' #: Result holding the number of connected components in the network.
+    LCC: Final[str] = 'epydemic.statistics.lcc'                #: Result holding the size of the largest (giant) component
+    SLCC: Final[str] = 'epydemic.statistics.slcc'              #: Result holding the size of the second-largest component
 
     def __init__(self):
         super().__init__()
+
+    def atEquilibrium(self, t):
+        '''The statistics can be sampled whenever all other
+        processes hit equilibrium.
+
+        :param t: the simulatiion time (unused)
+        :returns: True'''
+        return True
 
     def results(self) -> Dict[str, Any]:
         '''Extract the network summary statistics into a dict.
@@ -68,6 +77,7 @@ class NetworkStatistics(Process):
             ktotal += i * hist[i]
         res[self.KMEAN] = ktotal / g.order()
         res[self.KDIST] = hist
+        res[self.KMAX] = len(hist)
 
         # component statistics
         ccs = sorted(list(map(len, connected_components(g))), reverse=True)

@@ -51,8 +51,8 @@ class Dynamics(NetworkExperiment):
     :param g: (optional) prototype network or network generator'''
 
     # Additional metadata elements
-    TIME: Final[str] = 'time'      #: Metadata element holding the logical simulation end-time.
-    EVENTS: Final[str] = 'events'  #: Metadata element holding the number of events that happened.
+    TIME: Final[str] = 'epydemic.monitor.time'      #: Metadata element holding the logical simulation end-time.
+    EVENTS: Final[str] = 'epydemic.monitor.events'  #: Metadata element holding the number of events that happened.
 
     def __init__(self, p: Process, g: Union[Graph, NetworkGenerator] = None):
         super().__init__(g)

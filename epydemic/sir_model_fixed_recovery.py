@@ -32,10 +32,10 @@ class SIR_FixedRecovery(SIR):
     with some probability.'''
 
     # the additional model parameter
-    T_INFECTED : Final[str] = 'tInfected'    #: Parameter for the time spent infected before removal/recovery.
+    T_INFECTED: Final[str] = 'epydemic.sir.tInfected'    #: Parameter for the time spent infected before removal/recovery.
 
     # node attribute for infection time
-    INFECTION_TIME : Final[str] = 'infection_time'           #: Attribute recording when a node became infected
+    INFECTION_TIME: Final[str] = 'infection_time'           #: Attribute recording when a node became infected
 
     def __init__(self):
         super(SIR_FixedRecovery, self).__init__()

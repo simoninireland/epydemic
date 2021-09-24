@@ -32,10 +32,10 @@ class SIS_FixedRecovery(SIS):
     with some probability.'''
 
     # the additional model parameter
-    T_INFECTED : Final[str] = 'tInfected'   #: Parameter for the time spent infected before becoming susceptible again.
+    T_INFECTED: Final[str] = 'epydemic.sis.tInfected'   #: Parameter for the time spent infected before becoming susceptible again.
 
     # node attribute for infection time
-    INFECTION_TIME : Final[str] = 'infection_time'          #: Attribute recording when a node became infected
+    INFECTION_TIME: Final[str] = 'infection_time'          #: Attribute recording when a node became infected
 
     def __init__(self):
         super(SIS_FixedRecovery, self).__init__()

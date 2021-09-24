@@ -33,17 +33,17 @@ class SIR(CompartmentedModel):
     removed.'''
 
     # Model parameters
-    P_INFECTED : Final[str] = 'pInfected'  #: Parameter for probability of initially being infected.
-    P_INFECT : Final[str] = 'pInfect'      #: Parameter for probability of infection on contact.
-    P_REMOVE : Final[str] = 'pRemove'      #: Parameter for probability of removal (recovery).
+    P_INFECTED: Final[str] = 'epydemic.sir.pInfected'  #: Parameter for probability of initially being infected.
+    P_INFECT: Final[str] = 'epydemic.sir.pInfect'      #: Parameter for probability of infection on contact.
+    P_REMOVE: Final[str] = 'epydemic.sir.pRemove'      #: Parameter for probability of removal (recovery).
 
     # Possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE : Final[str] = 'SIR.S'         #: Compartment for nodes susceptible to infection.
-    INFECTED : Final[str] = 'SIR.I'            #: Compartment for nodes infected.
-    REMOVED : Final[str] = 'SIR.R'             #: Compartment for nodes recovered/removed.
+    SUSCEPTIBLE: Final[str] = 'epydemic.sir.S'         #: Compartment for nodes susceptible to infection.
+    INFECTED: Final[str] = 'epydemic.sir.I'            #: Compartment for nodes infected.
+    REMOVED: Final[str] = 'epydemic.sir.R'             #: Compartment for nodes recovered/removed.
 
     # Locus containing the edges at which dynamics can occur
-    SI : Final[str] = 'SIR.SI'                 #: Edge able to transmit infection.
+    SI: Final[str] = 'epydemic.sir.SI'                 #: Edge able to transmit infection.
 
     def __init__(self):
         super().__init__()

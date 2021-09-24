@@ -39,13 +39,13 @@ class Monitor(Process):
     '''
 
     # Experimental parameters
-    DELTA: Final[str] = "time_delta"             #: Parameter for the time interval for observations.
+    DELTA: Final[str] = "epydemic.monitor.time_delta"             #: Parameter for the time interval for observations.
 
     # Results
-    OBSERVATIONS: Final[str] = 'observations'    #: Result holding the times of the observations.
+    OBSERVATIONS: Final[str] = 'epydemic.monitor.observations'    #: Result holding the times of the observations.
 
     # Result name stem
-    TIMESERIES_STEM: Final[str] = "timeseries"   #: Stem for names of the timeseries for different loci.
+    TIMESERIES_STEM: Final[str] = "epydemic.monitor.timeseries"   #: Stem for names of the timeseries for different loci.
 
     @staticmethod
     def timeSeriesForLocus(l: str) -> str:

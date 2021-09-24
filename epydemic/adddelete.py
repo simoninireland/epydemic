@@ -36,9 +36,9 @@ class AddDelete(Process):
     of the size of the network, and a fixed degree for added nodes.'''
 
     # parameters
-    P_ADD: Final[str] = "pAdd"        #: Parameter for the node addition probability
-    P_DELETE: Final[str] = "pDelete"  #: Parameter for the node deletion probability
-    DEGREE: Final[str] = "addDegree"  #: Degree of newly-added nodes
+    P_ADD: Final[str] = "epydemic.addDelete.pAdd"        #: Parameter for the node addition probability
+    P_DELETE: Final[str] = "epydemic.addDelete.pDelete"  #: Parameter for the node deletion probability
+    DEGREE: Final[str] = "epydemic.addDelete.addDegree"  #: Degree of newly-added nodes
 
     # loci
     NODES : Final[str] = "allnodes"       #: Name of the locus holding all nodes in the network
@@ -102,7 +102,7 @@ class AddDelete(Process):
             i = i + 1
         return i
 
-    def addNewNode(self, **kwds):
+    def addNewNode(self, **kwds) -> Node:
         '''Add a new node to the network with a new, unused name. Any keyword arguments are
         added as node attributes.
 
