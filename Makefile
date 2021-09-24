@@ -324,9 +324,10 @@ Available targets:
    make tags         build the TAGS file
    make doc          build the API documentation using Sphinx
    make diagrams     create the diagrams for the API documentation
+   make joss-paper   preview the JOSS paper on epydemic (uses docker)
    make env          create a development virtual environment
    make sdist        create a source distribution
-   make wheel	     create binary (wheel) distribution
+   make wheel        create binary (wheel) distribution
    make upload       upload distribution to PyPi
    make commit       tag current version and and push to master repo
    make clean        clean-up the build
