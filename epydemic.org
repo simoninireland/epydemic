@@ -7,26 +7,31 @@
 
 *** Release 1.8.1
 
-**** Coding [3/6]
+**** Coding [4/8]
 
     - [ ] Add degree-distribution-preserving rewiring functions
       preserving P(k, k') cite:UnreasonableEffectiveness (branch
       rewiring-processes)
     - [ ] Constructing derived generating functions
-    - [ ] Add clients for the archive
+    - [X] Add clients for the archive
     - [X] Simplify parameter names (to match archive)
     - [X] Generators should have an ordinary iterator interface
     - [X] Change generators to update experimental parameters, remove
       reference to topology from StochasticDynamics
+    - [ ] A network generator that encapsulates an experiment, to get
+      the final result network of an adaptive process
+    - [ ] Refactor Monitor to have a basic sampling process that
+      gets sub-classed for monitoring, and for sampling the degree
+      distribution of the network as it evolves
 
 **** Bugs [1/1]
 
      - [X] Import of gf library from pip?
 
-**** Documentation [1/3]
+**** Documentation [2/2]
 
      - [X] Change references to network generators to ensembles
-     - [ ] Use proper BibTeX file and citations
+     - [X] Use proper BibTeX file and citations
 
 
 ** Sub-projects
@@ -128,7 +133,7 @@
     automatic citation widget in the repo. (Need to explore what this
     contains.)
 
-*** TODO API interface to the epydemic archive [1/3]
+*** DONE API interface to the epydemic archive [3/3]
 
     branch archive
 
@@ -143,8 +148,8 @@
     repeatedly download a small subset accidentally.
 
     - [X] Client interface to submit a network
-    - [ ] Client interface to download specific network by UUID
-    - [ ] Search interface
+    - [X] Client interface to download specific network by UUID
+    - [X] Search interface
 
 *** A message-passing dynamics
 
@@ -153,9 +158,17 @@
     to allow more general distributions in infection and recovery
     times. This would probably require an API change for models.
 
-*** Paper on draw set implementation
-
 *** TODO Complete analysis of fairness
     SCHEDULED: <2021-08-23 Mon>
 **** TODO Numerical exploration
 **** TODO First draft
+*** A metapopulation model
+
+    What would we need to do to use the /same/ process models in a
+    metapopulation setting? Is it even possible? Assuming that
+    within-population is mixed and there are flow rates
+    (per-compartment?) between populations?
+
+*** A differential infection model
+
+    Allow $\beta$ to be a matrix rather than a single number.
