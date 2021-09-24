@@ -1,9 +1,10 @@
-We'd like to record, acknowledge, and thank the following people for their contributions to epydemic:
+We'd like to record, acknowledge, and thank the following people for
+their contributions to epydemic:
 
-- Peter Mann
-- Martynas Noreika
-- Mike Pitcher
-- Aleksejs Sazonovs
-- Saray Shai
-- Oleksander Konovalov
-
+- Saray Shai (the original inspiration)
+- Peter Mann (lots of maths and experiments)
+- Martynas Noreika (exploring parallel implementations)
+- Mike Pitcher (applications in TB modelling)
+- Aleksejs Sazonovs (applications in zoonotic disease modelling)
+- Oleksander Konovalov (continuous integration)
+- Liberty Askew (vaccination and opinion dynamics models)
