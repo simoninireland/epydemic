@@ -1,6 +1,5 @@
 wheel
 tox
-nose
 coverage
 pylint
 rope
