@@ -82,7 +82,6 @@ class TreeNode():
         n = self
         while n is not None:
             n._updateHeightAndSizes()
-            assert(n._parent != n)
             n = n._parent
 
     def _updateHeightAndSizes(self):
@@ -180,7 +179,7 @@ class TreeNode():
         parent = z._parent
 
         # perform the appropriate rotation
-        # we disconbnect the root node from the rest of the tree
+        # we disconnect the root node from the rest of the tree
         # to prevent infinite recursions when re-computing sizes
         if z._data < y._data:
             if x._data < y._data:
@@ -294,7 +293,7 @@ class TreeNode():
         return self._inOrder()
 
     def _inOrder(self) -> Element:
-        '''Generator t oreturn the elements of the tree
+        '''Generator to return the elements of the tree
         in order using an in-order traverse.
 
         :returns: the next element'''
