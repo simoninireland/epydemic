@@ -554,7 +554,7 @@ class CompartmentedModel(Process):
         g = self.network()
         (n, m) = e
         data = g.get_edge_data(n, m)
-        if (not firstOnly) or (not data[self.OCCUPIED]):
+        if (not firstOnly) or (not data.get(self.OCCUPIED, False)):
             data[self.OCCUPIED] = True
             data[self.T_OCCUPIED] = t
 
