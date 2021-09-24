@@ -158,10 +158,6 @@
     to allow more general distributions in infection and recovery
     times. This would probably require an API change for models.
 
-*** TODO Complete analysis of fairness
-    SCHEDULED: <2021-08-23 Mon>
-**** TODO Numerical exploration
-**** TODO First draft
 *** A metapopulation model
 
     What would we need to do to use the /same/ process models in a
@@ -172,3 +168,13 @@
 *** A differential infection model
 
     Allow $\beta$ to be a matrix rather than a single number.
+
+*** Analysis of unfair draw
+
+    branch unfair-draw
+
+    My implementation of balanced binary trees with minimal
+    information introduces bias that's visible to the add-delete
+    process, but not to the epidemic processes. This is something that
+    needs to (first) be fixed (which is easy), and (second) understood
+    as to why it's only partially visible.
