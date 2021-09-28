@@ -1,4 +1,4 @@
-2# An AVL tree with random draw
+2# An AVL tree with fair random draw
 #
 # Copyright (C) 2021 Simon Dobson
 #
@@ -414,7 +414,7 @@ class TreeNode():
                 return self._right.discard(e)
 
     def draw(self) -> Element:
-        '''Draw an element from the tree at random. This is the "textbook"
+        '''Draw an element from the tree at random. This uses the "textbook"
         solution to random draw:
 
         0.  If this node is a leaf, return the data on this node
