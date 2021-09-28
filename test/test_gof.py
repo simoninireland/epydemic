@@ -113,9 +113,9 @@ class GFTest(unittest.TestCase):
 
         # perform a chi-squared test on the samples
         (_, p) = chisquare(d_network, d_theory)
-        print(d_network)
-        print(d_theory)
-        print(p)
+        #print(d_network)
+        #print(d_theory)
+        #print(p)
 
         # for a goodness-of-fit test we reject the null hypothesis (that
         # the samples come from the expected distribution) for p-values
@@ -130,7 +130,8 @@ class GFTest(unittest.TestCase):
 
         :param gen: the network generator
         :param gf: the generating function
-        :param reps: (optional) number of repetiions'''
+        :param reps: (optional) number of repetiions
+        :returns: True if we pass enough tests'''
         if reps is None:
             reps = self.REPETITIONS
         passes = 0
@@ -139,7 +140,7 @@ class GFTest(unittest.TestCase):
             if self._significance(g, gf):
                 passes += 1
             if passes > reps / 2:
-                return
+                return True
 
         # if we get here we didn't pass enough tests
         self.assertTrue(False, f'only passed {passes}/{reps} tests')
@@ -188,7 +189,7 @@ class GFTest(unittest.TestCase):
     def testAddDeleteDistribution(self):
         '''Test the the addition-deletion process converges as predicted by the theory.'''
         process = AddDelete()
-        process.setMaximumTime(50000)
+        process.setMaximumTime(80000)
 
         params = dict()
         params[ERNetwork.N] = 20000
