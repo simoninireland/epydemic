@@ -126,7 +126,7 @@
     edges of a given colour.
 
 *** DOING JOSS paper
-    DEADLINE: <2021-09-10 Fri> SCHEDULED: <2021-08-20 Fri>
+    DEADLINE: <2021-10-15 Fri> SCHEDULED: <2021-10-01 Fri>
 
     Complete the JOSS paper to give people something to cite when
     using epydemic. The push a citation.cff file so that there's an
