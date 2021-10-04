@@ -106,3 +106,4 @@ Features
    implementation
    glossary
    zbibliography
+   contributing

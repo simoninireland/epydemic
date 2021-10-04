@@ -99,6 +99,7 @@ SOURCES_DOCUMENTATION = \
 	doc/index.rst \
 	doc/install.rst \
 	doc/reference.rst \
+	doc/contributing.rst \
 	doc/classes.rst \
 	doc/zbibliography.rst \
 	doc/glossary.rst \
@@ -169,7 +170,8 @@ SOURCES_EXTRA = \
 	README.rst \
 	LICENSE \
 	HISTORY \
-	CONTRIBUTORS
+	CONTRIBUTORS \
+	CONTRIBUTING.rst
 SOURCES_GENERATED = \
 	MANIFEST \
 	setup.py
