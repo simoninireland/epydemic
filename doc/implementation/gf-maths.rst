@@ -120,11 +120,11 @@ have a list of coefficients then differentiation is simply an
 operation performed per-element. But what about for the series
 representation? Again, numerical differentiation is commonplace and
 provided in a number of libraries, notably ``scipy`` which has the
-`scipy.misc.derivative` function. It turns out however that there's a
+``scipy.misc.derivative`` function. It turns out however that there's a
 problem. Using this form of numerical differentiation works fine for a
 few degrees (say up to 10) but then suffers numerical
-instability. Since we might want to differentiate hundreds of
-thousands of times when analysing large networks, this clearly is a
+instability. Since we might want to differentiate hundreds (or even
+thousands) of times when analysing large networks, this clearly is a
 limitation.
 
 The solution, suggested in a throwaway comment by Newman
