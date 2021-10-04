@@ -10,6 +10,9 @@ epydemic: Epidemic simulations on networks in Python
 .. image:: https://github.com/simoninireland/epydemic/actions/workflows/ci.yaml/badge.svg
     :target: https://github.com/simoninireland/epydemic/actions/workflows/ci.yaml
 
+.. image:: https://www.gnu.org/graphics/gplv3-88x31.png
+    :target: https://www.gnu.org/licenses/gpl-3.0.en.html
+
 Overview
 --------
 
@@ -67,4 +70,4 @@ Author and license
 
 Copyright (c) 2017-2021, Simon Dobson <simoninireland@gmail.com>
 
-Licensed under the `GNU General Public License v2 or later (GPLv2+) <http://www.gnu.org/licenses/gpl.html>`_.
+Licensed under the `GNU General Public Licence v3 <https://www.gnu.org/licenses/gpl-3.0.en.html>`_.
