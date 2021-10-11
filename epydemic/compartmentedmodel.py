@@ -335,14 +335,14 @@ class CompartmentedModel(Process):
         :returns: a collection of nodes
 
         '''
-        return [ n for n in self.network().nodes() if self.getCompartment(n) == c ]
+        return [n for n in self.network().nodes() if self.getCompartment(n) == c]
 
     def results(self) -> Dict[str, Any]:
         '''Create a dict of experimental results for the experiment, consisting of the final
         sizes of all the compartments.
 
         :returns: a dict of experimental results'''
-        rc = super(CompartmentedModel, self).results()
+        rc = super().results()
 
         # add size of each compartment
         for c in self.compartments():
@@ -363,7 +363,7 @@ class CompartmentedModel(Process):
         g = self.network()
         edges = []
         for (n, m, data) in g.edges(data=True):
-            if (self.OCCUPIED not in data.keys()) or (data[self.OCCUPIED] != True):
+            if (self.OCCUPIED not in data.keys()) or (not data[self.OCCUPIED]):
                 # edge is unoccupied, mark it to be removed
                 # (safe because there are no parallel edges)
                 edges.insert(0, (n, m))
