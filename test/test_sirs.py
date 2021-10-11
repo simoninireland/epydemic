@@ -49,5 +49,12 @@ class SIRSTest(unittest.TestCase, CompartmentedDynamicsTest):
         # maximum time needed as disease may be endemic
         self._model.setMaximumTime(200)
 
+    def assertEpidemic(self, rc):
+        self.assertCountEqual(rc, [SIR.SUSCEPTIBLE, SIR.INFECTED, SIR.REMOVED])
+        self.assertTrue(rc[SIR.SUSCEPTIBLE] > 0)
+        self.assertTrue(rc[SIR.REMOVED] > 0)
+        self.assertEqual(rc[SIR.SUSCEPTIBLE] + rc[SIR.INFECTED] + rc[SIR.REMOVED], self._network.order())
+
+
 if __name__ == '__main__':
     unittest.main()
