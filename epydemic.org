@@ -12,7 +12,6 @@
     - [ ] Add degree-distribution-preserving rewiring functions
       preserving P(k, k') cite:UnreasonableEffectiveness (branch
       rewiring-processes)
-    - [ ] Constructing derived generating functions
     - [X] Add clients for the archive
     - [X] Simplify parameter names (to match archive)
     - [X] Generators should have an ordinary iterator interface
@@ -23,6 +22,8 @@
     - [ ] Refactor Monitor to have a basic sampling process that
       gets sub-classed for monitoring, and for sampling the degree
       distribution of the network as it evolves
+    - [ ] Deal with Libby's pull request, integrate vaccine and
+      opinion dynamics models
 
 **** Bugs [1/1]
 
@@ -125,8 +126,8 @@
     edges of a given colour and adjacent nodes accessed by traversing
     edges of a given colour.
 
-*** DOING JOSS paper
-    DEADLINE: <2021-10-15 Fri> SCHEDULED: <2021-10-01 Fri>
+*** TODO JOSS paper
+    DEADLINE: <2021-11-01 Mon> SCHEDULED: <2021-10-25 Mon>
 
     Complete the JOSS paper to give people something to cite when
     using epydemic. The push a citation.cff file so that there's an
