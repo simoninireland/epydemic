@@ -419,7 +419,7 @@ class CompartmentedModel(Process):
         :returns: the locus used to track the nodes'''
 
         if name is None:
-            name = '{l}-{r}'.format(l = l, r = r)
+            name = f'{l}-{r}'
 
         # add locus
         locus = CompartmentedEdgeLocus(name, l, r)
@@ -450,10 +450,10 @@ class CompartmentedModel(Process):
         if isinstance(e, tuple):
             # element is an edge, check compartments at the endpoints
             (n, m) = e
-            cs = [ g.nodes[n][self.COMPARTMENT], g.nodes[m][self.COMPARTMENT] ]
+            cs = [g.nodes[n][self.COMPARTMENT], g.nodes[m][self.COMPARTMENT]]
         else:
             # element is a node, check its own compartmnent
-            cs = [ g.nodes[e][self.COMPARTMENT] ]
+            cs = [g.nodes[e][self.COMPARTMENT]]
         return cs
 
     def _callAddHandlers(self, e: Element):
@@ -466,7 +466,7 @@ class CompartmentedModel(Process):
                 for (ah, _, _, _) in self._effects[c]:
                     ah(g, e)
 
-    def _callLeaveHandlers(self, e : Element, c: str):
+    def _callLeaveHandlers(self, e: Element, c: str):
         '''Call all handlers affected by a node or edge leaving a compartment.
 
         :param e: the node or edge
