@@ -57,6 +57,8 @@ SOURCES_CODE = \
 	epydemic/statistics.py \
 	epydemic/shuffle.py \
 	epydemic/newmanziff.py \
+	epydemic/opinion_model.py \
+	epydemic/vaccinate_model.py \
 	epydemic/gf/__init__.py \
 	epydemic/gf/gf.py \
 	epydemic/gf/function_gf.py \
@@ -87,6 +89,7 @@ SOURCES_TESTS = \
 	test/test_percolate.py \
 	test/test_shuffle.py \
 	test/test_newmanziff.py \
+	test/test_opinion.py \
 	test/test_gf.py \
 	test/test_gof.py
 TESTSUITE = test
@@ -153,6 +156,7 @@ SOURCES_DIAGRAMS = \
 	doc/cookbook/sir-progress-plc.png \
 	doc/cookbook/bond-percolation-plc.png \
 	doc/cookbook/site-percolation-plc.png
+SOURCES_BIBLIOGRAPHY = doc/bibliography.bib
 SOURCES_PAPER = \
 	paper.md \
 	paper.bib

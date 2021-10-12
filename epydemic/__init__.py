@@ -1,6 +1,6 @@
 # Initialisation for epydemic
 #
-# Copyright (C) 2017--2020 Simon Dobson
+# Copyright (C) 2017--2021 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -37,13 +37,14 @@ time` simulations which are better for handling a wider range of
 :term:`event` probabilities (but which are slightly harder to
 specify).
 
-`epydemic` also provides processes not directly connected with epidemic modelling
-but which are often used alongside disease models. This includes
-support for add/delete networks and percolation processes, as well as
-support for studying the percolation transition in networks and using
-generating functions to analyse their behaviour. Individual
-network processes can be combined in different ways to encourage good
-software engineering practices.
+`epydemic` also provides processes not directly connected with
+epidemic modelling but which are often used alongside disease
+models. This includes support for add/delete networks and percolation
+processes, as well as support for studying the percolation transition
+in networks and using generating functions to analyse their
+behaviour. Individual network processes can be combined in different
+ways to encourage good software engineering practices.
+
 '''
 
 # helper types
@@ -86,6 +87,7 @@ from .percolate import Percolate
 from .monitor import Monitor
 from .statistics import NetworkStatistics
 from .shuffle import ShuffleK
+from .opinion_model import Opinion
 
 # process combinators
 from .processsequence import ProcessSequence

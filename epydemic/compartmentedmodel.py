@@ -122,7 +122,7 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
         :returns: the compartments'''
         return [self._left, self._right]
 
-    def matches(self, g: Graph, n :Node, m: Node) -> int:
+    def matches(self, g: Graph, n: Node, m: Node) -> int:
         '''Test whether the given edge has the right compartment endpoints for this compartment. The
         method returns 1 if the edge has the right compartments in the orientation (n, m), -1 if it has
         the right compartments in orientation (m, n), and 0 otherwise.
