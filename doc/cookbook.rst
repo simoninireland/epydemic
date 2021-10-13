@@ -12,4 +12,5 @@ This page is a cookbook-in-progress of ways to use ``epydemic`` in practice.
     cookbook/from-r-to-probabilities.rst
     cookbook/dynamic-population.rst
     cookbook/keep-network.rst
+    cookbook/compare-series.rst
     cookbook/speed.rst

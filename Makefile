@@ -148,7 +148,8 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/dynamic-population.rst \
 	doc/cookbook/keep-network.rst \
 	doc/cookbook/from-r-to-probabilities.rst \
-	doc/cookbook/speed.rst
+	doc/cookbook/speed.rst \
+	doc/cookbook/compare-series.rst
 SOURCES_DIAGRAMS = \
 	doc/cookbook/powerlaw-cutoff.png \
 	doc/cookbook/sir-progress-dt.png \
