@@ -156,7 +156,9 @@ SOURCES_DIAGRAMS = \
 	doc/cookbook/sir-progress-er.png \
 	doc/cookbook/sir-progress-plc.png \
 	doc/cookbook/bond-percolation-plc.png \
-	doc/cookbook/site-percolation-plc.png
+	doc/cookbook/site-percolation-plc.png \
+	doc/cookbook/sir-time-series.png \
+	doc/cookbook/sir-time-series-raw.png
 SOURCES_BIBLIOGRAPHY = doc/bibliography.bib
 SOURCES_PAPER = \
 	paper.md \
@@ -168,6 +170,7 @@ SOURCES_UTILS = \
 	utils/make-monitor-progress.py \
 	utils/make-percolation.py \
 	utils/make-networks.py \
+	utils/make-compare-time-series.py \
 	utils/profile-simulation.py
 
 # Extras for the build and packaging system
