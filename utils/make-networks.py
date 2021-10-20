@@ -1,4 +1,4 @@
-# Craete networks to populate the archive
+# Create networks to populate the archive
 #
 # Copyright (C) 2017--2021 Simon Dobson
 #
@@ -21,7 +21,7 @@ import os
 from sys import argv, exit
 import json
 from dotenv import load_dotenv
-from epyc import Lab, ParallelLab, Experiment, RepeatedExperiment
+from epyc import ParallelLab, Experiment, RepeatedExperiment
 from epydemic import ERNetwork, BANetwork, PLCNetwork
 from epydemic.archive import ArchiveBuilder
 

@@ -21,6 +21,7 @@ from epydemic import BondPercolation, SitePercolation, PLCNetwork
 from epyc import Experiment
 import matplotlib.pyplot as plt
 
+# network topological parameters
 N = 10000
 alpha = 2.0
 kappa = 20
@@ -30,32 +31,37 @@ params[PLCNetwork.N] = N
 params[PLCNetwork.EXPONENT] = alpha
 params[PLCNetwork.CUTOFF] = kappa
 
+# construct a network
 g = PLCNetwork().set(params).generate()
 
+# bond-percolate the network
 e = BondPercolation(g)
 rcs = e.set(params).run()
 
-fig = plt.figure(figsize = (5, 5))
+# figure 1: the bond percolation behaviour
+fig = plt.figure(figsize=(5, 5))
 
 xs = [rc[Experiment.RESULTS][BondPercolation.P] for rc in rcs]
 ys = [rc[Experiment.RESULTS][BondPercolation.GCC] / N for rc in rcs]
+plt.plot(xs, ys, 'g-')
 
 plt.xlabel('fraction of occupied bonds $\phi$')
 plt.ylabel('size of giant component $S$')
-plt.title('Bond percolation on PLC network ($N = {n}, \alpha = {a}, \kappa={k}$)'.format(n=N, a=alpha, k=kappa))
-plt.plot(xs, ys, 'g-')
+plt.title(f'Bond percolation on PLC network ($N = {N}, \alpha = {alpha}, \\kappa={kappa}$)')
 plt.savefig('doc/cookbook/bond-percolation-plc.png')
 
+# site-percolate the network
 e = SitePercolation(g)
 rcs = e.set(params).run()
 
-fig = plt.figure(figsize = (5, 5))
+# figurer 2: site percolation behaviour
+fig = plt.figure(figsize=(5, 5))
 
 xs = [rc[Experiment.RESULTS][SitePercolation.P] for rc in rcs]
 ys = [rc[Experiment.RESULTS][SitePercolation.GCC] / N for rc in rcs]
+plt.plot(xs, ys, 'g-')
 
 plt.xlabel('fraction of occupied sites $\phi$')
 plt.ylabel('size of giant component $S$')
-plt.title('Site percolation on PLC network ($N = {n}, \alpha = {a}, \kappa={k}$)'.format(n=N, a=alpha, k=kappa))
-plt.plot(xs, ys, 'g-')
+plt.title('Site percolation on PLC network ($N = {N}, \alpha = {alpha}, \\kappa={kappa}$)')
 plt.savefig('doc/cookbook/site-percolation-plc.png')

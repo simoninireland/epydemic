@@ -25,6 +25,7 @@ from mpmath import polylog as Li
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn
+matplotlib.style.use('seaborn')
 
 
 def make_powerlaw(alpha):
@@ -38,6 +39,7 @@ def make_powerlaw(alpha):
         return C * pow((k + 0.0), -alpha)
     return p
 
+
 def make_powerlaw_with_cutoff(alpha, kappa):
     '''Create a model function for a powerlaw distribution with exponential cutoff.
 
@@ -50,21 +52,24 @@ def make_powerlaw_with_cutoff(alpha, kappa):
         return (pow((k + 0.0), -alpha) * math.exp(-(k + 0.0) / kappa)) / C
     return p
 
+# topological parameters
 alpha = 2
 kappa = 10
-
-fig = plt.figure(figsize = (5, 5))
 
 xs = numpy.linspace(1, 100)
 powerlaw = make_powerlaw(alpha)
 powerlaw_cutoff = make_powerlaw_with_cutoff(alpha, kappa)
 
+# figure 1: comparing the distributions
+fig = plt.figure(figsize=(5, 5))
+
+plt.plot(xs, [powerlaw(x) for x in xs], 'g-', label='powerlaw')
+plt.plot(xs, [powerlaw_cutoff(x) for x in xs], 'r-',
+         label=f'powerlaw with cutoff at $\\kappa = {kappa}$')
+
 plt.xlabel('$\\log \\, k$')
 plt.ylabel('$\\log \\, p_k$')
-plt.title('Powerlaw with and without cutoff ($\\alpha = {a}$)'.format(a = alpha))
-plt.plot(xs, [ powerlaw(x) for x in xs ], 'g-', label='powerlaw')
-plt.plot(xs, [ powerlaw_cutoff(x) for x in xs ], 'r-',
-         label='powerlaw with cutoff at $\\kappa = {k}$'.format(k = kappa))
+plt.title(f'Powerlaw with and without cutoff ($\\alpha = {alpha}$)')
 plt.loglog()
 plt.legend(loc='lower left')
 plt.savefig('doc/cookbook/powerlaw-cutoff.png')
