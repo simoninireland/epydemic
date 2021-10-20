@@ -40,11 +40,11 @@ progression of an :class:`SIR` epidemic on an ER network:
 
    lab[ERNetwork.N] = N
    lab[ERNetwork.KMEAN] = kmean
-   lab[SIR.P_INFECTED] = 0.01
-   lab[SIR.P_INFECT] = 0.1
-   lab[SIR.P_REMOVE] = 0.01
+   lab[SIR.P_INFECTED] = 0.001
+   lab[SIR.P_INFECT] = 0.0001
+   lab[SIR.P_REMOVE] = 0.001
    lab[Monitor.DELTA] = 1
-   lab['repetitions'] = range(100)
+   lab['repetitions'] = range(10)
 
    e = StochasticDynamics(ProcessSequence([SIR(), Monitor()]), ERNetwork())
    lab.runExperiment(e)
@@ -58,7 +58,7 @@ I locus by:
 
    c = Monitor.timeSeriesForLocus(SIR.INFECTED)
 
-If we extract the result set for this experiment it will have 100 rows
+If we extract the result set for this experiment it will have 10 rows
 (one per repetition), and we can project-out just the time series
 using:
 
@@ -67,9 +67,10 @@ using:
    df = lab.dataframe()
    tss = df[Monitor.timeSeriesForLocus(SIR.INFECTED)]
 
-Then each row will have a single column, which will itself be an
-array -- not quite what we wanted, so now we need to "explode" this
-list-like column into a row in itself:
+Then each row will have a single column, which will itself be an array
+-- not quite what we wanted, so now we need to "explode" this
+list-like column into a row in a new DataFrame with a more convenient
+shape:
 
 .. code-block:: python
 
@@ -96,7 +97,7 @@ the samples happen at the same times, some experimental runs are
 longer than others. We therefore need to extract the sample points of
 the *longest* experimental run, and use these as column
 labels. Shorter runs will then get ``NaN`` ("not a number") values for
-times they didn't sample, and this won't affect any statistics we
+times that they didn't sample, and this won't affect any statistics we
 compute later. The incantation to do this is:
 
 .. code-block:: python
@@ -130,17 +131,20 @@ range and space-out the samples to make a clearer plot, and use
 
    fig = plt.figure(figsize=(7, 5))
 
+   maxt = 5000
+   step = 200
+
    df = lab.dataframe()
    ts = df.loc[(df[Monitor.OBSERVATIONS].apply(len) == df[Monitor.OBSERVATIONS].apply(len).max())].iloc[0][Monitor.OBSERVATIONS]
    infecteds = DataFrame(df[Monitor.timeSeriesForLocus(SIR.INFECTED)].values.tolist()).rename(columns=lambda i: ts[i])
 
-   # compute the mean and standard error of the time series
+   # compute the mean and standard error of the time series using pandas
    infectedMeans = list(infecteds.mean())
    infectedErrors = list(infecteds.std())
 
    # plot the mean with error bars
-   plt.errorbar(ts[:5000:200], [I / N for I in infectedMeans[:5000:200]],
-		yerr=[e / N for e in infectedErrors[:5000:200]],
+   plt.errorbar(ts[:maxt:step], [I / N for I in infectedMeans[:maxt:step]],
+		yerr=[e / N for e in infectedErrors[:maxt:step]],
 		color='blue', marker='.',
 		ecolor='red', capsize=2)
 
@@ -164,12 +168,12 @@ can do this too, using the raw exploded data as well as the summaries:
    # plot the raw data time series
    for i in range(len(infecteds)):
        cs = list(infecteds.iloc[i])
-       plt.scatter(ts[:5000:200], [I / N for I in cs[:5000:200]],
+       plt.scatter(ts[:maxt:step], [I / N for I in cs[:maxt:step]],
 		   color='lightblue', marker='.',                # raw data in a light shade
 		   label='raw' if i == 0 else None)              # only one label for all the raw plots
 
    # plot the mean on top
-   plt.plot(ts[:5000:200], [I / N for I in infectedMeans[:5000:200]],
+   plt.plot(ts[:maxt:step], [I / N for I in infectedMeans[:maxt:step]],
 	    color='blue', marker='.',                            # mean in a darker shade
 	    label='mean')
 
