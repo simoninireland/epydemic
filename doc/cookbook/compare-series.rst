@@ -112,7 +112,7 @@ values.) We can use these for renaming if we want to:
 
 .. code-block:: python
 
-   infecteds = DataFrame(tss.values.tolist()).rename(columns=lambda i: ts[i])
+   infecteds = DataFrame(tss.values.tolist(), columns=ts)
 
 We'll also use this time series for the x-axis ticks on the plot.
 
