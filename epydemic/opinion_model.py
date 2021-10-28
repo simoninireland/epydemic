@@ -84,7 +84,7 @@ class Opinion(CompartmentedModel):
     is spread using an epidemic-like process, with compartments
     consisting of those ignorant of the rumour (:attr:`IGNORANT`),
     those who have heard the rumour and can spread it
-    (attr:`SPREADER`), and those who have heard the rumour and now do
+    (:attr:`SPREADER`), and those who have heard the rumour and now do
     not believe it (or at least do not spread it (:attr:`STIFLER`).
     The difference between this process and :class:`SIR` is that
     "spreaders" become "stiflers" at a rate proportional to their
@@ -125,10 +125,6 @@ class Opinion(CompartmentedModel):
         self.trackEdgesBetweenCompartments(self.IGNORANT, self.SPREADER, name=self.GP)
         self.trackEdgesBetweenMultipleCompartments(self.SPREADER, [self.SPREADER, self.STIFLER], name=self.PPT)
 
-        self.trackNodesInCompartment(self.IGNORANT)
-        self.trackNodesInCompartment(self.SPREADER)
-        self.trackNodesInCompartment(self.STIFLER)
-
         self.addEventPerElement(self.GP, pAffect, self.affect)
         self.addEventPerElement(self.PPT, pStifle, self.stifle)
 
@@ -145,7 +141,12 @@ class Opinion(CompartmentedModel):
         return self.addLocus(name, locus)
 
     def atEquilibrium(self, t):
-        return len(self.locus(self.GP)) == 0 or super().atEquilibrium(t)
+        """The process is at equilibrium if there are no more GP or
+        PPT edges remaining.
+
+        :param t: the simulation time
+        :returns: True if the process is at equilibrium"""
+        return (len(self.locus(self.GP)) == 0 and len(self.locus(self.PPT)) == 0) or super().atEquilibrium(t)
 
     def affect(self, t: float, e: Element):
         """Performs affect event. Changes the compartment of the ignorant-end
