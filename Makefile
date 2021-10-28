@@ -120,6 +120,7 @@ SOURCES_DOCUMENTATION = \
 	doc/sis_fixed_recovery.rst \
 	doc/sirs.rst \
 	doc/seir.rst \
+	doc/opinion.rst \
 	doc/adddelete.rst \
 	doc/percolate.rst \
 	doc/monitor.rst \

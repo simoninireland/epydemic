@@ -60,8 +60,17 @@ Other processes
    :maxdepth: 2
 
    adddelete
+   opinion
    percolate
    shuffle
+
+
+Analytic processes
+------------------
+
+.. toctree::
+   :maxdepth: 2
+
    monitor
    statistics
 
