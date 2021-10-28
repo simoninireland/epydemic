@@ -7,7 +7,7 @@
 
 *** Release 1.8.1
 
-**** Coding [4/8]
+**** Coding [4/9]
 
     - [ ] Add degree-distribution-preserving rewiring functions
       preserving P(k, k') cite:UnreasonableEffectiveness (branch
@@ -22,6 +22,7 @@
     - [ ] Refactor Monitor to have a basic sampling process that
       gets sub-classed for monitoring, and for sampling the degree
       distribution of the network as it evolves
+    - [ ] Add unpacking of time series to Monitor
     - [ ] Deal with Libby's pull request, integrate vaccine and
       opinion dynamics models
 
@@ -127,7 +128,7 @@
     edges of a given colour.
 
 *** TODO JOSS paper
-    DEADLINE: <2021-11-01 Mon> SCHEDULED: <2021-10-25 Mon>
+    DEADLINE: <2021-11-19 Fri> SCHEDULED: <2021-11-08 Mon>
 
     Complete the JOSS paper to give people something to cite when
     using epydemic. The push a citation.cff file so that there's an
