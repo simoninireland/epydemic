@@ -29,10 +29,10 @@ else:
 from epydemic import SIR
 
 
-class SIvR(epydemic.SIR):
+class SIvR(SIR):
     """Reduced susceptiblility SIvR model from paper.
 
-    Inherits from epydemic.SIR and based on this class
+    Inherits from :class:`SIR` and based on this class
     structure. Monitor features have been integrated into the class.
 
     """
