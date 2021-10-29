@@ -128,13 +128,7 @@
     edges of a given colour.
 
 *** TODO JOSS paper
-    DEADLINE: <2021-11-19 Fri> SCHEDULED: <2021-11-08 Mon>
-
-    Complete the JOSS paper to give people something to cite when
-    using epydemic. The push a citation.cff file so that there's an
-    automatic citation widget in the repo. (Need to explore what this
-    contains.)
-
+    DEADLINE: <2021-11-26 Fri> SCHEDULED: <2021-11-15 Mon>
 *** DONE API interface to the epydemic archive [3/3]
 
     branch archive
