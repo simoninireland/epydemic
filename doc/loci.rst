@@ -17,6 +17,10 @@ sub-classes) hopefully renders the machinery largely transparent.
 
 .. automethod:: Locus.name
 
+.. automethod:: Locus.setProcess
+
+.. automethod:: Locus.process
+
 
 Handlers
 --------
