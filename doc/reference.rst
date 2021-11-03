@@ -60,7 +60,6 @@ Other processes
    :maxdepth: 2
 
    adddelete
-   opinion
    percolate
    shuffle
    opinion
