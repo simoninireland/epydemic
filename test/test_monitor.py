@@ -36,16 +36,16 @@ class MonitorTest(unittest.TestCase):
     def testSimple( self ):
         '''Test we capture the right time series.'''
         m = MonitoredSIR()
-        m.setMaximumTime(100)
-        e = StochasticDynamics(m, networkx.erdos_renyi_graph(1000, 5.0 / 1000))
+        #m.setMaximumTime(100)
+        e = StochasticDynamics(m, networkx.erdos_renyi_graph(1000, 20.0 / 1000))
 
         param = dict()
         param[SIR.P_INFECTED] = 0.01
-        param[SIR.P_INFECT] = 0.002
-        param[SIR.P_REMOVE] = 0.002
+        param[SIR.P_INFECT] = 0.3
+        param[SIR.P_REMOVE] = 1.0
         param[Monitor.DELTA] = 1.0
 
-        rc = e.set(param).run()
+        rc = e.set(param).run(fatal=True)
         self.assertSetEqual(set(rc[epyc.Experiment.RESULTS].keys()),
                             set([Monitor.timeSeriesForLocus(SIR.SI),
                                  Monitor.timeSeriesForLocus(SIR.INFECTED),
@@ -53,10 +53,9 @@ class MonitorTest(unittest.TestCase):
                                  SIR.SUSCEPTIBLE,
                                  SIR.INFECTED,
                                  SIR.REMOVED]))
-        # the next test is >=, not =, because some events may be drawn after the maxiumum time,
-        # but the time is short enough that the number of infecteds won't be exhausted beforehand
+        elapsed = rc[epyc.Experiment.METADATA][epyc.Experiment.ELAPSED_TIME]
         n = len(rc[epyc.Experiment.RESULTS][Monitor.OBSERVATIONS])
-        self.assertGreaterEqual(n, 100)
+        self.assertGreaterEqual(n, int(elapsed / param[Monitor.DELTA]))
         for k in [SIR.SI, SIR.INFECTED]:
             self.assertEqual(len(rc[epyc.Experiment.RESULTS][Monitor.timeSeriesForLocus(k)]), n)
 
