@@ -67,7 +67,7 @@ Other processes
    vaccinate
 
 
-Analytic processes
+Analysis processes
 ------------------
 
 .. toctree::
