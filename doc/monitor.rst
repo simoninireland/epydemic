@@ -36,12 +36,6 @@ names.
 .. autoattribute:: Monitor.OBSERVATIONS
 
 
-Events
-------
-
-.. automethod:: Monitor.observe
-
-
 Building the process
 --------------------
 
@@ -50,3 +44,15 @@ Building the process
 .. automethod:: Monitor.build
 
 .. automethod:: Monitor.results
+
+
+Events
+------
+
+.. automethod:: Monitor.observe
+
+
+Running the process
+--------------------
+
+.. automethod:: Monitor.atEquilibrium

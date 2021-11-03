@@ -63,6 +63,9 @@ Other processes
    opinion
    percolate
    shuffle
+   opinion
+   sivr
+   vaccinate
 
 
 Analytic processes
