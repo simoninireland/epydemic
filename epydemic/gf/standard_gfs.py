@@ -19,7 +19,7 @@
 
 from cmath import exp
 from mpmath import polylog
-from scipy.special import zeta
+from scipy.special import zetac
 from epydemic.gf import GF, gf_from_series
 
 
@@ -45,13 +45,15 @@ def gf_er(N: int, kmean: float = None, phi: float = None) -> GF:
     # return the generating function
     return gf_from_series(lambda x: exp(kmean * (x - 1)))
 
-def gf_ba(exponent: float) -> GF:
+def gf_powerlaw(exponent: float) -> GF:
     '''Return the generating function of the powerlaw
-    degree distribution with the given exponent.
+    degree distribution with the given exponent. The best-known
+    powerlaw network is the Barabasi-Albert network which has
+    an exponent of 3.
 
     :param exponent: the exponent of the distribution
     :returns: the generating function'''
-    return gf_from_series(lambda x: polylog(exponent, x) / zeta(exponent, 1))
+    return gf_from_series(lambda x: polylog(exponent, x) / zetac(exponent))
 
 def gf_plc(exponent: float, cutoff: float) -> GF:
     '''Return the generating function of the powerlaw-with-cutoff

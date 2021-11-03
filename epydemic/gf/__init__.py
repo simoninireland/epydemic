@@ -27,4 +27,4 @@ from .continuous_gf import ContinuousGF
 
 # public interface
 from .interface import gf_from_series, gf_from_coefficients, gf_from_network
-from .standard_gfs import gf_er, gf_ba, gf_plc
+from .standard_gfs import gf_er, gf_powerlaw, gf_plc

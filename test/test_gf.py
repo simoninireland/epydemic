@@ -148,20 +148,20 @@ class GFTest(unittest.TestCase):
         kmean_empirical = sum(degrees) / 5000
         self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
 
-    def testBAProbabilities(self):
-        '''Test that the BA GF evaluates to 1.'''
-        gf = gf_ba(3.0)
+    def testPLProbabilities(self):
+        '''Test that the powerlaw GF evaluates to 1.'''
+        gf = gf_powerlaw(3.0)
         self.assertAlmostEqual(gf(1.0), 1.0, places=2)
 
-    def testBAmean(self):
-        '''Test extraction of the mean degree for BA neworks.'''
+    def testPLmean(self):
+        '''Test extraction of the mean degree for powerlaw neworks.'''
         g = networkx.barabasi_albert_graph(10000, 3)
-        gf = gf_ba(3)
+        gf = gf_powerlaw(3)
         gf_prime = gf.dx()
 
         degrees = [d for (_, d) in g.degree()]
         kmean_empirical = sum(degrees) / 10000
-        self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
+        self.assertAlmostEqual(gf_prime(1.0), kmean_empirical, delta=0.5)
 
     def testPLCProbabilities(self):
         '''Test that the PLC GF evaluates to 1.'''
