@@ -150,7 +150,7 @@ class Opinion(CompartmentedModel):
 
     def affect(self, t: float, e: Element):
         """Performs affect event. Changes the compartment of the ignorant-end
-        node to :attr:`AFFECTED`. It also marks the edge as occupied.
+        node to :attr:`SPREADER`.
 
         :param t: the simulation time
         :param e: the edge transmitting the infection, ignorant -> spreader
@@ -158,7 +158,6 @@ class Opinion(CompartmentedModel):
         """
         (n, _) = e
         self.changeCompartment(n, self.SPREADER)
-        self.markOccupied(e, t)
 
     def stifle(self, t: float, e: Element):
         """Performs a stifle event. This changes the compartment of a

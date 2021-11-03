@@ -19,81 +19,46 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-import random
-from networkx import Graph
-from typing import Dict, Any, List, Final, Tuple, Callable
+from typing import Dict, Any
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
     from typing_extensions import Final
-from epydemic import Opinion
+from epydemic import Opinion, SIvR, Node
 
 
 class Vaccinate(Opinion):
-    """
-    Vaccination model from paper. Inherits from Opinion model to
-    included vaccination process running over network.
+    """An opinion model where the opinion is pro- or anti-vaccination, and
+    nodes that are pro-vaccination are vaccinated at a certain rate.
+
+    Internally, the opinion being spread is anti-vaccination. Those who have
+    been affected by the opinion (spreaders) will refuse vaccination; those
+    who have either not heard the opinion or have changed their opinion (ignorants
+    and stiflers) will be vaccinated at a given rate.
+
+    The actual vacciination functionality is provided as an event by :class:`SIvR`.
+    Tnis class simply provides the mechanism whereby vaccination events happen.
     """
 
     # Experimental parameters
-    R_VACC: Final[str] = 'Vaccinate.rVacc'         #: Experimental parameter for rate of vaccination
-
-    # Compartments
-    ANTI_VACC: Final[str] = 'antivacc'             #: tracker for antivaccination nodes
-    PRO_UN_VACC: Final[str] = 'unvacc_provacc'     #: tracker for unvaccinated nodes pro-vaccination
-    VACCED: Final[str] = 'vacced'                  #: vaccinated nodes locus
-
-    def __init__(self):
-        super().__init__()
+    P_VACCINATE: Final[str] = 'epydemic.vaccinate.pVaccinate'  #: Experimental parameter for rate of vaccination.
 
     def build(self, params: Dict[str, Any]):
-        """
-        Builds vaccination model
+        """Builds vaccination model. This extends the :class:`Opinion` parameters
+        with a vaccination rate :attr:`P_VACCINATE`.
+
         :param params: experimenrtal parameters
         """
         super().build(params)
 
-        self.addLocus(self.ANTI_VACC)
-        self.addLocus(self.PRO_UN_VACC)
-        self.addLocus(self.VACCED)
-
-        # scales up probability to a rate
-        rVacc = params[self.R_VACC] * self.network().number_of_nodes()
-        self.addFixedRateEvent(self.PRO_UN_VACC, rVacc, self.vaccinate)
-
-        g = self.network()
-        g.set_node_attributes(values=False, name="vacced")
-        g.set_node_attributes(values=0, name="t_vacc")
+        # add vaccination events for ignorant and stifler individuals
+        self.addPerElementEvent(self.IGNORANT, params[self.P_VACCINATE], self.vaccinate)
+        self.addPerElementEvent(self.STIFLER, params[self.P_VACCINATE], self.vaccinate)
 
     def vaccinate(self, t: float, n: Node):
-        """Performs vaccination event. Updates nodes' :attr:'VACCED' and
-        :attr:'T_VACCED' attributes, and adds nodes to :attr:`VACCED` locus and
-        removes from PRO_UN_VACC locus.
+        '''Perform the vaccination operation. The actual functionality is
+        outsourced to :meth:`SIvR.vaccinateNode`.
 
-        :param t: time of vaccination
-        :param n: node being vaccinated
-
-        """
-        g = self.network()
-        g.nodes[n]['vacced'] = True
-        g.nodes[n]['t_vacc'] = t
-        self.locus(self.PRO_UN_VACC).leaveHandler(self.network(), n)
-        self.locus(self.VACCED).addHandler(self.network(), n)
-
-
-    def changeCompartment(self, n: Node, c: str):
-        """
-        Overrides opinion.changeCompartment to manually add and remove nodes from PRO_UN_VACC and
-        ANTI_VACC compartments.
-
-        :param n: node changing compartment
-        :param c: compartment node is changing to
-        """
-
-        if c == self.IGNORANT: #if being added to ignorant in inital set up of model.
-            self.locus(self.PRO_UN_VACC).addHandler(self.network(), n)
-        if c == self.SPREADER: # once affected by antivacc opinion, handles trackers.
-            self.locus(self.PRO_UN_VACC).leaveHandler(self.network(), n)
-            self.locus(self.ANTI_VACC).addHandler(self.network(), n)
-
-        super().changeCompartment(n, c)
+        :param t: the simulation time
+        :param n: the node'''
+        SIvR.vaccinateNode(self, t, n)

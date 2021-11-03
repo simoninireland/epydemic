@@ -1,4 +1,4 @@
-# SIvR model that incorporates vaccination
+# SIR model that incorporates vaccination, reducing infection.
 #
 # Copyright (C) 2021 Liberty Askew
 # Integrated into main codebase by Simon Dobson
@@ -19,102 +19,125 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-import random
-from networkx import Graph
-from typing import Dict, Any, List, Tuple, Callable
+import numpy                     # type: ignore
+from typing import Dict, Any
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
     from typing_extensions import Final
-from epydemic import SIR
+from epydemic import SIR, Node, Edge
 
 
 class SIvR(SIR):
-    """Reduced susceptiblility SIvR model from paper.
+    """Reduced susceptiblility vaccination model
 
-    Inherits from :class:`SIR` and based on this class
-    structure. Monitor features have been integrated into the class.
+    This model extends :class:`SIR` with a simppe model of vaccination.
+    A node may be vaccinated or not. When a vaccinated susceptible node undergoes
+    an :meth:`infect` event it only actually becomes infected in
+    a proportiion of cases, controlled by the :attr:`EFFICACY` attribute: a
+    high vaccine efficacy means that more infections will fail. The
+    vaccine onnly becomes effective after an optional time offset
+    determined by :attr:`T_OFFSET`: before this time after vaccination,
+    vaccinated and unvaccinated individuals behave the same.
 
+    The model maintains two additional loci, containing vaccinated-but-infected-anyway
+    individuals (:attr:`INFECTED_V`) and unvaccinated-and-infected individuals
+    (:attr:`INFECTED_N`). These do noit affect the dynamics, but make it easy
+    to monitor (using :class:`Monitor`) the relative sizes of these classes within
+    the infected population.
+
+    The :meth:`vaccinateNode` method is defined to vaccinate a given node. It isn't called
+    by any events within this model, but can be called by another process to initiate
+    vaccination.
     """
 
-    INFECTED_N : Final[str] = 'SIvR.In'            #: Tracker for infected unvaccinated nodes.
-    INFECTED_V : Final[str] = 'SIvR.Iv'            #: Tracker for infected vaccinated nodes.
+    # Experimental parameters
+    EFFICACY : Final[str] = 'epydemic.SIvR.pEfficacy'   #: Experimental parameter for vaccine efficacy.
+    T_OFFSET : Final[str] = 'epydemic.SIvR.tOffset'     #: Experimental parameter for delay in applying vaccine.
 
-    def __init__(self, effic = 0.8, offset = 0):
+    # Loci
+    INFECTED_N : Final[str] = 'epydemic.SIvR.In'        #: Tracker for infected unvaccinated nodes.
+    INFECTED_V : Final[str] = 'epydemic.SIvR.Iv'        #: Tracker for infected vaccinated nodes.
 
-        super().__init__()
-        self.effic = effic                          #efficacy of the vaccine.
-        self.offset = offset                        # if there is an offset start of vaccination cycle when run from dynamic.
-        self._finalNetwork : Graph = None           #stores final network as class attribute for analysis.
+    # Node attributes
+    VACCINATED : Final[str] = 'vaccincated'             #: Node attribute storing vaccine status.
+    VACCINATION_TIME : Final[str] = 'vaccination_time'  #: Node attribute for vaccination time..
 
-    def build(self, params):
+    def vaccinateNode(self, t: float, e: Node):
+        '''Vaccinate an individual. This updates the process to
+        include the vaccination of the given individual (node).
+
+        :param t: the simulation time
+        :param n: the node'''
+        g = self.network()
+        g.nodes[n][self.VACCINATED] = True
+        g.nodes[n][self.VACCINATION_TIME] = t
+
+    def build(self, params: Dict[str, Any]):
         """
-        Builds the SIvR model.
-        params: dictionary
-            params[epydemic.SIR.P_INFECTED]
-            params[epydemic.SIR.P_INFECT]
-            params[epydemic.SIR.P_REMOVE]
+        Build the SIvR model. This uses the same paraneters as :class:`SIR`, and adds
+        vaccine efficacy (:attr:`EFFICACY`) and (optionally) a time delay (:attr:`T_OFFSET`).
+
+        :param params: experimental parameters
         """
+        super().build(params)
 
-        super(SIvR, self).build(params)
+        # stash the efficacy
+        self._efficacy = params[self.EFFICACY]
+        self._rng = numpy.random.default_rng()
 
-        self.addLocus(self.INFECTED_N) # adds locus to track infected unvaccinated nodes.
-        self.addLocus(self.INFECTED_V) # adds locus to track infected vaccinated nodes.
+        # default to no time offset
+        self._offset = params.get(self.T_OFFSET, 0.0)
 
-        self.trackNodesInCompartment(epydemic.SIR.SUSCEPTIBLE) # monitors simulation for results
-        self.trackNodesInCompartment(epydemic.SIR.REMOVED) # monitors simulation for results
+        # track (un)vaccinated nodes
+        self.addLocus(self.INFECTED_N)    # infected but unvaccinated nodes
+        self.addLocus(self.INFECTED_V)    # infected and vaccinated nodes
 
+    def setUp(self, params: Dict[str, Any]):
+        '''Set up the simulation. All nodes are initially marked
+        as unvaccinated.
 
-    def infect(self, t, e):
-        """
-        Overrides epydemic.SIR.infect to perform an infection event. This method has additional
-        functionality of reducing probability of infection for vaccinated nodes according to
-        self.efficacy. Also checks node vaccination time with offset to see if it vaccinated at
-        time t -  used when combined in dynamic model.
+        :param params: the experimental parameters'''
+        super().setUp(params)
+        g = self.network()
+        for n in g.nodes:
+            g.nodes[n][self.VACCINATED] = False
+
+    def infect(self, t: float, e: Edge):
+        """Extends :meth:`SIR.infect` with functionality to reduce the
+        probability of infection for vaccinated nodes according to
+        :attr:`EFFICACY`. The vaccination effect only kicks-in after
+        a time :attr:`T_OFFSET` from administration.
 
         t: the simulation time
-        e: the edge transmitting the infection, susceptible-infected
+        e: the edge transmitting the infection, susceptible->infected
         """
-        (n, o) = e
-        if (self.network().nodes[n]['vacced'] == True) & (self.network().nodes[n]['t_vacc'] + self.offset < t) : #when combined with dynamic model need to check time vaccinated with offset.
-            if random.random() > self.effic: #implements efficacy of the vaccine.
-                self.changeCompartment(n, self.INFECTED, True)
+        (n, _) = e
+        g = self.network()
+        if g.nodes[n][self.VACCINATED] and g.nodes[n][VACCINATION_TIME] + self._offset < t:
+            # node is vaccinated, test for effect
+            if self._rng.random() > self._efficacy:
+                # infect anyway
+                self.changeCompartment(n, self.INFECTED)
                 self.markOccupied(e, t)
+
+                # log in the infected-despite-vaccinated locus
+                self.locus(self.INFECTED_V).enterHandler(g, n)
         else:
-            self.changeCompartment(n, self.INFECTED, False)
+            # node is not vaccinated, infect as normal
+            self.changeCompartment(n, self.INFECTED)
             self.markOccupied(e, t)
 
-    def changeCompartment(self, n, c, v = False):
-        """
-        Change the compartment of a node. Overrides epydemic.SIR.changeCompartment because handles
-        manually adding and removing nodes from INFECTED_V and INFECTED_N locus.
-        n: the node
-        c: the new compartment for the node
-        """
-        g = self.network()
-        oc = g.nodes[n][self.COMPARTMENT] #old compartment of node.
-        if oc is not None:
-            self._callLeaveHandlers(n, oc)
-        g.nodes[n][self.COMPARTMENT] = c
-        self._callEnterHandlers(n, c)
-        if c == 'epydemic.SIR.I': # if being infected.
-            if v:
-                self.locus(self.INFECTED_V).addHandler(self.network(),n)
-            if not v:
-                self.locus(self.INFECTED_N).addHandler(self.network(),n)
-        if oc == 'epydemic.SIR.I': # if recovering.
-            if self.locus(self.INFECTED_V).__contains__(n):
-                self.locus(self.INFECTED_V).leaveHandler(self.network(),n)
-            if self.locus(self.INFECTED_N).__contains__(n):
-                self.locus(self.INFECTED_N).leaveHandler(self.network(),n)
+            # log as infected-but-unvaccinated
+            self.locus(self.INFECTED_N).enterHandler(g, n)
 
+    def remove(self, t: float, n: Node):
+        '''Perform the remove event and also remove from the marker loci.
 
-    def results(self):
-        """
-        Grabs final results of network and stores the final network as class attribute _finalNetwork
-        for analysis.
-        returns: results dictionary
-        """
-        res = super().results()
-        self._finalNetwork = self.network().copy()
-        return res
+        :param t: the simulation time (unused)
+        :param n: the node'''
+        super().remove(t, n)
+
+        # remove from whichever tracker
+        self.locus(self.INFECTED_V).leaveHandler(g, n)
+        self.locus(self.INFECTED_N).leaveHandler(g, n)
