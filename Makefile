@@ -59,6 +59,7 @@ SOURCES_CODE = \
 	epydemic/newmanziff.py \
 	epydemic/opinion_model.py \
 	epydemic/vaccinate_model.py \
+	epydemic/sivr_model.py \
 	epydemic/gf/__init__.py \
 	epydemic/gf/gf.py \
 	epydemic/gf/function_gf.py \
@@ -90,6 +91,7 @@ SOURCES_TESTS = \
 	test/test_shuffle.py \
 	test/test_newmanziff.py \
 	test/test_opinion.py \
+	test/test_vaccination.py \
 	test/test_gf.py \
 	test/test_gof.py
 TESTSUITE = test
@@ -121,6 +123,8 @@ SOURCES_DOCUMENTATION = \
 	doc/sirs.rst \
 	doc/seir.rst \
 	doc/opinion.rst \
+	doc/sivr.rst \
+	doc/vaccinate.rst \
 	doc/adddelete.rst \
 	doc/percolate.rst \
 	doc/monitor.rst \
