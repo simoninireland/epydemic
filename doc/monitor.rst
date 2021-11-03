@@ -50,9 +50,3 @@ Events
 ------
 
 .. automethod:: Monitor.observe
-
-
-Running the process
---------------------
-
-.. automethod:: Monitor.atEquilibrium

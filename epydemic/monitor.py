@@ -76,14 +76,6 @@ class Monitor(Process):
         delta = params[self.DELTA]
         self.postRepeatingEvent(0.0, delta, None, self.observe)
 
-    def atEquilibrium(self, t):
-        """The process is always at equilibrium. This means it won't keep other
-        processes going on they reach equilibrium.
-
-        :param t: the simulation time (unused)
-        :returns: True"""
-        return True
-
     def observe(self, t: float, e: Any):
         '''Observe the network, capturing the sizes of all loci which are then
         stored into individual time series. Another time series,
@@ -122,6 +114,7 @@ class Monitor(Process):
         res = super().results()
 
         # store the time series
-        for n in self._timeSeries:
-            res[n] = self._timeSeries[n]
+        if self._timeSeries is not None:
+            for n in self._timeSeries:
+                res[n] = self._timeSeries[n]
         return res
