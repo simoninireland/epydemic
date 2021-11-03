@@ -21,7 +21,7 @@ import sys
 import math
 from networkx import Graph
 import numpy
-from typing import Dict, Any, List, Tuple, Callable
+from typing import Dict, Any, List, Tuple, Callable, cast
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
@@ -131,10 +131,13 @@ class CompartmentedEdgeLocus(CompartmentedLocus):
         :param n: the first node
         :param m: the second node
         :returns: match status -1, 0, or 1'''
-        if (g.nodes[n][CompartmentedModel.COMPARTMENT] == self._right) and (g.nodes[m][CompartmentedModel.COMPARTMENT] == self._left):
+        p = cast(CompartmentedModel, self.process())
+        cn = p.getCompartment(n)
+        cm = p.getCompartment(m)
+        if (cn == self._right) and (cm == self._left):
             return -1
         else:
-            if (g.nodes[n][CompartmentedModel.COMPARTMENT] == self._left) and (g.nodes[m][CompartmentedModel.COMPARTMENT] == self._right):
+            if (cn == self._left) and (cm == self._right):
                 return 1
             else:
                 return 0
@@ -446,14 +449,13 @@ class CompartmentedModel(Process):
 
         :param e: a node or edge
         :returns: a list of compartments'''
-        g = self.network()
         if isinstance(e, tuple):
             # element is an edge, check compartments at the endpoints
             (n, m) = e
-            cs = [g.nodes[n][self.COMPARTMENT], g.nodes[m][self.COMPARTMENT]]
+            cs = [self.getCompartment(n), self.getCompartment(m)]
         else:
             # element is a node, check its own compartmnent
-            cs = [g.nodes[e][self.COMPARTMENT]]
+            cs = [self.getCompartment(e)]
         return cs
 
     def _callAddHandlers(self, e: Element):

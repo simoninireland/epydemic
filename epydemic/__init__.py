@@ -54,8 +54,8 @@ from .bbt import TreeNode
 from .drawset import DrawSet
 
 # network processes
-from .loci import Locus
 from .process import Process, EventFunction, EventDistribution
+from .loci import Locus
 
 # network generators
 from .generator import NetworkGenerator
@@ -84,10 +84,14 @@ from .sis_model_fixed_recovery import SIS_FixedRecovery
 # other processes
 from .adddelete import AddDelete
 from .percolate import Percolate
-from .monitor import Monitor
-from .statistics import NetworkStatistics
 from .shuffle import ShuffleK
 from .opinion_model import Opinion
+from .sivr_model import SIvR
+from .vaccinate_model import Vaccinate
+
+# monitoring anmd summarisation processes
+from .monitor import Monitor
+from .statistics import NetworkStatistics
 
 # process combinators
 from .processsequence import ProcessSequence

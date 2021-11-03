@@ -168,6 +168,9 @@ class Dynamics(NetworkExperiment):
             self._perLocusEvents[p] = []
         self._processLoci[p][n] = l
 
+        # link locus to the process that defined it
+        l.setProcess(p)
+
         # return the locus
         return l
 

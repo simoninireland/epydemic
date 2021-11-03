@@ -19,21 +19,22 @@
 
 from typing import Dict, List, Tuple, Any, Callable, Iterable, Union
 from networkx import Graph
-from epydemic import Locus, Node, Edge, Element
+from epydemic import Node, Edge, Element
 
-# There is a circular import between Process and Dynamics at the typing level
-# (but not at the execution level), when providing types for dynamics() and
-# setDynamics(). To deal with this we only import Dynamics in order to
-# type-check Process, and not for execution.
-# (See https://www.stefaanlippens.net/circular-imports-type-hints-python.html)
+# There is a circular import between Process and Dynamics, and between
+# Process and Locus, at the typing level (but not at the execution
+# level), when providing types for dynamics() and setDynamics(). To
+# deal with this we only import Dynamics in order to type-check
+# Process, and not for execution.  (See
+# https://www.stefaanlippens.net/circular-imports-type-hints-python.html)
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from epydemic import Dynamics
+    from epydemic import Dynamics, Locus
 
 
 # Types for handling events
 EventFunction = Callable[[float, Element], None]              #: Type of event-handler functions.
-EventDistribution = List[Tuple[Locus, float, EventFunction]]  #: Type of event distributions.
+EventDistribution = List[Tuple['Locus', float, EventFunction]]  #: Type of event distributions.
 
 
 class Process():
@@ -179,14 +180,13 @@ class Process():
         return (t >= self.maximumTime())
 
     def results(self) -> Dict[str, Any]:
-       """Create and return an empty dict to be filled with experimental
-       results.  Sub-classes should extend this method to add results
-       to the dict.
+        """Create and return an empty dict to be filled with experimental
+        results.  Sub-classes should extend this method to add results
+        to the dict.
 
-       :returns: an empty dict for experimental results
-
-       """
-       return dict()
+        :returns: an empty dict for experimental results
+        """
+        return dict()
 
 
     # ---------- Accessing and evolving the network ----------
@@ -279,7 +279,7 @@ class Process():
     # ---------- Probabilistic and posted events ----------
     # These are helper methods that delegate to the dynamics
 
-    def addLocus(self, n : str, l : Locus =None) -> Locus:
+    def addLocus(self, n : str, l : 'Locus' = None) -> 'Locus':
         """Add a named locus.
 
         :param n: the locus name
@@ -287,20 +287,20 @@ class Process():
         :returns: the locus"""
         return self._dynamics.addLocus(self, n, l)
 
-    def loci(self) -> Dict[str, Locus]:
+    def loci(self) -> Dict[str, 'Locus']:
         '''Return the names of the loci that this process added.
 
         :returns: a dict from names to loci'''
         return self._dynamics.lociForProcess(self)
 
-    def locus(self, n : str) -> Locus:
+    def locus(self, n : str) -> 'Locus':
         '''Return the named locus.
 
         :param n: the locus name
         :returns: the locus'''
         return self.loci()[n]
 
-    def addEventPerElement(self, l : Union[str, Locus], p : float, ef : EventFunction):
+    def addEventPerElement(self, l : Union[str, 'Locus'], p : float, ef : EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability for each element of the locus, and calling
         the :term:`event function` when it is selected. The locus may
@@ -319,7 +319,7 @@ class Process():
         """
         self._dynamics.addEventPerElement(self, l, p, ef)
 
-    def addFixedRateEvent(self, l : Union[str, Locus], p : float, ef : EventFunction):
+    def addFixedRateEvent(self, l : Union[str, 'Locus'], p : float, ef : EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability, and calling the :term:`event function`
         when it is selected. The locus may be a :class:`Locus` object
