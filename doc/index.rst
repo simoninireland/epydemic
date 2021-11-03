@@ -63,7 +63,7 @@ Features
 
 * Compatible with Python 3.6 and later, as well as with PyPy3
 
-* Optimised internal data structures for performance
+* Internal data structures optimised for performance at large scales
 
 * Supports both discrete-time :term:`synchronous dynamics` and
   continuous-time :term:`stochastic dynamics` (Gillespie) simulation
@@ -81,6 +81,12 @@ Features
   Susceptible-Infected-Susceptible (:term:`SIS`),
   and Susceptible-Exposed-Infected-Susceptible (:term:`SEIR`)
   models built-in, with variations
+
+* Opinion dynamics to model the spread of rumours
+
+* Vaccination models that reduce infection in vaccinated
+  sub-populations, and allow those populations to change as the result
+  of anti-vaccination rumours
 
 * Addition-deletion process to model natural birth and death
 
