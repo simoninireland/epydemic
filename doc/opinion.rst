@@ -40,6 +40,10 @@ Opinion spreading uses two loci:
 * Between spreaders and spreaders or stiflers (PPT edges) where the
   opinion is quashed (the :attr:`Opinion.PPT` locus).
 
+.. autoattribute:: Opinion.GP
+
+.. autoattribute:: Opinion.PPT
+
 
 Building the model
 ------------------
