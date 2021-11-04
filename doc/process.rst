@@ -1,28 +1,28 @@
 :class:`Process`: Base class for network processes
 ==================================================
 
-.. currentmodule :: epydemic
+.. currentmodule:: epydemic
 
-.. autoclass :: Process
+.. autoclass:: Process
    :show-inheritance:
 
 
-Core methods
-------------
+Setup and initialisation
+------------------------
 
 Five methods provide the core API for defining new processes, and are typically overridden by sub-classes.
 
-.. automethod :: Process.reset
+.. automethod:: Process.reset
 
-.. automethod :: Process.build
+.. automethod:: Process.build
 
-.. automethod :: Process.setUp
+.. automethod:: Process.setUp
 
-.. automethod :: Process.tearDown
+.. automethod:: Process.tearDown
 
-.. automethod :: Process.atEquilibrium
+.. automethod:: Process.atEquilibrium
 
-.. automethod :: Process.results
+.. automethod:: Process.results
 
 
 Getting ready to run
@@ -30,17 +30,17 @@ Getting ready to run
 
 Several other methods provide information for the process.
 
-.. automethod :: Process.setNetwork
+.. automethod:: Process.setNetwork
 
-.. automethod :: Process.network
+.. automethod:: Process.network
 
-.. automethod :: Process.setDynamics
+.. automethod:: Process.setDynamics
 
-.. automethod :: Process.dynamics
+.. automethod:: Process.dynamics
 
-.. automethod :: Process.setMaximumTime
+.. automethod:: Process.setMaximumTime
 
-.. automethod :: Process.maximumTime
+.. automethod:: Process.maximumTime
 
 
 Accessing and evolving the network
@@ -54,24 +54,24 @@ in `networkx`.
 
 The interface may be overridden and extended by sub-classes. Three methods form the general core.
 
-.. automethod :: Process.addNode
+.. automethod:: Process.addNode
 
-.. automethod :: Process.removeNode
+.. automethod:: Process.removeNode
 
-.. automethod :: Process.addEdge
+.. automethod:: Process.addEdge
 
-.. automethod :: Process.removeEdge
+.. automethod:: Process.removeEdge
 
 Four other "bulk" methods are deinfed in terms of the basic methods, and so don't typically
 need to be overridden specifically.
 
-.. automethod :: Process.addNodesFrom
+.. automethod:: Process.addNodesFrom
 
-.. automethod :: Process.removeNodesFrom
+.. automethod:: Process.removeNodesFrom
 
-.. automethod :: Process.addEdgesFrom
+.. automethod:: Process.addEdgesFrom
 
-.. automethod :: Process.removeEdgesFrom
+.. automethod:: Process.removeEdgesFrom
 
 
 Loci
@@ -81,11 +81,11 @@ Loci are the "locations" at which things happen. The purpose of a :class:`Locus`
 track of something -- a set of nodes, the entire network, and so forth -- so that
 simulation can proceed efficiently.
 
-.. automethod :: Process.addLocus
+.. automethod:: Process.addLocus
 
-.. automethod :: Process.loci
+.. automethod:: Process.loci
 
-.. automethod :: Process.locus
+.. automethod:: Process.locus
 
 
 Events
@@ -99,13 +99,13 @@ There are three broad classes of events. *Per-element* events occur with a proba
 on each element of a locis. This means that loci with more elements will generate a higher
 rate of events.
 
-.. automethod :: Process.addEventPerElement
+.. automethod:: Process.addEventPerElement
 
 *Fixed-rate* events, by contrast, occur with a probability that's independent of the
 number of elements in a locus, as long as it's not empty. This means that the rate at
 which such events fire is independent of the size of the locus.
 
-.. automethod :: Process.addFixedRateEvent
+.. automethod:: Process.addFixedRateEvent
 
 These two kinds of events are both *stochastic*, in the sense that they are generated according
 to an exponential probability distribution.
@@ -114,10 +114,20 @@ In contrast, *posted* events are set to occur at a particular simulation time. A
 simulation proceeds it will execute posted events in the correct time sequence relative
 to the different stochastic events that are generated.
 
-.. automethod :: Process.postEvent
+.. automethod:: Process.postEvent
 
-.. automethod :: Process.postRepeatingEvent
-
-
+.. automethod:: Process.postRepeatingEvent
 
 
+Identifiers for instances and runs
+----------------------------------
+
+Every process instance has an identifier that's guaranteed to be
+unique within this simulation, and a run identifier that's
+guaranteed to be unique to different runs of the same process
+instance. Taken together, these two identifiers uniquely identify
+a single run of a single process instance.
+
+.. automethod:: Process.instanceId
+
+.. automethod:: Process.runId

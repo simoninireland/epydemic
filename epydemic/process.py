@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
 
 # Types for handling events
-EventFunction = Callable[[float, Element], None]              #: Type of event-handler functions.
+EventFunction = Callable[[float, Element], None]                #: Type of event-handler functions.
 EventDistribution = List[Tuple['Locus', float, EventFunction]]  #: Type of event distributions.
 
 
@@ -58,7 +58,8 @@ class Process():
     """
 
     # defaults
-    DEFAULT_MAX_TIME = 20000      #: Default maximum simulation time.
+    DEFAULT_MAX_TIME: float = 20000.0      #: Default maximum simulation time.
+    INSTANCE_SEQ: int = 0                  #: Process instance sequence number.
 
     def __init__(self):
         super().__init__()
@@ -66,20 +67,42 @@ class Process():
         # set the default maximum time, which persists across runs of the process
         self._maxTime = self.DEFAULT_MAX_TIME
 
+        # set the identifiers
+        self._instanceId = self.INSTANCE_SEQ
+        self.INSTANCE_SEQ += 1
+        self._runId = 0
+
         # reset this instance
         #self.reset()
+
+
+    # ---------- Process instancce and run iidentifiers ----------
+
+    def instanceId(self) -> int:
+
+        '''Return the unique instance identifier of this process.
+
+        :returns: the instacne id'''
+        return self._instanceId
+
+    def runId(self) -> int:
+        '''Return the unique run identifier for the current run. This
+        is updated whenever the process is reset.
+
+        :returns: the run id'''
+        return self._runId
 
 
     # ---------- Setup and initialisation ----------
 
     def reset(self):
         """Reset the process ready to be built. This resets all the internal
-        process state variables. The default does nothng.
+        process state variables.
 
         """
-        pass
+        self._runId += 1
 
-    def build(self, params : Dict[str, Any]):
+    def build(self, params: Dict[str, Any]):
         """Build the process model. This should be overridden by sub-classes,
         and should create the various elements of the model.
 
@@ -88,7 +111,7 @@ class Process():
         """
         pass
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         """Set up the network under the given dynamics. The default does
         nothing: sub-classes should override it to initialise node states
         or establish other properties ready for the experiment.
@@ -108,7 +131,7 @@ class Process():
 
     # ---------- State access and update ----------
 
-    def setNetwork(self, g : Graph):
+    def setNetwork(self, g: Graph):
         """Set the network the process is running over.
 
         :param g: the network
@@ -124,7 +147,7 @@ class Process():
         """
         return self._dynamics.network()
 
-    def setDynamics(self, d : 'Dynamics'):
+    def setDynamics(self, d: 'Dynamics'):
         '''Set the instance of :class:`Dynamics` that runs the process.
 
         :param d: the dynamics'''
@@ -138,7 +161,7 @@ class Process():
         '''
         return self._dynamics
 
-    def setMaximumTime(self, t : float):
+    def setMaximumTime(self, t: float):
         """Set the maximum default simulation time. The default is given by
         :attr:`DEFAULT_MAX_TIME`.  This is used by
         :meth:`atEquilibrium` as the default way to determine
@@ -164,7 +187,7 @@ class Process():
 
     # ---------- Termination and results ----------
 
-    def atEquilibrium(self, t : float) -> bool:
+    def atEquilibrium(self, t: float) -> bool:
         """Test whether the process is an equilibrium. The default simply
         checks whether the simulation time exceeds the maximum given
         by :meth:`setMaximumTime`, which defaults to an arbitrary
@@ -191,14 +214,14 @@ class Process():
 
     # ---------- Accessing and evolving the network ----------
 
-    def addNode(self, n : Node, **kwds):
+    def addNode(self, n: Node, **kwds):
         """Add a node to the working network. Any keyword arguments added as node attributes
 
         :param n: the new node
         :param kwds: (optional) node attributes"""
         self.network().add_node(n, **kwds)
 
-    def addNodesFrom(self, ns : Iterable[Node], **kwds):
+    def addNodesFrom(self, ns: Iterable[Node], **kwds):
         """Add all the nodes in the given iterable to the working network. Any
         keyword arguments are added as node attributes. This works by
         calling :meth:`addNode` for each element of the iterable.
@@ -210,13 +233,13 @@ class Process():
         for n in ns:
             self.addNode(n, **kwds)
 
-    def removeNode(self, n : Node):
+    def removeNode(self, n: Node):
         """Remove a node from the working network.
 
         :param n: the node"""
         self.network().remove_node(n)
 
-    def removeNodesFrom(self, ns : Iterable[Node]):
+    def removeNodesFrom(self, ns: Iterable[Node]):
         """Remove all the nodes in the given iterable from the working
         network. This works by iteratively calling :meth:`removeNode`
         for each element of the iterable collection.
@@ -227,7 +250,7 @@ class Process():
         for n in ns:
             self.removeNode(n)
 
-    def addEdge(self, n : Node, m : Node, **kwds):
+    def addEdge(self, n: Node, m: Node, **kwds):
         """Add an edge between nodes. Any keyword arguments are added as edge
         attributes.  If the endpoint nodes do not already exist then
         an exception is raised.
@@ -244,7 +267,7 @@ class Process():
             raise Exception('No node {n} in network'.format(n = m))
         g.add_edge(n, m, **kwds)
 
-    def addEdgesFrom(self, es : Iterable[Edge], **kwds):
+    def addEdgesFrom(self, es: Iterable[Edge], **kwds):
         """Add all the edges in the given iterable to the working network. Any
         keyword arguments are added as node attributes. This works by
         calling :meth:`addEdge` for each element of the iterable.
@@ -257,14 +280,14 @@ class Process():
             (n, m) = e
             self.addEdge(n, m, **kwds)
 
-    def removeEdge(self, n : Node, m : Node):
+    def removeEdge(self, n: Node, m: Node):
         """Remove an edge from the working network.
 
         :param n: the start node
         :param m: the end node"""
         self.network().remove_edge(n, m)
 
-    def removeEdgesFrom(self, es : Iterable[Edge]):
+    def removeEdgesFrom(self, es: Iterable[Edge]):
         """Remove all the edges in the given iterable collection from the
         working network. This works by iteratively calling
         :meth:`removeEdge` for each edge in the iterable.
@@ -279,7 +302,7 @@ class Process():
     # ---------- Probabilistic and posted events ----------
     # These are helper methods that delegate to the dynamics
 
-    def addLocus(self, n : str, l : 'Locus' = None) -> 'Locus':
+    def addLocus(self, n: str, l: 'Locus' = None) -> 'Locus':
         """Add a named locus.
 
         :param n: the locus name
@@ -293,14 +316,14 @@ class Process():
         :returns: a dict from names to loci'''
         return self._dynamics.lociForProcess(self)
 
-    def locus(self, n : str) -> 'Locus':
+    def locus(self, n: str) -> 'Locus':
         '''Return the named locus.
 
         :param n: the locus name
         :returns: the locus'''
         return self.loci()[n]
 
-    def addEventPerElement(self, l : Union[str, 'Locus'], p : float, ef : EventFunction):
+    def addEventPerElement(self, l: Union[str, 'Locus'], p: float, ef: EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability for each element of the locus, and calling
         the :term:`event function` when it is selected. The locus may
@@ -319,7 +342,7 @@ class Process():
         """
         self._dynamics.addEventPerElement(self, l, p, ef)
 
-    def addFixedRateEvent(self, l : Union[str, 'Locus'], p : float, ef : EventFunction):
+    def addFixedRateEvent(self, l: Union[str, 'Locus'], p: float, ef: EventFunction):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability, and calling the :term:`event function`
         when it is selected. The locus may be a :class:`Locus` object
@@ -337,7 +360,7 @@ class Process():
         """
         self._dynamics.addFixedRateEvent(self, l, p, ef)
 
-    def postEvent(self, t : float, e : Any, ef : EventFunction):
+    def postEvent(self, t: float, e: Any, ef: EventFunction):
         """Post an event that calls the :term:`event function` at time t.
 
         :param t: the current time
@@ -345,7 +368,7 @@ class Process():
         :param ef: the event function"""
         self._dynamics.postEvent(t, e, ef)
 
-    def postRepeatingEvent(self, t : float, dt : float, e : Any, ef : EventFunction):
+    def postRepeatingEvent(self, t: float, dt: float, e: Any, ef: EventFunction):
         """Post an event that starts at time t and re-occurs at interval dt.
 
         :param t: the start time
