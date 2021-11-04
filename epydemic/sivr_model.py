@@ -63,15 +63,41 @@ class SIvR(SIR):
     VACCINATED : Final[str] = 'vaccincated'             #: Node attribute storing vaccine status.
     VACCINATION_TIME : Final[str] = 'vaccination_time'  #: Node attribute for vaccination time..
 
-    def vaccinateNode(self, t: float, e: Node):
+
+    # ---------- Managing vaccination data ----------
+
+    def vaccinateNode(self, t: float, n: Node):
         '''Vaccinate an individual. This updates the process to
         include the vaccination of the given individual (node).
 
         :param t: the simulation time
         :param n: the node'''
         g = self.network()
-        g.nodes[n][self.VACCINATED] = True
-        g.nodes[n][self.VACCINATION_TIME] = t
+
+        # we use SIvR.VACCINATED here rather than self.VACCINATED to allow
+        # other models to call this method while passing themselves in
+        # as self (since they typically won't have a reference to the SIvR
+        # process thatt's running in parallel)
+        g.nodes[n][SIvR.VACCINATED] = True
+        g.nodes[n][SIvR.VACCINATION_TIME] = t
+
+    def nodeVaccinated(self, n: Node) -> bool:
+        '''Tests the vaccination status of a node.
+
+        :param n: the node
+        :returns: True if the node has been vaccinated'''
+        return self.network().nodes[n].get(SIvR.VACCINATED, False)
+
+    def nodeVaccinatedAt(self, n: Node) -> float:
+        '''Return the vaccination time of a node. This is defined to be
+        -1 -- an illegal simulation time -- if the node has not been vaccinated.
+
+        :param n: the node
+        :returns: the vaccination time or -1'''
+        return self.network().nodes[n].get(SIvR.VACCINATION_TIME, -1)
+
+
+    # ---------- Building the model ----------
 
     def build(self, params: Dict[str, Any]):
         """
@@ -103,6 +129,9 @@ class SIvR(SIR):
         for n in g.nodes:
             g.nodes[n][self.VACCINATED] = False
 
+
+    # ---------- Events ----------
+
     def infect(self, t: float, e: Edge):
         """Extends :meth:`SIR.infect` with functionality to reduce the
         probability of infection for vaccinated nodes according to
@@ -114,7 +143,7 @@ class SIvR(SIR):
         """
         (n, _) = e
         g = self.network()
-        if g.nodes[n][self.VACCINATED] and g.nodes[n][VACCINATION_TIME] + self._offset < t:
+        if g.nodes[n][self.VACCINATED] and g.nodes[n][self.VACCINATION_TIME] + self._offset < t:
             # node is vaccinated, test for effect
             if self._rng.random() > self._efficacy:
                 # infect anyway
@@ -139,5 +168,6 @@ class SIvR(SIR):
         super().remove(t, n)
 
         # remove from whichever tracker
+        g = self.network()
         self.locus(self.INFECTED_V).leaveHandler(g, n)
         self.locus(self.INFECTED_N).leaveHandler(g, n)

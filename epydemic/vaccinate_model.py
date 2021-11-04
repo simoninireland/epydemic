@@ -37,7 +37,7 @@ class Vaccinate(Opinion):
     and stiflers) will be vaccinated at a given rate.
 
     The actual vacciination functionality is provided as an event by :class:`SIvR`.
-    Tnis class simply provides the mechanism whereby vaccination events happen.
+    Tnis class simply provides the mechanism whereby vaccination events are caused.
     """
 
     # Experimental parameters
@@ -52,8 +52,8 @@ class Vaccinate(Opinion):
         super().build(params)
 
         # add vaccination events for ignorant and stifler individuals
-        self.addPerElementEvent(self.IGNORANT, params[self.P_VACCINATE], self.vaccinate)
-        self.addPerElementEvent(self.STIFLER, params[self.P_VACCINATE], self.vaccinate)
+        self.addEventPerElement(self.IGNORANT, params[self.P_VACCINATE], self.vaccinate)
+        self.addEventPerElement(self.STIFLER, params[self.P_VACCINATE], self.vaccinate)
 
     def vaccinate(self, t: float, n: Node):
         '''Perform the vaccination operation. The actual functionality is

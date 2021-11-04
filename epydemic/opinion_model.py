@@ -25,7 +25,7 @@ if sys.version_info >= (3, 8):
     from typing import Final
 else:
     from typing_extensions import Final
-from epydemic import CompartmentedModel, Node, Element, CompartmentedLocus, CompartmentedEdgeLocus
+from epydemic import CompartmentedModel, Node, Element, Locus, CompartmentedLocus, CompartmentedEdgeLocus
 
 
 class MultiCompartmentedEdgeLocus(CompartmentedEdgeLocus):
@@ -68,9 +68,12 @@ class MultiCompartmentedEdgeLocus(CompartmentedEdgeLocus):
         :returns: match status -1, 0, or 1
 
         '''
-        if (g.nodes[n][CompartmentedModel.COMPARTMENT] == self._left) and (g.nodes[m][CompartmentedModel.COMPARTMENT] in self._rights):
+        p = self.process()
+        cn = p.getCompartment(n)
+        cm = p.getCompartment(m)
+        if (cn == self._left) and (cm in self._rights):
             return 1
-        elif (g.nodes[n][CompartmentedModel.COMPARTMENT] in self._rights) and (g.nodes[m][CompartmentedModel.COMPARTMENT] == self._left):
+        elif (cn in self._rights) and (cm == self._left):
             return -1
         else:
             return 0
@@ -122,13 +125,16 @@ class Opinion(CompartmentedModel):
         self.addCompartment(self.SPREADER, pAffected)
         self.addCompartment(self.STIFLER, 0.0)
 
+        self.trackNodesInCompartment(self.IGNORANT)
+        self.trackNodesInCompartment(self.SPREADER)
+        self.trackNodesInCompartment(self.STIFLER)
         self.trackEdgesBetweenCompartments(self.IGNORANT, self.SPREADER, name=self.GP)
         self.trackEdgesBetweenMultipleCompartments(self.SPREADER, [self.SPREADER, self.STIFLER], name=self.PPT)
 
         self.addEventPerElement(self.GP, pAffect, self.affect)
         self.addEventPerElement(self.PPT, pStifle, self.stifle)
 
-    def trackEdgesBetweenMultipleCompartments(self, l: str, rs: List[str], name: str):
+    def trackEdgesBetweenMultipleCompartments(self, l: str, rs: List[str], name: str) -> Locus:
         """
         Add a locus to track edges with endpoint nodes in the given compartments.
 
@@ -140,7 +146,7 @@ class Opinion(CompartmentedModel):
         locus = MultiCompartmentedEdgeLocus(name, l, rs)
         return self.addLocus(name, locus)
 
-    def atEquilibrium(self, t):
+    def atEquilibrium(self, t: float) -> bool:
         """The process is at equilibrium if there are no more GP or
         PPT edges remaining.
 
