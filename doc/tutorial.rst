@@ -15,5 +15,6 @@ book on epidemic modelling :cite:`em`.
     tutorial/build-sir.rst
     tutorial/use-standard-model.rst
     tutorial/run-at-scale.rst
+    tutorial/subclassing.rst
     tutorial/process-composition.rst
     tutorial/advanced-topics.rst
