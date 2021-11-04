@@ -221,16 +221,22 @@ class CompartmentedModel(Process):
     compartment at the end of the experiment. This can be changed by overriding the
     :meth:`results` method.'''
 
-    # model state variables
-    COMPARTMENT : Final[str] = 'compartment'                 #: Node attribute holding the node's compartment.
-    OCCUPIED : Final[str] = 'occupied'                       #: Edge attribute, True if infection travelled along the edge.
-    T_OCCUPIED : Final[str] = 'occupationTime'               #: Edge attribute holding the time the infection crossed the edge.
-    T_HITTING: Final[str] = 'hittingTime'                    #: Node attribute recording the hitting time.
+    # Placeholders for model state variables
+    COMPARTMENT: str = None               #: State variable holding a node's compartment.
+    OCCUPIED: str = None                  #: State variable that's True for occupied edges.
+    T_OCCUPIED: str = None                #: State variable holding the occupation time of an edge.
+    T_HITTING: str = None                 #: State variable holding the infection time of a node.
 
     def __init__(self):
         super().__init__()
         self._compartments: Dict[str, float] = dict()         # compartment -> initial probability
         self._effects: Dict[str, List[Handlers]] = dict()     # compartment -> event handlers
+
+        # state variable unique tags
+        self.COMPARTMENT = self.stateVariable('compartment')
+        self.OCCUPIED = self.stateVariable('occupied')
+        self.T_OCCUPIED = self.stateVariable('tOccupied')
+        self.T_HITTING = self.stateVariable('tHitting')
 
 
     # ---------- Setup and initialisation ----------
@@ -285,7 +291,7 @@ class CompartmentedModel(Process):
         '''Place each node in the network into its initial compartment. The default
         initialises the nodes into a random compartment according to the initial
         compartment distribution returned by :meth:`initialCompartmentDistribution`.
-        This method may be overridden to, for example structure the initial
+        This method may be overridden to, for example, structure the initial
         population non-randomly.'''
 
         # get the initial compartment distribution
@@ -322,7 +328,7 @@ class CompartmentedModel(Process):
     # ---------- Termination and results ----------
 
     def compartments(self) -> List[str]:
-        '''Return the set of compartments.
+        '''Return the set of compartments for this model.
 
         :returns: the compartments'''
         return list(self._compartments.keys())

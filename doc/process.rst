@@ -119,8 +119,8 @@ to the different stochastic events that are generated.
 .. automethod:: Process.postRepeatingEvent
 
 
-Identifiers for instances and runs
-----------------------------------
+Identifiers for instances, runs, and state
+------------------------------------------
 
 Every process instance has an identifier that's guaranteed to be
 unique within this simulation, and a run identifier that's
@@ -131,3 +131,10 @@ a single run of a single process instance.
 .. automethod:: Process.instanceId
 
 .. automethod:: Process.runId
+
+There is also a method for defining "constants" to be used as
+attributes on nodes and edges for storing process state.
+
+.. automethod:: Process.stateVariable
+
+(See :ref:`subclassing` for an example of how to define state variables.)

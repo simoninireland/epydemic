@@ -92,6 +92,17 @@ class Process():
         return self._runId
 
 
+    # ---------- Process state variables ----------
+
+    def stateVariable(self, stem: str) -> str:
+        '''Create a unique name for a state variable using the given stem.
+        The default combines the stem with the process instance id.
+
+        :param stem: the name stem
+        :returns: the state variable name'''
+        return '{s}-{n}'.format(s=stem, n=self.instanceId())
+
+
     # ---------- Setup and initialisation ----------
 
     def reset(self):

@@ -13,13 +13,17 @@ or in :term:`continuous time` using :term:`stochastic dynamics`.
 
 :class:`CompartmentedModel` is an abstract class that must be
 sub-classed to define actual disease models. `epydemic` provides
-implementations of the two "reference" compartmented models,
-:class:`SIR` and :class:`SIS`, as well as several variants of them:
-Hethcote :cite:`Hethcote-CompartmentedModels` provides a survey of a huge range of others.
+implementations of the three "reference" compartmented models,
+:class:`SIR`, :class:`SIS`, and :class:`SEIR`, as well as several
+variants of them: Hethcote :cite:`Hethcote-CompartmentedModels`
+provides a survey of a huge range of others.
 
 
-Attributes
-----------
+Model state variables
+---------------------
+
+These are used as tags for attributes on nodes and edges that store
+the model state.
 
 .. autoattribute:: CompartmentedModel.COMPARTMENT
 
