@@ -1,7 +1,7 @@
 # Test basic process functions
 #
 # Copyright (C) 2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Process, Dynamics
+from epydemic import *
 import unittest
 import networkx
 
@@ -84,6 +84,24 @@ class ProcessTest(unittest.TestCase):
             self._p.addEdge(1, 7)
         with self.assertRaises(Exception):
             self._p.addEdge(7, 1)
+
+    def testInstanceIds(self):
+        '''Test instances ids are unique.'''
+        p1 = Process()
+        p2 = Process()
+        self.assertNotEqual(p1.instanceId(), p2.instanceId())
+
+    def testRunIds(self):
+        '''Test that two runs of the same process have different run ids.'''
+        p = Process()
+        g = networkx.fast_gnp_random_graph(10000, 0.001)
+        e = StochasticDynamics(p, g)
+
+        rc1 = e.run(fatal=True)
+        r1 = p.runId()
+        rc2 = e.run(fatal=True)
+        r2 = p.runId()
+        self.assertNotEqual(r1, r2)
 
 
 if __name__ == '__main__':

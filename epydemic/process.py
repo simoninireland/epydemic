@@ -68,8 +68,8 @@ class Process():
         self._maxTime = self.DEFAULT_MAX_TIME
 
         # set the identifiers
-        self._instanceId = self.INSTANCE_SEQ
-        self.INSTANCE_SEQ += 1
+        self._instanceId = Process.INSTANCE_SEQ
+        Process.INSTANCE_SEQ += 1
         self._runId = 0
 
         # reset this instance
