@@ -76,10 +76,9 @@ class Process():
         #self.reset()
 
 
-    # ---------- Process instancce and run iidentifiers ----------
+    # ---------- Process instance and run identifiers ----------
 
     def instanceId(self) -> int:
-
         '''Return the unique instance identifier of this process.
 
         :returns: the instacne id'''
