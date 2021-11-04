@@ -86,7 +86,7 @@ class Process():
 
     def runId(self) -> int:
         '''Return the unique run identifier for the current run. This
-        is updated whenever the process is reset.
+        is updated whenever the process is reset by a call to :meth:`reset`.
 
         :returns: the run id'''
         return self._runId
