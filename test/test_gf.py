@@ -193,7 +193,7 @@ class GFTest(unittest.TestCase):
     def testPLCmean(self):
         '''Test extraction of the mean degree for PLC neworks.'''
         param = dict()
-        param[PLCNetwork.N] = 10000
+        param[PLCNetwork.N] = 5000
         param[PLCNetwork.EXPONENT] = 3.0
         param[PLCNetwork.CUTOFF] = 25
         g = PLCNetwork().set(param).generate()
@@ -201,7 +201,7 @@ class GFTest(unittest.TestCase):
         gf_prime = gf.dx()
 
         degrees = [d for (_, d) in g.degree()]
-        kmean_empirical = sum(degrees) / 10000
+        kmean_empirical = sum(degrees) / 5000
         self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
 
 
