@@ -155,7 +155,7 @@ class GFTest(unittest.TestCase):
 
     def testPLmean(self):
         '''Test extraction of the mean degree for powerlaw neworks.'''
-        g = networkx.barabasi_albert_graph(10000, 3)
+        g = networkx.barabasi_albert_graph(10000, 3)s
         gf = gf_powerlaw(3)
         gf_prime = gf.dx()
 
