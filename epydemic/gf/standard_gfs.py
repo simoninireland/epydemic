@@ -45,6 +45,7 @@ def gf_er(N: int, kmean: float = None, phi: float = None) -> GF:
     # return the generating function
     return gf_from_series(lambda x: exp(kmean * (x - 1)))
 
+
 def gf_powerlaw(exponent: float) -> GF:
     '''Return the generating function of the powerlaw
     degree distribution with the given exponent. The best-known
@@ -54,6 +55,7 @@ def gf_powerlaw(exponent: float) -> GF:
     :param exponent: the exponent of the distribution
     :returns: the generating function'''
     return gf_from_series(lambda x: polylog(exponent, x) / zetac(exponent))
+
 
 def gf_plc(exponent: float, cutoff: float) -> GF:
     '''Return the generating function of the powerlaw-with-cutoff
