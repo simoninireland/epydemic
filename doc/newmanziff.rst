@@ -25,7 +25,7 @@ The reason percolation is of interest is that it provides a model of a wide rang
 interesting processes. (Originally it was used to study crack formation in crystals
 and waterflow in soils.) It also bears a striking similarity to the ways in which
 epidemics form, with the final occupied sub-graph being mathematically related to the
-contact tree of an epidemic. This lets us stidy epidemics using percolation, an approach
+contact tree of an epidemic. This lets us study epidemics using percolation, an approach
 pioneered by Newman :cite:`NewmanEpidemicDisease`.
 
 While percolation can also be used in conjunction with epidemic processes, it is often
