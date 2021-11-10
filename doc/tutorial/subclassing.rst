@@ -56,6 +56,12 @@ some state for compartments as follows:
 
 .. code-block:: python
 
+    # Placeholders for model state variables
+    COMPARTMENT: str = None               #: State variable holding a node's compartment.
+    OCCUPIED: str = None                  #: State variable that's True for occupied edges.
+    T_OCCUPIED: str = None                #: State variable holding the occupation time of an edge.
+    T_HITTING: str = None                 #: State variable holding the infection time of a node.
+
     def __init__(self):
 	super().__init__()
 	self._compartments: Dict[str, float] = dict()         # compartment -> initial probability
@@ -67,9 +73,11 @@ some state for compartments as follows:
 	self.T_OCCUPIED = self.stateVariable('tOccupied')
 	self.T_HITTING = self.stateVariable('tHitting')
 
-This lets code use ``COMPARTMENT`` as if it was a constant -- which it
-is, but a constant *unique to this instance*. This can then be hidden
-by accessor methods, for example:
+(We define placeholders for the variable names as a place to hang
+their documentation.) Code can use ``COMPARTMENT`` as if it was a
+constant -- which it is, but a constant *unique to this instance*. The
+actual constants can anyway then be hidden by accessor methods, for
+example:
 
 .. code-block:: python
 

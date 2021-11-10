@@ -26,10 +26,10 @@ can be annoying.
 reason for this is that they can then be run at scale, possibly on
 remote computers, without needing to ship lots of data around. We
 therefore package the experiment, and the local analysis of its
-results and end state, into a class (possibly built with multiple
-inheritance, for decomposition and re-use). Because of this, we take
-care to spin-up and tear-down experiments cleanly, and this extends to
-the management of the working network.
+results and end state, into a class, for decomposition and
+re-use. Because of this, we take care to spin-up and tear-down
+experiments cleanly, and this extends to the management of the working
+network.
 
 An ``epydemic`` experiment maintains a working network over a single
 run. This is created either from a prototype network, or from a
@@ -65,8 +65,7 @@ network in the process object, for example by extending
 The end-state network is now in :code:`m._finalNetwork` for
 analysis. This works because results are created *after* the body of
 the experiment but *before* tear-down. You could even put this
-behaviour into a class on its own, and then include it using multiple
-inheritance with whatever process you're defining, or as part of a
+behaviour into a class on its own, and then include it using a
 :class:`ProcessSequence`.
 
 This approach only works locally and at small scale, though. If run

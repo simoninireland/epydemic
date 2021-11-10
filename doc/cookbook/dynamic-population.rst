@@ -12,19 +12,17 @@ An epidemic over a changing population
 scenario: a compartmented model and an addition-deletion process. We
 just have to make them work together.
 
-Python multiple inheritance is the mechanism for this, in the same way
-as we can include :ref:`monitoring <monitoring-progress>` to any process.
-The basic structure will therefore be to create a new process that combines
-the compartmented model we want with the addition-deletion process, and then
-set all the parameters that the two processes need. Suppose we choose our
-favourite :class:`SIR` model. We'd then have a class definition that lools something like:
+``epydemic`` provides a :class:`ProcessSequence` for this, in the same
+way as we can include :ref:`monitoring <monitoring-progress>` to any
+process.  The basic structure will therefore be to create a new
+process sequence that combines the compartmented model we want with
+the addition-deletion process, and then set all the parameters that
+the two processes need. Suppose we choose our favourite :class:`SIR`
+model. We'd then have code that lools something like:
 
-.. code-block :: python
+.. code-block:: python
 
-    class DynamicSIR(epydemic.SIR, epydemic.AddDelete):
-
-	def __init__(self):
-	    super(DynamicSIR, self).__init__()
+    p = ProcessSequence([SIR(), AddDelete()])
 
 So far so good.
 
@@ -58,37 +56,45 @@ process is running over. :class:`AddDelete` overrides both these methods
 defines another, :meth:`AddDelete.addNewNode`, that creates a new node with a new
 name.
 
-To define how :class:`SIR` and :class:`AddDelete` work together, then, we need to
-extend the methods where the interaction occurs. Let's suppose we've decided that
-all added nodes will be marked as :attr:`SIR.SUSCEPTIBLE`, and that all deleted nodes
-will just disappear. We can code this up by adding two methods to our class definition:
 
-.. code-block :: python
+Making processes work together
+------------------------------
 
-    def addNewNode(self, **kwds):
-	'''Mark new nodes as susceptible.
+To define how :class:`SIR` and :class:`AddDelete` work together, then,
+we need to extend the methods where the interaction occurs. Let's
+suppose we've decided that all added nodes will be marked as
+:attr:`SIR.SUSCEPTIBLE`, and that all deleted nodes will just
+disappear. We can code this up by sub-classing :class:`AddDelete` and
+adding two methods to our class definition:
 
-	:param kwds: (optional) node attributes'''
+.. code-block:: python
 
-	# add the node, cepturing its name
-	n = super(DynamicSIR, self).addNewNode(*kwds)
+    class CompartmentedAddDelete(AddDelete):
 
-	# set the compartment of this node to susceptible
-	self.setCompartment(n, epydemic.SIR.SUSCEPTIBLE)
+	def addNewNode(self, **kwds):
+	    '''Mark new nodes as susceptible.
 
-	# return the name of the new node
-	return n
+	    :param kwds: (optional) node attributes'''
 
-    def removeNode(self, n):
-	'''Mark any node as removed before deleting.
+	    # add the node, cepturing its name
+	    n = super().addNewNode(*kwds)
 
-	:param n: the node'''
+	    # set the compartment of this node to susceptible
+	    self.setCompartment(n, epydemic.SIR.SUSCEPTIBLE)
 
-	# change the node's compartment to removed
-	self.changeCompartment(n, epydemic.SIR.REMOVED)
+	    # return the name of the new node
+	    return n
 
-	# delete the node
-	super(DynamicSIR, self).removeNode(n)
+	def removeNode(self, n):
+	    '''Mark any node as removed before deleting.
+
+	    :param n: the node'''
+
+	    # change the node's compartment to removed
+	    self.changeCompartment(n, epydemic.SIR.REMOVED)
+
+	    # delete the node
+	    super().removeNode(n)
 
 (Note that when adding a node we used :meth:`CompartmentModel.setCompartment` because
 the newly-added node didn't have a compartment, whereas when deleting a
@@ -116,10 +122,48 @@ can do this in one of three ways:
 1. Extend :class:`SIR` and add a new compartment in the sub-class;
 2. Write another compartmented model that *only* has this compartment, and no
    events, and add it into the mix using multiple inheritance; or
-3. Extend :meth:`AddDelete.build` to add the new compartment.
+3. Extend :meth:`CompartmentedAddDelete.build` to add the new compartment.
 
 Which of these is the "correct" approach depends on context. In any case there's
 an interaction between the addition-deletion process and the compartmented model
 process that's requiring extra code. At one level the solution you choose doesn't
 matter, because the interactions all go through an API and any extra results that
 you obtain land in the results dict alongside the other values.
+
+
+Composition and sub-classing
+----------------------------
+
+We've used both process composition and sub-classing in this example,
+and it's perhaps useful to explore how and why.
+
+Process composition using :class:`ProcessSequence` takes two (or more)
+processes and runs them together. The individual processes themselves
+are unchanged, but their events and other functions are merged during
+the simulation.
+
+If the two processes need to interact in more complicated ways,
+requiring code to be written, then we need to add that code somehow in
+the right place for it to be called by the right process. Sub-classing
+is often the simplest way to do this. It has the disadvantage of
+creating a new class that's in some sense specific to the composition
+-- ``CompartmentedAddDelete`` in our case here -- but it equally
+remains somewhat independent of the other process and so can
+potentially be re-used. One could swqp-out :class:`SIR` and replace it
+with :class:`SEIR`, for example, without changing
+``CompartmentedAddDelete``.
+
+If you're determined to avoid an extra class you can adopt a more
+dynamic approach and "monkey-patch" the definitions of methods in
+*just the one instance* of :class:`AddDelete` that you're using. If
+you know how to do this, and are happy with the consequences, work
+away: if you *don't* know, our advice is not to find out as the
+resulting can of worms is enormous.
+
+A third possible approach is to use multiple inheritance, and for
+example define a class that sub-classes *both* :class:`SIR` *and*
+:class:`AddDelete` and then overrides the methods. This sometimes
+works well, but sacrifices quite a lot of control and opportunities
+for re-use. We no longer recommend using multiple inheritance in
+``epydemic`` simulations: see :ref:`no-multiple-inheritance` for a
+discussion.
