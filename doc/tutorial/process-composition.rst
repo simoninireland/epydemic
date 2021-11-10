@@ -48,7 +48,7 @@ control the sequences of interactions that need to occur.
 
 .. warning::
 
-   Versions of ``epydemic`` prior 1.8.1 used multiple inheritance
+   Versions of ``epydemic`` prior to 1.8.1 used multiple inheritance
    internally, as well as in examples.
 
 The issue is that multiple inheritance imposes a single order on the
