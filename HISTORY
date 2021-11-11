@@ -10,6 +10,9 @@ Version 1.8.1
    - Simplified experimental parameter names
    - Small changes to the way topologies are marked in parameters
    - Added opinion dynamics, vaccine-enhanced SIR, and anti-vax rumour models
+   - Removed all uses of multiple inheritance
+   - Added tutorial explanations of process composition
+   - Fixed CI job
 
 Version 1.7.2 (2021-07-06)
 
