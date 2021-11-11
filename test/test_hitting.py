@@ -51,24 +51,24 @@ class HittingTest(unittest.TestCase):
         params[SIR.P_INFECT] = 0.3
         params[SIR.P_REMOVE] = 0.05
 
-        m = SIR()
+        sir = SIR()
         c = CaptureNetwork()
         g = ERNetwork()
-        e = StochasticDynamics(ProcessSequence([m, c]), g)
+        e = StochasticDynamics(ProcessSequence([sir, c]), g)
         rc = e.set(params).run(fatal=True)
 
         gprime = c.finalNetwork()
-        infecteds = [n for n in gprime.nodes if gprime.nodes[n][CompartmentedModel.COMPARTMENT] == SIR.REMOVED]
+        infecteds = [n for n in gprime.nodes if gprime.nodes[n][sir.COMPARTMENT] == SIR.REMOVED]
         initialInfecteds = 0
         for n in infecteds:
-            if CompartmentedModel.T_HITTING in gprime.nodes[n]:
+            if sir.T_HITTING in gprime.nodes[n]:
                 # hitting time is actually a time
-                t = gprime.nodes[n][CompartmentedModel.T_HITTING]
+                t = gprime.nodes[n][sir.T_HITTING]
                 self.assertTrue(t > 0)
 
                 # there's an occupied incident edge with the same occupation time
-                occs = [(n, m ) for (n, m) in gprime.edges(n) if gprime.get_edge_data(n, m)[CompartmentedModel.OCCUPIED]]
-                ts = [gprime.get_edge_data(n, m)[CompartmentedModel.T_OCCUPIED] for (n, m) in occs]
+                occs = [(n, m ) for (n, m) in gprime.edges(n) if gprime.get_edge_data(n, m)[sir.OCCUPIED]]
+                ts = [gprime.get_edge_data(n, m)[sir.T_OCCUPIED] for (n, m) in occs]
                 self.assertTrue(t in ts)
             else:
                 # initially infected node
