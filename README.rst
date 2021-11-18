@@ -53,7 +53,7 @@ copy, just clone the repo:
 
     git clone git@github.com:simoninireland/epydemic.git
     cd epydemic
-    python setup.py install
+    pip install .
 
 
 
