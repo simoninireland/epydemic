@@ -19,7 +19,7 @@
 
 from cmath import exp
 from mpmath import polylog
-from scipy.special import zetac
+from scipy.special import zeta
 from epydemic.gf import GF, gf_from_series
 
 
@@ -54,7 +54,11 @@ def gf_powerlaw(exponent: float) -> GF:
 
     :param exponent: the exponent of the distribution
     :returns: the generating function'''
-    return gf_from_series(lambda x: polylog(exponent, x) / zetac(exponent))
+
+    # the zeta function we use here (from scipy) is the Hurwitz zeta function
+    # zeta(exp, c), which corresponds to the Riemann zeta function
+    # in the case where c = 1
+    return gf_from_series(lambda x: polylog(exponent, x) / zeta(exponent, 1))
 
 
 def gf_plc(exponent: float, cutoff: float) -> GF:
