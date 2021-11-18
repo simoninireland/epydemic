@@ -91,9 +91,10 @@ simulation can proceed efficiently.
 Events
 ------
 
-Events are the code fragments that run as part of the simulation. The collection
-of events defined by a process form all the possible actions that the simulation
-will perform.
+Events are the code fragments that run as part of the simulation. The
+collection of events defined by a process form all the possible
+actions that the simulation will perform. Events can be given
+meaningful names, which don't affect the execution of the simulation.
 
 There are three broad classes of events. *Per-element* events occur with a probability
 on each element of a locis. This means that loci with more elements will generate a higher
