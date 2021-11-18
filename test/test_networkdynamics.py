@@ -169,7 +169,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         p = SIR()
         gen = ERNetwork()
         e = StochasticDynamics(p, gen)
-        rc = e.set(params).run()
+        rc = e.set(params).run(fatal=True)
 
         self.assertIn(NetworkGenerator.TOPOLOGY, rc[Experiment.PARAMETERS])
         self.assertEqual(rc[Experiment.PARAMETERS][NetworkGenerator.TOPOLOGY], gen.topology())
