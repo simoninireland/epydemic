@@ -54,7 +54,7 @@ class StochasticDynamics(Dynamics):
 
             # compute the total rate of transitions for the entire network
             a = 0.0
-            for (_, r, _) in transitions:
+            for (_, r, _, _) in transitions:
                 a += r
             if a == 0.0:
                 break              # no events with non-zero rates
@@ -67,7 +67,7 @@ class StochasticDynamics(Dynamics):
             dt = (1.0 / a) * math.log(1.0 / r1)
 
             # calculate which event happens
-            (l, _, ef) = transitions[0]
+            (l, _, ef, _) = transitions[0]
             if len(transitions) > 1:
                 # choose the rate threshold
                 r2 = rng.random()
@@ -77,7 +77,7 @@ class StochasticDynamics(Dynamics):
                 # are less than the random threshold
                 xs = 0
                 for v in range(0, len(transitions)):
-                    (l, xsp, ef) = transitions[v]
+                    (l, xsp, ef, _) = transitions[v]
                     if (xs + xsp) > xc:
                         break
                     else:

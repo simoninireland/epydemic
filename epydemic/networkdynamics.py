@@ -30,7 +30,7 @@ else:
 
 # Event types (not exported outside this file)
 PostedEventFunction = Callable[[], None]
-PostedEvent = Tuple[float, int, PostedEventFunction]
+PostedEvent = Tuple[float, int, PostedEventFunction, str]
 
 
 class Dynamics(NetworkExperiment):
@@ -199,18 +199,22 @@ class Dynamics(NetworkExperiment):
             # process doesn't have loci, return an empty dict
             return dict()
 
-    def addEventPerElement(self, p: Process, l: Union[str, Locus], pr: float, ef: EventFunction):
-        """Add a probabilistic event at a locus, occurring with a particular (fixed)
-        probability for each element of the locus, and calling the :term:`event function`
-        when it is selected.
+    def addEventPerElement(self, p: Process, l: Union[str, Locus], pr: float,
+                           ef: EventFunction, name: Optional[str] = None):
+        """Add a probabilistic event at a locus, occurring with a particular
+        (fixed) probability for each element of the locus, and calling
+        the :term:`event function` when it is selected.
 
         :param p: the process
         :param l: the locus or locus name
         :param pr: the event probability
-        :param ef: the event function"""
+        :param ef: the event function
+        :param name: (optional) meaningful name of the event
+
+        """
         if isinstance(l, str):
             l = self.locus(l)
-        self._perElementEvents[p].append((l, pr, ef))
+        self._perElementEvents[p].append((l, pr, ef, name))
 
     def perElementEventDistribution(self, p: Process, t: float) -> EventDistribution:
         """Return the distribution of per-element events for the given process' loci
@@ -224,17 +228,22 @@ class Dynamics(NetworkExperiment):
         else:
             return []
 
-    def addFixedRateEvent(self, p: Process, l: Union[str, Locus], pr: float, ef: EventFunction):
-        """Add a probabilistic event at a locus, occurring with a particular (fixed)
-        probability, and calling the :term:`event function` when it is selected.
+    def addFixedRateEvent(self, p: Process, l: Union[str, Locus], pr: float,
+                          ef: EventFunction, name: Optional[str] = None):
+        """Add a probabilistic event at a locus, occurring with a particular
+        (fixed) probability, and calling the :term:`event function`
+        when it is selected.
 
         :param p: the process
         :param l: the locus or locus name
         :param pr: the event probability
-        :param ef: the event function"""
+        :param ef: the event function
+        :param name: (optional) meaningful name of the event
+
+        """
         if isinstance(l, str):
             l = self.locus(l)
-        self._perLocusEvents[p].append((l, pr, ef))
+        self._perLocusEvents[p].append((l, pr, ef, name))
 
     def fixedRateEventDistribution(self, p: Process, t: float) -> EventDistribution:
         """Return the distribution of fixed-rate events for the given process' loci
@@ -249,10 +258,10 @@ class Dynamics(NetworkExperiment):
             return []
 
     def eventRateDistribution(self, t: float) -> EventDistribution:
-        """Return the event distribution, a sequence of (l, r, f) triples
+        """Return the event distribution, a sequence of (l, r, f, n) tuples
         where l is the locus where the event occurs, r is the rate at
-        which an event occurs, and f is the event function called to
-        make it happen.
+        which an event occurs, f is the event function called to
+        make it happen, and n is the event name (which may be None).
 
         Note the distinction between a *rate* and a *probability*:
         the former can be obtained from the latter simply by
@@ -264,18 +273,18 @@ class Dynamics(NetworkExperiment):
         is assumed to have reached equilibrium if all events have zero rates.
 
         :param t: current time
-        :returns: a list of (locus, rate, event function) triples"""
+        :returns: a list of (locus, rate, event function, event name) tuples"""
         rates = []
 
         for p in self._perElementEvents:
             # convert per-element events to rates
-            for (l, pr, ef) in self._perElementEvents[p]:
-                rates.append((l, pr * len(l), ef))
+            for (l, pr, ef, name) in self._perElementEvents[p]:
+                rates.append((l, pr * len(l), ef, name))
 
             # add fixed-rate events for non-empty loci
-            for (l, pr, ef) in self._perLocusEvents[p]:
+            for (l, pr, ef, name) in self._perLocusEvents[p]:
                 if len(l) > 0:
-                    rates.append((l, pr, ef))
+                    rates.append((l, pr, ef, name))
 
         return rates
 
@@ -292,28 +301,35 @@ class Dynamics(NetworkExperiment):
         self._eventId += 1
         return id
 
-    def postEvent(self, t: float, e: Element, ef: EventFunction):
+    def postEvent(self, t: float, e: Element, ef: EventFunction, name: Optional[str] = None):
         """Post an event that calls the :term:`event function` at time t.
 
         :param t: the current time
         :param e: the element (node or edge) on which the event occurs
-        :param ef: the event function"""
-        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: ef(t, e))))
+        :param ef: the event function
+        :param name: (optional) meaningful name of the event
 
-    def postRepeatingEvent(self, t: float, dt: float, e: Element, ef: EventFunction):
+        """
+        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: ef(t, e)), name))
+
+    def postRepeatingEvent(self, t: float, dt: float, e: Element,
+                           ef: EventFunction, name: Optional[str] = None):
         """Post an event that starts at time t and re-occurs at interval dt.
 
         :param t: the start time
         :param dt: the interval
         :param e: the element (node or edge) on which the event occurs
-        :param ef: the element function"""
+        :param ef: the element function
+        :param name: (optional) meaningful name of the event
+
+        """
 
         def repeat(tc, e):
             ef(tc, e)
             tp = tc + dt
-            heappush(self._postedEvents, (tp, self._nextEventId(), (lambda: repeat(tp, e))))
+            heappush(self._postedEvents, (tp, self._nextEventId(), (lambda: repeat(tp, e)), name))
 
-        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: repeat(t, e))))
+        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: repeat(t, e)), name))
 
     def nextPendingEventBefore(self, t: float) -> Optional[PostedEventFunction]:
         """Return the next pending event to occur at or before time t.
@@ -322,13 +338,13 @@ class Dynamics(NetworkExperiment):
         :returns: a pending event function or None"""
         if len(self._postedEvents) > 0:
             # we have events, grab the soonest
-            (et, id, pef) = heappop(self._postedEvents)
+            (et, id, pef, name) = heappop(self._postedEvents)
             if et <= t:
                 # event should have occurred, return
                 return pef
             else:
                 # this (and therefore all further events) are in the future, put it back
-                heappush(self._postedEvents, (et, id, pef))
+                heappush(self._postedEvents, (et, id, pef, name))
                 return None
         else:
             # we don't have any events

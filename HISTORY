@@ -13,6 +13,7 @@ Version 1.8.1
    - Removed all uses of multiple inheritance
    - Added tutorial explanations of process composition
    - Fixed CI job
+   - Added optional meaningful event names
 
 Version 1.7.2 (2021-07-06)
 

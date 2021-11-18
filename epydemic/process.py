@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from typing import Dict, List, Tuple, Any, Callable, Iterable, Union
+from typing import Dict, List, Tuple, Any, Callable, Iterable, Union, Optional
 from networkx import Graph
 from epydemic import Node, Edge, Element
 
@@ -33,8 +33,8 @@ if TYPE_CHECKING:
 
 
 # Types for handling events
-EventFunction = Callable[[float, Element], None]                #: Type of event-handler functions.
-EventDistribution = List[Tuple['Locus', float, EventFunction]]  #: Type of event distributions.
+EventFunction = Callable[[float, Element], None]                     #: Type of event-handler functions.
+EventDistribution = List[Tuple['Locus', float, EventFunction, str]]  #: Type of event distributions.
 
 
 class Process():
@@ -333,7 +333,8 @@ class Process():
         :returns: the locus'''
         return self.loci()[n]
 
-    def addEventPerElement(self, l: Union[str, 'Locus'], p: float, ef: EventFunction):
+    def addEventPerElement(self, l: Union[str, 'Locus'], p: float,
+                           ef: EventFunction, name: Optional[str] = None):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability for each element of the locus, and calling
         the :term:`event function` when it is selected. The locus may
@@ -348,11 +349,13 @@ class Process():
         :param l: the locus or locus name
         :param p: the event probability
         :param ef: the event function
+        :param name: (optional) meaningful name of the event
 
         """
-        self._dynamics.addEventPerElement(self, l, p, ef)
+        self._dynamics.addEventPerElement(self, l, p, ef, name)
 
-    def addFixedRateEvent(self, l: Union[str, 'Locus'], p: float, ef: EventFunction):
+    def addFixedRateEvent(self, l: Union[str, 'Locus'], p: float,
+                          ef: EventFunction, name: Optional[str] = None):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability, and calling the :term:`event function`
         when it is selected. The locus may be a :class:`Locus` object
@@ -366,25 +369,32 @@ class Process():
         :param l: the locus or locus name
         :param p: the event probability
         :param ef: the event function
+        :param name: (optional) meaningful name of the event
 
         """
-        self._dynamics.addFixedRateEvent(self, l, p, ef)
+        self._dynamics.addFixedRateEvent(self, l, p, ef, name)
 
-    def postEvent(self, t: float, e: Any, ef: EventFunction):
+    def postEvent(self, t: float, e: Any,
+                  ef: EventFunction, name: Optional[str] = None):
         """Post an event that calls the :term:`event function` at time t.
 
         :param t: the current time
         :param e: the element (node or edge) on which the event occurs
-        :param ef: the event function"""
-        self._dynamics.postEvent(t, e, ef)
+        :param ef: the event function
+        :param name: (optional) meaningful name of the event
 
-    def postRepeatingEvent(self, t: float, dt: float, e: Any, ef: EventFunction):
+        """
+        self._dynamics.postEvent(t, e, ef, name)
+
+    def postRepeatingEvent(self, t: float, dt: float, e: Any,
+                           ef: EventFunction, name: Optional[str] = None):
         """Post an event that starts at time t and re-occurs at interval dt.
 
         :param t: the start time
         :param dt: the interval
         :param e: the element (node or edge) on which the event occurs
         :param ef: the element function
+        :param name: (optional) meaningful name of the event
 
         """
-        self._dynamics.postRepeatingEvent(t, dt, e, ef)
+        self._dynamics.postRepeatingEvent(t, dt, e, ef, name)
