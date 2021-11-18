@@ -1,7 +1,7 @@
 # Test the Newman-Ziff percolation algorithms
 #
 # Copyright (C) 2017--2021 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -31,8 +31,8 @@ class NewmanZiffTest(unittest.TestCase):
         '''Test we can do the basic bond percolation operations.'''
         g = complete_graph(5)
         e = BondPercolation(g)
-        _ = e.run()
-    
+        _ = e.run(fatal=True)
+
     def testBondTransition(self):
         '''Test the bond percolation transition on a PLC network.'''
         params = dict()
@@ -40,8 +40,8 @@ class NewmanZiffTest(unittest.TestCase):
         params[PLCNetwork.EXPONENT] = 2.5
         params[PLCNetwork.CUTOFF] = 20
         e = BondPercolation(PLCNetwork())
-        rc = e.set(params).run()
-        print(rc)
+        rc = e.set(params).run(fatal=True)
+        #print(rc)
 
     def testResultLayout(self):
         '''Test the results land correctly in the notebook.'''
@@ -87,12 +87,12 @@ class NewmanZiffTest(unittest.TestCase):
 
 
    # ---------- Site percolation ----------
-    
+
     def testSiteZero(self):
         '''Test we can do the basic site percolation operations.'''
         g = complete_graph(5)
         e = SitePercolation(g)
-        _ = e.run()
+        _ = e.run(fatal=True)
 
     def testSiteTransition(self):
         '''Test the site percolation transition on a PLC network.'''
@@ -101,8 +101,8 @@ class NewmanZiffTest(unittest.TestCase):
         params[PLCNetwork.EXPONENT] = 2.5
         params[PLCNetwork.CUTOFF] = 20
         e = SitePercolation(PLCNetwork())
-        rc = e.set(params).run()
-        print(rc)    
+        rc = e.set(params).run(fatal=True)
+        #print(rc)
 
 
 if __name__ == '__main__':
