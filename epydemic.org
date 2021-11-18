@@ -7,7 +7,7 @@
 
 *** Release 1.8.1
 
-**** Coding [4/9]
+**** Coding [4/10]
 
     - [ ] Add degree-distribution-preserving rewiring functions
       preserving P(k, k') cite:UnreasonableEffectiveness (branch
@@ -25,6 +25,7 @@
     - [ ] Add unpacking of time series to Monitor
     - [ ] Deal with Libby's pull request, integrate vaccine and
       opinion dynamics models
+    - [ ] Add names to events in reference models
 
 **** Bugs [1/1]
 
@@ -87,7 +88,7 @@
        tests to see whether it's possible to run ~ipyparallel~ in this
        way (which I think it is).
 
-*** Generating function library [7/9]
+*** TODO Generating function library [7/10]
 
     branch gf
 
@@ -110,10 +111,20 @@
     - [ ] Deriving new generating functions, with more complex
       (functional) values for X
     - [ ] Multi-variable generating functions
+    - [ ] Standalone from epydemic?
 
     There's another approach alongside this, which would be to write a
     symbolic package with the generating functions in them, for use in
     Sage. This would then complement the numerical side.
+
+**** TODO Extend with multiple variables
+     SCHEDULED: <2021-11-19 Fri>
+
+     How does this work with respect to the single-variable case?
+
+     Need to understand the use cases.
+
+**** Consider refactoring into a standalone package
 
 *** Multilayer networks
 
@@ -128,7 +139,7 @@
     edges of a given colour.
 
 *** TODO JOSS paper
-    DEADLINE: <2021-11-26 Fri> SCHEDULED: <2021-11-15 Mon>
+    DEADLINE: <2021-12-10 Fri> SCHEDULED: <2021-11-29 Mon>
 *** DONE API interface to the epydemic archive [3/3]
 
     branch archive
