@@ -137,15 +137,18 @@ class GFTest(unittest.TestCase):
 
     def testERmean(self):
         '''Test extraction of the mean degree for ER networks.'''
-        g = networkx.gnp_random_graph(5000, 0.005)
-        gf = gf_er(5000, phi=0.005)
+        N = 5000
+        phi = 0.005
+        kmean = N * phi
+
+        g = networkx.gnp_random_graph(N, phi)
+        gf = gf_er(N, phi=0.005)
         gf_prime = gf.dx()
 
-        kmean = 5000 * 0.005
         self.assertAlmostEqual(gf_prime(1), kmean, delta=1)
 
         degrees = [d for (_, d) in g.degree()]
-        kmean_empirical = sum(degrees) / 5000
+        kmean_empirical = sum(degrees) / N
         self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
 
     def testPLProbabilities(self):
@@ -155,13 +158,16 @@ class GFTest(unittest.TestCase):
 
     def testPLmean(self):
         '''Test extraction of the mean degree for powerlaw neworks.'''
-        g = networkx.barabasi_albert_graph(10000, 3)
+        N = 10000
+        m = 2
+
+        g = networkx.barabasi_albert_graph(N, m)
         gf = gf_powerlaw(3)
         gf_prime = gf.dx()
 
         degrees = [d for (_, d) in g.degree()]
-        kmean_empirical = sum(degrees) / 10000
-        self.assertAlmostEqual(gf_prime(1.0), kmean_empirical, delta=0.5)
+        kmean_empirical = sum(degrees) / N
+        self.assertAlmostEqual(gf_prime(1.0), kmean_empirical, delta=1)
 
     def testPLCProbabilities(self):
         '''Test that the PLC GF evaluates to 1.'''
@@ -170,7 +176,7 @@ class GFTest(unittest.TestCase):
 
     def testPLCnormalised(self):
         '''Test that the PLC GF sums to 1.'''
-        gf = gf_plc(2.0, 20)
+        gf = gf_plc(2.0, 60)
         v = 0.0
         for k in range(60):
             v += gf[k]
