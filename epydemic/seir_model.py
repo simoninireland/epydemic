@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import CompartmentedModel, Node, Edge
 import sys
 from typing import Dict, Any
 if sys.version_info >= (3, 8):
@@ -25,6 +24,8 @@ if sys.version_info >= (3, 8):
 else:
     # backport compatibility with older typing
     from typing_extensions import Final
+from epydemic import CompartmentedModel, Node, Edge
+
 
 class SEIR(CompartmentedModel):
     '''The Susceptible-Exposed-Infected-Removed :term:`compartmented model of disease`.
@@ -52,10 +53,14 @@ class SEIR(CompartmentedModel):
     P_REMOVE: Final[str] = 'epydemic.seir.pRemove'                    #: Parameter for probability of removal (recovery).
 
     # Possible dynamics states of a node for SIR dynamics
-    SUSCEPTIBLE: Final[str] = 'SEIR.S'        #: Compartment for nodes susceptible to infection.
-    EXPOSED: Final[str] = 'SEIR.E'            #: Compartment for nodes exposed and infectious.
-    INFECTED: Final[str] = 'SEIR.I'           #: Compartment for nodes symptomatic and infectious.
-    REMOVED: Final[str] = 'SEIR.R'            #: Compartment for nodes recovered/removed.
+    SUSCEPTIBLE: Final[str] = 'epydemic.seir.S'     #: Compartment for nodes susceptible to infection.
+    EXPOSED: Final[str] = 'epydemic.seir.E'         #: Compartment/event name for nodes exposed and infectious.
+    INFECTED: Final[str] = 'epydemic.seir.I'        #: Compartment for nodes symptomatic and infectious.
+    REMOVED: Final[str] = 'epydemic.seir.R'         #: Compartment/event name for nodes recovered/removed.
+
+    # Event names
+    INFECTED_SYMPTOMATIC: Final[str] = 'epydemic.seir.IS' #: Event name for infections from symptomatic (:attr:`INFECTED`) individuals)
+    INFECTED_ASYMPTOMATIC: Final[str] = 'epydemic.seir.IA' #: Event name for infections from asymptomatic (:attr:`EXPOSED`) individuals)
 
     # Loci containing the edges at which dynamics can occur
     SE: Final[str] = 'SEIR.SE'                #: Edge able to transmit infection from an exposed individual.
@@ -86,10 +91,10 @@ class SEIR(CompartmentedModel):
         self.trackNodesInCompartment(self.EXPOSED)
         self.trackNodesInCompartment(self.INFECTED)
 
-        self.addEventPerElement(self.SE, pInfectA, self.infectAsymptomatic)
-        self.addEventPerElement(self.SI, pInfect, self.infect)
-        self.addEventPerElement(self.EXPOSED, pSymptoms, self.symptoms)
-        self.addEventPerElement(self.INFECTED, pRemove, self.remove)
+        self.addEventPerElement(self.SE, pInfectA, self.infectAsymptomatic, name=self.INFECTED_ASYMPTOMATIC)
+        self.addEventPerElement(self.SI, pInfect, self.infect, name=self.INFECTED_SYMPTOMATIC)
+        self.addEventPerElement(self.EXPOSED, pSymptoms, self.symptoms, name=self.INFECTED)
+        self.addEventPerElement(self.INFECTED, pRemove, self.remove, name=self.REMOVED)
 
     def infectAsymptomatic(self, t: float, e: Edge):
         '''Perform an infection event when an :attr:`EXPOSED` individual infects

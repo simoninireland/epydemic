@@ -17,28 +17,28 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import SIR
 import sys
+from typing import Dict, Any
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict, Any
+    from typing import Final
 else:
-    # backport compatibility with older typing
-    from typing import Dict, Any
     from typing_extensions import Final
+from epydemic import SIR
+
 
 class SIR_FixedRecovery(SIR):
     '''The Susceptible-Infected-Removed :term:`compartmented model of disease`,
     in the variation where the time spent infected is fixed rather than happening
     with some probability.'''
 
-    # the additional model parameter
+    # Additional model parameter
     T_INFECTED: Final[str] = 'epydemic.sir.tInfected'    #: Parameter for the time spent infected before removal/recovery.
 
-    # node attribute for infection time
+    # Node attribute for infection time
     INFECTION_TIME: Final[str] = 'infection_time'           #: Attribute recording when a node became infected
 
     def __init__(self):
-        super(SIR_FixedRecovery, self).__init__()
+        super().__init__()
 
     def build(self, params : Dict[str, Any]):
         '''Build the variant SIR model. The difference between this and the
@@ -55,15 +55,15 @@ class SIR_FixedRecovery(SIR):
         self.addCompartment(self.INFECTED, pInfected)
         self.addCompartment(self.REMOVED, 0.0)
 
-        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
-        self.addFixedRateEvent(self.SI, pInfect, self.infect)
+        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
+        self.addFixedRateEvent(self.SI, pInfect, self.infect, name=self.INFECTED)
 
     def setUp(self, params : Dict[str, Any]):
         '''After setting up as normal, post remove events for any nodes that are
         initially infected.
 
         :param params: the simulation parameters'''
-        super(SIR_FixedRecovery, self).setUp(params)
+        super().setUp(params)
 
         # traverse the set of initially-infected nodes
         tInfected = params[self.T_INFECTED]
@@ -73,7 +73,7 @@ class SIR_FixedRecovery(SIR):
             g.nodes[n][self.INFECTION_TIME] = 0.0
 
             # post the corresponding removal event
-            self.postEvent(tInfected, n, self.remove)
+            self.postEvent(tInfected, n, self.remove, name=self.REMOVED)
 
     def infect(self, t : float, e : Any):
         '''Perform the normal infection event, and then post an event to remove the
@@ -83,11 +83,11 @@ class SIR_FixedRecovery(SIR):
         :param e: the edge transmitting the infection, susceptible-infected'''
 
         # infect as normal
-        super(SIR_FixedRecovery, self).infect(t, e)
+        super().infect(t, e)
 
         # record the infection time
         (n, _) = e
         self.network().nodes[n][self.INFECTION_TIME] = t
 
         # post the removal event for the appropriate time in the future
-        self.postEvent(t + self._tInfected, n, self.remove)
+        self.postEvent(t + self._tInfected, n, self.remove, name=self.REMOVED)

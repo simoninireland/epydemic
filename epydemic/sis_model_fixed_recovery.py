@@ -17,14 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import SIS
 import sys
+from typing import Dict, Any
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict, Any
+    from typing import Final
 else:
-    # backport compatibility with older typing
-    from typing import Dict, Any
     from typing_extensions import Final
+from epydemic import SIS
+
 
 class SIS_FixedRecovery(SIS):
     '''The Susceptible-Infected-Susceptible :term:`compartmented model of disease`,
@@ -38,7 +38,7 @@ class SIS_FixedRecovery(SIS):
     INFECTION_TIME: Final[str] = 'infection_time'          #: Attribute recording when a node became infected
 
     def __init__(self):
-        super(SIS_FixedRecovery, self).__init__()
+        super().__init__()
 
     def build(self, params : Dict[str, Any]):
         '''Build the variant SIS model. The difference between this and the
@@ -54,15 +54,15 @@ class SIS_FixedRecovery(SIS):
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
 
-        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
-        self.addEventPerElement(self.SI, pInfect, self.infect)
+        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
+        self.addEventPerElement(self.SI, pInfect, self.infect, name=self.INFECTED)
 
     def setUp(self, params : Dict[str, Any]):
         '''After setting up as normal, post recovery events for any nodes that are
         initially infected.
 
         :param params: the simulation parameters'''
-        super(SIS_FixedRecovery, self).setUp(params)
+        super().setUp(params)
 
         # traverse the set of initially-infected nodes
         tInfected = params[self.T_INFECTED]
@@ -72,7 +72,7 @@ class SIS_FixedRecovery(SIS):
             g.nodes[n][self.INFECTION_TIME] = 0.0
 
             # post the corresponding removal event
-            self.postEvent(tInfected, n, self.recover)
+            self.postEvent(tInfected, n, self.recover, name=self.RECOVERED)
 
     def infect( self, t : float, e : Any):
         '''Perform the normal infection event, and then post an event to recover
@@ -83,10 +83,10 @@ class SIS_FixedRecovery(SIS):
         (n, _) = e
 
         # infect as normal
-        super(SIS_FixedRecovery, self).infect(t, e)
+        super().infect(t, e)
 
         # record the infection time
         self.network().nodes[n][self.INFECTION_TIME] = t
 
         # post the removal event for the appropriate time in the future
-        self.postEvent(t + self._tInfected, n, self.recover)
+        self.postEvent(t + self._tInfected, n, self.recover, name=self.RECOVERED)

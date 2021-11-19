@@ -18,13 +18,13 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-from epydemic import CompartmentedModel, Node, Edge
 from typing import Dict, Any
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
     # backport compatibility with older typing
     from typing_extensions import Final
+from epydemic import CompartmentedModel, Node, Edge
 
 
 class SIS(CompartmentedModel):
@@ -55,7 +55,10 @@ class SIS(CompartmentedModel):
 
     # Possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE: Final[str] = 'epydemic.sis.S'         #: Compartment for nodes susceptible to infection.
-    INFECTED: Final[str] = 'epydemic.sis.I'            #: Compartment for nodes infected.
+    INFECTED: Final[str] = 'epydemic.sis.I'            #: Compartment/event name for nodes infected.
+
+    # Event names
+    RECOVERED: Final[str] = 'epydemic.sis.R'            #: Event name for nodes infected.
 
     # Locus containing the edges at which dynamics can occur
     SI: Final[str] = 'epydemic.sis.SI'                 #: Edge able to transmit infection.
@@ -76,11 +79,11 @@ class SIS(CompartmentedModel):
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
 
-        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name = self.SI)
+        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
         self.trackNodesInCompartment(self.INFECTED)
 
-        self.addEventPerElement(self.INFECTED, pRecover, self.recover)
-        self.addEventPerElement(self.SI, pInfect, self.infect)
+        self.addEventPerElement(self.INFECTED, pRecover, self.recover, name=self.RECOVERED)
+        self.addEventPerElement(self.SI, pInfect, self.infect, name=self.INFECTED)
 
     def countOccupied(self, e: Edge) -> int:
         '''Update the count of the number of times an edge has passed

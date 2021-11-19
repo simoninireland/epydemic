@@ -39,8 +39,8 @@ class SIR(CompartmentedModel):
 
     # Possible dynamics states of a node for SIR dynamics
     SUSCEPTIBLE: Final[str] = 'epydemic.sir.S'         #: Compartment for nodes susceptible to infection.
-    INFECTED: Final[str] = 'epydemic.sir.I'            #: Compartment for nodes infected.
-    REMOVED: Final[str] = 'epydemic.sir.R'             #: Compartment for nodes recovered/removed.
+    INFECTED: Final[str] = 'epydemic.sir.I'            #: Compartment/event name for nodes infected.
+    REMOVED: Final[str] = 'epydemic.sir.R'             #: Compartment/event name for nodes recovered/removed.
 
     # Locus containing the edges at which dynamics can occur
     SI: Final[str] = 'epydemic.sir.SI'                 #: Edge able to transmit infection.
@@ -65,8 +65,8 @@ class SIR(CompartmentedModel):
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
         self.trackNodesInCompartment(self.INFECTED)
 
-        self.addEventPerElement(self.SI, pInfect, self.infect)
-        self.addEventPerElement(self.INFECTED, pRemove, self.remove)
+        self.addEventPerElement(self.SI, pInfect, self.infect, name=self.INFECTED)
+        self.addEventPerElement(self.INFECTED, pRemove, self.remove, name=self.REMOVED)
 
     def infect(self, t: float, e: Any):
         '''Perform an infection event. This changes the compartment of

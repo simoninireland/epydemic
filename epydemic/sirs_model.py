@@ -19,11 +19,10 @@
 
 from epydemic import SIR
 import sys
+from typing import Dict, Any
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict, Any
+    from typing import Final
 else:
-    # backport compatibility with older typing
-    from typing import Dict, Any
     from typing_extensions import Final
 
 
@@ -37,20 +36,22 @@ class SIRS(SIR):
     # Extra model parameter
     P_RESUSCEPT: Final[str] = 'epydemic.sirs.pResuscept'    #: Parameter for probability of losing immunity
 
+    # Event name
+    RESUSCEPT: Final[str] = 'epydemic.sirs.X'               #: Compartment/event name for returning to susceptible.
     def __init__(self):
-        super(SIRS, self).__init__()
+        super().__init__()
 
     def build(self, params : Dict[str, Any]):
         '''Build the SIRS model.
 
         :param params: the model parameters'''
-        super(SIRS, self).build(params)
+        super().build(params)
 
         # add components needed for SIRS
         pResuscept = params[self.P_RESUSCEPT]
         self.trackNodesInCompartment(self.REMOVED)
 
-        self.addEventPerElement(self.REMOVED, pResuscept, self.resuscept)
+        self.addEventPerElement(self.REMOVED, pResuscept, self.resuscept, self.RESUSCEPT)
 
     def resuscept(self, t : float, n : Any):
         '''Perform a re-susceptibility event. This changes the compartment of
