@@ -62,18 +62,21 @@ class NetworkDynamicsTest(unittest.TestCase):
         self.assertCountEqual(self.pendingEvents(dyn, 0.5), [])
 
         # check firing of earliest event
-        pefs = self.pendingEvents(dyn, 1)
-        self.assertTrue(len(pefs), 1)
-        (pefs[0])()                # fire the event
+        pevs = self.pendingEvents(dyn, 1)
+        self.assertTrue(len(pevs), 1)
+        (_, _, pef, _, _) = pevs[0]
+        pef()                # fire the event
         self.assertTrue(self._v, 1)
         self.assertCountEqual(self.pendingEvents(dyn, 1), [])
 
         # check multiple events coming off in the right order
-        pefs = self.pendingEvents(dyn, 3)
-        self.assertTrue(len(pefs), 2)
-        (pefs[0])()
+        pevs = self.pendingEvents(dyn, 3)
+        self.assertTrue(len(pevs), 2)
+        (_, _, pef, _, _) = pevs[0]
+        pef()
         self.assertTrue(self._v, 21)
-        (pefs[1])()
+        (_, _, pef, _, _) = pevs[0]
+        pef()
         self.assertTrue(self._v, 121)
         self.assertCountEqual(self.pendingEvents(dyn, 3), [])
 
