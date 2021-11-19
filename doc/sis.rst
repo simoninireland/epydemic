@@ -4,7 +4,7 @@
 .. currentmodule:: epydemic
 
 .. autoclass:: SIS
-   
+
 The Synchronous-Infected-Susceptible or SIS process is a variant of
 the more common SIR process which cycles between only two states,
 keeping nodes part of the dynamics indefinitely.
@@ -23,11 +23,16 @@ SIS is a :term:`compartmented model of disease` with two :term:`compartments`:
 Dynamical states
 ----------------
 
-SIS simulation places nodes into one of three compartments:
+SIS simulation places nodes into one of two compartments:
 
 .. autoattribute:: SIS.SUSCEPTIBLE
-		   
+
 .. autoattribute:: SIS.INFECTED
+
+There is an extra event recorded when a node recovers and returns to
+being susceptible.
+
+.. autoattribute:: SIS.RECOVERED
 
 
 Parameters
@@ -63,7 +68,7 @@ These two options define the loci for the SIS model.
 The other locus is named :attr:`SIS.INFECTED`, the same as the
 compartment.
 
-		   
+
 Building the model
 ------------------
 
@@ -72,8 +77,8 @@ installs the necessary loci and events to define the disease
 dynamics. The event methods are described more thoroughly below.
 
 .. automethod:: SIS.build
-		
-		   
+
+
 Event methods
 -------------
 
@@ -81,7 +86,5 @@ Event methods are defined for each of the two dynamical rules for the
 process: infection and recovery.
 
 .. automethod:: SIS.infect
-		
+
 .. automethod:: SIS.recover
-		
-		
