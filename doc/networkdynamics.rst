@@ -128,3 +128,12 @@ up to a given simulation time.
 .. automethod:: Dynamics.nextPendingEventBefore
 
 .. automethod:: Dynamics.runPendingEvents
+
+
+Event logging
+-------------
+
+As each event (probabilistic or posted) is fired, there is an
+opportunity for the dynamics to log it or take some other action.
+
+.. automethod:: Dynamics.eventFired

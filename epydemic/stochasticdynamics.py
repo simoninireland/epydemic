@@ -67,7 +67,7 @@ class StochasticDynamics(Dynamics):
             dt = (1.0 / a) * math.log(1.0 / r1)
 
             # calculate which event happens
-            (l, _, ef, _) = transitions[0]
+            (l, _, ef, name) = transitions[0]
             if len(transitions) > 1:
                 # choose the rate threshold
                 r2 = rng.random()
@@ -100,6 +100,7 @@ class StochasticDynamics(Dynamics):
 
                 # perform the event by calling the event function,
                 # passing the dynamics, event time, network, and element
+                self.logEvent(t, name, e)
                 ef(t, e)
 
                 # increment the event counter

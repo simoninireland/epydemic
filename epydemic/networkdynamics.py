@@ -19,18 +19,17 @@
 
 import sys
 from heapq import heappush, heappop
+from typing import Union, Dict, List, Any, Optional, Tuple, Callable, cast
+if sys.version_info >= (3, 8):
+    from typing import Final
+else:
+    from typing_extensions import Final
 from networkx import Graph
 from epydemic import NetworkExperiment, Locus, Process, NetworkGenerator, EventFunction, EventDistribution, Element
-if sys.version_info >= (3, 8):
-    from typing import Union, Final, Dict, List, Any, Optional, Tuple, Callable
-else:
-    # backport compatibility with older typing
-    from typing import Union, Dict, List, Any, Optional, Tuple, Callable
-    from typing_extensions import Final
 
 # Event types (not exported outside this file)
 PostedEventFunction = Callable[[], None]
-PostedEvent = Tuple[float, int, PostedEventFunction, str]
+PostedEvent = Tuple[float, int, PostedEventFunction, Element, str]
 
 
 class Dynamics(NetworkExperiment):
@@ -310,7 +309,7 @@ class Dynamics(NetworkExperiment):
         :param name: (optional) meaningful name of the event
 
         """
-        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: ef(t, e)), name))
+        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: ef(t, e)), e, name))
 
     def postRepeatingEvent(self, t: float, dt: float, e: Element,
                            ef: EventFunction, name: Optional[str] = None):
@@ -327,24 +326,25 @@ class Dynamics(NetworkExperiment):
         def repeat(tc, e):
             ef(tc, e)
             tp = tc + dt
-            heappush(self._postedEvents, (tp, self._nextEventId(), (lambda: repeat(tp, e)), name))
+            heappush(self._postedEvents, (tp, self._nextEventId(), (lambda: repeat(tp, e)), e, name))
 
-        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: repeat(t, e)), name))
+        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: repeat(t, e)), e, name))
 
-    def nextPendingEventBefore(self, t: float) -> Optional[PostedEventFunction]:
+    def nextPendingEventBefore(self, t: float) -> Optional[PostedEvent]:
         """Return the next pending event to occur at or before time t.
 
         :param t: the current time
         :returns: a pending event function or None"""
         if len(self._postedEvents) > 0:
             # we have events, grab the soonest
-            (et, id, pef, name) = heappop(self._postedEvents)
+            pe = heappop(self._postedEvents)
+            (et, _, _, _, _) = pe
             if et <= t:
                 # event should have occurred, return
-                return pef
+                return pe
             else:
                 # this (and therefore all further events) are in the future, put it back
-                heappush(self._postedEvents, (et, id, pef, name))
+                heappush(self._postedEvents, pe)
                 return None
         else:
             # we don't have any events
@@ -360,11 +360,31 @@ class Dynamics(NetworkExperiment):
         :returns: the number of events fired'''
         n = 0
         while True:
-            pef = self.nextPendingEventBefore(t)
-            if pef is None:
+            pe = self.nextPendingEventBefore(t)
+            if pe is None:
                 # no more pending events, return however many we've fired already
                 return n
             else:
                 # fire the event
+                (_, _, pef, e, name) = cast(PostedEvent, pe)
+                self.logEvent(t, name, e)
                 pef()
                 n += 1
+
+
+    # ---------- Event logging ----------
+
+    def eventFired(self, t: float, etype: str, e : Element):
+        '''Respond to the occurrance of the given event. The method is passed
+        the simulation time, event type and the element affected --
+        and isn't passed the event function, which is used elsewhere.
+
+        The default does nothing. It can be overridden by sub-classes to
+        provide event-level logging or other functions.
+
+        :param t: the simulation time
+        :param etype: the event type
+        :param e: the element
+
+        '''
+        pass

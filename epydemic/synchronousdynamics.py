@@ -63,23 +63,25 @@ class SynchronousDynamics(Dynamics):
 
             # run through all the events in the distribution
             dist = self.perElementEventDistribution(proc, t)
-            for (l, p, ef, _) in dist:
+            for (l, p, ef, name) in dist:
                 if (len(l) > 0) and (p > 0.0):
                     # run through every possible element on which this event may occur
                     for e in copy(l):
                         # test for occurrance of the event on this element
                         if rng.random() <= p:
                             # yes, perform the event
+                            self.logEvent(t, name, e)
                             ef(t, e)
                             nev = nev + 1
 
             # run through all the fixed-rate events for this timestep
             dist = self.fixedRateEventDistribution(proc, t)
-            for (l, p, ef, _) in dist:
+            for (l, p, ef, name) in dist:
                 if (len(l) > 0) and (p > 0.0):
                     if rng.random() <= p:
                         # yes, perform the event on an element drawn at random
                         e = l.draw()
+                        self.logEvent(t, name, e)
                         ef(t, e)
                         nev = nev + 1
 
