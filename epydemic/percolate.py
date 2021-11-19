@@ -19,13 +19,12 @@
 
 import sys
 import numpy                             # type: ignore
-from epydemic import Process, Edge
 from typing import Dict, Any, List
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
-    # backport compatibility with older typing
     from typing_extensions import Final
+from epydemic import Process, Edge
 
 
 class Percolate(Process):
