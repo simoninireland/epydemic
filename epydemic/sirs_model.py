@@ -37,7 +37,7 @@ class SIRS(SIR):
     P_RESUSCEPT: Final[str] = 'epydemic.sirs.pResuscept'    #: Parameter for probability of losing immunity
 
     # Event name
-    RESUSCEPT: Final[str] = 'epydemic.sirs.X'               #: Compartment/event name for returning to susceptible.
+    RESUSCEPT: Final[str] = 'epydemic.sirs.RS'              #: Compartment/event name for returning to susceptible.
     def __init__(self):
         super().__init__()
 

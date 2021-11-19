@@ -58,7 +58,7 @@ class SIS(CompartmentedModel):
     INFECTED: Final[str] = 'epydemic.sis.I'            #: Compartment/event name for nodes infected.
 
     # Event names
-    RECOVERED: Final[str] = 'epydemic.sis.R'            #: Event name for nodes infected.
+    RECOVERED: Final[str] = 'epydemic.sis.R'       #: Event name for nodes that become susceptible again.
 
     # Locus containing the edges at which dynamics can occur
     SI: Final[str] = 'epydemic.sis.SI'                 #: Edge able to transmit infection.
