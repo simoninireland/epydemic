@@ -7,7 +7,7 @@
 
 *** Release 1.8.1
 
-**** Coding [4/10]
+**** Coding [6/12]
 
     - [ ] Add degree-distribution-preserving rewiring functions
       preserving P(k, k') cite:UnreasonableEffectiveness (branch
@@ -23,18 +23,21 @@
       gets sub-classed for monitoring, and for sampling the degree
       distribution of the network as it evolves
     - [ ] Add unpacking of time series to Monitor
-    - [ ] Deal with Libby's pull request, integrate vaccine and
+    - [X] Deal with Libby's pull request, integrate vaccine and
       opinion dynamics models
-    - [ ] Add names to events in reference models
+    - [ ] Full test of vaccine and disease models in parallel
+    - [X] Add names to events in reference models
+    - [ ] Test event firing
 
 **** Bugs [1/1]
 
      - [X] Import of gf library from pip?
 
-**** Documentation [2/2]
+**** Documentation [2/3]
 
      - [X] Change references to network generators to ensembles
      - [X] Use proper BibTeX file and citations
+     - [ ] Add docs on event names (in API) and their uses (in cookbook?)
 
 
 ** Sub-projects
@@ -118,7 +121,7 @@
     Sage. This would then complement the numerical side.
 
 **** TODO Extend with multiple variables
-     SCHEDULED: <2021-11-19 Fri>
+     SCHEDULED: <2021-11-25 Thu>
 
      How does this work with respect to the single-variable case?
 
