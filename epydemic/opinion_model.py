@@ -131,8 +131,8 @@ class Opinion(CompartmentedModel):
         self.trackEdgesBetweenCompartments(self.IGNORANT, self.SPREADER, name=self.GP)
         self.trackEdgesBetweenMultipleCompartments(self.SPREADER, [self.SPREADER, self.STIFLER], name=self.PPT)
 
-        self.addEventPerElement(self.GP, pAffect, self.affect)
-        self.addEventPerElement(self.PPT, pStifle, self.stifle)
+        self.addEventPerElement(self.GP, pAffect, self.affect, name=self.SPREADER)
+        self.addEventPerElement(self.PPT, pStifle, self.stifle, name=self.STIFLER)
 
     def trackEdgesBetweenMultipleCompartments(self, l: str, rs: List[str], name: str) -> Locus:
         """
