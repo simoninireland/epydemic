@@ -70,8 +70,8 @@ class SynchronousDynamics(Dynamics):
                         # test for occurrance of the event on this element
                         if rng.random() <= p:
                             # yes, perform the event
-                            self.logEvent(t, name, e)
                             ef(t, e)
+                            self.eventFired(t, name, e)
                             nev = nev + 1
 
             # run through all the fixed-rate events for this timestep
@@ -81,8 +81,8 @@ class SynchronousDynamics(Dynamics):
                     if rng.random() <= p:
                         # yes, perform the event on an element drawn at random
                         e = l.draw()
-                        self.logEvent(t, name, e)
                         ef(t, e)
+                        self.eventFired(t, name, e)
                         nev = nev + 1
 
             # add the events to the count

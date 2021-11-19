@@ -100,8 +100,8 @@ class StochasticDynamics(Dynamics):
 
                 # perform the event by calling the event function,
                 # passing the dynamics, event time, network, and element
-                self.logEvent(t, name, e)
                 ef(t, e)
+                self.eventFired(t, name, e)
 
                 # increment the event counter
                 events += 1

@@ -367,8 +367,8 @@ class Dynamics(NetworkExperiment):
             else:
                 # fire the event
                 (_, _, pef, e, name) = cast(PostedEvent, pe)
-                self.logEvent(t, name, e)
                 pef()
+                self.eventFired(t, name, e)
                 n += 1
 
 
