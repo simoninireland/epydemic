@@ -38,6 +38,7 @@ class SIRS(SIR):
 
     # Event name
     RESUSCEPT: Final[str] = 'epydemic.sirs.RS'              #: Compartment/event name for returning to susceptible.
+
     def __init__(self):
         super().__init__()
 
