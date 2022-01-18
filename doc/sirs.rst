@@ -23,9 +23,10 @@ Building the model
 
 Event methods
 -------------
+
 There is an extra event recorded when a node returns to being
 susceptible.
 
-.. autoattribute:: SIRS.RESUSCEPTIBLE
+.. autoattribute:: SIRS.RESUSCEPT
 
 .. automethod:: SIRS.resuscept
