@@ -19,12 +19,16 @@ studied by Shai and Dobson :cite:`CoupledAdaptive-13`.)
 Run the epidemic
 ----------------
 
-To run the epidemic, we need to provide the dynamics with the parameters that the disease model needs. The dynakics
-is actually an ``epyc`` experiment, so we provide the parameters as a dict.
+To run the epidemic, we need to provide the dynamics with the
+parameters that the disease model needs. The dynamics is actually an
+``epyc`` :ref:`experiment <epyc:experiment-class>`, so we provide the
+parameters as a dict.
 
 We can build a dict giving values to these three parameters:
 
 .. code-block:: python
+
+   import epyc
 
    param = dict()
    param[epydemic.SIR.P_INFECTED] = 0.01
@@ -92,13 +96,17 @@ show some dramatic variation such as not having anyone at all becoming infected 
 Larger scale: explore infection rates
 -------------------------------------
 
-It would clearly be tedious and error-prone to perform lots of repetiions by hand, and even more so if we wanted
-to see, for example, whether changing the infection probability made a difference. Fortunately, because ``epydemic`` uses
-``epyc`` to manage its execution, we can use ``epyc``'s ``Lab`` class to automate the process.
+It would clearly be tedious and error-prone to perform lots of
+repetiions by hand, and even more so if we wanted to see, for example,
+whether changing the infection probability made a
+difference. Fortunately, because ``epydemic`` uses ``epyc`` to manage
+its execution, we can use ``epyc``'s :ref:`Lab <epyc:lab-class>` class
+to automate the process.
 
-Let's run a larger experiment, performing repeated simulations for several different infection values. Without getting
-caught up in how ``epyc`` works (there's a `web site for that <https://epyc.readthedocs.io/en/latest>`_), we can just
-jump straight in:
+Let's run a larger experiment, performing repeated simulations for
+several different infection values. Without getting caught up in how
+``epyc`` works (there's a whole :doc:`web site <epyc:index>` for
+that), we can just jump straight in:
 
 .. code-block:: python
 
@@ -110,15 +118,17 @@ jump straight in:
 
    # build the parameter space, where P_INFECT ranges from 0.01 to 1.0 in 10 steps
    lab[epydemic.SIR.P_INFECTED] = 0.01
-   lab[epydemic.SIR.P_INFECT] = numpy.linspace(0.01, 1.0, num = 10, endpoint = True)
+   lab[epydemic.SIR.P_INFECT] = numpy.linspace(0.01, 1.0, num=10, endpoint=True)
    lab[epydemic.SIR.P_REMOVE] = 0.05
 
    # run 5 repetitions of the experiment at each point in the parameter space
    lab.runExperiment(eypc.RepeatedExperiment(e, 5))
 
-Significantly more time passes -- unsurprisingly, since we're doing 50 experimental runs (5 repetitions at each of
-10 points in the parameter space, varying the infection probability each time). We can then retrieve all the results
-and import them directly into ``pandas`` for analysis:
+Significantly more time passes -- unsurprisingly, since we're doing 50
+experimental runs (5 repetitions at each of 10 points in the parameter
+space, varying the infection probability each time). We can then
+retrieve all the results and import them directly into ``pandas`` for
+analysis:
 
 .. code-block:: python
 
@@ -126,5 +136,53 @@ and import them directly into ``pandas`` for analysis:
 
    df = lab.dataframe()
 
-You'll see the results of the experiments loaded into this DataFrame, including the sizes of compartments, along with
-the experimental parameters that gave rise to those results anmd some other metadata about the simulation.
+You'll see the results of the experiments loaded into this DataFrame,
+including the sizes of compartments, along with the experimental
+parameters that gave rise to those results anmd some other metadata
+about the simulation.
+
+
+Even larger scale: parallelism
+------------------------------
+
+What if we want to go larger again? -- say 100 points and 1000
+repetitions? That's clearly a *lot* more computation: 100,000
+experimental runs. That's a lot to do in a sequential fashion, but
+fortunately ``epydemic`` (or more accurately ``epyc``) comes to our
+aid.
+
+Suppose we have a 32-core workstation. This means we can run up to 32
+processes simultaneously, and we can make use of this parallelism to
+run simulations in parallel. Each simulation still takes the same
+amount of time to run, but we run lots of them together. This can buy
+some speed-up.
+
+We probably don't want to use all 32 cores, as that'll soak up *all*
+the available computing power and possibly leave us locked-out of our
+own machine! Instead we can, for example, leave 2 cores for everything
+else and consume the rest for our simulations.
+
+.. code-block:: python
+
+   pnb = epyc.JSONLabNotebook('more-sir-experiments.json')
+   plab = epyc.ParallelLab(nb, cores=-2)
+
+   plab[epydemic.SIR.P_INFECTED] = 0.01
+   plab[epydemic.SIR.P_INFECT] = numpy.linspace(0.01, 1.0, num=100, endpoint=True)
+   plab[epydemic.SIR.P_REMOVE] = 0.05
+
+   plab.runExperiment(eypc.RepeatedExperiment(e, 1000))
+
+That's it! The code of the simulation stays the same. We said
+``cores=-2``, which translates as "all but 2 of the cores" -- 30 in
+our case -- so 30 experiments run in parallel.
+
+This might *still* not be fast enough, but ``epyc`` can also make use
+of a compute cluster if you have one available. See
+:ref:`epyc:second-tutorial` for a lot more information on setting up
+and using compute clusters: once you've done this, ``epydemic`` can
+(with a few scant exceptions) use it without any changes in the
+processes or other code. We've used ``epydemic`` on clusters with
+around 180 cores without any problems, which gives significant
+speed-up as well as letting you walk away and do other things while
+your code's running .
