@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'epydemic'
-copyright = u'2017--2021, Simon Dobson'
+copyright = u'2017--2022, Simon Dobson'
 author = u'Simon Dobson'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -85,7 +85,7 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
-# Master bbibfile
+# Master bibfile
 bibtex_bibfiles = ['bibliography.bib']
 
 # Style
