@@ -39,6 +39,7 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     'sphinx_autodoc_typehints',
     'sphinxcontrib.bibtex',
+    'sphinx.ext.intersphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -91,6 +92,12 @@ bibtex_bibfiles = ['bibliography.bib']
 # Style
 bibtex_reference_style = 'label'
 bibtex_default_style = 'alpha'
+
+# Other Sphinx projects cross-referenced
+intersphinx_mapping = {
+    # epyc
+    'epyc': ('https://epyc.readthedocs.io/en/latest/', None),
+    }
 
 
 # -- Options for HTML output ----------------------------------------------

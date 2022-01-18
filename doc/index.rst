@@ -52,8 +52,7 @@ What is ``epydemic``?
 processes. It aims to provide the common simulation approaches used in
 the scientific literature, together with a small set of "common
 epidemics" that can form the basis for experimentation. ``epydemic``
-is built on top of `epyc
-<https://epyc.readthedocs.io/en/latest/index.html>`_, an experiment
+is built on top of :doc:`epyc <epyc:index>`, an experiment
 management package that handles running different simulations either
 on a single machine or in the cloud.
 
@@ -93,7 +92,8 @@ Features
 * Includes a library for working with :term:`generating functions`, as
   used in many research papers in network science
 
-* Integrated with ``epyc``'s labs and experiments, including execution
+* Integrated with ``epyc``'s :ref:`labs <epyc:lab-class>` and
+  :ref:`experiments <epyc:experiment-class>`, including execution
   in parallel on compute clusters for doing simulations at scale
 
 * Fully compatible with ``jupyter`` notebooks and labs

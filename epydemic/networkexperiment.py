@@ -24,8 +24,8 @@ from epydemic import NetworkGenerator, FixedNetwork
 
 
 class NetworkExperiment(Experiment):
-    '''A very lightweight base class for providing a network to an `epyc`
-    experiment. The network can either be a fixed network used for
+    '''A very lightweight base class for providing a network to an
+    :ref:`experiment <epyc:experiment-class>`. The network can either be a fixed network used for
     each experimental run, or a network generator that will be used to
     generate a new instance for each run.
 
