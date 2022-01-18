@@ -148,4 +148,4 @@ dynamics to set up and manage the event tap.
 
 .. automethod:: Dynamics.simulationStarted
 
-.. automethod:: Dynamics.siumulationEnded
+.. automethod:: Dynamics.simulationEnded
