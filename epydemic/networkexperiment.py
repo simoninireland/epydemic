@@ -38,8 +38,8 @@ class NetworkExperiment(Experiment):
         # turn a literal network into a network generator
         if isinstance(g, Graph):
             g = FixedNetwork(g)
-        self._generator = cast(NetworkGenerator, g)       # network generator
-        self._graph : Graph = None                        # working network instance
+        self._generator: NetworkGenerator = cast(NetworkGenerator, g) # network generator
+        self._graph: Graph = None                                     # working network instance
 
 
     # ---------- Configuration ----------
@@ -99,10 +99,11 @@ class NetworkExperiment(Experiment):
         super().setUp(params)
 
         # generate a working network instance
-        gen =self.networkGenerator()
-        self._graph = gen.set(params).generate()
+        gen = self.networkGenerator()
+        g = gen.set(params).generate()
+        self.setNetwork(g)
 
-        # update the paraneters with the topology marker for the generator
+        # update the parameters with the topology marker for the generator
         params[NetworkGenerator.TOPOLOGY] = gen.topology()
 
     def tearDown(self):
