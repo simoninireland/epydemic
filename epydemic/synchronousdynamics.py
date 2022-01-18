@@ -1,6 +1,6 @@
 # Synchronous dynamics base class
 #
-# Copyright (C) 2017--2020 Simon Dobson
+# Copyright (C) 2017--2021 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -42,7 +42,7 @@ class SynchronousDynamics(Dynamics):
     # additional metadata
     TIMESTEPS_WITH_EVENTS: Final[str] = 'epydemic.dynamics.timesteps_with_events'  #: Metadata element holding the number timesteps that actually had events occur within them
 
-    def __init__(self, p: Process, g: Union[Graph, NetworkGenerator] =None):
+    def __init__(self, p: Process, g: Union[Graph, NetworkGenerator] = None):
         super().__init__(p, g)
 
     def do(self, params: Dict[str, Any]) -> Dict[str, Any]:
@@ -50,6 +50,8 @@ class SynchronousDynamics(Dynamics):
 
         :param params: the parameters of the simulation
         :returns: a dict of experimental results'''
+        self.simulationStarted()
+
         rng = numpy.random.default_rng()
         proc = self.process()
         t = 1.0
@@ -101,4 +103,5 @@ class SynchronousDynamics(Dynamics):
 
         # report results
         rc = self.experimentalResults()
+        self.simulationEnded()
         return rc

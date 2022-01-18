@@ -130,10 +130,22 @@ up to a given simulation time.
 .. automethod:: Dynamics.runPendingEvents
 
 
-Event logging
--------------
+Event taps
+----------
 
 As each event (probabilistic or posted) is fired, there is an
-opportunity for the dynamics to log it or take some other action.
+opportunity for the dynamics to log it or take some other
+action. We refer to this as the *event tap*, as it captures the entire
+stream of events regardless of how they are defined and whether
+they are posted or stochastic. See :ref:`event-taps` for a discussion.
 
 .. automethod:: Dynamics.eventFired
+
+There are three other methods that are called within the core of the
+dynamics to set up and manage the event tap.
+
+.. automethod:: Dynamics.initialiseEventTaps
+
+.. automethod:: Dynamics.simulationStarted
+
+.. automethod:: Dynamics.siumulationEnded

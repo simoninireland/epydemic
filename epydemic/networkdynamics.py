@@ -67,6 +67,9 @@ class Dynamics(NetworkExperiment):
         self._perLocusEvents: Dict[Process, EventDistribution] = dict()    # dict from processes to events that occur per-locus
         self._postedEvents: List[PostedEvent] = []                         # pri-queue of fixed-time events
 
+        # initialise the event tap sub-system
+        self.initialiseEventTaps()
+
 
     # ---------- Configuration ----------
 
@@ -372,12 +375,37 @@ class Dynamics(NetworkExperiment):
                 n += 1
 
 
-    # ---------- Event logging ----------
+    # ---------- Event taps ----------
+
+    def initialiseEventTaps(self):
+        '''Initialise the event tap sub-system, which allows external code
+        access to the event stream of the simulation as it runs.
+
+        The default does nothing.'''
+        pass
+
+    def simulationStarted(self):
+        '''Called when the simulation has been configured, and set up, any
+        processes built, and is ready to run.
+
+        The default does nothing.
+
+        '''
+        pass
+
+    def simulationEnded(self):
+        '''Called when the simulation has stopped, immediately before tear-down.
+
+        The default does nothing.'''
+        pass
 
     def eventFired(self, t: float, etype: str, e : Element):
         '''Respond to the occurrance of the given event. The method is passed
         the simulation time, event type and the element affected --
         and isn't passed the event function, which is used elsewhere.
+
+        This method is called in the past tense, *after* the event function
+        has been run. This lets the effects of the event be observed.
 
         The default does nothing. It can be overridden by sub-classes to
         provide event-level logging or other functions.

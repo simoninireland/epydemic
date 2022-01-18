@@ -44,6 +44,8 @@ class StochasticDynamics(Dynamics):
 
         :param params: the experimental parameters
         :returns: the experimental results dict'''
+        self.simulationStarted()
+
         proc = self.process()
         rng = numpy.random.default_rng()
         t = 0
@@ -77,7 +79,7 @@ class StochasticDynamics(Dynamics):
                 # are less than the random threshold
                 xs = 0
                 for v in range(0, len(transitions)):
-                    (l, xsp, ef, _) = transitions[v]
+                    (l, xsp, ef, name) = transitions[v]
                     if (xs + xsp) > xc:
                         break
                     else:
@@ -99,7 +101,7 @@ class StochasticDynamics(Dynamics):
                 e = l.draw()
 
                 # perform the event by calling the event function,
-                # passing the dynamics, event time, network, and element
+                # passing the event time and element
                 ef(t, e)
                 self.eventFired(t, name, e)
 
@@ -113,6 +115,7 @@ class StochasticDynamics(Dynamics):
         (self.metadata())[self.TIME] = t
         (self.metadata())[self.EVENTS] = events
 
-        # report results
+        # generate and return experimental results
         rc = self.experimentalResults()
+        self.simulationEnded()
         return rc
