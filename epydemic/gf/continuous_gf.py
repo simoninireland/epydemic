@@ -75,7 +75,12 @@ class ContinuousGF(GF):
 
         :param i: the index
         :returns: the coefficient of x^i'''
-        return float((self._differentiate(0.0, i) / factorial(i)).real)
+
+        # we need to adapt the step distance for the integration
+        # so that it is smaller than 1 / i
+        step = 1 / (numpy.ceil(i / 99) * 100)
+
+        return float((self._differentiate(0.0, i, dx=step) / factorial(i)).real)
 
     def evaluate(self, x: float) -> float:
         '''Evaluate the generating function.
