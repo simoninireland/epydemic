@@ -26,5 +26,5 @@ from .discrete_gf import DiscreteGF
 from .continuous_gf import ContinuousGF
 
 # public interface
-from .interface import gf_from_series, gf_from_coefficients, gf_from_network
-from .standard_gfs import gf_er, gf_powerlaw, gf_plc
+from .interface import gf_from_series, gf_from_coefficients, gf_from_coefficient_function, gf_from_network
+from .standard_gfs import gf_er, gf_powerlaw, gf_ba, gf_plc

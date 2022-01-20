@@ -32,13 +32,16 @@ Alternatively (and better), import only the functions you need:
 Construction
 ------------
 
-``epydemic``'s generating functions can be constructed in different
-ways: from an explicit series, from a sequence of coefficients, or
-from a network.
+``epydemic``'s generating functions can be constructed in four
+different ways: from an explicit series, from a sequence of
+coefficients, from a function that returns the coefficient of a given
+term, or from a network.
 
 .. autofunction:: gf_from_series
 
 .. autofunction:: gf_from_coefficients
+
+.. autofunction:: gf_from_coefficient_function
 
 .. autofunction:: gf_from_network
 

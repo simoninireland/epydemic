@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-from typing import List, Callable, Union
+from typing import List, Callable, Union, cast
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
@@ -36,15 +36,23 @@ def gf_from_series(f: Callable[[float], float]) -> GF:
     :returns: the generating function'''
     return ContinuousGF(f)
 
-def gf_from_coefficients(cs: Union[List[float], Callable[[int], float]]) -> GF:
-    '''Create a generating function from a list of coefficients. These
-    may be provided either as a list of values or as a function that
-    maps the term exponent to the coefficient. In the latter case the
-    function must return a value for *all* terms.
 
-    :param cs: the coefficients, as a list or a function
+def gf_from_coefficients(cs: List[float]) -> GF:
+    '''Create a generating function from a list of coefficients.
+
+    :param cs: the list of coefficients
     :returns: a generating function'''
     return DiscreteGF(coefficients=cs)
+
+
+def gf_from_coefficient_function(f: Callable[[int], float]) -> GF:
+    '''Create a generating function from a function that computes
+    the coefficient for the given term.
+
+    :param f: the coefficients function
+    :returns: a generating function'''
+    return DiscreteGF(f=f)
+
 
 def gf_from_network(g: Graph) -> GF:
     '''Create a generating function representing the actual distribution

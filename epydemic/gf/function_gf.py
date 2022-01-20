@@ -26,13 +26,13 @@ class FunctionGF(GF):
     The function must be total on the range :math:`[0, n]`.
 
     :param generator: a function that generates coefficients
-    :param n: the largest term in the generating function
+    :param n: (optional) the largest term in the generating function (defaults to 300)
     '''
 
-    def __init__(self, generator: Callable[[int], float], n: int):
+    def __init__(self, generator: Callable[[int], float], n: int = None):
         super().__init__()
         self._coefficients: Callable[[int], float] = generator
-        self._maxTerm = n
+        self._maxTerm = 300 if n is None else 300
 
     def getCoefficient(self, i: int) -> float:
         '''Return the i'th coefficient.

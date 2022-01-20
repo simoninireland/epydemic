@@ -78,7 +78,7 @@ class ContinuousGF(GF):
 
         # we need to adapt the step distance for the integration
         # so that it is smaller than 1 / i
-        step = 1 / (numpy.ceil(i / 99) * 100)
+        step = 1 / (numpy.ceil((i + 1) / 99) * 100)
 
         return float((self._differentiate(0.0, i, dx=step) / factorial(i)).real)
 

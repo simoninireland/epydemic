@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from collections import Counter
-from typing import List
+from typing import List, Callable
 from networkx import Graph
 from epydemic.gf import FunctionGF
 
@@ -33,27 +33,38 @@ class DiscreteGF(FunctionGF):
 
     :param g: (optional) a network
     :param coefficients: (optional) a list of coefficients
+    :param f: (optional) a function from index to coefficient
 
     '''
 
-    def __init__(self, g: Graph = None, coefficients: List[float] = None):
+    def __init__(self, g: Graph = None, coefficients: List[float] = None, f: Callable[[int], float] = None):
+        # check for valid paramneters
+        nn = 0
+        nn += 1 if g is not None else 0
+        nn += 1 if coefficients is not None else 0
+        nn += 1 if f is not None else 0
+        if nn == 0:
+            raise TypeError('One of a network, list, or coefficient function needed')
+        elif nn > 1:
+            raise TypeError('At most one of a network, list, or coefficient function permitted')
 
-        # check we have one of the approaches we need
-        ps = len([p for p in [g, coefficients] if p is not None])
-        if ps == 0:
-            raise ValueError('Must provide one of a network or a list of coefficients')
-        elif ps > 1:
-            raise ValueError('Ambiguous parameters')
-
+        # switch on the method
+        ncoeff = None
         if g is not None:
-            # extract the coefficients from the degree distribution
+            # network
             coefficients = self._coefficientsFromNetwork(g)
+            generator = self._coefficientsWrapper(coefficients)
+            ncoeff = len(coefficients)
+        elif coefficients is not None:
+            # list of coefficients
+            generator = self._coefficientsWrapper(coefficients)
+            ncoeff = len(coefficients)
+        else:
+            # function returning coefficients
+            generator = f
+            ncoeff = None
 
-        # we have a list of coefficients, wrap a function around them
-        generator = self._coefficientsWrapper(coefficients)
-
-        # create the generating function
-        super().__init__(generator, len(coefficients) + 1)
+        super().__init__(generator, ncoeff)
 
     def _coefficientsFromNetwork(self, g: Graph) -> List[float]:
         '''Compute the degree histogram.

@@ -189,10 +189,10 @@ class GFTest(unittest.TestCase):
     def testAddDeleteDistribution(self):
         '''Test the the addition-deletion process converges as predicted by the theory.'''
         process = AddDelete()
-        process.setMaximumTime(80000)
+        process.setMaximumTime(10000)
 
         params = dict()
-        params[ERNetwork.N] = 20000
+        params[ERNetwork.N] = 5000
         params[ERNetwork.KMEAN] = 20
         params[AddDelete.P_ADD] = 1
         params[AddDelete.P_DELETE] = 1

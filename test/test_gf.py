@@ -34,12 +34,7 @@ class GFTest(unittest.TestCase):
         :param g: the network
         :returns: the degree distribution histogram'''
         N = g.order()
-        seq = sorted([d for (_, d) in g.degree()])
-        hist = Counter(seq)
-        maxk = max(seq)
-        cs = [hist[i] / N for i in range(maxk + 1)]
-        return cs
-
+        return [nk / N for nk in networkx.degree_histogram(g)]
 
     # Discrete distributions extracted from networks
 
@@ -88,6 +83,31 @@ class GFTest(unittest.TestCase):
         gcs = [(gf.dx(k))(0) / factorial(k) for k in range(len(cs))]
         for k in range(len(cs)):
             self.assertAlmostEqual(cs[k], gf[k], places=1)
+
+    def testFromCoefficients(self):
+        '''Test we can create a generating function from explicit coefficients.'''
+        coeffs = [0, 0.05, 0.7, 0.25]
+        gf = gf_from_coefficients(coeffs)
+        self.assertEqual(gf(1.0), 1.0)
+        for k in range(len(coeffs)):
+            self.assertEqual(coeffs[k], gf[k])
+        self.assertEqual(gf[k + 1], 0.0)
+
+    def testFromFunction(self):
+        '''Test we can create a generating function from a function returning the coefficients.'''
+        coeffs = [0, 0.05, 0.7, 0.25]
+
+        def f(k):
+            if k < len(coeffs):
+                return coeffs[k]
+            else:
+                return 0
+
+        gf = gf_from_coefficient_function(f)
+        self.assertEqual(gf(1.0), 1.0)
+        for k in range(len(coeffs)):
+            self.assertEqual(coeffs[k], gf[k])
+        self.assertEqual(gf[k + 1], 0.0)
 
 
     # Continuous series distributions
@@ -156,22 +176,36 @@ class GFTest(unittest.TestCase):
         gf = gf_powerlaw(3.0)
         self.assertAlmostEqual(gf(1.0), 1.0, places=2)
 
-    def testPLmean(self):
-        '''Test extraction of the mean degree for powerlaw neworks.'''
-        N = 10000
-        m = 2
+    # def testPLmean(self):
+    #     '''Test extraction of the mean degree for powerlaw neworks.'''
+    #     N = 10000
+    #     M = 2
 
-        g = networkx.barabasi_albert_graph(N, m)
-        gf = gf_powerlaw(3)
-        gf_prime = gf.dx()
+    #     g = networkx.barabasi_albert_graph(N, M)
+    #     gf = gf_powerlaw(3)
+    #     gf_prime = gf.dx()
 
-        degrees = [d for (_, d) in g.degree()]
-        kmean_empirical = sum(degrees) / N
-        self.assertAlmostEqual(gf_prime(1.0), kmean_empirical, delta=1)
+    #     degrees = [d for (_, d) in g.degree()]
+    #     kmean_empirical = sum(degrees) / N
+    #     self.assertAlmostEqual(gf_prime(1.0), kmean_empirical, delta=1)
+
+    def testBADistribution(self):
+        '''Test the degree distribution of the BA network.'''
+        N = 5000
+        M = 4
+
+        params = dict()
+        params[BANetwork.N] = N
+        params[BANetwork.M] = M
+        g = BANetwork().set(params).generate()
+        gf = gf_ba(M)
+        cs = self._histogram(g)
+        for k in range(M + 10, len(cs)):
+            self.assertAlmostEqual(cs[k], gf[k], places=2)
 
     def testPLCProbabilities(self):
         '''Test that the PLC GF evaluates to 1.'''
-        gf = gf_plc(2.5, 60)
+        gf = gf_plc(3.0, 60)
         self.assertAlmostEqual(gf(1.0), 1.0, places=2)
 
     def testPLCnormalised(self):
