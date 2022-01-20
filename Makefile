@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2022 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -270,6 +270,7 @@ $(VENV):
 	$(VIRTUALENV) $(VENV)
 	$(CAT) $(REQUIREMENTS) $(DEV_REQUIREMENTS) >$(VENV)/requirements.txt
 	$(ACTIVATE) && $(PIP) install -U pip wheel && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
+	$(ACTIVATE) && mypy --install-types --non-interactive
 
 # Build a source distribution
 sdist: $(DIST_SDIST)
