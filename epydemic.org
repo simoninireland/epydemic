@@ -7,7 +7,7 @@
 
 *** Release 1.8.1
 
-**** Coding [6/12]
+**** Coding [7/12]
 
     - [ ] Add degree-distribution-preserving rewiring functions
       preserving P(k, k') cite:UnreasonableEffectiveness (branch
@@ -25,7 +25,7 @@
     - [ ] Add unpacking of time series to Monitor
     - [X] Deal with Libby's pull request, integrate vaccine and
       opinion dynamics models
-    - [ ] Full test of vaccine and disease models in parallel
+    - [X] Full test of vaccine and disease models in parallel
     - [X] Add names to events in reference models
     - [ ] Test event firing
 
@@ -121,7 +121,7 @@
     Sage. This would then complement the numerical side.
 
 **** TODO Extend with multiple variables
-     SCHEDULED: <2021-11-25 Thu>
+     SCHEDULED: <2023-01-12 Thu>
 
      How does this work with respect to the single-variable case?
 
@@ -142,7 +142,7 @@
     edges of a given colour.
 
 *** TODO JOSS paper
-    DEADLINE: <2021-12-10 Fri> SCHEDULED: <2021-11-29 Mon>
+    DEADLINE: <2022-02-18 Fri> SCHEDULED: <2022-01-24 Mon>
 *** DONE API interface to the epydemic archive [3/3]
 
     branch archive
