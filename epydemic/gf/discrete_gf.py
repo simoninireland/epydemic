@@ -38,14 +38,11 @@ class DiscreteGF(FunctionGF):
     '''
 
     def __init__(self, g: Graph = None, coefficients: List[float] = None, f: Callable[[int], float] = None):
-        # check for valid paramneters
-        nn = 0
-        nn += 1 if g is not None else 0
-        nn += 1 if coefficients is not None else 0
-        nn += 1 if f is not None else 0
-        if nn == 0:
+        # check for valid parameters
+        ps = len([p for p in [g, coefficients, f] if p is not None])
+        if ps == 0:
             raise TypeError('One of a network, list, or coefficient function needed')
-        elif nn > 1:
+        elif ps > 1:
             raise TypeError('At most one of a network, list, or coefficient function permitted')
 
         # switch on the method

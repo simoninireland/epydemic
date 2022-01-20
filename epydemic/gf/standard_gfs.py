@@ -35,7 +35,7 @@ def gf_er(N: int, kmean: float = None, phi: float = None) -> GF:
     # check we have exactly one of kmean or phi
     ps = len([p for p in [kmean, phi] if p is not None])
     if ps != 1:
-        raise ValueError('Must provide either a mean degree or an occupation probability')
+        raise TypeError('Must provide either a mean degree or an occupation probability')
 
     # get the mean degree if it wasn't provided
     if kmean is None:
