@@ -99,7 +99,7 @@ Probabilistic events
 
 Stochastic events can be attached to each locus defined for the simulation.
 
-.. automethod : Dynamics.addEventPerElement
+.. automethod:: Dynamics.addEventPerElement
 
 .. automethod:: Dynamics.addFixedRateEvent
 
