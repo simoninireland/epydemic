@@ -109,6 +109,11 @@ class GFTest(unittest.TestCase):
             self.assertEqual(coeffs[k], gf[k])
         self.assertEqual(gf[k + 1], 0.0)
 
+    def testNoParametersDiscreteGF(self):
+        '''Test we detect no valid parameters passed to build a discrete generating function.'''
+        with self.assertRaises(TypeError):
+            gf = DiscreteGF()
+
 
     # Continuous series distributions
 
@@ -130,6 +135,11 @@ class GFTest(unittest.TestCase):
 
 
     # Standard distributions
+
+    def testNoParametersER(self):
+        '''Test we detect no valid parameters for an ER network.'''
+        with self.assertRaises(TypeError):
+            gf = gf_er(10000)
 
     def testERProbabilities(self):
         '''Test that the ER GF evaluates to 1.'''
