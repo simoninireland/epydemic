@@ -19,7 +19,6 @@
 
 from cmath import exp
 from mpmath import polylog, zeta
-#from scipy.special import zeta
 from epydemic.gf import GF, gf_from_series, gf_from_coefficient_function
 
 
