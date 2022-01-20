@@ -51,12 +51,14 @@ Posted and stochastic events
 
 A *posted* event is an event that happens at a specific, known,
 simulation time. that is to say, *both* the event *and* the time when
-it will happen are known when the event is created.
+it will happen are known when the event is created. Events are posted
+by calling :meth:`Dynamics:postEvent`.
 
 A *stochastic* event is an event chosen using a stochastic process,
 meaning that the event happens (or doesn't) on some model element
-(typically a node or edge).  Exactly how these events work depend on
-the dynamics used (see below).
+(typically a node or edge). Events are declared using
+:meth:`Dynamics.addFixedRateEventr` or :meth:`Dynamics.addEventPerElement`.
+Exactly how these events are chosen depend on the dynamics used (see below).
 
 
 Decomposition
@@ -100,6 +102,11 @@ to a single well-known method, :meth:`Dynamics.eventFired`. This
 allows sub-classes of :class:`Dynamics` to act on *every* event,
 regardless of which process defines it and whether it was stochastic
 or posted.
+
+When events are defined or posted using the various methods, they can
+optionally be given names. These names are then passed to
+:meth:`Dynamics.eventFired`, and form the only way in which different
+types of events can be differentiated.
 
 This feature isn't used at all within "core" ``epydemic``, but is
 provided as another extension mechanism that can be used if and when
