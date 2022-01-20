@@ -207,6 +207,9 @@ class Dynamics(NetworkExperiment):
         (fixed) probability for each element of the locus, and calling
         the :term:`event function` when it is selected.
 
+        The optional name is used in conjunction with
+        :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
+
         :param p: the process
         :param l: the locus or locus name
         :param pr: the event probability
@@ -235,6 +238,9 @@ class Dynamics(NetworkExperiment):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability, and calling the :term:`event function`
         when it is selected.
+
+        The optional name is used in conjunction with
+        :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
 
         :param p: the process
         :param l: the locus or locus name
@@ -306,6 +312,9 @@ class Dynamics(NetworkExperiment):
     def postEvent(self, t: float, e: Element, ef: EventFunction, name: Optional[str] = None):
         """Post an event that calls the :term:`event function` at time t.
 
+        The optional name is used in conjunction with
+        :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
+
         :param t: the current time
         :param e: the element (node or edge) on which the event occurs
         :param ef: the event function
@@ -317,6 +326,9 @@ class Dynamics(NetworkExperiment):
     def postRepeatingEvent(self, t: float, dt: float, e: Element,
                            ef: EventFunction, name: Optional[str] = None):
         """Post an event that starts at time t and re-occurs at interval dt.
+
+        The optional name is used in conjunction with
+        :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
 
         :param t: the start time
         :param dt: the interval
@@ -399,19 +411,23 @@ class Dynamics(NetworkExperiment):
         The default does nothing.'''
         pass
 
-    def eventFired(self, t: float, etype: str, e : Element):
+    def eventFired(self, t: float, name: str, e : Element):
         '''Respond to the occurrance of the given event. The method is passed
-        the simulation time, event type and the element affected --
+        the simulation time, event name, and the element affected --
         and isn't passed the event function, which is used elsewhere.
 
         This method is called in the past tense, *after* the event function
         has been run. This lets the effects of the event be observed.
 
+        The event name is simply the optional name that was given to the event
+        when it was declared using :meth:`addEventPerElement` or
+        :meth:`addFixedRateEvent`. It will be None if no name was provided.
+
         The default does nothing. It can be overridden by sub-classes to
         provide event-level logging or other functions.
 
         :param t: the simulation time
-        :param etype: the event type
+        :param name: the event name
         :param e: the element
 
         '''
