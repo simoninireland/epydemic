@@ -345,7 +345,6 @@ Available targets:
    make sdist        create a source distribution
    make wheel        create binary (wheel) distribution
    make upload       upload distribution to PyPi
-   make commit       tag current version and and push to master repo
    make clean        clean-up the build
    make reallyclean  clean up the virtualenv as well
 
