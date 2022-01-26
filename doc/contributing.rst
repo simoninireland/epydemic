@@ -5,6 +5,7 @@ Contributing
 reports, requests for new features, and (especially!) code for new
 features.
 
+
 To report an issue
 ------------------
 
@@ -17,11 +18,16 @@ Please be as specific as possible about the problem. Code that
 illustrates an issue is very welcome, but please make it as simple as
 possible!
 
+
 To request a feature
 --------------------
 
 If you simply want to suggest a feature, please open an issue report
 as above.
+
+
+To contribute a feature
+-----------------------
 
 If on the other hand you have proposed code for a new feature, please
 create a pull request containing your proposal, with using ``git``
@@ -46,6 +52,36 @@ documentation, and remember that docstrings aren't enough on their own.
 We use the `Python black coding style <https://pypi.org/project/black/>`_,
 and it'd be helpful if any pulled code did the same. We use type
 annotations to improve maintainability.
+
+
+Installing the codebase
+-----------------------
+
+To get your own copy of the codebase, simply clone the repo from
+GitHub and (optionally) create your own branch to work on
+
+.. code-block:: sh
+
+   # clone the repo
+   git clone git@github.com:simoninireland/epydemic.git
+   cd epydemic
+
+   # create a new branch to work on
+   git branch my-new-feature
+
+The makefile has several targets that are needed for development:
+
+- ``make env`` build a virtual environment with all the necessary
+  libraries. This include both those that ``epyc`` needs to run
+  (specified in ``requirements.txt``, and those that are simply needed
+  when developing and testing (specified in ``dev-requirements.txt``)
+- ``make test`` runs the test suite. This consists of a *lot* of
+  tests, some of which do a lot of work, and so this may take some time
+- ``make clean`` delete s a lo of constructed files for a clean build
+- ``make reallyclean`` also deletes the venv
+
+Calling ``make`` on its own prints all the available targets.
+
 
 Copyrights on code
 ------------------
