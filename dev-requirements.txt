@@ -9,6 +9,8 @@ sphinx-autodoc-typehints
 sphinxcontrib-bibtex
 doc8
 twine
+jedi
+jedi-language-server
 matplotlib
 seaborn
 mypy
