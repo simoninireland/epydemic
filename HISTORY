@@ -1,4 +1,4 @@
-Version 1.8.1
+Version 1.8.1 (2022-01-26)
 
    - Added recording of first hitting time for nodes
    - Added options to CompartmentedMode.markOccupied() and CompartmentedModel.markHit()
