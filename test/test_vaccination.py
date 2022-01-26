@@ -60,7 +60,6 @@ class VaccinationTest(unittest.TestCase):
         self._params[Monitor.DELTA] = 1 # self._maxTime / 100
 
         rc = self._e.set(self._params).run(fatal=True)
-        print(rc)
 
 
 if __name__ == '__main__':
