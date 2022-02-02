@@ -95,6 +95,7 @@ class SynchronousDynamics(Dynamics):
 
             # advance to the next timestep
             t += 1.0
+        self.simulationEnded()
 
         # add some more metadata
         (self.metadata())[self.TIME] = t
@@ -103,5 +104,4 @@ class SynchronousDynamics(Dynamics):
 
         # report results
         rc = self.experimentalResults()
-        self.simulationEnded()
         return rc

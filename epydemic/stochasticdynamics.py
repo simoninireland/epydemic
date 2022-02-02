@@ -110,6 +110,7 @@ class StochasticDynamics(Dynamics):
 
         # when we get here there may still be posted events that haven't
         # been run, and these are ignored: equilibrium overrides posting
+        self.simulationEnded()
 
         # add some more metadata
         (self.metadata())[self.TIME] = t
@@ -117,5 +118,4 @@ class StochasticDynamics(Dynamics):
 
         # generate and return experimental results
         rc = self.experimentalResults()
-        self.simulationEnded()
         return rc
