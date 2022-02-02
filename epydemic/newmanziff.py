@@ -53,7 +53,7 @@ class NewmanZiff(NetworkExperiment):
     def tearDown(self):
         '''Throw away the components data structure at tear-down.'''
         self._components = None
-        super(NewmanZiff, self).tearDown()
+        super().tearDown()
 
     def rootOf(self, n : Node) -> Node:
         '''Return the root of the component containing node n, updating
