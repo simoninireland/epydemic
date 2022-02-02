@@ -67,9 +67,6 @@ class Dynamics(NetworkExperiment):
         self._perLocusEvents: Dict[Process, EventDistribution] = dict()    # dict from processes to events that occur per-locus
         self._postedEvents: List[PostedEvent] = []                         # pri-queue of fixed-time events
 
-        # initialise the event tap sub-system
-        self.initialiseEventTaps()
-
 
     # ---------- Configuration ----------
 
@@ -142,7 +139,7 @@ class Dynamics(NetworkExperiment):
         '''
         self._process.tearDown()
         super().tearDown()
-        self._postedEvents= []
+        self._postedEvents = []
 
 
     # ---------- Stochastic events (drawn from a distribution) ----------
@@ -385,50 +382,3 @@ class Dynamics(NetworkExperiment):
                 pef()
                 self.eventFired(t, name, e)
                 n += 1
-
-
-    # ---------- Event taps ----------
-
-    def initialiseEventTaps(self):
-        '''Initialise the event tap sub-system, which allows external code
-        access to the event stream of the simulation as it runs.
-
-        The default does nothing.'''
-        pass
-
-    def simulationStarted(self):
-        '''Called when the simulation has been configured, and set up, any
-        processes built, and is ready to run.
-
-        The default does nothing.
-
-        '''
-        pass
-
-    def simulationEnded(self):
-        '''Called when the simulation has stopped, immediately before tear-down.
-
-        The default does nothing.'''
-        pass
-
-    def eventFired(self, t: float, name: str, e : Element):
-        '''Respond to the occurrance of the given event. The method is passed
-        the simulation time, event name, and the element affected --
-        and isn't passed the event function, which is used elsewhere.
-
-        This method is called in the past tense, *after* the event function
-        has been run. This lets the effects of the event be observed.
-
-        The event name is simply the optional name that was given to the event
-        when it was declared using :meth:`addEventPerElement` or
-        :meth:`addFixedRateEvent`. It will be None if no name was provided.
-
-        The default does nothing. It can be overridden by sub-classes to
-        provide event-level logging or other functions.
-
-        :param t: the simulation time
-        :param name: the event name
-        :param e: the element
-
-        '''
-        pass

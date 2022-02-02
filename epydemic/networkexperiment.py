@@ -20,14 +20,21 @@
 from typing import Union, Dict, Any, cast
 from networkx import Graph
 from epyc import Experiment
-from epydemic import NetworkGenerator, FixedNetwork
+from epydemic import NetworkGenerator, FixedNetwork, Element
 
 
 class NetworkExperiment(Experiment):
     '''A very lightweight base class for providing a network to an
-    :ref:`experiment <epyc:experiment-class>`. The network can either be a fixed network used for
-    each experimental run, or a network generator that will be used to
-    generate a new instance for each run.
+    :ref:`experiment <epyc:experiment-class>`. The network can either
+    be a fixed network used for each experimental run, or a network
+    generator that will be used to generate a new instance for each
+    run.
+
+    The experimnent also provides the interface for :ref:`event-taps`,
+    allowing external code to tap-into the changes the experiment makes
+    to the network. Sub-classes need to insert calls to this interface
+    as appropriate, notably around the main body of the simulation and
+    at each significant change.
 
     :param g: (optional) prototype network or network generator
 
@@ -40,6 +47,9 @@ class NetworkExperiment(Experiment):
             g = FixedNetwork(g)
         self._generator: NetworkGenerator = cast(NetworkGenerator, g) # network generator
         self._graph: Graph = None                                     # working network instance
+
+        # initialise the event tap sub-system
+        self.initialiseEventTaps()
 
 
     # ---------- Configuration ----------
@@ -110,3 +120,48 @@ class NetworkExperiment(Experiment):
         '''At the end of each experiment, throw away the working network.'''
         super().tearDown()
         self._graph = None
+
+
+    # ---------- Event taps ----------
+
+    def initialiseEventTaps(self):
+        '''Initialise the event tap sub-system, which allows external code
+        access to the event stream of the simulation as it runs.
+
+        The default does nothing.'''
+        pass
+
+    def simulationStarted(self):
+        '''Called when the simulation has been configured, and set up, any
+        processes built, and is ready to run.
+
+        The default does nothing.'''
+        pass
+
+    def simulationEnded(self):
+        '''Called when the simulation has stopped, immediately before tear-down.
+
+        The default does nothing.'''
+        pass
+
+    def eventFired(self, t: float, name: str, e : Element):
+        '''Respond to the occurrance of the given event. The method is passed
+        the simulation time, event name, and the element affected --
+        and isn't passed the event function, which is used elsewhere.
+
+        This method is called in the past tense, *after* the event function
+        has been run. This lets the effects of the event be observed.
+
+        The event name is simply the optional name that was given to the event
+        when it was declared using :meth:`addEventPerElement` or
+        :meth:`addFixedRateEvent`. It will be None if no name was provided.
+
+        The default does nothing. It can be overridden by sub-classes to
+        provide event-level logging or other functions.
+
+        :param t: the simulation time
+        :param name: the event name
+        :param e: the element
+
+        '''
+        pass
