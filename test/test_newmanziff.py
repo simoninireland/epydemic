@@ -41,7 +41,6 @@ class NewmanZiffTest(unittest.TestCase):
         params[PLCNetwork.CUTOFF] = 20
         e = BondPercolation(PLCNetwork())
         rc = e.set(params).run(fatal=True)
-        #print(rc)
 
     def testResultLayout(self):
         '''Test the results land correctly in the notebook.'''

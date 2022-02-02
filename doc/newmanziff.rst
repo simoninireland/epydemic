@@ -39,32 +39,46 @@ site percolation experiment on a million-node network in under 30s.
 Bond percolation
 ----------------
 
-.. autoclass :: BondPercolation
+.. autoclass:: BondPercolation
    :show-inheritance:
+
+.. autoattribute:: BondPercolation.OCCUPY
+
+.. automethod:: BondPercolation.setUp
+
+.. automethod:: BondPercolation.do
 
 The percolation process returns two values:
 
-.. autoattribute :: BondPercolation.P
+.. autoattribute:: BondPercolation.P
 
-.. autoattribute :: BondPercolation.GCC
-
-.. automethod :: BondPercolation.setUp
-
-.. automethod :: BondPercolation.do
+.. autoattribute:: BondPercolation.GCC
 
 
 Site percolation
 ----------------
 
-.. autoclass :: SitePercolation
+.. autoclass:: SitePercolation
    :show-inheritance:
+
+.. autoattribute:: SitePercolation.OCCUPY
+
+.. automethod:: SitePercolation.setUp
+
+.. automethod:: SitePercolation.do
 
 The percolation process returns two values:
 
-.. autoattribute :: SitePercolation.P
+.. autoattribute:: SitePercolation.P
 
-.. autoattribute :: SitePercolation.GCC
+.. autoattribute:: SitePercolation.GCC
 
-.. automethod :: SitePercolation.setUp
 
-.. automethod :: SitePercolation.do
+Events
+------
+
+Both bond and site percolation treat each individual occupation of a
+bond or site as an event which is fed to the :ref:`event taps
+interface <event-taps>`. For bond percolation, the element associated
+with the event is the newly-occupied edge; for sites, it is the
+newly-occupied node.
