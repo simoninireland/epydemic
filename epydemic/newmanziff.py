@@ -45,7 +45,8 @@ class NewmanZiff(NetworkExperiment):
             samples = 100
         if isinstance(samples, int):
             samples = numpy.linspace(0.0, 1.0, num=samples, endpoint=True)
-        self._samples: List[float] = sorted(numpy.unique(list(cast(Iterable[float], samples))))
+        self._samplepoints: List[float] = sorted(numpy.unique(list(cast(Iterable[float], samples))))
+        self._samples: List[Dict[str, Any]] = None
 
         # components data structure is initially empty
         self._components: numpy.ndarray = None
@@ -55,11 +56,13 @@ class NewmanZiff(NetworkExperiment):
 
         :param params: the experimental parameters'''
         super().setUp(params)
+        self._samples = []
         self._gcc = 0
         self._ncomponents = 0
 
     def tearDown(self):
         '''Throw away the components data structure at tear-down.'''
+        self._samples = None
         self._components = None
         super().tearDown()
 
@@ -157,30 +160,19 @@ class NewmanZiff(NetworkExperiment):
         :returns: an empty dict'''
         return dict()
 
-    def report(self, params: Dict[str, Any], meta: Dict[str, Any], res: List[Dict[str, Any]]) -> ResultsDict:
-        '''Re-write the list of samples into two sequences of the percolation value
-        and corresponding GCC size. It is assumed that all the samples take the same form,
-        i.e., have the same keys.
+    def experimentalResults(self) -> Dict[str, Any]:
+        '''Package-up the samples taken into a dict of time series.
 
-        :param params: the experimental parameters
-        :param meta: the metadata
-        :param res: a list of individual sample results
-        :returns: a results dicts'''
-
-        # create the series
-        series = dict()
-        for k in res[0].keys():
-            series[k] = []
-        for r in res:
-            for k in r.keys():
-                series[k].append(r[k])
-
-        # wrap the experiment results in a results dict
-        rc = self.resultsdict()
-        rc[self.PARAMETERS] = params.copy()
-        rc[self.METADATA] = meta.copy()
-        rc[self.RESULTS] = series
-        return rc
+        :returns: the experimental results'''
+        res = dict()
+        if len(self._samples) > 0:
+            for s in self._samples:
+                for k in s.keys():
+                    if k not in res.keys():
+                        res[k] = [s[k]]
+                    else:
+                        res[k].append(s[k])
+        return res
 
 
 class BondPercolation(NewmanZiff):
@@ -252,7 +244,7 @@ class BondPercolation(NewmanZiff):
         res[self.GCC] = self._gcc
         return res
 
-    def percolate(self, es : List[Edge]) -> List[Dict[str, Any]]:
+    def percolate(self, es : List[Edge]):
         '''Perform the bond percolation process. This runs through the
         list of edges, occupying them and taking samples of the occupied
         network's statistics at the requested sample points. The samples
@@ -260,14 +252,12 @@ class BondPercolation(NewmanZiff):
         They will be recorded in the results as actually having been sampled at the
         requested point, however, so that all results are sampled with the same indices.
 
-        :param es: the permuted list of edges
-        :returns: a list of dicts of experiment results.'''
+        :param es: the permuted list of edges'''
 
         # take an initial sample if requested
-        samples = []
         samplePoint = 0
-        if self._samples[samplePoint] == 0.0:
-            samples.append(self.sample(self._samples[samplePoint]))
+        if self._samplepoints[samplePoint] == 0.0:
+            self._samples.append(self.sample(self._samplepoints[samplePoint]))
             samplePoint += 1
 
         # percolate the network
@@ -280,18 +270,16 @@ class BondPercolation(NewmanZiff):
             self.eventFired(i, self.OCCUPY, (n, m))
 
             # take a sample if this is a sample point
-            if  (i + 1) / M >= self._samples[samplePoint]:
+            if  (i + 1) / M >= self._samplepoints[samplePoint]:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
-                samples.append(self.sample(self._samples[samplePoint]))
+                self._samples.append(self.sample(self._samplepoints[samplePoint]))
                 self.eventFired(i, self.SAMPLE, None)
 
                 # if we've collected all the samples we want, bail out
                 samplePoint += 1
-                if samplePoint > len(self._samples):
+                if samplePoint > len(self._samplepoints):
                     break
-
-        return samples
 
     def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
         '''Perform the percolation process. This passes a permuted
@@ -307,7 +295,8 @@ class BondPercolation(NewmanZiff):
 
         # percolate the network using these edges
         self.simulationStarted(params)
-        res = self.percolate(es)
+        self.percolate(es)
+        res = self.experimentalResults()
         self.simulationEnded(res)
         return res
 
@@ -409,7 +398,7 @@ class SitePercolation(NewmanZiff):
         res[self.GCC] = self._gcc
         return res
 
-    def percolate(self, ns : List[Node]) -> List[Dict[str, Any]]:
+    def percolate(self, ns : List[Node]):
         '''Perform the site percolation process. This runs through the
         list of nodes, occupying them and taking samples of the occupied
         network's statistics at the requested sample points. The samples
@@ -417,13 +406,12 @@ class SitePercolation(NewmanZiff):
         They will be recorded in the results as actually having been sampled at the
         requested point, however, so that all results are sampled with the same indices.
 
-        :param en: the permuted list of nodes
-        :returns: a list of dicts of experiment results.'''
+        :param en: the permuted list of nodes'''
+
         # take an initial sample if requested
-        samples = []
         samplePoint = 0
-        if self._samples[samplePoint] == 0.0:
-            samples.append(self.sample(self._samples[samplePoint]))
+        if self._samplepoints[samplePoint] == 0.0:
+            self._samples.append(self.sample(self._samplepoints[samplePoint]))
             samplePoint += 1
 
         # percolate the network
@@ -436,18 +424,16 @@ class SitePercolation(NewmanZiff):
             self.eventFired(i, self.OCCUPY, n)
 
             # take a sample if this is a sample point
-            if  (i + 1) / N >= self._samples[samplePoint]:
+            if  (i + 1) / N >= self._samplepoints[samplePoint]:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
-                samples.append(self.sample(self._samples[samplePoint]))
+                self._samples.append(self.sample(self._samplepoints[samplePoint]))
                 self.eventFired(i, self.SAMPLE, None)
 
                 # if we've collected all the samples we want, bail out
                 samplePoint += 1
-                if samplePoint > len(self._samples):
+                if samplePoint > len(self._samplepoints):
                     break
-
-        return samples
 
     def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
         '''Perform the percolation process. This passes a permuted
@@ -463,6 +449,7 @@ class SitePercolation(NewmanZiff):
 
         # percolate the network using these nodes
         self.simulationStarted(params)
-        res = self.percolate(ns)
+        self.percolate(ns)
+        res = self.experimentalResults()
         self.simulationEnded(res)
         return res
