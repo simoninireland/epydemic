@@ -44,7 +44,7 @@ class StochasticDynamics(Dynamics):
 
         :param params: the experimental parameters
         :returns: the experimental results dict'''
-        self.simulationStarted()
+        self.simulationStarted(params)
 
         proc = self.process()
         rng = numpy.random.default_rng()
@@ -110,12 +110,12 @@ class StochasticDynamics(Dynamics):
 
         # when we get here there may still be posted events that haven't
         # been run, and these are ignored: equilibrium overrides posting
-        self.simulationEnded()
 
         # add some more metadata
         (self.metadata())[self.TIME] = t
         (self.metadata())[self.EVENTS] = events
 
         # generate and return experimental results
-        rc = self.experimentalResults()
-        return rc
+        res = self.experimentalResults()
+        self.simulationEnded(res)
+        return res

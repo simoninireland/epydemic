@@ -50,7 +50,7 @@ class SynchronousDynamics(Dynamics):
 
         :param params: the parameters of the simulation
         :returns: a dict of experimental results'''
-        self.simulationStarted()
+        self.simulationStarted(params)
 
         rng = numpy.random.default_rng()
         proc = self.process()
@@ -95,7 +95,6 @@ class SynchronousDynamics(Dynamics):
 
             # advance to the next timestep
             t += 1.0
-        self.simulationEnded()
 
         # add some more metadata
         (self.metadata())[self.TIME] = t
@@ -103,5 +102,6 @@ class SynchronousDynamics(Dynamics):
         (self.metadata())[self.TIMESTEPS_WITH_EVENTS] = timestepEvents
 
         # report results
-        rc = self.experimentalResults()
-        return rc
+        res = self.experimentalResults()
+        self.simulationEnded(res)
+        return res

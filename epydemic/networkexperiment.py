@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from typing import Union, Dict, Any, cast
+from typing import Union, Dict, List,Any, cast
 from networkx import Graph
 from epyc import Experiment
 from epydemic import NetworkGenerator, FixedNetwork, Element
@@ -103,8 +103,7 @@ class NetworkExperiment(Experiment):
         '''Set up the experiment for a run. This creates a working copy of the
         network (class) underlying the experiment.
 
-        :params params: the experimental parameters
-
+        :param params: the experimental parameters
         '''
         super().setUp(params)
 
@@ -131,17 +130,21 @@ class NetworkExperiment(Experiment):
         The default does nothing.'''
         pass
 
-    def simulationStarted(self):
-        '''Called when the simulation has been configured, and set up, any
+    def simulationStarted(self, params: Dict[str, Any]):
+        '''Called when the simulation has been configured and set up, any
         processes built, and is ready to run.
 
-        The default does nothing.'''
+        The default does nothing.
+
+        :param params: the experimental parameters'''
         pass
 
-    def simulationEnded(self):
+    def simulationEnded(self, res: Union[Dict[str, Any], List[Dict[str, Any]]]):
         '''Called when the simulation has stopped, immediately before tear-down.
 
-        The default does nothing.'''
+        The default does nothing.
+
+        :param res: the experimental results'''
         pass
 
     def eventFired(self, t: float, name: str, e : Element):
