@@ -32,12 +32,12 @@ else:
 
 class NewmanZiff(NetworkExperiment):
     '''Base class for the Newman-Ziff site and bond percolation algorithm,
-    as described in :ref:`Newman and Ziff 2000 <NZ00>`.
+    as described in :cite:`Newman and Ziff 2000 <NewmanZiff>`.
 
     :param g: (optional) the underlying network or generator
     :param samples: (optional) number of samples or list of sample points (defaults to 100)'''
 
-    def __init__(self, g : Graph = None, samples : Union[int, Iterable[float]] = None):
+    def __init__(self, g: Graph = None, samples: Union[int, Iterable[float]] = None):
         super().__init__(g)
 
         # fill in default
@@ -45,10 +45,18 @@ class NewmanZiff(NetworkExperiment):
             samples = 100
         if isinstance(samples, int):
             samples = numpy.linspace(0.0, 1.0, num=samples, endpoint=True)
-        self._samples : List[float] = sorted(numpy.unique(list(cast(Iterable[float], samples))))
+        self._samples: List[float] = sorted(numpy.unique(list(cast(Iterable[float], samples))))
 
         # components data structure is initially empty
-        self._components : numpy.ndarray = None
+        self._components: numpy.ndarray = None
+
+    def setUp(self, params : Dict[str, Any]):
+        '''Set up the process.
+
+        :param params: the experimental parameters'''
+        super().setUp(params)
+        self._gcc = 0
+        self._ncomponents = 0
 
     def tearDown(self):
         '''Throw away the components data structure at tear-down.'''
@@ -81,45 +89,98 @@ class NewmanZiff(NetworkExperiment):
         component is c1.
 
         :param c1: the first component root
-        :param c2: trhe second component root
+        :param c2: the second component root
         :returns: the new component's size'''
-        # extract the size of the second compooent
+
+        # extract the size of the second componoent
+        # sd: this will be a negative number, since that's how sizes are stored
         msize = self._components[c2]
 
-        # join the second compoent to the first
+        # join the second component to the first
         self._components[c2] = c1
 
         # update the size of the first component
+        # sd: this adds two negative numbers
         self._components[c1] += msize
 
+        # reduce the number of components by one
+        self._ncomponents -= 1
+
         # return the size of the new component
+        # sd: minus the new encoded size at the root
         return -self._components[c1]
 
-    def sample(self, p : float) -> Dict[str, Any]:
-        '''Take a sample. The default does nothing.
+
+    # ---------- Querying the structure ----------
+
+    def components(self) -> int:
+        '''Return the number of components in the network.
+
+        :returns: the number of components'''
+        return self._ncomponents
+
+    def componentSize(self, n: Node) -> int:
+        '''Return the size of the component containing the node.
+
+        :param n: the node
+        :returns: the size of the component of which this node is part
+        '''
+        r = self.rootOf(n)
+        return -self._components[r]
+
+    def largestComponentSize(self) -> int:
+        '''Return the size of the largest component.
+
+        :returns: the size of largest component'''
+        return self._gcc
+
+    def inLargestComponent(self, n: Node) -> bool:
+        '''Return True if the given node is part of the largest component.
+        Note that this is non-deterministic, in the sense that before
+        the percolation threshold there will be more than one "largest"
+        cluster (and mightr indeed be several even afterwards): in *a*
+        largest cluster might be a better interpretation.
+
+        :param n: the node
+        :returns: True if the node is part of the largest component
+        '''
+        return (self.componentSize(n) == self.largestComponentSize())
+
+
+    # ---------- Sampling ----------
+
+    def sample(self, p: float) -> Dict[str, Any]:
+        '''Take a sample. The default does nothing, and it overridden by
+        sub-classes.
 
         :param p: the current occupation probability
         :returns: an empty dict'''
         return dict()
 
-    def report(self, params : Dict[str, Any], meta : Dict[str, Any], res : List[Dict[str, Any]]) -> List[ResultsDict]:
-        '''Re-write the list of results into a list of individual experiments by
-        wrapping them up as results dicts. Essentially this presents the results as though
-        a percolation experiment had happened for each sample.
+    def report(self, params: Dict[str, Any], meta: Dict[str, Any], res: List[Dict[str, Any]]) -> ResultsDict:
+        '''Re-write the list of samples into two sequences of the percolation value
+        and corresponding GCC size. It is assumed that all the samples take the same form,
+        i.e., have the same keys.
 
         :param params: the experimental parameters
         :param meta: the metadata
         :param res: a list of individual sample results
-        :returns: a list of results dicts'''
-        rcs = []
+        :returns: a results dicts'''
+
+        # create the series
+        series = dict()
+        for k in res[0].keys():
+            series[k] = []
         for r in res:
-            # wrap the experiment results in their own results dict
-            rc = self.resultsdict()
-            rc[self.PARAMETERS] = params.copy()
-            rc[self.METADATA] = meta.copy()
-            rc[self.RESULTS] = r.copy()
-            rcs.append(rc)
-        return rcs
+            for k in r.keys():
+                series[k].append(r[k])
+
+        # wrap the experiment results in a results dict
+        rc = self.resultsdict()
+        rc[self.PARAMETERS] = params.copy()
+        rc[self.METADATA] = meta.copy()
+        rc[self.RESULTS] = series
+        return rc
 
 
 class BondPercolation(NewmanZiff):
@@ -133,14 +194,13 @@ class BondPercolation(NewmanZiff):
     :param g: (optional) the underlying network or generator
     :param samples: (optional) number of samples or list of sample points (defaults to 100)'''
 
-    # Synthesised parameters
-    P : Final[str] = 'epydemic.bondpercolation.pOccupied'    #: Parameter holding percolation threshold.
-
     # Event names
     OCCUPY: Final[str] = 'epydemic.bondpercolation.occupy'   #: Name for bond-occupation event.
+    SAMPLE: Final[str] = 'epydemic.bondpercolation.sample'   #: Name for sampling event.
 
     # Experimental results
-    GCC : Final[str] = 'epydemic.bondpercolation.gcc'        #: Result holding size of GCC.
+    P: Final[str] = 'epydemic.bondpercolation.pOccupied'     #: Result holding series of percolation values.
+    GCC: Final[str] = 'epydemic.bondpercolation.gcc'         #: Result holding sizes of largest component.
 
     def __init__(self, g : Graph = None, samples : Union[int, Iterable[float]] = None):
         super().__init__(g, samples)
@@ -153,7 +213,8 @@ class BondPercolation(NewmanZiff):
         super().setUp(params)
         N = self.network().order()
         self._components = numpy.full(N, -1, numpy.int32)
-        self._gcc = 1   # initially all nodes are individual components, unconnected by occupied edges
+        self._gcc = 1           # all nodes are individual components, unconnected by occupied edges
+        self._ncomponents = N
 
     def occupy(self, n : Node, m : Node) -> Optional[int]:
         '''Occupy an edge. If this causes two components to be joined,
@@ -178,7 +239,7 @@ class BondPercolation(NewmanZiff):
             # return the new component size
             return csize
         else:
-            # no new component was foprmed
+            # no new component was formed
             return None
 
     def sample(self, p : float) -> Dict[str, Any]:
@@ -201,6 +262,7 @@ class BondPercolation(NewmanZiff):
 
         :param es: the permuted list of edges
         :returns: a list of dicts of experiment results.'''
+
         # take an initial sample if requested
         samples = []
         samplePoint = 0
@@ -222,6 +284,7 @@ class BondPercolation(NewmanZiff):
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
                 samples.append(self.sample(self._samples[samplePoint]))
+                self.eventFired(i, self.SAMPLE, None)
 
                 # if we've collected all the samples we want, bail out
                 samplePoint += 1
@@ -243,10 +306,10 @@ class BondPercolation(NewmanZiff):
         numpy.random.shuffle(es)
 
         # percolate the network using these edges
-        self.simulationStarted()
-        l = self.percolate(es)
-        self.simulationEnded()
-        return l
+        self.simulationStarted(params)
+        res = self.percolate(es)
+        self.simulationEnded(res)
+        return res
 
 
 class SitePercolation(NewmanZiff):
@@ -258,14 +321,13 @@ class SitePercolation(NewmanZiff):
     :param g: (optional) the underlying network or generator
     :param samples: (optional) number of samples or list of sample points (defaults to 100)'''
 
-    # Synthesised parameters
-    P : Final[str] = 'epydemic.sitepercolation.pOccupied'    #: Parameter holding percolation threshold.
-
     # Event names
     OCCUPY: Final[str] = 'epydemic.sitepercolation.occupy'   #: Name for site-occupation event.
+    SAMPLE: Final[str] = 'epydemic.sitepercolation.sample'   #: Name for sampling event.
 
     # Experimental results
-    GCC : Final[str] = 'epydemic.sitepercolation.gcc'        #: Result holding size of GCC.
+    P: Final[str] = 'epydemic.sitepercolation.pOccupied'    #: Result holding sequence of percolation values.
+    GCC: Final[str] = 'epydemic.sitepercolation.gcc'        #: Result holding sizes of largest component.
 
     def __init__(self, g : Graph = None, samples : Union[int, Iterable[float]] = None):
         super().__init__(g, samples)
@@ -279,7 +341,32 @@ class SitePercolation(NewmanZiff):
         N = self.network().order()
         self._unoccupied = N + 1                   # a root that can never occur
         self._components = numpy.full(N, self._unoccupied, numpy.int32)
-        self._gcc = 0    # initially there are no components
+        self._gcc = 0          # initially there are no components
+        self._ncomponents = 0
+
+    def componentSize(self, n: Node) -> int:
+        '''Return the size of the component containing the node. This will
+        be 0 if the node has not been occupied.
+
+        :param n: the node
+        :returns: the size of the component of which this node is part
+        '''
+        if self._components[n] == self._unoccupied:
+            return 0
+        else:
+            return super().componentSize(n)
+
+    def inLargestComponent(self, n: Node) -> bool:
+        '''Return True if the given node is occupied and part of the
+        largest component.
+
+        :param n: the node
+        :returns: True if the node is occupied and part of the largest component
+        '''
+        if self.componentSize(n) == 0:
+            return False
+        else:
+            return super().inLargestComponent(n)
 
     def occupy(self, nr : Node) -> int:
         '''Occupy a node, which is then joined to all adjacent occupied nodes.
@@ -294,6 +381,7 @@ class SitePercolation(NewmanZiff):
 
         # mark the node as a singleton component
         self._components[nr] = -1
+        self._ncomponents += 1
         csize = 1
 
         # connect to all neighbouring occupied nodes
@@ -352,6 +440,7 @@ class SitePercolation(NewmanZiff):
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
                 samples.append(self.sample(self._samples[samplePoint]))
+                self.eventFired(i, self.SAMPLE, None)
 
                 # if we've collected all the samples we want, bail out
                 samplePoint += 1
@@ -373,7 +462,7 @@ class SitePercolation(NewmanZiff):
         numpy.random.shuffle(ns)
 
         # percolate the network using these nodes
-        self.simulationStarted()
-        l = self.percolate(ns)
-        self.simulationEnded()
-        return l
+        self.simulationStarted(params)
+        res = self.percolate(ns)
+        self.simulationEnded(res)
+        return res

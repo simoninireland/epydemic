@@ -51,9 +51,12 @@ class NewmanZiffTest(unittest.TestCase):
         e = BondPercolation(PLCNetwork(), samples=50)
         lab.runExperiment(e)
         df = lab.notebook().current().dataframe()
-        self.assertEqual(len(df), 50)
-        self.assertIn(0.0, df[BondPercolation.P])
-        self.assertIn(1.0, df[BondPercolation.P])
+        self.assertEqual(len(df), 1)
+        ps = df[BondPercolation.P][0]
+        gccs = df[BondPercolation.GCC][0]
+        self.assertEqual(len(ps), len(gccs))
+        self.assertIn(0.0, ps)
+        self.assertIn(1.0, ps)
 
     def testSamplePoints(self):
         '''Test we can set explicit sample points.'''
@@ -65,11 +68,14 @@ class NewmanZiffTest(unittest.TestCase):
         e = BondPercolation(PLCNetwork(), samples=samples)
         lab.runExperiment(e)
         df = lab.notebook().current().dataframe()
-        self.assertEqual(len(df), 3)
-        points = sorted(list(df[BondPercolation.P]))
-        self.assertEqual(points[0], 0.0)
-        self.assertAlmostEqual(points[1], 0.5, places=2)
-        self.assertEqual(points[2], 1.0)
+        self.assertEqual(len(df), 1)
+        ps = df[BondPercolation.P][0]
+        gccs = df[BondPercolation.GCC][0]
+        self.assertEqual(len(ps), len(gccs))
+        self.assertEqual(len(gccs), 3)
+        self.assertEqual(ps[0], 0.0)
+        self.assertAlmostEqual(ps[1], 0.5, places=2)
+        self.assertEqual(ps[2], 1.0)
 
     def testRepeats(self):
         '''Test we play well with repeated experiments.'''
@@ -80,10 +86,11 @@ class NewmanZiffTest(unittest.TestCase):
         e = BondPercolation(PLCNetwork(), samples=10)
         lab.runExperiment(RepeatedExperiment(e, 3))
         df = lab.notebook().current().dataframe()
-        self.assertEqual(len(df), 3 * 10)
-        for p in df[BondPercolation.P]:
-            self.assertEqual(len(df[df[BondPercolation.P] == p]), 3)
-
+        self.assertEqual(len(df), 3)
+        for i in range(len(df)):
+            r = df.iloc[i]
+            ps = r[BondPercolation.P]
+            self.assertEqual(len(ps), 10)
 
    # ---------- Site percolation ----------
 
