@@ -97,7 +97,7 @@ from .statistics import NetworkStatistics
 from .processsequence import ProcessSequence
 
 # other experiments
-from .newmanziff import BondPercolation, SitePercolation
+from .newmanziff import NewmanZiff, BondPercolation, SitePercolation
 
 # late initialisation
 Bitstream.init_default_rng()
