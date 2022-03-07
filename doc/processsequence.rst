@@ -61,7 +61,9 @@ process needs to be able to access the methods on another.
 A non-anonymous process sequence is created using a dict from
 component process names (strings) to component processes. There are no
 default names, for maximum flexibility. One component process can then
-refer to another by using its name.
+refer to another by using its name, by first using
+:meth:`Process.container` to acquire its container and then looking-up
+the required component process.
 
 .. automethod:: ProcessSequence.processes
 
