@@ -23,46 +23,22 @@ random. One could do this by setting :attr:`SIR.P_INFECTED` to
 one node -- and if you happen to infect no nodes, everything will
 break.
 
-There are (at least) two ways to implement this depending on exactly
-what you want to accomplish. (We'll assume an :class:`SIR` model:
-change parameter names accordingly for other models.)
+There are several ways to implement this depending on exactly what you
+want to accomplish, the easiest of which is to directly code the
+required behaviour in a sub-class of the model you want to
+seed. (We'll assume an :class:`SIR` model: change parameter names
+accordingly for other models.)
 
 
-Solution 1: By hand
--------------------
+Changing the initial seeding procedure
+--------------------------------------
 
-First inhibit random seeding by setting the parameter
-:attr:`SIR.P_INFECTED` to 0 so that no nodes will be randomly
-infected.
-
-We then need to choose the seed nodes and place them into the
-:attr:`SIR.INFECTED` compartment. If we have a model ``m`` and a set
-of nodes ``ns`` that we want to infect, then:
-
-.. code-block:: python
-
-    for n in ns:
-	m.changeCompartment(n, SIR.INFECTED)
-
-will do the trick, and will keep track of the numbers of nodes in the
-various compartments. This is probably best done by extending
-:meth:`CompartmentedModel.setUp` so that, after the initial setup has been done, we
-change the compartments of the selected nodes and then proceeds with
-the simulation.
-
-This approach has the advantage of minimally intruding on the initial
-compartment distribution: it just takes control of the setting of
-nodes in one compartment.
-
-
-Solution 2: By changing the initial seeding procedure
------------------------------------------------------
-
-The alternative way, which is arguably cleaner, is to change the way
-in which initial compartments are assigned. To do this we have to
-account for the compartments of *all* the nodes -- not just the
-infected ones. We can do this by overriding
-:meth:`CompartmentedModel.initialCompartments` like this:
+To take control of the seeding procedure we have to account for the
+compartments of *all* the nodes -- not just the infected ones. We can
+do this by overriding
+:meth:`CompartmentedModel.initialCompartments`. If, for example, we
+wanted exactly one seed node, chosen at random, then we could do
+the following:
 
 .. code-block:: python
 
