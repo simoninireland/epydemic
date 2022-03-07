@@ -22,7 +22,7 @@ model. We'd then have code that lools something like:
 
 .. code-block:: python
 
-    p = ProcessSequence([SIR(), AddDelete()])
+    ps = ProcessSequence([SIR(), AddDelete()])
 
 So far so good.
 
@@ -64,8 +64,14 @@ To define how :class:`SIR` and :class:`AddDelete` work together, then,
 we need to extend the methods where the interaction occurs. Let's
 suppose we've decided that all added nodes will be marked as
 :attr:`SIR.SUSCEPTIBLE`, and that all deleted nodes will just
-disappear. We can code this up by sub-classing :class:`AddDelete` and
-adding two methods to our class definition:
+disappear.
+
+We need the addition-deletion process to be able to access to disease
+process. We can do this by creating a process sequence with named
+components. We'll call the disease process 'disease' and the
+addition-deletion process 'population'. Now, *if* the
+addition-deletion process is combined with a disease process, it can
+make use of that process as part of its definition:
 
 .. code-block:: python
 
@@ -76,11 +82,11 @@ adding two methods to our class definition:
 
 	    :param kwds: (optional) node attributes'''
 
-	    # add the node, cepturing its name
+	    # add the node, capturing its name
 	    n = super().addNewNode(*kwds)
 
 	    # set the compartment of this node to susceptible
-	    self.setCompartment(n, epydemic.SIR.SUSCEPTIBLE)
+	    self.container()['disease'].setCompartment(n, epydemic.SIR.SUSCEPTIBLE)
 
 	    # return the name of the new node
 	    return n
@@ -91,18 +97,35 @@ adding two methods to our class definition:
 	    :param n: the node'''
 
 	    # change the node's compartment to removed
-	    self.changeCompartment(n, epydemic.SIR.REMOVED)
+	    self.container()['disease'].changeCompartment(n, epydemic.SIR.REMOVED)
 
 	    # delete the node
 	    super().removeNode(n)
 
-(Note that when adding a node we used :meth:`CompartmentModel.setCompartment` because
-the newly-added node didn't have a compartment, whereas when deleting a
-node we used and not :meth:`CompartmentedModel.changeCompartment` because it did.)
+The addition and removal of nodes now affects the components of the
+nodes added or deleted, by acquiring the 'disease' component of the
+container process (the sequence of which the addition-deletion process
+is part) and using it to change compartment. (Note that when adding a
+node we used :meth:`CompartmentedModel.setCompartment` because the
+newly-added node didn't have a compartment, whereas when deleting a
+node we used and not :meth:`CompartmentedModel.changeCompartment`
+because it did.)
+
+We now need to build a process sequence with these names defined:
+
+.. code-block:: python
+
+    comps = {'disease': SIR()
+	     'population': ComponentAddDelete()}
+    ps = ProcessSequence(comps)
 
 The :meth:`AddDelete.add` and :meth:`AddDelete.delete` events will now use these
 overridden methods, and will inform the compartmented model when new susceptible
-nodes appear and when nodes are deleted.
+nodes appear and when nodes are deleted. Note that we never actually
+use the name of the addition-deletion process anywhere, as the SIR
+process doesn't need to make use of it. If it *did* -- if we defined a
+variant disease that needed to work with a changing population
+directly, we could do so.
 
 
 Keeping the numbers straight
@@ -153,12 +176,12 @@ potentially be re-used. One could swqp-out :class:`SIR` and replace it
 with :class:`SEIR`, for example, without changing
 ``CompartmentedAddDelete``.
 
-If you're determined to avoid an extra class you can adopt a more
+(If you're determined to avoid an extra class you can adopt a more
 dynamic approach and "monkey-patch" the definitions of methods in
 *just the one instance* of :class:`AddDelete` that you're using. If
 you know how to do this, and are happy with the consequences, work
 away: if you *don't* know, our advice is not to find out as the
-resulting can of worms is enormous.
+resulting can of worms is enormous.)
 
 A third possible approach is to use multiple inheritance, and for
 example define a class that sub-classes *both* :class:`SIR` *and*
@@ -167,3 +190,14 @@ works well, but sacrifices quite a lot of control and opportunities
 for re-use. We no longer recommend using multiple inheritance in
 ``epydemic`` simulations: see :ref:`no-multiple-inheritance` for a
 discussion.
+
+
+Complicated process sequences
+-----------------------------
+
+If you find yourself using :class:`ProcessSequence` with named
+components frequently, it's probably worth sub-classing it to add code
+that builds the components with the right names, so that you know that
+they'll always be available. The resulting process is "just" a
+process, and can be combined with other processes (and indeed other
+process sequences) freely.
