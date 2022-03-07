@@ -145,6 +145,7 @@ SOURCES_DOCUMENTATION = \
 	doc/tutorial/generators.rst \
 	doc/implementation.rst \
 	doc/implementation/challenges.rst \
+	doc/implementation/no-multiple-inheritance.rst \
 	doc/implementation/events.rst \
 	doc/implementation/gf-maths.rst \
 	doc/cookbook.rst \
