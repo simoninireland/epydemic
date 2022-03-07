@@ -88,10 +88,10 @@ Retrieving results
 ------------------
 
 The ``run`` method returns a dict of results. The structure of this
-dict is defined by ``epyc``, and you can refer to `that package's
-documentation for more details
-<https://epyc.readthedocs.io/en/latest/>`_: for our purposes, we will
-another dict under the ``epyc.Experiment.RESULTS`` key.
+dict is defined by ``epyc``, and is described :ref:`here
+<epyc:results-experiment>`: for our purposes, we will simply see a
+nested dict with the results of the experiment appearing in a dict
+under the ``epyc.Experiment.RESULTS`` key.
 
 The experimental resuilts are constructed by the
 :meth:`Process.results` method. This is overridden by
