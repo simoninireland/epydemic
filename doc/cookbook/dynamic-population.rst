@@ -183,13 +183,16 @@ you know how to do this, and are happy with the consequences, work
 away: if you *don't* know, our advice is not to find out as the
 resulting can of worms is enormous.)
 
-A third possible approach is to use multiple inheritance, and for
+A third possibility is to use multiple inheritance, and for
 example define a class that sub-classes *both* :class:`SIR` *and*
 :class:`AddDelete` and then overrides the methods. This sometimes
 works well, but sacrifices quite a lot of control and opportunities
-for re-use. We no longer recommend using multiple inheritance in
-``epydemic`` simulations: see :ref:`no-multiple-inheritance` for a
-discussion.
+for re-use.
+
+.. warning::
+
+   We :ref:`no longer recommend <no-multiple-inheritance>` using
+   multiple inheritance in ``epydemic`` simulations.
 
 
 Complicated process sequences
