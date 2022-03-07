@@ -50,6 +50,9 @@ class Process():
     a process dynamics (a sub-class of :class:`Dynamics`) to actually
     run a simulation of the process.
 
+    Process can be composed into larger structures, for example as part of
+    a :class:`ProcessSequence`.
+
     The process class includes an interface for interacting with the
     working network. The basic interface is extended and overridden in
     different sub-classes that interact with the network in different
@@ -66,6 +69,9 @@ class Process():
 
         # set the default maximum time, which persists across runs of the process
         self._maxTime = self.DEFAULT_MAX_TIME
+
+        # set the hierarchy
+        self._containerProcess: 'Process' = None
 
         # set the identifiers
         self._instanceId = Process.INSTANCE_SEQ
@@ -101,6 +107,22 @@ class Process():
         :param stem: the name stem
         :returns: the state variable name'''
         return '{s}-{n}'.format(s=stem, n=self.instanceId())
+
+
+    # ---------- Process containment ----------
+
+    def setContainer(self, ps: 'Process'):
+        '''Register this process as being composed as part of another process.
+
+        :param ps: the containing process'''
+        self._containerProcess = ps
+
+    def container(self) -> 'Process':
+        '''Return the container processthis process is part of. This will
+        be None for "simple" processes.
+
+        :return: the container process or None'''
+        return self._containerProcess
 
 
     # ---------- Setup and initialisation ----------

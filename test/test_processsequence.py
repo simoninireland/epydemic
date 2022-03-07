@@ -1,7 +1,7 @@
 # Test processes compose into sequences
 #
 # Copyright (C) 2021 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -81,9 +81,42 @@ class ProcessSequenceTest(unittest.TestCase):
         e = StochasticDynamics(p, ERNetwork())
         rc2 = e.set(params).run()
 
-        # bond percolation shouold reduce the number of edges (only) 
+        # bond percolation shouold reduce the number of edges (only)
         self.assertTrue(rc1[Experiment.RESULTS][NetworkStatistics.N] == rc2[Experiment.RESULTS][NetworkStatistics.N])
         self.assertTrue(rc1[Experiment.RESULTS][NetworkStatistics.M] > rc2[Experiment.RESULTS][NetworkStatistics.M])
+
+
+    # ---------- Containment ----------
+
+    def testAnonymous(self):
+        '''Test that component sub-processes are anonymous by default.'''
+        m = Percolate()
+        s = NetworkStatistics()
+        ps = ProcessSequence([m, s])
+        self.assertIsNone(ps.processNames())
+        self.assertCountEqual(ps.processes(), [m ,s])
+        with self.assertRaises(Exception):
+            ps['tt']
+
+    def testContainment(self):
+        '''Test process containment.'''
+        ps = ProcessSequence([Percolate(), NetworkStatistics()])
+        for p in ps.processes():
+            self.assertEqual(p.container(), ps)
+        self.assertIsNone(ps.container())
+
+    def testRetrieveByName(self):
+        '''Test we can retrieve a process by name, and only those processes.'''
+        names = dict()
+        names['model'] = SIR()
+        names['stats'] = NetworkStatistics()
+        ps = ProcessSequence(names)
+        self.assertCountEqual(ps.processes(), [names['model'], names['stats'] ])
+        for n in names.keys():
+            self.assertEqual(ps[n], names[n])
+        with self.assertRaises(Exception):
+            ps['tt']
+
 
 if __name__ == '__main__':
     unittest.main()

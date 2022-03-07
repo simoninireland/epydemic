@@ -22,12 +22,14 @@ import epyc
 import unittest
 import networkx
 
+
 class DynamicSIR(SIR, AddDelete):
+    '''Test process for the multiple inheritance approach.'''
 
     N = 'networkSize'
 
     def __init__(self):
-        super(DynamicSIR, self).__init__()
+        super().__init__()
 
     def addNewNode(self, **kwds):
         '''Mark new nodes as susceptible.
@@ -36,7 +38,7 @@ class DynamicSIR(SIR, AddDelete):
         :returns: the generated name of the new node'''
 
         # add the node, capturing its name
-        n = super(DynamicSIR, self).addNewNode(**kwds)
+        n = super().addNewNode(**kwds)
 
         # set the compartment of this node to susceptible
         self.setCompartment(n, SIR.SUSCEPTIBLE)
@@ -53,13 +55,57 @@ class DynamicSIR(SIR, AddDelete):
         self.changeCompartment(n, SIR.REMOVED)
 
         # delete the node
-        super(DynamicSIR, self).removeNode(n)
+        super().removeNode(n)
 
     def results( self ):
         '''Save the size of the resulting network.
 
         :returns: a dict of experimental results'''
-        rc = super(DynamicSIR, self).results()
+        rc = super().results()
+        rc[self.N] = self.network().order()
+        return rc
+
+
+class CompartmentedAddDelete(AddDelete):
+    '''Test process for the process sequence approach.'''
+
+    N = 'networkSize'
+    DISEASE = 'diseaseModel'
+
+    def __init__(self):
+        super().__init__()
+
+    def addNewNode(self, **kwds):
+        '''Mark new nodes as susceptible.
+
+        :param kwds: (optional) node attributes
+        :returns: the generated name of the new node'''
+
+        # add the node, capturing its name
+        n = super().addNewNode(**kwds)
+
+        # set the compartment of this node to susceptible
+        self.container()[self.DISEASE].setCompartment(n, SIR.SUSCEPTIBLE)
+
+        # return the name of the new node
+        return n
+
+    def removeNode(self, n):
+        '''Mark any node as removed before deleting.
+
+        :param n: the node'''
+
+        # change the node's compartment to removed
+        self.container()[self.DISEASE].changeCompartment(n, SIR.REMOVED)
+
+        # delete the node
+        super().removeNode(n)
+
+    def results( self ):
+        '''Save the size of the resulting network.
+
+        :returns: a dict of experimental results'''
+        rc = super().results()
         rc[self.N] = self.network().order()
         return rc
 
@@ -88,14 +134,14 @@ class AddDeleteSIRTest(unittest.TestCase):
         '''Test that the epidemic doesn't affect the population size when run with equal rates.'''
         self._params[AddDelete.P_ADD] = 1
         self._params[AddDelete.P_DELETE] = 1
-        rc = self._e.set(self._params).run()
+        rc = self._e.set(self._params).run(fatal=True)
         self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][DynamicSIR.N], self._network.order(), delta = int((self._network.order() + 0.0) * 0.1))
 
     def testZeroRates(self):
         '''Test that zero rates leave a fixed population and a normal epidemic.'''
         self._params[AddDelete.P_ADD] = 0
         self._params[AddDelete.P_DELETE] = 0
-        rc = self._e.set(self._params).run()
+        rc = self._e.set(self._params).run(fatal=True)
         self.assertEqual(rc[epyc.Experiment.RESULTS][DynamicSIR.N], self._network.order())
         self.assertEqual(rc[epyc.Experiment.RESULTS][DynamicSIR.N], self._N)
         self.assertCountEqual(rc[epyc.Experiment.RESULTS], [DynamicSIR.N, SIR.SUSCEPTIBLE, SIR.INFECTED, SIR.REMOVED])
@@ -108,8 +154,23 @@ class AddDeleteSIRTest(unittest.TestCase):
         '''Test that all nodes land in a compartment.'''
         self._params[AddDelete.P_ADD] = 1
         self._params[AddDelete.P_DELETE] = 1
-        rc = self._e.set(self._params).run()
+        rc = self._e.set(self._params).run(fatal=True)
         self.assertEqual(rc[epyc.Experiment.RESULTS][DynamicSIR.N], rc[epyc.Experiment.RESULTS][SIR.SUSCEPTIBLE] + rc[epyc.Experiment.RESULTS][SIR.INFECTED] + rc[epyc.Experiment.RESULTS][SIR.REMOVED])
+
+
+    def testSequence(self):
+        '''Test the process sequence approach.'''
+        self._params[AddDelete.P_ADD] = 1
+        self._params[AddDelete.P_DELETE] = 1
+        ps = dict()
+        ps[CompartmentedAddDelete.DISEASE] = SIR()
+        ps['adddelete'] = CompartmentedAddDelete()
+        self._process = ProcessSequence(ps)
+        self._process.setMaximumTime(self._maxTime)
+        self._e = StochasticDynamics(self._process, self._network)
+        rc = self._e.set(self._params).run(fatal=True)
+        self.assertAlmostEqual(rc[epyc.Experiment.RESULTS][CompartmentedAddDelete.N], self._network.order(), delta = int((self._network.order() + 0.0) * 0.1))
+
 
 if __name__ == '__main__':
     unittest.main()
