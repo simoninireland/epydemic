@@ -8,11 +8,11 @@ In a nutshell
 
 **Operating systems**: Linux, OS X
 
-**License**: `GNU General Public License v2 or later (GPLv2+) <http://www.gnu.org/licenses/gpl.html>`_
+**License**: `GNU General Public License v3 or later (GPLv3) <http://www.gnu.org/licenses/gpl.html>`_
 
 **Repository**: https://github.com/simoninireland/epydemic
 
-**Maintainer**: `Simon Dobson <mailto:simon.dobson@computer.org>`_
+**Maintainer**: `Simon Dobson <mailto:simoninireland@gmail.com>`_
 
 
 Installation with ``pip``
@@ -26,4 +26,3 @@ Use the following command:
 
 ``epydemic`` works perfectly in virtual environments, and indeed doing so is
 good practice for reproducible scientific code.
-
