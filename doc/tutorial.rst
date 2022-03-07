@@ -12,9 +12,9 @@ book on epidemic modelling :cite:`em`.
     :maxdepth: 2
 
     tutorial/simulation.rst
-    tutorial/build-sir.rst
     tutorial/use-standard-model.rst
     tutorial/run-at-scale.rst
+    tutorial/build-sir.rst
     tutorial/subclassing.rst
     tutorial/process-composition.rst
     tutorial/advanced-topics.rst

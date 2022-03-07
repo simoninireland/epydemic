@@ -2,20 +2,22 @@
 
 .. currentmodule:: epydemic
 
-Defining new processes
-======================
+Defining more new processes
+===========================
 
-Defining a new process is simply a matter of sub-classing the relevant
-base class. There are three likely places to start:
+So now we can build a disease process from scratch. This is the
+simplest way of defining a new process, as a direct sub-class of
+:class:`CompartmentedModel`, but there are two other ways we might use
+instead:
 
-- A new disease model -- probably subclass one of :class:`SIR`,
-  :class:`SIS`, or :class:`SEIR`
-- A new compartmented model unrelated to these -- sub-class
-  :class:`CompartmentedModel`
-- An entirely new process -- sub-class :class:`Process`
+- By adding compartments to an existing model
+- By adding state to an existing model
+- By computing extra results
+- By composing processes together
 
-Each of these three starting points has subtleties, things it's best to
-understand before starting.
+Each of these starting points has subtleties, and we'll explore all
+but the last here. (The last is the subject of the :ref:`next chapter
+<process-composition>`.)
 
 (In exceptional circumstances one might need to avoid the process
 hierarchy entirely and create new kinds of experiment. This can be
@@ -25,15 +27,70 @@ done by sub-classing :class:`NetworkExperiment`.)
 New compartmented models
 ------------------------
 
-A new disease model is easy to build, especially if you have a
-description of it in terms of compartments. It's usually just a matter
-of overriding :meth:`Process.build` to define the new compartments and
-add appropriate rules for each :term:`event`, and then define a
+A new disease model is easy to build, as we :ref:`saw <build-sir>`,
+especially if you have a description of it in terms of
+compartments. It's usually just a matter of overriding
+:meth:`Process.build` to define the new compartments and add
+appropriate rules for each :term:`event`, and then define a
 :term:`event function` implementing the actions of each.
 
 
-Additional state
-----------------
+Adding more compartments
+------------------------
+
+Let's consider a variant of SIR called SIRS, where someone can become
+susceptible again after some time. (This models diseases where the
+immunity given by infection is time-bounded.)  Again, we'll define a
+slightlyu simplied version of ``epydemic``'s built-in :class:`SIRS`
+process.
+
+For SIRS we need to add three things to SIR:
+
+- another parameter, the probability of becoming susceptible again;
+- a locus tracking the R nodes so they can be the target of
+  re-susceptibility events; and
+- the code for this event.
+
+We can bring these three elements together in a sub-class:
+
+.. code-block:: python
+
+  class SIRS(SIR):
+    # Extra model parameter
+    P_RESUSCEPT = 'pResuscept'    #: Parameter for probability of losing immunity
+
+    # Event name
+    RESUSCEPT = 'RS'              #: Compartment/event name for returning to susceptible.
+
+    def __init__(self):
+	super().__init__()
+
+    def build(self, params):
+	super().build(params)
+
+	# add components needed for SIRS
+	pResuscept = params[self.P_RESUSCEPT]
+	self.trackNodesInCompartment(self.REMOVED)
+
+	self.addEventPerElement(self.REMOVED, pResuscept, self.resuscept, self.RESUSCEPT)
+
+    def resuscept(self, t, n):
+	self.changeCompartment(n, self.SUSCEPTIBLE)
+
+From what we've seen already this is hopefully quite clear. The new
+sub-class builds on :class:`SIR`, adding to its :meth:`SIR.build`
+method to track nodes in the removed compartment and add an event with
+the probability given by the experimental parameter. The code for this
+event simply changes the node's compartment back to susceptible.
+
+.. note ::
+
+    You can see the code for the SIRS process
+    `here <https://raw.githubusercontent.com/simoninireland/epydemic/master/epydemic/sirs_model.py>`_.
+
+
+Adding more state
+-----------------
 
 A process over a network will typically want to save state on each
 node and/or edge> For a :class:`CompartmentedModel` this includes

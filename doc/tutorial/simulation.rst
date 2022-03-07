@@ -36,7 +36,7 @@ There are lots of ways to define a network process. The most common for spidemic
 simulation is using a :term:`compartmented model of disease` where each node resides
 in a different state (or compartment) that changes as the epidemic progresses. All such
 processes in ``epydemic`` sub-class :class:`CompartmenedModel`, and the library also
-includes "reference" models for the most common kinds of epidemic process. 
+includes "reference" models for the most common kinds of epidemic process.
 
 
 Loci
@@ -71,5 +71,4 @@ There are two kinds of dynamics currently supported by ``epydemic``:
      this distribution. This can be very efficient if events are rare, since it jumps
      over times when "nothing happens".
 
-We'll now show how to put these classes toigether to :ref:`build-sir`.
-
+We'll now show how to put these classes together.

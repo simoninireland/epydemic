@@ -36,34 +36,13 @@ In this example the two processes will be built, set up, run, torn down,
 and their results collected. (See :ref:`monitoring-progress` to see this
 example in more detail.)
 
+There are more complicated ways of composing processes together where
+the component processes can interact with each other directly by
+name. See the :ref:`cookbook recipe <dynamic-population>` for an example.
 
-.. _no-multiple-inheritance:
 
 Multiple inheritance
 --------------------
 
-Another way to compose processes is to use Python's multiple
-inheritance, We don't recommend this approach as it's a lot harder to
-control the sequences of interactions that need to occur.
-
-.. warning::
-
-   Versions of ``epydemic`` prior to 1.8.1 used multiple inheritance
-   internally, as well as in examples.
-
-The issue is that multiple inheritance imposes a single order on the
-compositions of methods, defined by the method resolution order or
-MRO. These restrictions don't always align with what's needed by
-``epydemic``. In particular it can make it hard to correctly define
-when a process has reached equilibrium.
-
-A more serious restriction is that further composition --
-whether by sequence or by further inheritance -- can create a
-situation in which one need to change the order of the previous
-multiply-inherited methods. While this can be done, it's liable to
-lead to errors and even in the best case requires code duplication and
-awkward calls that jump-around the inheritance hierarchy.
-
-All things considered, using a :class:`ProcessSequence` makes
-classes more re-usable and easier to compose when building more
-complex processes.
+We :ref:`no longer recommend using multiple inheritance
+<no-multiple-inheritance>` to compose processes.
