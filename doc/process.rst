@@ -139,3 +139,15 @@ attributes on nodes and edges for storing process state.
 .. automethod:: Process.stateVariable
 
 (See :ref:`subclassing` for an example of how to define state variables.)
+
+
+Containment
+-----------
+
+Processes can have a hierarchy, for example when composed into a
+:class:`ProcessSequence`. There are a couple of methods used to access
+this hierarchy.
+
+.. automethod:: Process.setContainer
+
+.. automethod:: Process.container
