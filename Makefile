@@ -162,6 +162,8 @@ SOURCES_DIAGRAMS = \
 	doc/cookbook/sir-progress-dt.png \
 	doc/cookbook/sir-progress-er.png \
 	doc/cookbook/sir-progress-plc.png \
+	doc/cookbook/bond-percolation-er.png \
+	doc/cookbook/site-percolation-er.png \
 	doc/cookbook/bond-percolation-plc.png \
 	doc/cookbook/site-percolation-plc.png \
 	doc/cookbook/sir-time-series.png \
