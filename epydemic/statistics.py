@@ -45,7 +45,7 @@ class NetworkStatistics(Process):
     KMAX: Final[str] = 'epydemic.statistics.kmax'              #: Result holding the largest node degree.
     KDIST: Final[str] = 'epydemic.statistics.k_distribution'   #: Result holding the degree histogram as an array.
     COMPONENTS: Final[str] = 'epydemic.statistics.ncomponents' #: Result holding the number of connected components in the network.
-    LCC: Final[str] = 'epydemic.statistics.lcc'                #: Result holding the size of the largest (giant) component
+    LCC: Final[str] = 'epydemic.statistics.lcc'                #: Result holding the size of the largest connected ("giant") component
     SLCC: Final[str] = 'epydemic.statistics.slcc'              #: Result holding the size of the second-largest component
 
     def __init__(self):

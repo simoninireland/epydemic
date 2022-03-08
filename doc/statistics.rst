@@ -16,7 +16,7 @@ The statistics gathered are:
 - The mean degree of nodes
 - The degree histogram
 - The number of connected components
-- The number of nodes in the largest connected component
+- The number of nodes in the :term:`largest connected component`
 - The number of nodes in the second-largest connected component
 
 The process runs in the results-gathering phase, where is analyses the topology
@@ -45,7 +45,3 @@ Building the process
 --------------------
 
 .. automethod :: NetworkStatistics.results
-
-
-
-
