@@ -86,6 +86,15 @@ Glossary
       network science introduction and Wilf
       :cite:`generatingfunctionology` for a more detailed treatment.
 
+   giant connected component
+      In :term:`percolation` (and other) processes, the giant
+      connected component (sometimes called the GCC, or simply "the
+      giant component") is a connected component that occupies a
+      substantial fraction of the network. The formal definition of
+      the GCC is quite complicated; the common working definition is
+      that a component is "giant" when it includes more that a hundredth
+      of the network's nodes :cite:`PercolationSmearedPhaseTransition`.
+
    Gillespie simulation
       A simulation technique developed initially for *ab initio*
       chemistry simulations :cite:`Gillespie76,Gillespie77`.
@@ -103,6 +112,16 @@ Glossary
       instance. A typical example is the class of networks with Poisson
       degree distribution (the ER networks), defined by the order and
       mean degree of the network.
+
+   percolation
+      A process that randomly "occupies" edges in a network with a
+      given probability.
+
+   percolation threshold
+      The occupation probability in a percolation process above which
+      a :term:`giant connected component` forms. The size of the GCC
+      rises rapidly once the threshold is passed, making the
+      threshold generally "crisp".
 
    posted event
       An :term:`event` posted for a definite future time. The
