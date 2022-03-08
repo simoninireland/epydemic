@@ -1,6 +1,6 @@
 # Create the percolation diagrams for the Newman-Ziff algorithm
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2022 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,51 +17,83 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import BondPercolation, SitePercolation, PLCNetwork
+from epydemic import BondPercolation, SitePercolation, ERNetwork, PLCNetwork
 from epyc import Experiment
 import matplotlib.pyplot as plt
 
 # network topological parameters
 N = 10000
+kmean = 20
 alpha = 2.0
 kappa = 20
 
 params = dict()
+params[ERNetwork.N] = N
+params[ERNetwork.KMEAN] = kmean
 params[PLCNetwork.N] = N
 params[PLCNetwork.EXPONENT] = alpha
 params[PLCNetwork.CUTOFF] = kappa
 
-# construct a network
-g = PLCNetwork().set(params).generate()
+# construct networks
+g_er = ERNetwork().set(params).generate()
+g_plc = PLCNetwork().set(params).generate()
 
-# bond-percolate the network
-e = BondPercolation(g)
-rcs = e.set(params).run()
+# bond-percolate the networks
+e_er = BondPercolation(g_er)
+rc_er = e_er.set(params).run()
+e_plc = BondPercolation(g_plc)
+rc_plc = e_plc.set(params).run()
 
-# figure 1: the bond percolation behaviour
+# figure 1a: the bond percolation behaviour of an ER network
 fig = plt.figure(figsize=(5, 5))
 
-xs = [rc[Experiment.RESULTS][BondPercolation.P] for rc in rcs]
-ys = [rc[Experiment.RESULTS][BondPercolation.GCC] / N for rc in rcs]
+xs = rc_er[Experiment.RESULTS][BondPercolation.P]
+ys = [gcc / N for gcc in rc_er[Experiment.RESULTS][BondPercolation.GCC]]
 plt.plot(xs, ys, 'g-')
 
 plt.xlabel('fraction of occupied bonds $\phi$')
 plt.ylabel('size of giant component $S$')
-plt.title(f'Bond percolation on PLC network ($N = {N}, \alpha = {alpha}, \\kappa={kappa}$)')
-plt.savefig('doc/cookbook/bond-percolation-plc.png')
+plt.title(f'Bond percolation on ER network ($N = {N}, \\langle k \\rangle = {kmean}$)', size='medium')
+plt.savefig('doc/cookbook/bond-percolation-er.png')
 
-# site-percolate the network
-e = SitePercolation(g)
-rcs = e.set(params).run()
-
-# figurer 2: site percolation behaviour
+# figure 1b: the bond percolation behaviour of a PLC network
 fig = plt.figure(figsize=(5, 5))
 
-xs = [rc[Experiment.RESULTS][SitePercolation.P] for rc in rcs]
-ys = [rc[Experiment.RESULTS][SitePercolation.GCC] / N for rc in rcs]
+xs = rc_plc[Experiment.RESULTS][BondPercolation.P]
+ys = [gcc / N for gcc in rc_plc[Experiment.RESULTS][BondPercolation.GCC]]
+plt.plot(xs, ys, 'g-')
+
+plt.xlabel('fraction of occupied bonds $\phi$')
+plt.ylabel('size of giant component $S$')
+plt.title(f'Bond percolation on PLC network ($N = {N}, \\alpha = {alpha}, \\kappa={kappa}$)', size='medium')
+plt.savefig('doc/cookbook/bond-percolation-plc.png')
+
+# site-percolate the networks
+e_er = SitePercolation(g_er)
+rc_er = e_er.set(params).run()
+e_plc = SitePercolation(g_plc)
+rc_plc = e_plc.set(params).run()
+
+# figurer 2a: site percolation behaviour for an ER network
+fig = plt.figure(figsize=(5, 5))
+
+xs = rc_er[Experiment.RESULTS][SitePercolation.P]
+ys = [gcc / N for gcc in rc_er[Experiment.RESULTS][SitePercolation.GCC]]
 plt.plot(xs, ys, 'g-')
 
 plt.xlabel('fraction of occupied sites $\phi$')
 plt.ylabel('size of giant component $S$')
-plt.title('Site percolation on PLC network ($N = {N}, \alpha = {alpha}, \\kappa={kappa}$)')
+plt.title(f'Site percolation on ER network ($N = {N}, \\langle k \\rangle = {kmean}$)', size='medium')
+plt.savefig('doc/cookbook/site-percolation-er.png')
+
+# figurer 2a: site percolation behaviour for a PLC network
+fig = plt.figure(figsize=(5, 5))
+
+xs = rc_plc[Experiment.RESULTS][SitePercolation.P]
+ys = [gcc /  N for gcc in rc_plc[Experiment.RESULTS][SitePercolation.GCC]]
+plt.plot(xs, ys, 'g-')
+
+plt.xlabel('fraction of occupied sites $\phi$')
+plt.ylabel('size of giant component $S$')
+plt.title(f'Site percolation on PLC network ($N = {N}, \\alpha = {alpha}, \\kappa={kappa}$)', size='medium')
 plt.savefig('doc/cookbook/site-percolation-plc.png')
