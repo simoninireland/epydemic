@@ -1,6 +1,6 @@
 # Test goodness-of-fit for various distributions
 #
-# Copyright (C) 2021 Simon Dobson
+# Copyright (C) 2021--2022 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -124,26 +124,29 @@ class GFTest(unittest.TestCase):
 
     # ---------- Network generators ----------
 
-    def _testSignificance(self, gen, gf, reps=None):
+    def _testSignificance(self, gen, gf, reps=None, threshold=None):
         '''Perform repeated tests against random networks. We pass if the
         majority pass.
 
         :param gen: the network generator
         :param gf: the generating function
-        :param reps: (optional) number of repetiions
+        :param reps: (optional) number of repetitions
+        :param threshold: (optional) number of passes needed (defaults to half the number of repetitions)
         :returns: True if we pass enough tests'''
         if reps is None:
             reps = self.REPETITIONS
+        if threshold is None:
+            threshold = int(reps / 2)
         passes = 0
         for _ in range(reps):
             g = gen.generate()
             if self._significance(g, gf):
                 passes += 1
-            if passes > reps / 2:
+            if passes > threshold:
                 return True
 
         # if we get here we didn't pass enough tests
-        self.assertTrue(False, f'only passed {passes}/{reps} tests')
+        self.assertTrue(False, f'only passed {passes}/{reps} tests (needed {threshold})')
 
     def testERDistribution(self):
         '''Test the ER network generator constructs the right degree distribution.'''
@@ -162,7 +165,7 @@ class GFTest(unittest.TestCase):
         param[PLCNetwork.CUTOFF] = 20
         gen = PLCNetwork().set(param)
         gf = gf_plc(param[PLCNetwork.EXPONENT], param[PLCNetwork.CUTOFF])
-        self._testSignificance(gen, gf)
+        self._testSignificance(gen, gf, reps=10, threshold=3)
 
 
     # ---------- Addition-deletion process ----------
@@ -202,7 +205,7 @@ class GFTest(unittest.TestCase):
 
         gf = self._make_addition_deletion_gf(params[AddDelete.DEGREE])
         self.assertAlmostEqual(int(gf.dx()(1)), params[AddDelete.DEGREE], delta=1)
-        self.assertTrue(self._testSignificance(gen, gf))
+        self.assertTrue(self._testSignificance(gen, gf, reps=10, threshold=3))
 
 
 if __name__ == '__main__':
