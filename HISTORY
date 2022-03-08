@@ -3,6 +3,9 @@ Version 1.9.1
    - Refactored event taps to be more general
    - Added events and new query methods to the Newman-Ziff percolation processes
    - Changed the way Newman-Ziff results are returned in notebooks
+   - Added named sub-processes in process sequences
+   - Reformulated tutorial to avoid some confusions
+   - Added recipe on percolation
 
 Version 1.8.1 (2022-01-26)
 
