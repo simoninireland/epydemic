@@ -89,6 +89,9 @@ Features
 
 * Addition-deletion process to model natural birth and death
 
+* An implementation of the Newman-Ziff algorithm for studying
+  :term:`percolation`
+
 * Includes a library for working with :term:`generating functions`, as
   used in many research papers in network science
 
