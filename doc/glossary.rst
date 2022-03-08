@@ -90,14 +90,24 @@ Glossary
       In :term:`percolation` (and other) processes, the giant
       connected component (sometimes called the GCC, or simply "the
       giant component") is a connected component that occupies a
-      substantial fraction of the network. The formal definition of
-      the GCC is quite complicated; the common working definition is
-      that a component is "giant" when it includes more that a hundredth
-      of the network's nodes :cite:`PercolationSmearedPhaseTransition`.
+      substantial fraction of the network: basically the GCC forms
+      when the size of the :term:`largest connected component` is
+      "very large". The formal definition of when a component becomes
+      giant is quite complicated; the common working definition is
+      that the LCC is "giant" when it includes more that a
+      hundredth of the network's nodes
+      :cite:`PercolationSmearedPhaseTransition`.
 
    Gillespie simulation
       A simulation technique developed initially for *ab initio*
       chemistry simulations :cite:`Gillespie76,Gillespie77`.
+
+   largest connected component
+      The largest collection of nodes in the network linked by
+      edges. Often called the LCC. In some cases we may also be
+      interested in the sizes of other components: for example the
+      second-largest connected component (SLCC) can give useful
+      information.
 
    locus
       A "place" at which dynamics can occur, that is to say, where
