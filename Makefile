@@ -154,6 +154,7 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/infect-specific-nodes.rst \
 	doc/cookbook/dynamic-population.rst \
 	doc/cookbook/keep-network.rst \
+	doc/cookbook/percolation-threshold.rst \
 	doc/cookbook/from-r-to-probabilities.rst \
 	doc/cookbook/speed.rst \
 	doc/cookbook/compare-series.rst
