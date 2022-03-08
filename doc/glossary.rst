@@ -114,8 +114,8 @@ Glossary
       mean degree of the network.
 
    percolation
-      A process that randomly "occupies" edges in a network with a
-      given probability.
+      A process that randomly "occupies" nodes or edges in a
+      network with a given probability.
 
    percolation threshold
       The occupation probability in a percolation process above which
