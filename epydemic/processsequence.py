@@ -21,7 +21,7 @@ from typing import List, Dict, Any, Union, cast
 from epydemic import Process, Dynamics
 
 class ProcessSequence(Process):
-    '''A process build from a sequence of other processes. This allows separate process
+    '''A process built from a sequence of other processes. This allows separate process
     behaviour to be defined independently and then combined in different ways.
 
     The processes can be defined either by a list or a dict. The former
