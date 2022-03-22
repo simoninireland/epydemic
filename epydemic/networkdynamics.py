@@ -218,17 +218,17 @@ class Dynamics(NetworkExperiment):
             l = self.locus(l)
         self._perElementEvents[p].append((l, pr, ef, name))
 
-    def perElementEventDistribution(self, p: Process, t: float) -> EventDistribution:
-        """Return the distribution of per-element events for the given process' loci
+    def perElementEventDistribution(self, t: float) -> EventDistribution:
+        """Return the distribution of per-element events for all processes' loci
         at the given time. By default the distribution is time-independent.
 
-        :param p: the process
         :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
-        if p in self._perElementEvents:
-            return self._perElementEvents[p]
-        else:
-            return []
+        rates = []
+        for p in self._perElementEvents:
+            for (l, pr, ef, name) in self._perElementEvents[p]:
+                rates.append((l, pr * len(l), ef, name))
+        return rates
 
     def addFixedRateEvent(self, p: Process, l: Union[str, Locus], pr: float,
                           ef: EventFunction, name: Optional[str] = None):
@@ -250,17 +250,18 @@ class Dynamics(NetworkExperiment):
             l = self.locus(l)
         self._perLocusEvents[p].append((l, pr, ef, name))
 
-    def fixedRateEventDistribution(self, p: Process, t: float) -> EventDistribution:
-        """Return the distribution of fixed-rate events for the given process' loci
+    def fixedRateEventDistribution(self, t: float) -> EventDistribution:
+        """Return the distribution of fixed-rate events for all processes' loci
         at the given time. By default the distribution is time-independent.
 
-        :param p: the process
         :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
-        if p in self._perElementEvents:
-            return self._perLocusEvents[p]
-        else:
-            return []
+        rates = []
+        for p in self._perLocusEvents:
+            for (l, pr, ef, name) in self._perLocusEvents[p]:
+                if len(l) > 0:
+                    rates.append((l, pr, ef, name))
+        return rates
 
     def eventRateDistribution(self, t: float) -> EventDistribution:
         """Return the event distribution, a sequence of (l, r, f, n) tuples
@@ -279,19 +280,7 @@ class Dynamics(NetworkExperiment):
 
         :param t: current time
         :returns: a list of (locus, rate, event function, event name) tuples"""
-        rates = []
-
-        for p in self._perElementEvents:
-            # convert per-element events to rates
-            for (l, pr, ef, name) in self._perElementEvents[p]:
-                rates.append((l, pr * len(l), ef, name))
-
-            # add fixed-rate events for non-empty loci
-            for (l, pr, ef, name) in self._perLocusEvents[p]:
-                if len(l) > 0:
-                    rates.append((l, pr, ef, name))
-
-        return rates
+        return self.perElementEventDistribution(t) + self.fixedRateEventDistribution(t)
 
 
     # ---------- Posted events (occurring at a fixed time) ----------
