@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.9.1
+VERSION = 1.9.2
 
 
 # ----- Sources -----
@@ -94,7 +94,8 @@ SOURCES_TESTS = \
 	test/test_vaccination.py \
 	test/test_gf.py \
 	test/test_gof.py \
-	test/test_events.py
+	test/test_events.py \
+	test/test_sto_sync.py
 TESTSUITE = test
 
 SOURCES_DOC_CONF = doc/conf.py

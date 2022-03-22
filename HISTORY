@@ -1,3 +1,8 @@
+Version 1.9.2
+
+   - Fixed bug in process sequences under synchronous dynamics
+   - Refactored event rates calculations to not be per-process
+
 Version 1.9.1 (2022-03-08)
 
    - Refactored event taps to be more general
