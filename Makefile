@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.9.2
+VERSION = 1.9.3
 
 
 # ----- Sources -----
@@ -148,6 +148,7 @@ SOURCES_DOCUMENTATION = \
 	doc/implementation/challenges.rst \
 	doc/implementation/no-multiple-inheritance.rst \
 	doc/implementation/events.rst \
+	doc/implementation/dynamics.rst \
 	doc/implementation/gf-maths.rst \
 	doc/cookbook.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
@@ -169,7 +170,9 @@ SOURCES_DIAGRAMS = \
 	doc/cookbook/bond-percolation-plc.png \
 	doc/cookbook/site-percolation-plc.png \
 	doc/cookbook/sir-time-series.png \
-	doc/cookbook/sir-time-series-raw.png
+	doc/cookbook/sir-time-series-raw.png \
+	doc/implementation/sir-stochastic.png \
+	doc/implementation/sir-synchronous.png
 SOURCES_BIBLIOGRAPHY = doc/bibliography.bib
 SOURCES_PAPER = \
 	paper.md \
@@ -182,6 +185,7 @@ SOURCES_UTILS = \
 	utils/make-percolation.py \
 	utils/make-networks.py \
 	utils/make-compare-time-series.py \
+	utils/make-compare-syn-sto.py \
 	utils/profile-simulation.py
 
 # Extras for the build and packaging system
@@ -304,6 +308,8 @@ diagrams:
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-monitor-progress.py
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-powerlaw-cutoff.py
 	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-percolation.py
+	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-compare-time-series.py
+	$(ACTIVATE) && PYTHONPATH=$(ROOT) $(PYTHON) utils/make-compare-syn-sto.py
 
 # Preview the JOSS paper
 joss-paper:
