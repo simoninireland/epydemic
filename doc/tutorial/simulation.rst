@@ -61,14 +61,9 @@ They can however be usefully sub-classed in some situations, for example to impr
 of simulations.
 
 There are two kinds of dynamics currently supported by ``epydemic``:
+for this tutorial we'll use the most common,
+:class:`StochasticDynamics`. (See :ref:`implementation-dynamics` for
+an explanation of the different simulation dynamics available in
+``epydemic``.)
 
-   - The :class:`SynchronousDynamics` works in :term:`discrete time`. At each timestep it
-     examines each node or edge in each locus and, for each event, decides whether that
-     event occurs on that node.
-   - The :class:`StochasticDynamics` works in :term:`continuous time` using the mechanism of
-     Gillespie simulation. It computes a joint probability distribution of events,
-     nodes, and edges, and then draws the next event and its occurrance time  from
-     this distribution. This can be very efficient if events are rare, since it jumps
-     over times when "nothing happens".
-
-We'll now show how to put these classes together.
+We'll now show how to put all these classes together.

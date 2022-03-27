@@ -1,5 +1,11 @@
 Version 1.10.1
 
+
+Version 1.9.3 (2022-03-27)
+
+   - Fixed another bug in SynchronousDynamics
+   - Added explanation of the two different Dynamics classes
+
 Version 1.9.2 (2022-03-22)
 
    - Fixed bug in process sequences under synchronous dynamics

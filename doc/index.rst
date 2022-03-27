@@ -12,8 +12,8 @@ Vision: A common platform for epidemic simulation
 ``epydemic`` aims to provide a common framework for the scalable and
 efficient simulation of epidemic processes.
 The current version of ``epydemic`` can simulate an SIR epidemic on a
-network of :math:`10^5` nodes in about 20s, using PyPy on a modern
-(Intel Core i7\@3.8GHz) workstation.
+network of :math:`10^5` nodes in about 20s, using Gillespie simulation
+and PyPy on a modern (Intel Core i7\@3.8GHz) workstation.
 
 
 What are epidemics?

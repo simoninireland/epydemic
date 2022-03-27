@@ -113,27 +113,3 @@ appropriate calls are in place for all the core classes (for example
 :class:`StochasticDynamics` and :class:`BondPercolation`). It is
 provided as another extension mechanism that can be used if and when
 needed.
-
-
-Dynamics
---------
-
-The concrete sub-classes of :class:`Dynamics` define exactly how all
-these ideas are realised.
-
-A :class:`SynchronousDynamics` is a :term:`discrete time`
-simulator. At each timestep it runs all the events posted before this
-time that remain to run, and then checks all the elements that *might*
-have an event run on them and selects those that *do* undergo events
-using the given event probability. This technique can be slower than
-other approaches, but is needed for some processes where the global
-distribution of events is hard to compute.
-
-A :class:`StochasticDynamics` is a :term:`continuous time`
-simulator. It maintains a joint probability distribution defining the
-probability of a given event occurring in a given time interval into
-the future. It draws from this distribution, advances the simulation
-time by the chosen interval, runs any posted events that should have
-occurred before this time, and then chooses an element on which to run
-the event. This technique is known as :term:`Gillespie simulation` and
-is both efficient and stochastically exact.
