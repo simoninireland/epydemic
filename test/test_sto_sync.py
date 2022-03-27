@@ -23,48 +23,44 @@ import unittest
 import networkx
 
 
+class MonitoredSIR(SIR):
+
+    def build(self, params):
+        super().build(params)
+        self.trackNodesInCompartment(SIR.SUSCEPTIBLE)
+        self.trackNodesInCompartment(SIR.REMOVED)
+
+
 class StoSyncTest(unittest.TestCase):
 
     def testStochasticMonitor(self):
         '''Test monitoring of a process under stochastic dynamics.'''
-        T = 1000000
-        num_of_points = 1000
-        deltaM = T / num_of_points
-
-        m = SIR()
-        p = ProcessSequence([m, Monitor()])
+        p = ProcessSequence([MonitoredSIR(), Monitor()])
 
         param = dict()
-        param[SIR.P_INFECTED] = 0.01
-        param[SIR.P_INFECT] = 0.1
-        param[SIR.P_REMOVE] = 0.2
-        param[ERNetwork.N] = 5000
-        param[ERNetwork.KMEAN] = 10
-        param[Monitor.DELTA] = deltaM
+        param[SIR.P_INFECTED] = 0.001
+        param[SIR.P_INFECT] = 0.0001
+        param[SIR.P_REMOVE] = 0.001
+        param[ERNetwork.N] = 10000
+        param[ERNetwork.KMEAN] = 50
+        param[Monitor.DELTA] = 1
 
         e = StochasticDynamics(p, ERNetwork())
-        e.process().setMaximumTime(T)
         rc = e.set(param).run(fatal=True)
 
     def testSynchronousMonitor(self):
         '''Test monitoring of a process under synchronous dynamics.'''
-        T = 1000000
-        num_of_points = 1000
-        deltaM = T / num_of_points
-
-        m = SIR()
-        p = ProcessSequence([m, Monitor()])
+        p = ProcessSequence([MonitoredSIR(), Monitor()])
 
         param = dict()
-        param[SIR.P_INFECTED] = 0.01
-        param[SIR.P_INFECT] = 0.1
-        param[SIR.P_REMOVE] = 0.2
-        param[ERNetwork.N] = 5000
-        param[ERNetwork.KMEAN] = 10
-        param[Monitor.DELTA] = deltaM
+        param[SIR.P_INFECTED] = 0.001
+        param[SIR.P_INFECT] = 0.0001
+        param[SIR.P_REMOVE] = 0.001
+        param[ERNetwork.N] = 10000
+        param[ERNetwork.KMEAN] = 50
+        param[Monitor.DELTA] = 1
 
         e = SynchronousDynamics(p, ERNetwork())
-        e.process().setMaximumTime(T)
         rc = e.set(param).run(fatal=True)
 
 

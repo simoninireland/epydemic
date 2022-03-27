@@ -222,12 +222,31 @@ class Dynamics(NetworkExperiment):
         """Return the distribution of per-element events for all processes' loci
         at the given time. By default the distribution is time-independent.
 
+        Note that this method returns the *probability* of events, not their
+        expected *rates*, for which use :meth:`perElementEventRateDistribution`.
+
         :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
-        rates = []
+        probs = []
         for p in self._perElementEvents:
             for (l, pr, ef, name) in self._perElementEvents[p]:
-                rates.append((l, pr * len(l), ef, name))
+                probs.append((l, pr, ef, name))
+        return probs
+
+    def perElementEventRateDistribution(self, t: float) -> EventDistribution:
+        """Return the rates of per-element events for all processes' loci
+        at the given time. By default the distribution is time-independent.
+
+        Note that this is method returns event *rates*, not their *probabilities*
+        as returned by :meth:`perElementEventDistribution`. The rate is simply
+        an event's probability multiplied by the size of the locus on which it occurs,
+        giving the expected number of events occurring from that locus in unit time.
+
+        :param t: the simulation time
+        :returns: a list of (locus, rate, event function) triples"""
+        rates = []
+        for (l, pr, ef, name) in self.perElementEventDistribution(t):
+            rates.append((l, pr * len(l), ef, name))
         return rates
 
     def addFixedRateEvent(self, p: Process, l: Union[str, Locus], pr: float,
@@ -280,7 +299,7 @@ class Dynamics(NetworkExperiment):
 
         :param t: current time
         :returns: a list of (locus, rate, event function, event name) tuples"""
-        return self.perElementEventDistribution(t) + self.fixedRateEventDistribution(t)
+        return self.perElementEventRateDistribution(t) + self.fixedRateEventDistribution(t)
 
 
     # ---------- Posted events (occurring at a fixed time) ----------
