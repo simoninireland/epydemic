@@ -17,6 +17,12 @@ experimental protocol. Each simulation is parameterised by a dict
 providing the parameters used to condition the simulation, typically
 providing event probabilities for the various events that may happen.
 
+.. note::
+
+   Simulations don't use :class:`Dynamics` objects directly, but
+   instead use a sub-class. See :ref:`implementation-dynamics` for an
+   explanation of the differences between approaches.
+
 In stand-alone mode, a simulation is run by calling the :meth:`run`
 method (inherited from `epyc.Experiment`), passing a dict of
 parameters. The network dynamics then performs a single simulation
@@ -107,6 +113,8 @@ Thes events form a probability distribution from which events can be drawn
 in the course of the simulation.
 
 .. automethod:: Dynamics.perElementEventDistribution
+
+.. automethod:: Dynamics.perElementEventRateDistribution
 
 .. automethod:: Dynamics.fixedRateEventDistribution
 
