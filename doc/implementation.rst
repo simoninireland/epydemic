@@ -10,4 +10,5 @@ for those who are interested.
     implementation/events.rst
     implementation/challenges.rst
     implementation/no-multiple-inheritance.rst
+    implementation/dynamics.rst
     implementation/gf-maths.rst
