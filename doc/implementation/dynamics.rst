@@ -114,3 +114,28 @@ all the available information relating to all previous events, rather
 than all the one in the previous timestep as happens in the
 synchronous case. This can sometimes lead to different curves even for
 the same parameters.
+
+
+Posted events
+-------------
+
+Both dynamics can have "normal" (stochastic) and "posted" events. The
+former happen at a time determined by their distribution; the latter
+happen at set simulation times.
+
+Stochastic events by their nature aren't known to happen ahead of
+time. Posted events can however be posted, and then at some later
+point (but before the event has fired) can be determined to not be
+needed any more and be un-posted to remove them from the event queue.
+
+(To un-post an event you need its event identifier, which is returned
+by meth:`Dynamics.postEvent`. This implies that you need to remember
+this information for any posted event that you might later want to
+un-post. This isn't an issue in practice, as it's usually very clear
+which events in a simulation might need to be un-posted.)
+
+The event queue is represented as a priority queue (or priqueue) held
+in simulation time order. This is efficient for everything *except*
+deleting (un-posting) events, so instead when un-posting we simply
+set the event function to `None`. All the methods for accessing the
+queue ignore such events when they're popped-off the queue.
