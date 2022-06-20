@@ -136,3 +136,8 @@ up to a given simulation time.
 .. automethod:: Dynamics.nextPendingEventBefore
 
 .. automethod:: Dynamics.runPendingEvents
+
+Posted events can be un-posted at any time before they
+fire. (Repeating events can't be un-posted once posted.)
+
+.. automethod:: Dynamics.unpostEvent
