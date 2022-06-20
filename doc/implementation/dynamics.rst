@@ -129,7 +129,7 @@ point (but before the event has fired) can be determined to not be
 needed any more and be un-posted to remove them from the event queue.
 
 (To un-post an event you need its event identifier, which is returned
-by meth:`Dynamics.postEvent`. This implies that you need to remember
+by :meth:`Dynamics.postEvent`. This implies that you need to remember
 this information for any posted event that you might later want to
 un-post. This isn't an issue in practice, as it's usually very clear
 which events in a simulation might need to be un-posted.)
