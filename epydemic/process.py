@@ -362,6 +362,8 @@ class Process():
         the :term:`event function` when it is selected. The locus may
         be a :class:`Locus` object or a string, which is taken to be a
         locus of this process.
+        This is a helper method that calls :meth:`Dynamics.addEventPerElement`
+        on the dynamics running the process.
 
         Unlike fixed probability events added by
         :meth:`addFixedRateEvent`, a per-element event happens with
@@ -382,7 +384,9 @@ class Process():
         (fixed) probability, and calling the :term:`event function`
         when it is selected. The locus may be a :class:`Locus` object
         or a string, which is taken to be the name of a locus of this
-        process.
+        process. This is a helper method that calls :meth:`Dynamics.addFixedRateEvent`
+        on the dynamics running the process.
+
 
         Unlike fixed rate events added by :meth:`addEventPerElement`,
         a fixed probability event happens with the same probability
@@ -397,20 +401,38 @@ class Process():
         self._dynamics.addFixedRateEvent(self, l, p, ef, name)
 
     def postEvent(self, t: float, e: Any,
-                  ef: EventFunction, name: Optional[str] = None):
+                  ef: EventFunction, name: Optional[str] = None) -> int:
         """Post an event that calls the :term:`event function` at time t.
+        This is a helper method that calls :meth:`Dynamics.postEvent`
+        on the dynamics running the process.
 
-        :param t: the current time
+        :param t: the time to fire the event
         :param e: the element (node or edge) on which the event occurs
         :param ef: the event function
         :param name: (optional) meaningful name of the event
 
         """
-        self._dynamics.postEvent(t, e, ef, name)
+        return self._dynamics.postEvent(t, e, ef, name)
+
+    def unpostEvent(self, id: None):
+        """Un-post the given event.
+        This is a helper method that calls :meth:`Dynamics.postEvent`
+        on the dynamics running the process.
+        A KeyError will be raised if the event
+        is not queued, which typically means it's been fired already
+        (*i.e.*, its posting time lies in the past relative to the current
+        simulation time).
+
+        :param id: the event id
+
+        """
+        self._dynamics.unpostEvent(id)
 
     def postRepeatingEvent(self, t: float, dt: float, e: Any,
                            ef: EventFunction, name: Optional[str] = None):
         """Post an event that starts at time t and re-occurs at interval dt.
+        This is a help[er methoid that calls :meth:`Dynamics.postRepeatingEvent`
+        on the dynamics running the process.
 
         :param t: the start time
         :param dt: the interval

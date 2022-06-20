@@ -94,7 +94,9 @@ Events
 Events are the code fragments that run as part of the simulation. The
 collection of events defined by a process form all the possible
 actions that the simulation will perform. Events can be given
-meaningful names, which don't affect the execution of the simulation.
+meaningful names, which don't affect the execution of the simulation
+All these methods are simply helpers for the corresponding methods in
+:class:`Dynamics`.
 
 There are three broad classes of events. *Per-element* events occur with a probability
 on each element of a locis. This means that loci with more elements will generate a higher
@@ -117,7 +119,10 @@ to the different stochastic events that are generated.
 
 .. automethod:: Process.postEvent
 
+.. automethod:: Process.unpostEvent
+
 .. automethod:: Process.postRepeatingEvent
+
 
 
 Identifiers for instances, runs, and state
