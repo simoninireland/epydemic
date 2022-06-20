@@ -69,20 +69,20 @@ class NetworkDynamicsTest(unittest.TestCase):
         self.assertTrue(self._v, 1)
         self.assertCountEqual(self.pendingEvents(dyn, 1), [])
 
-        # check multiple events coming off in the right order
+        # check multiple events coming off in the right orderag
         pevs = self.pendingEvents(dyn, 3)
-        self.assertTrue(len(pevs), 2)
+        self.assertEqual(len(pevs), 2)
         (_, _, pef, _, _) = pevs[0]
         pef()
-        self.assertTrue(self._v, 21)
+        self.assertEqual(self._v, 21)
         (_, _, pef, _, _) = pevs[0]
         pef()
-        self.assertTrue(self._v, 121)
+        self.assertEqual(self._v, 121)
         self.assertCountEqual(self.pendingEvents(dyn, 3), [])
 
         # check we can run all remaining events
         dyn.runPendingEvents(10)       # a long time in the future
-        self.assertTrue(self._v, 321)
+        self.assertEqual(self._v, 321)
         self.assertCountEqual(self.pendingEvents(dyn, 10), [])
         self.assertCountEqual(self.pendingEvents(dyn, 20), [])
 
@@ -176,6 +176,138 @@ class NetworkDynamicsTest(unittest.TestCase):
 
         self.assertIn(NetworkGenerator.TOPOLOGY, rc[Experiment.PARAMETERS])
         self.assertEqual(rc[Experiment.PARAMETERS][NetworkGenerator.TOPOLOGY], gen.topology())
+
+    def testUnpost(self):
+        '''Test we can un-post an event.'''
+        p = Process()
+        dyn = Dynamics(p)
+
+        # event function builder, will increment the shared
+        # value when fired
+        self._v = 0
+        def make_ef( w ):
+            def ef( t, e ):
+                self._v = self._v + w
+            return ef
+
+        # post some events at different times
+        id1 = dyn.postEvent(1, None, make_ef(1))
+        id20 = dyn.postEvent(2, None, make_ef(20))
+        id100 = dyn.postEvent(3, None, make_ef(100))
+        id200 = dyn.postEvent(4, None, make_ef(200))
+
+        # un-post one of the events
+        dyn.unpostEvent(id20)
+
+        # check the event is discarded correctly
+        dyn.runPendingEvents(2)
+        self.assertEqual(self._v, 1)
+        dyn.runPendingEvents(3)
+        self.assertEqual(self._v, 101)
+        dyn.runPendingEvents(4)
+        self.assertEqual(self._v, 301)
+
+    def testUnpostTwo(self):
+        '''Test we can un-post two non-adjacent events.'''
+        p = Process()
+        dyn = Dynamics(p)
+
+        # event function builder, will increment the shared
+        # value when fired
+        self._v = 0
+        def make_ef( w ):
+            def ef( t, e ):
+                self._v = self._v + w
+            return ef
+
+        # post some events at different times
+        id1 = dyn.postEvent(1, None, make_ef(1))
+        id20 = dyn.postEvent(2, None, make_ef(20))
+        id100 = dyn.postEvent(3, None, make_ef(100))
+        id200 = dyn.postEvent(4, None, make_ef(200))
+
+        # un-post two consecutive events
+        dyn.unpostEvent(id20)
+        dyn.unpostEvent(id200)
+
+        # check the events are discarded correctly
+        dyn.runPendingEvents(4)
+        self.assertEqual(self._v, 101)
+
+    def testUnpostTwoInARow(self):
+        '''Test we can un-post two events in a row.'''
+        p = Process()
+        dyn = Dynamics(p)
+
+        # event function builder, will increment the shared
+        # value when fired
+        self._v = 0
+        def make_ef( w ):
+            def ef( t, e ):
+                self._v = self._v + w
+            return ef
+
+        # post some events at different times
+        id1 = dyn.postEvent(1, None, make_ef(1))
+        id20 = dyn.postEvent(2, None, make_ef(20))
+        id100 = dyn.postEvent(3, None, make_ef(100))
+        id200 = dyn.postEvent(4, None, make_ef(200))
+
+        # un-post two consecutive events
+        dyn.unpostEvent(id20)
+        dyn.unpostEvent(id100)
+
+        # check the events are discarded correctly
+        dyn.runPendingEvents(4)
+        self.assertEqual(self._v, 201)
+
+    def testUnpostFired(self):
+        '''Test we can't un-post an event that's fired.'''
+        p = Process()
+        dyn = Dynamics(p)
+
+        # event function builder, will increment the shared
+        # value when fired
+        self._v = 0
+        def make_ef( w ):
+            def ef( t, e ):
+                self._v = self._v + w
+            return ef
+
+        # post some events at different times
+        id1 = dyn.postEvent(1, None, make_ef(1))
+        id20 = dyn.postEvent(2, None, make_ef(20))
+        id100 = dyn.postEvent(3, None, make_ef(100))
+        id200 = dyn.postEvent(4, None, make_ef(200))
+
+        # run some events
+        dyn.runPendingEvents(3)
+        self.assertEqual(self._v, 121)
+
+        # try (and fail) to un-post a past event
+        with self.assertRaises(KeyError):
+            dyn.unpostEvent(id20)
+
+    def testUnpostAll(self):
+        '''Test we can can empoty trhe posted event queue.'''
+        p = Process()
+        dyn = Dynamics(p)
+
+        # event function builder, will increment the shared
+        # value when fired
+        self._v = 0
+        def make_ef( w ):
+            def ef( t, e ):
+                self._v = self._v + w
+            return ef
+
+        # post and delete an event
+        id1 = dyn.postEvent(1, None, make_ef(1))
+        dyn.unpostEvent(id1)
+
+        # run some events
+        dyn.runPendingEvents(3)
+        self.assertEqual(self._v, 0)
 
 
 if __name__ == '__main__':

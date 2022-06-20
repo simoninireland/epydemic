@@ -29,7 +29,7 @@ from epydemic import NetworkExperiment, Locus, Process, NetworkGenerator, EventF
 
 # Event types (not exported outside this file)
 PostedEventFunction = Callable[[], None]
-PostedEvent = Tuple[float, int, PostedEventFunction, Element, str]
+PostedEvent = Tuple[float, int, Optional[PostedEventFunction], Element, str]
 
 
 class Dynamics(NetworkExperiment):
@@ -53,6 +53,7 @@ class Dynamics(NetworkExperiment):
     TIME: Final[str] = 'epydemic.monitor.time'      #: Metadata element holding the logical simulation end-time.
     EVENTS: Final[str] = 'epydemic.monitor.events'  #: Metadata element holding the number of events that happened.
 
+
     def __init__(self, p: Process, g: Union[Graph, NetworkGenerator] = None):
         super().__init__(g)
 
@@ -66,7 +67,7 @@ class Dynamics(NetworkExperiment):
         self._perElementEvents: Dict[Process, EventDistribution] = dict()  # dict from processes to events that occur per-element
         self._perLocusEvents: Dict[Process, EventDistribution] = dict()    # dict from processes to events that occur per-locus
         self._postedEvents: List[PostedEvent] = []                         # pri-queue of fixed-time events
-
+        self._postedEventFinder: Dict[int, PostedEvent] = {}               # mapping from event id to event structure
 
     # ---------- Configuration ----------
 
@@ -124,6 +125,7 @@ class Dynamics(NetworkExperiment):
         self._perElementEvents = dict()
         self._perLocusEvents = dict()
         self._postedEvents = []
+        self._postedEventFinder = dict()
         self._eventId = 0
         self._simulationTime = 0.0
 
@@ -139,6 +141,9 @@ class Dynamics(NetworkExperiment):
         '''
         self._process.tearDown()
         super().tearDown()
+
+        # discard any remaining posted events
+        self._postedEventFinder = {}
         self._postedEvents = []
 
 
@@ -314,8 +319,10 @@ class Dynamics(NetworkExperiment):
         self._eventId += 1
         return id
 
-    def postEvent(self, t: float, e: Element, ef: EventFunction, name: Optional[str] = None):
+    def postEvent(self, t: float, e: Element, ef: EventFunction, name: Optional[str] = None) -> int:
         """Post an event that calls the :term:`event function` at time t.
+        A unique id it returned that can be used to remove the event
+        before it fires using :meth:`unpostEvent`.
 
         The optional name is used in conjunction with
         :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
@@ -324,13 +331,19 @@ class Dynamics(NetworkExperiment):
         :param e: the element (node or edge) on which the event occurs
         :param ef: the event function
         :param name: (optional) meaningful name of the event
+        :returns: the event id
 
         """
-        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: ef(t, e)), e, name))
+        id = self._nextEventId()
+        ev = [t, id, (lambda: ef(t, e)), e, name]
+        self._postedEventFinder[id] = ev
+        heappush(self._postedEvents, ev)
+        return id
 
     def postRepeatingEvent(self, t: float, dt: float, e: Element,
                            ef: EventFunction, name: Optional[str] = None):
         """Post an event that starts at time t and re-occurs at interval dt.
+        Repeating events can't be removed once posted.
 
         The optional name is used in conjunction with
         :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
@@ -346,26 +359,50 @@ class Dynamics(NetworkExperiment):
         def repeat(tc, e):
             ef(tc, e)
             tp = tc + dt
-            heappush(self._postedEvents, (tp, self._nextEventId(), (lambda: repeat(tp, e)), e, name))
+            id = self._nextEventId()
+            ev = [tp, id, (lambda: repeat(tp, e)), e, name]
+            self._postedEventFinder[id] = ev
+            heappush(self._postedEvents, ev)
 
-        heappush(self._postedEvents, (t, self._nextEventId(), (lambda: repeat(t, e)), e, name))
+        id = self._nextEventId()
+        ev = [t, id, (lambda: repeat(t, e)), e, name]
+        self._postedEventFinder[id] = ev
+        heappush(self._postedEvents, ev)
+
+    def unpostEvent(self, id : int):
+        '''Un-post a posted event. This is only legal before the
+        event has fired, and will raise a KeyError if called on one
+        that's not queued.
+
+        :param id: the event id'''
+        ev = self._postedEventFinder[id]
+
+        # replace the event function with a dummy event
+        ev[2] = None
 
     def nextPendingEventBefore(self, t: float) -> Optional[PostedEvent]:
-        """Return the next pending event to occur at or before time t.
+        """Return the next pending event to occur at or before time t. This
+        will automatically discard any un-posted events.
 
         :param t: the current time
         :returns: a pending event function or None"""
-        if len(self._postedEvents) > 0:
+        while len(self._postedEvents) > 0:
             # we have events, grab the soonest
             pe = heappop(self._postedEvents)
-            (et, _, _, _, _) = pe
-            if et <= t:
-                # event should have occurred, return
-                return pe
+            (et, id, ef, _, _) = pe
+            if ef is None:
+                # event was un-posted, discard
+                del self._postedEventFinder[id]
+                continue
             else:
-                # this (and therefore all further events) are in the future, put it back
-                heappush(self._postedEvents, pe)
-                return None
+                if et <= t:
+                    # event should have occurred
+                    del self._postedEventFinder[id]
+                    return pe
+                else:
+                    # this (and therefore all further events) are in the future, put it back
+                    heappush(self._postedEvents, pe)
+                    return None
         else:
             # we don't have any events
             return None
