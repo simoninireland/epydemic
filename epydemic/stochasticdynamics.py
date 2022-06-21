@@ -1,6 +1,6 @@
 # Gillespie dynamics base class
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2022 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -59,57 +59,68 @@ class StochasticDynamics(Dynamics):
             for (_, r, _, _) in transitions:
                 a += r
             if a == 0.0:
-                break              # no events with non-zero rates
+                # no events with non-zero rates, check for posted events
+                et = self.nextPendingEventTime()
+                if et is None:
+                    # no pending events either, so we're done
+                    break
+                else:
+                    # set the new simulation time
+                    t = et
+                    self.setCurrentSimulationTime(t)
 
-            # shuffle the transitions
-            #random.shuffle(transitions)
+                    # run the event
+                    events += self.runPendingEvents(t)
 
-            # calculate the timestep delta
-            r1 = rng.random()
-            dt = (1.0 / a) * math.log(1.0 / r1)
+            else:
+                # we have stochastic events to run
 
-            # calculate which event happens
-            (l, _, ef, name) = transitions[0]
-            if len(transitions) > 1:
-                # choose the rate threshold
-                r2 = rng.random()
-                xc = r2 * a
+                # shuffle the transitions
+                #random.shuffle(transitions)
 
-                # find the largest event for which the cumulative rates
-                # are less than the random threshold
-                xs = 0
-                for v in range(0, len(transitions)):
-                    (l, xsp, ef, name) = transitions[v]
-                    if (xs + xsp) > xc:
-                        break
-                    else:
-                        xs += xsp
+                # calculate the timestep delta
+                r1 = rng.random()
+                dt = (1.0 / a) * math.log(1.0 / r1)
 
-            # increment the time
-            t += dt
-            self.setCurrentSimulationTime(t)
+                # calculate which event happens
+                (l, _, ef, name) = transitions[0]
+                if len(transitions) > 1:
+                    # choose the rate threshold
+                    r2 = rng.random()
+                    xc = r2 * a
 
-            # fire any events posted for at or before this time
-            events = events + self.runPendingEvents(t)
+                    # find the largest event for which the cumulative rates
+                    # are less than the random threshold
+                    xs = 0
+                    for v in range(0, len(transitions)):
+                        (l, xsp, ef, name) = transitions[v]
+                        if (xs + xsp) > xc:
+                            break
+                        else:
+                            xs += xsp
 
-            # it's possible that posted events have removed all elements
-            # from the chosen locus, in which case we simply continue
-            # with the next event selection
-            # sd: is this correct? or does it mess up the statistics too much?
-            if len(l) > 0:
-                # draw a random element from the chosen locus
-                e = l.draw()
+                # increment the time
+                t += dt
+                self.setCurrentSimulationTime(t)
 
-                # perform the event by calling the event function,
-                # passing the event time and element
-                ef(t, e)
-                self.eventFired(t, name, e)
+                # fire any events posted for at or before this time
+                events += self.runPendingEvents(t)
 
-                # increment the event counter
-                events += 1
+                # it's possible that posted events have removed all elements
+                # from the chosen locus, in which case we simply continue
+                # with the next event selection
+                # sd: is this correct? or does it mess up the statistics too much?
+                if len(l) > 0:
+                    # draw a random element from the chosen locus
+                    e = l.draw()
 
-        # when we get here there may still be posted events that haven't
-        # been run, and these are ignored: equilibrium overrides posting
+                    # perform the event by calling the event function,
+                    # passing the event time and element
+                    ef(t, e)
+                    self.eventFired(t, name, e)
+
+                    # increment the event counter
+                    events += 1
 
         # add some more metadata
         (self.metadata())[self.TIME] = t
