@@ -5,7 +5,7 @@
 Simulation dynamics
 ===================
 
-The `events <implementation-=events>`_ of a simulation are only half
+The :ref:`events <implementation-events>` of a simulation are only half
 the story: they need to be generated and executed in the correct
 order. This is the job of the dynamics classes, the sub-classes of
 :class:`Dynamics`.
@@ -132,10 +132,13 @@ needed any more and be un-posted to remove them from the event queue.
 by :meth:`Dynamics.postEvent`. This implies that you need to remember
 this information for any posted event that you might later want to
 un-post. This isn't an issue in practice, as it's usually very clear
-which events in a simulation might need to be un-posted.)
+which events in a simulation might need to be un-posted, and
+therefore need to have their ids recorded.)
 
 The event queue is represented as a priority queue (or priqueue) held
 in simulation time order. This is efficient for everything *except*
-deleting (un-posting) events, so instead when un-posting we simply
-set the event function to `None`. All the methods for accessing the
-queue ignore such events when they're popped-off the queue.
+deleting (un-posting) events, so instead when un-posting we simply set
+the event function to `None`. Accessing the queue through any of the
+:ref:`posted event methods <dynamics-posted-events>` automatically
+discards any leading un-posted events, so the un-posting mechanism is
+transparent to client code.

@@ -75,7 +75,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         (_, _, pef, _, _) = pevs[0]
         pef()
         self.assertEqual(self._v, 21)
-        (_, _, pef, _, _) = pevs[0]
+        (_, _, pef, _, _) = pevs[1]
         pef()
         self.assertEqual(self._v, 121)
         self.assertCountEqual(self.pendingEvents(dyn, 3), [])
@@ -160,7 +160,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         dyn = Dynamics(p)
         self.assertCountEqual(dyn.lociForProcess(p), dict())
 
-    def testTopologyMarjer(self):
+    def testTopologyMarker(self):
         '''Test we get a topology marker in the experimental parameters.'''
         params = dict()
         params[SIR.P_INFECTED] = 0.01
@@ -206,6 +206,31 @@ class NetworkDynamicsTest(unittest.TestCase):
         self.assertEqual(self._v, 101)
         dyn.runPendingEvents(4)
         self.assertEqual(self._v, 301)
+
+    def testUnpostFirst(self):
+        '''Test we can un-post the first event.'''
+        p = Process()
+        dyn = Dynamics(p)
+
+        # event function builder, will increment the shared
+        # value when fired
+        self._v = 0
+        def make_ef( w ):
+            def ef( t, e ):
+                self._v = self._v + w
+            return ef
+
+        # post some events at different times
+        id1 = dyn.postEvent(1, None, make_ef(1))
+        id20 = dyn.postEvent(2, None, make_ef(20))
+        id100 = dyn.postEvent(3, None, make_ef(100))
+        id200 = dyn.postEvent(4, None, make_ef(200))
+
+        # un-post one of the events
+        dyn.unpostEvent(id1)
+
+        # check that the first "real" event is now the second one posted
+        self.assertEqual(dyn.nextPendingEventTime(), 2)
 
     def testUnpostTwo(self):
         '''Test we can un-post two non-adjacent events.'''

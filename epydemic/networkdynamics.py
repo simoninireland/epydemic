@@ -375,36 +375,71 @@ class Dynamics(NetworkExperiment):
         that's not queued.
 
         :param id: the event id'''
-        ev = self._postedEventFinder[id]
+        pe = self._postedEventFinder[id]
 
-        # replace the event function with a dummy event
-        ev[2] = None
+        # replace the event function with a dummy
+        pe[2] = None
+
+    def _discardUnpostedEvents(self):
+        '''Chew-up and discard any unposted events at the head of the posted
+        event queue. After a call to this method the next event on the
+        posted event queue (if there is one) is guaranteed to be "real".'''
+        while len(self._postedEvents) > 0:
+            (_, id, ef, _, _) = self._postedEvents[0]
+            if ef == None:
+                # the head event hasbeen unposted, discard
+                heappop(self._postedEvents)
+                del self._postedEventFinder[id]
+            else:
+                # head event is "real", we're done
+                break
+
+    def nextPendingEvent(self) -> Optional[PostedEvent]:
+        '''Return the next posted event, or `None` if there are no events.
+
+        :returns: the next posted event or None'''
+        self._discardUnpostedEvents()
+        if len(self._postedEvents) > 0:
+            # return the next event
+            pe = heappop(self._postedEvents)
+            (_, id, ef, _, _) = pe
+            del self._postedEventFinder[id]
+            return pe
+        else:
+            # no posted events
+            return None
+
+        # if we get here there are no events remainiong
+        return None
+
+    def nextPendingEventTime(self) -> float:
+        '''Return the simulation time for the next pending posted event, without
+        affecting the event queue.
+
+        :returns: the simulation time or None'''
+        self._discardUnpostedEvents()
+        if len(self._postedEvents) > 0:
+            # return the next event time
+            (et, _, _, _, _) = self._postedEvents[0]
+            return et
+        else:
+            # no posted events
+            return None
 
     def nextPendingEventBefore(self, t: float) -> Optional[PostedEvent]:
-        """Return the next pending event to occur at or before time t. This
-        will automatically discard any un-posted events.
+        """Return the next pending event to occur at or before time t.
 
         :param t: the current time
-        :returns: a pending event function or None"""
-        while len(self._postedEvents) > 0:
-            # we have events, grab the soonest
-            pe = heappop(self._postedEvents)
-            (et, id, ef, _, _) = pe
-            if ef is None:
-                # event was un-posted, discard
-                del self._postedEventFinder[id]
-                continue
-            else:
-                if et <= t:
-                    # event should have occurred
-                    del self._postedEventFinder[id]
-                    return pe
-                else:
-                    # this (and therefore all further events) are in the future, put it back
-                    heappush(self._postedEvents, pe)
-                    return None
+        :returns: a posted event or None"""
+        et = self.nextPendingEventTime()
+        if et is None:
+            # no posted events remaining
+            return None
+        elif et <= t:
+            # next event should be fired now
+            return self.nextPendingEvent()
         else:
-            # we don't have any events
+            # next event lies after the requested time
             return None
 
     def runPendingEvents(self, t: float) -> int:

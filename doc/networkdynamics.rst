@@ -121,6 +121,8 @@ in the course of the simulation.
 .. automethod:: Dynamics.eventRateDistribution
 
 
+.. _dynamics-posted-events:
+
 Posted events
 -------------
 
@@ -132,6 +134,10 @@ A :class:`Dynamics` object also maintains a queue of posted event.
 
 This queue is then accessed to extract the events that need to be fired
 up to a given simulation time.
+
+.. automethod:: Dynamics.nextPendingEvent
+
+.. automethod:: Dynamics.nextPendingEventTime
 
 .. automethod:: Dynamics.nextPendingEventBefore
 
