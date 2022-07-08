@@ -17,10 +17,11 @@ occur.
    internally, as well as in examples and the test suite.
 
 The issue is that multiple inheritance imposes a single order on the
-compositions of methods, defined by the method resolution order or
-MRO. These restrictions don't always align with what's needed by
-``epydemic``. In particular it can make it hard to correctly define
-when a process has reached equilibrium.
+compositions of methods, defined by the `method resolution order
+<https://www.python.org/download/releases/2.3/mro/>`_ or MRO. These
+restrictions don't always align with what's needed by ``epydemic``. In
+particular it can make it hard to correctly define when a process has
+reached equilibrium.
 
 A more serious restriction is that further composition --
 whether by sequence or by further inheritance -- can create a
