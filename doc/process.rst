@@ -20,7 +20,9 @@ Five methods provide the core API for defining new processes, and are typically 
 
 .. automethod:: Process.tearDown
 
-.. automethod:: Process.atEquilibrium
+.. automethod:: Process.dynamics
+
+.. automethod:: Process.currentSimulationTime
 
 .. automethod:: Process.results
 
@@ -120,6 +122,8 @@ to the different stochastic events that are generated.
 .. automethod:: Process.postEvent
 
 .. automethod:: Process.unpostEvent
+
+.. automethod:: Process.pendingEventTime
 
 .. automethod:: Process.postRepeatingEvent
 

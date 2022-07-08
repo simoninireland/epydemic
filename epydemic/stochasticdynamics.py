@@ -99,12 +99,15 @@ class StochasticDynamics(Dynamics):
                         else:
                             xs += xsp
 
-                # increment the time
-                t += dt
-                self.setCurrentSimulationTime(t)
+                # compute increment to the simulation time
+                nt = t + dt
 
                 # fire any events posted for at or before this time
-                events += self.runPendingEvents(t)
+                events += self.runPendingEvents(nt)
+
+                # update the simulation time
+                t = nt
+                self.setCurrentSimulationTime(t)
 
                 # it's possible that posted events have removed all elements
                 # from the chosen locus, in which case we simply continue
@@ -117,10 +120,15 @@ class StochasticDynamics(Dynamics):
                     # perform the event by calling the event function,
                     # passing the event time and element
                     ef(t, e)
-                    self.eventFired(t, name, e)
+                    self.eventFired(t, l.process(), name, e)
 
                     # increment the event counter
                     events += 1
+
+        # if we get here through hitting equilibrium then any
+        # posted events will be discarded and any possible stochastic
+        # events won;t be drawn: equilibriom essentially overrides
+        # everything else
 
         # add some more metadata
         (self.metadata())[self.TIME] = t

@@ -24,6 +24,7 @@ import networkx
 
 
 class MonitoredSIR(SIR):
+    '''Add tracking to all the compartments.'''
 
     def build(self, params):
         super().build(params)

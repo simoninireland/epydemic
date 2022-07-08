@@ -25,19 +25,14 @@ import networkx
 from epydemic import *
 
 
-class MonitoredSIR(SIR, Monitor):
-
-    def __init__(self):
-        super().__init__()
-
-
 class MonitorTest(unittest.TestCase):
 
     def testSimple( self ):
         '''Test we capture the right time series.'''
-        m = MonitoredSIR()
-        #m.setMaximumTime(100)
-        e = StochasticDynamics(m, networkx.erdos_renyi_graph(1000, 20.0 / 1000))
+        m = SIR()
+        p = ProcessSequence([m, Monitor()])
+        m.setMaximumTime(100)
+        e = StochasticDynamics(p, networkx.erdos_renyi_graph(1000, 20.0 / 1000))
 
         param = dict()
         param[SIR.P_INFECTED] = 0.01
@@ -71,15 +66,17 @@ class MonitorTest(unittest.TestCase):
             lab = epyc.Lab(nb)
 
             # run the experiment
-            m = MonitoredSIR()
+            m = SIR()
             m.setMaximumTime(100)
-            e = StochasticDynamics(m, networkx.erdos_renyi_graph(1000, 5.0 / 1000))
+            p = ProcessSequence([m, Monitor()])
+            e = StochasticDynamics(p, networkx.erdos_renyi_graph(1000, 20.0 / 1000))
             lab[SIR.P_INFECTED] = 0.01
-            lab[SIR.P_INFECT] = 0.002
-            lab[SIR.P_REMOVE] = 0.002
+            lab[SIR.P_INFECT] = 0.3
+            lab[SIR.P_REMOVE] = 1.0
             lab[Monitor.DELTA] = 1.0
             rc = lab.runExperiment(e)
             df = lab.dataframe()
+            self.assertGreater(len(df), 0)
 
             # check we read back in correctly
             with epyc.HDF5LabNotebook(fn).open() as nb1:

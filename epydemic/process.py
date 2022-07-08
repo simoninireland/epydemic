@@ -50,13 +50,14 @@ class Process():
     a process dynamics (a sub-class of :class:`Dynamics`) to actually
     run a simulation of the process.
 
-    Process can be composed into larger structures, for example as part of
+    Processes can be composed into larger structures, for example as part of
     a :class:`ProcessSequence`.
 
     The process class includes an interface for interacting with the
     working network. The basic interface is extended and overridden in
     different sub-classes that interact with the network in different
-    ways.
+    ways. The process also provides helper methods to save explicit
+    use of the :class:`Dynamics` when writing events.
 
     """
 
@@ -118,7 +119,7 @@ class Process():
         self._containerProcess = ps
 
     def container(self) -> 'Process':
-        '''Return the container processthis process is part of. This will
+        '''Return the container process this process is part of. This will
         be None for "simple" processes.
 
         :return: the container process or None'''
@@ -218,6 +219,13 @@ class Process():
 
 
     # ---------- Termination and results ----------
+
+    def currentSimulationTime(self) -> float:
+        '''Return the current simulation time. Only makes sense
+        when called from a running simulation.
+
+        :returns: the time'''
+        return self.dynamics().currentSimulationTime()
 
     def atEquilibrium(self, t: float) -> bool:
         """Test whether the process is an equilibrium. The default simply
@@ -412,21 +420,35 @@ class Process():
         :param name: (optional) meaningful name of the event
 
         """
-        return self._dynamics.postEvent(t, e, ef, name)
+        return self._dynamics.postEvent(t, self, e, ef, name)
 
-    def unpostEvent(self, id: None):
+    def unpostEvent(self, id: int, fatal: bool = True) -> Optional[float]:
         """Un-post the given event.
         This is a helper method that calls :meth:`Dynamics.postEvent`
         on the dynamics running the process.
-        A KeyError will be raised if the event
+
+        A KeyError will normally be raised if the event
         is not queued, which typically means it's been fired already
+        (*i.e.*, its posting time lies in the past relative to the current
+        simulation time): set fatal to False to avoid this.
+
+        :param id: the event id
+        :param fatal: whether to raise KeyError for missing events (defaults to True)
+        :returns: the time for which the event was posted, or None
+
+        """
+        return self._dynamics.unpostEvent(id, fatal)
+
+    def pendingEventTime(self, id: int) -> float:
+        '''Return the time for which the given event is posted. This is
+        a helper event trhat calls :meth:`Dynamics.pendingEventTime`. A KeyError
+        will be raised if the event is not queued, which typically means it's been fired already
         (*i.e.*, its posting time lies in the past relative to the current
         simulation time).
 
-        :param id: the event id
-
-        """
-        self._dynamics.unpostEvent(id)
+        :parfam, id: the event
+        :returns: the event's posted simulation time'''
+        return self._dynamics.pendingEventTime(id)
 
     def postRepeatingEvent(self, t: float, dt: float, e: Any,
                            ef: EventFunction, name: Optional[str] = None):
@@ -441,4 +463,4 @@ class Process():
         :param name: (optional) meaningful name of the event
 
         """
-        self._dynamics.postRepeatingEvent(t, dt, e, ef, name)
+        self._dynamics.postRepeatingEvent(t, dt, self, e, ef, name)

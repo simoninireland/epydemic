@@ -98,18 +98,23 @@ Event taps
 ----------
 
 As well as evaluating an event function, the event stream is "tapped"
-to a single well-known method, :meth:`NetworkExperiment.eventFired`. This
-allows sub-classes of :class:`NetworkExperiment` to act on *every* event,
+to a single well-known method, :meth:`Dynamics.eventFired`. This
+allows sub-classes of :class:`Dynamics` to act on *every* event,
 regardless of which process defines it and whether it was stochastic
 or posted.
 
 When events are defined or posted using the various methods, they can
 optionally be given names. These names are then passed to
-:meth:`NetworkExperiment.eventFired`, and form the only way in which
+:meth:`Dynamics.eventFired`, and form the only way in which
 different types of events can be differentiated.
 
 This feature isn't used at all within "core" ``epydemic``, but the
 appropriate calls are in place for all the core classes (for example
-:class:`StochasticDynamics` and :class:`BondPercolation`). It is
-provided as another extension mechanism that can be used if and when
-needed.
+:class:`StochasticDynamics`). It is provided as another extension
+mechanism that can be used if and when needed.
+
+Note also that event taps are defined intimately tied-up with the
+:class:`Process` class, and need one to operate. This means they're
+not defined for classes derived directly from
+:class:`NetworkExperiment` (which includes :class:`BondPercolation`
+and :class:`SitePercolation`).

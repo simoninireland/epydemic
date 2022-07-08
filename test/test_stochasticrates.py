@@ -1,6 +1,6 @@
 # Test stochastic dynamics generates believable event traces
 #
-# Copyright (C) 2017--2019 Simon Dobson
+# Copyright (C) 2017--2022 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -21,6 +21,7 @@ import epyc
 from epydemic import *
 import networkx
 import unittest
+
 
 class DummyLocus(Locus):
     def __init__(self, name):

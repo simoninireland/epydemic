@@ -53,10 +53,10 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
 
         # post some events at different times
-        dyn.postEvent(1, None, make_ef(1))
-        dyn.postEvent(2, None, make_ef(20))
-        dyn.postEvent(3, None, make_ef(100))
-        dyn.postEvent(4, None, make_ef(200))
+        p.postEvent(1, None, make_ef(1))
+        p.postEvent(2, None, make_ef(20))
+        p.postEvent(3, None, make_ef(100))
+        p.postEvent(4, None, make_ef(200))
 
         # check no events before the first one posted
         self.assertCountEqual(self.pendingEvents(dyn, 0.5), [])
@@ -64,7 +64,7 @@ class NetworkDynamicsTest(unittest.TestCase):
         # check firing of earliest event
         pevs = self.pendingEvents(dyn, 1)
         self.assertTrue(len(pevs), 1)
-        (_, _, pef, _, _) = pevs[0]
+        (_, _, _, pef, _, _) = pevs[0]
         pef()                # fire the event
         self.assertTrue(self._v, 1)
         self.assertCountEqual(self.pendingEvents(dyn, 1), [])
@@ -72,10 +72,10 @@ class NetworkDynamicsTest(unittest.TestCase):
         # check multiple events coming off in the right orderag
         pevs = self.pendingEvents(dyn, 3)
         self.assertEqual(len(pevs), 2)
-        (_, _, pef, _, _) = pevs[0]
+        (_, _, _, pef, _, _) = pevs[0]
         pef()
         self.assertEqual(self._v, 21)
-        (_, _, pef, _, _) = pevs[1]
+        (_, _, _, pef, _, _) = pevs[1]
         pef()
         self.assertEqual(self._v, 121)
         self.assertCountEqual(self.pendingEvents(dyn, 3), [])
@@ -191,10 +191,10 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
 
         # post some events at different times
-        id1 = dyn.postEvent(1, None, make_ef(1))
-        id20 = dyn.postEvent(2, None, make_ef(20))
-        id100 = dyn.postEvent(3, None, make_ef(100))
-        id200 = dyn.postEvent(4, None, make_ef(200))
+        id1 = p.postEvent(1, None, make_ef(1))
+        id20 = p.postEvent(2, None, make_ef(20))
+        id100 = p.postEvent(3, None, make_ef(100))
+        id200 = p.postEvent(4, None, make_ef(200))
 
         # un-post one of the events
         dyn.unpostEvent(id20)
@@ -221,10 +221,10 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
 
         # post some events at different times
-        id1 = dyn.postEvent(1, None, make_ef(1))
-        id20 = dyn.postEvent(2, None, make_ef(20))
-        id100 = dyn.postEvent(3, None, make_ef(100))
-        id200 = dyn.postEvent(4, None, make_ef(200))
+        id1 = p.postEvent(1, None, make_ef(1))
+        id20 = p.postEvent(2, None, make_ef(20))
+        id100 = p.postEvent(3, None, make_ef(100))
+        id200 = p.postEvent(4, None, make_ef(200))
 
         # un-post one of the events
         dyn.unpostEvent(id1)
@@ -246,10 +246,10 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
 
         # post some events at different times
-        id1 = dyn.postEvent(1, None, make_ef(1))
-        id20 = dyn.postEvent(2, None, make_ef(20))
-        id100 = dyn.postEvent(3, None, make_ef(100))
-        id200 = dyn.postEvent(4, None, make_ef(200))
+        id1 = p.postEvent(1, None, make_ef(1))
+        id20 = p.postEvent(2, None, make_ef(20))
+        id100 = p.postEvent(3, None, make_ef(100))
+        id200 = p.postEvent(4, None, make_ef(200))
 
         # un-post two consecutive events
         dyn.unpostEvent(id20)
@@ -273,10 +273,10 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
 
         # post some events at different times
-        id1 = dyn.postEvent(1, None, make_ef(1))
-        id20 = dyn.postEvent(2, None, make_ef(20))
-        id100 = dyn.postEvent(3, None, make_ef(100))
-        id200 = dyn.postEvent(4, None, make_ef(200))
+        id1 = p.postEvent(1, None, make_ef(1))
+        id20 = p.postEvent(2, None, make_ef(20))
+        id100 = p.postEvent(3, None, make_ef(100))
+        id200 = p.postEvent(4, None, make_ef(200))
 
         # un-post two consecutive events
         dyn.unpostEvent(id20)
@@ -300,10 +300,10 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
 
         # post some events at different times
-        id1 = dyn.postEvent(1, None, make_ef(1))
-        id20 = dyn.postEvent(2, None, make_ef(20))
-        id100 = dyn.postEvent(3, None, make_ef(100))
-        id200 = dyn.postEvent(4, None, make_ef(200))
+        id1 = p.postEvent(1, None, make_ef(1))
+        id20 = p.postEvent(2, None, make_ef(20))
+        id100 = p.postEvent(3, None, make_ef(100))
+        id200 = p.postEvent(4, None, make_ef(200))
 
         # run some events
         dyn.runPendingEvents(3)
@@ -327,7 +327,7 @@ class NetworkDynamicsTest(unittest.TestCase):
             return ef
 
         # post and delete an event
-        id1 = dyn.postEvent(1, None, make_ef(1))
+        id1 = p.postEvent(1, None, make_ef(1))
         dyn.unpostEvent(id1)
 
         # run some events
