@@ -29,7 +29,7 @@ from epydemic import NetworkExperiment, Locus, Process, NetworkGenerator, EventF
 
 # Event types (not exported outside this file)
 PostedEventFunction = Callable[[], None]
-PostedEvent = Tuple[float, int, Optional[PostedEventFunction], Element, str]
+PostedEvent = Tuple[float, int, Process, Optional[PostedEventFunction], Element, str]
 
 
 class Dynamics(NetworkExperiment):
@@ -46,6 +46,12 @@ class Dynamics(NetworkExperiment):
     generator can be any iterator but will typically be an instance of
     :class:`NetworkGenerator`.
 
+    The dynamics also provides the interface for :ref:`event-taps`,
+    allowing external code to tap-into the changes the experiment makes
+    to the network. Sub-classes need to insert calls to this interface
+    as appropriate, notably around the main body of the simulation and
+    at each significant change.
+
     :param p: network process to run
     :param g: (optional) prototype network or network generator'''
 
@@ -60,14 +66,18 @@ class Dynamics(NetworkExperiment):
         # initialise other fields
         self._eventId: int = 0                                             # counter for posted events
         self._process: Process = p                                         # network process to run
-        self._simulationTime: float = 0.0                                  # on-going simulation time
         self._process.setDynamics(self)                                    # back-link from process to dynamics (for events)
+        self._simulationTime: float = 0.0                                  # on-going simulation time
         self._loci: Dict[str, Locus] = dict()                              # dict from names to loci
         self._processLoci: Dict[Process, Dict[str, Locus]] = dict()        # dict from processes to loci for events
         self._perElementEvents: Dict[Process, EventDistribution] = dict()  # dict from processes to events that occur per-element
         self._perLocusEvents: Dict[Process, EventDistribution] = dict()    # dict from processes to events that occur per-locus
         self._postedEvents: List[PostedEvent] = []                         # pri-queue of fixed-time events
         self._postedEventFinder: Dict[int, PostedEvent] = {}               # mapping from event id to event structure
+
+        # initialise the event tap sub-system
+        self.initialiseEventTaps()
+
 
     # ---------- Configuration ----------
 
@@ -319,7 +329,8 @@ class Dynamics(NetworkExperiment):
         self._eventId += 1
         return id
 
-    def postEvent(self, t: float, e: Element, ef: EventFunction, name: Optional[str] = None) -> int:
+    def postEvent(self, t: float, p: Process, e: Element, ef: EventFunction,
+                  name: Optional[str] = None) -> int:
         """Post an event that calls the :term:`event function` at time t.
         A unique id it returned that can be used to remove the event
         before it fires using :meth:`unpostEvent`.
@@ -328,19 +339,24 @@ class Dynamics(NetworkExperiment):
         :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
 
         :param t: the current time
+        :param p: the process originating the event
         :param e: the element (node or edge) on which the event occurs
         :param ef: the event function
         :param name: (optional) meaningful name of the event
         :returns: the event id
 
         """
+        if t < self.currentSimulationTime():
+            ct = self.currentSimulationTime()
+            raise ValueError(f'Posting event in the past ({t} < {ct})')
+
         id = self._nextEventId()
-        ev = [t, id, (lambda: ef(t, e)), e, name]
+        ev = [t, id, p, (lambda: ef(t, e)), e, name]
         self._postedEventFinder[id] = ev
         heappush(self._postedEvents, ev)
         return id
 
-    def postRepeatingEvent(self, t: float, dt: float, e: Element,
+    def postRepeatingEvent(self, t: float, dt: float, p: Process, e: Element,
                            ef: EventFunction, name: Optional[str] = None):
         """Post an event that starts at time t and re-occurs at interval dt.
         Repeating events can't be removed once posted.
@@ -350,46 +366,65 @@ class Dynamics(NetworkExperiment):
 
         :param t: the start time
         :param dt: the interval
+        :param p: the process originating the event
         :param e: the element (node or edge) on which the event occurs
         :param ef: the element function
         :param name: (optional) meaningful name of the event
 
         """
 
+        # event function to fire an event and then re-schedule it
         def repeat(tc, e):
             ef(tc, e)
-            tp = tc + dt
-            id = self._nextEventId()
-            ev = [tp, id, (lambda: repeat(tp, e)), e, name]
-            self._postedEventFinder[id] = ev
-            heappush(self._postedEvents, ev)
+            self.postEvent(tc + dt, p, e, repeat, name)
 
-        id = self._nextEventId()
-        ev = [t, id, (lambda: repeat(t, e)), e, name]
-        self._postedEventFinder[id] = ev
-        heappush(self._postedEvents, ev)
+        self.postEvent(t, p, e, repeat, name)
 
-    def unpostEvent(self, id : int):
+    def unpostEvent(self, id: int, fatal: bool = True) -> Optional[float]:
         '''Un-post a posted event. This is only legal before the
-        event has fired, and will raise a KeyError if called on one
-        that's not queued.
+        event has fired, and will normally raise a KeyError if called on one
+        that's not queued: set fatal to False to avoid this.
 
-        :param id: the event id'''
-        pe = self._postedEventFinder[id]
+        :param id: the event id
+        :param fatal: whether to raise KeyError for missing events (defaults to True)
+        :returns: the simulation time at which the event would have fired, or None'''
+        pe = self._postedEventFinder.get(id, None)
+
+        # decide what to do if there's no such event
+        if pe is None:
+            if fatal:
+                raise KeyError(id)
+            else:
+                return None
 
         # replace the event function with a dummy
-        pe[2] = None
+        pe[3] = None
+
+        # remove from the event finder
+        del self._postedEventFinder[id]
+
+        # return the time for which the event was scheduled
+        return pe[0]
+
+    def pendingEventTime(self, id: int) -> float:
+        '''Return the time for which the given event is posted for. This will
+        raise a KeyError if the event isn't in the queue, thrtough having fired
+        or being un-posted.
+
+        :poram id: the event
+        :returns: the event's posted simulation time'''
+        (et, _, _, _, _, _)  = self._postedEventFinder[id]
+        return et
 
     def _discardUnpostedEvents(self):
         '''Chew-up and discard any unposted events at the head of the posted
         event queue. After a call to this method the next event on the
         posted event queue (if there is one) is guaranteed to be "real".'''
         while len(self._postedEvents) > 0:
-            (_, id, ef, _, _) = self._postedEvents[0]
+            (_, id, _, ef, _, _) = self._postedEvents[0]
             if ef == None:
-                # the head event hasbeen unposted, discard
+                # the head event has been unposted, discard it
                 heappop(self._postedEvents)
-                del self._postedEventFinder[id]
             else:
                 # head event is "real", we're done
                 break
@@ -402,7 +437,7 @@ class Dynamics(NetworkExperiment):
         if len(self._postedEvents) > 0:
             # return the next event
             pe = heappop(self._postedEvents)
-            (_, id, ef, _, _) = pe
+            (_, id, _, ef, _, _) = cast(PostedEvent, pe)
             del self._postedEventFinder[id]
             return pe
         else:
@@ -420,7 +455,7 @@ class Dynamics(NetworkExperiment):
         self._discardUnpostedEvents()
         if len(self._postedEvents) > 0:
             # return the next event time
-            (et, _, _, _, _) = self._postedEvents[0]
+            (et, _, _, _, _, _) = cast(PostedEvent, self._postedEvents[0])
             return et
         else:
             # no posted events
@@ -458,7 +493,59 @@ class Dynamics(NetworkExperiment):
                 return n
             else:
                 # fire the event
-                (_, _, pef, e, name) = cast(PostedEvent, pe)
+                (et, _, p, pef, e, name) = cast(PostedEvent, pe)
+                self.setCurrentSimulationTime(et)  # set the correct time
                 pef()
-                self.eventFired(t, name, e)
+                self.eventFired(t, p, name, e)
                 n += 1
+
+
+    # ---------- Event taps ----------
+
+    def initialiseEventTaps(self):
+        '''Initialise the event tap sub-system, which allows external code
+        access to the event stream of the simulation as it runs.
+
+        The default does nothing.'''
+        pass
+
+    def simulationStarted(self, params: Dict[str, Any]):
+        '''Called when the simulation has been configured and set up, any
+        processes built, and is ready to run.
+
+        The default does nothing.
+
+        :param params: the experimental parameters'''
+        pass
+
+    def simulationEnded(self, res: Union[Dict[str, Any], List[Dict[str, Any]]]):
+        '''Called when the simulation has stopped, immediately before tear-down.
+
+        The default does nothing.
+
+        :param res: the experimental results'''
+        pass
+
+    def eventFired(self, t: float, p: Process, name: str, e : Element):
+        '''Respond to the occurrance of the given event. The method is
+        passed the simulation time, originating process, event name,
+        and the element affected -- and isn't passed the event
+        function, which is used elsewhere.
+
+        This method is called in the past tense, *after* the event function
+        has been run. This lets the effects of the event be observed.
+
+        The event name is simply the optional name that was given to the event
+        when it was declared using :meth:`addEventPerElement` or
+        :meth:`addFixedRateEvent`. It will be None if no name was provided.
+
+        The default does nothing. It can be overridden by sub-classes to
+        provide event-level logging or other functions.
+
+        :param t: the simulation time
+        :param p: the process firing the event
+        :param name: the event name
+        :param e: the element
+
+        '''
+        pass
