@@ -97,6 +97,9 @@ bibtex_default_style = 'alpha'
 intersphinx_mapping = {
     # epyc
     'epyc': ('https://epyc.readthedocs.io/en/latest/', None),
+
+    # epydemic-signals
+    'signals': ('https://pyepydemic-signals.readthedocs.io/en/latest/', None),
     }
 
 
