@@ -267,14 +267,12 @@ class BondPercolation(NewmanZiff):
 
             # occupy the edge
             self.occupy(n, m)
-            self.eventFired(i, self.OCCUPY, (n, m))
 
             # take a sample if this is a sample point
             if  (i + 1) / M >= self._samplepoints[samplePoint]:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
                 self._samples.append(self.sample(self._samplepoints[samplePoint]))
-                self.eventFired(i, self.SAMPLE, None)
 
                 # if we've collected all the samples we want, bail out
                 samplePoint += 1
@@ -294,10 +292,8 @@ class BondPercolation(NewmanZiff):
         numpy.random.shuffle(es)
 
         # percolate the network using these edges
-        self.simulationStarted(params)
         self.percolate(es)
         res = self.experimentalResults()
-        self.simulationEnded(res)
         return res
 
 
@@ -421,14 +417,12 @@ class SitePercolation(NewmanZiff):
 
             # occupy the edge
             self.occupy(n)
-            self.eventFired(i, self.OCCUPY, n)
 
             # take a sample if this is a sample point
             if  (i + 1) / N >= self._samplepoints[samplePoint]:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
                 self._samples.append(self.sample(self._samplepoints[samplePoint]))
-                self.eventFired(i, self.SAMPLE, None)
 
                 # if we've collected all the samples we want, bail out
                 samplePoint += 1
@@ -448,8 +442,6 @@ class SitePercolation(NewmanZiff):
         numpy.random.shuffle(ns)
 
         # percolate the network using these nodes
-        self.simulationStarted(params)
         self.percolate(ns)
         res = self.experimentalResults()
-        self.simulationEnded(res)
         return res
