@@ -228,6 +228,9 @@ ZIP = zip -r
 # (See https://unix.stackexchange.com/questions/155046/determine-if-git-working-directory-is-clean-from-a-script)
 GIT_DIRTY = $(shell $(GIT) status --untracked-files=no --porcelain)
 
+# The git branch we're currently working on
+GIT_BRANCH = $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null)
+
 # Root directory
 ROOT = $(shell pwd)
 
@@ -289,9 +292,13 @@ sdist: $(DIST_SDIST)
 wheel: $(DIST_WHEEL)
 
 # Upload a source distribution to PyPi
-upload: commit sdist wheel
+upload: master-only commit sdist wheel
 	$(GPG) --detach-sign -a dist/$(PACKAGENAME)-$(VERSION).tar.gz
 	$(ACTIVATE) && $(RUN_TWINE)
+
+# Check we're on the master branch befoire uploading
+master-only:
+	if [ "$(GIT_BRANCH)" != "master" ]; then echo "Can only upload from master branch"; exit 1; fi
 
 # Update the remote repos on release
 commit: check-local-repo-clean
