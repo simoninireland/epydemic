@@ -69,12 +69,15 @@ class SynchronousDynamics(Dynamics):
                 if (len(l) > 0) and (p > 0.0):
                     # run through every possible element on which this event may occur
                     for e in copy(l):
-                        # test for occurrance of the event on this element
-                        if rng.random() <= p:
-                            # yes, perform the event
-                            ef(t, e)
-                            self.eventFired(t, l.process(), name, e)
-                            nev = nev + 1
+                        # make sure the element hasn't been removed from the locus
+                        # through the processing of a previous element
+                        if e in l:
+                            # test for occurrance of the event on this element
+                            if rng.random() <= p:
+                                # yes, perform the event
+                                ef(t, e)
+                                self.eventFired(t, l.process(), name, e)
+                                nev = nev + 1
 
             # run through all the fixed-rate events for this timestep
             dist = self.fixedRateEventDistribution(t)
