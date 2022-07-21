@@ -1,0 +1,26 @@
+name: Create release
+
+on:
+  push:
+    tags:
+      - 'v*'    # all version-style tags, i.e., v1.10.1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+steps:
+      - name: Checkout code
+	uses: actions/checkout@master
+      - name: Create Release
+	id: create_release
+	uses: actions/create-release@v1
+	env:
+	  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # provided by environment
+	with:
+	  tag_name: ${{ github.ref }}                 # also provided by environment
+	  release_name: Release ${{ github.ref }}
+	  body: |
+	    See HISTORY for release changes
+	  draft: false
+	  prerelease: false
