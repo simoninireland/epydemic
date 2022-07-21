@@ -1,4 +1,4 @@
-Version 1.10.1
+Version 1.10.1 (2022-07-21)
 
    - Added un-posting of posted events
    - Changed StochasticDynamics to continue to run posted events even
