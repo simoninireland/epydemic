@@ -1,5 +1,16 @@
 Version 1.10.1
 
+   - Added un-posting of posted events
+   - Changed StochasticDynamics to continue to run posted events even
+     after stochastic events become exhausted (rather than discarding
+     un-fired posted events). It remains the case that equilibrium overrides
+     posting
+   - Refactored event taps API to iunclude the process raising the event
+   - Added documentation cross-links to epydemic-signals as an example of
+     event taps
+   - Fixed times for execution of posted events
+   - Added test for removal of elements from loci when processing events
+     under synchronous dynamics
 
 Version 1.9.3 (2022-03-27)
 
