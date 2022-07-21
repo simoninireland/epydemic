@@ -1,6 +1,6 @@
 typing_extensions; python_version < '3.8'
 networkx >= 2.4
-epyc >= 1.6.1
+epyc >= 1.7.2
 pandas
 numpy >= 1.18
 scipy
