@@ -10,7 +10,7 @@ epydemic: Epidemic simulations on networks in Python
 .. image:: https://github.com/simoninireland/epydemic/actions/workflows/ci.yaml/badge.svg
     :target: https://github.com/simoninireland/epydemic/actions/workflows/ci.yaml
 
-.. image:: https://pepy.tech/badge/epydemic/month
+.. image:: https://pepy.tech/badge/epydemic
     :target: https://pepy.tech/project/epydemic
 
 .. image:: https://www.gnu.org/graphics/gplv3-88x31.png
