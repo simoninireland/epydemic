@@ -18,10 +18,9 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import math
-import numpy                     # type: ignore
 from typing import Dict, Any, Union
 from networkx import Graph
-from epydemic import Dynamics, Process, NetworkGenerator
+from epydemic import Dynamics, rng, Process, NetworkGenerator
 
 
 class StochasticDynamics(Dynamics):
@@ -47,7 +46,6 @@ class StochasticDynamics(Dynamics):
         self.simulationStarted(params)
 
         proc = self.process()
-        rng = numpy.random.default_rng()
         t = 0
         events = 0
         while not proc.atEquilibrium(t):

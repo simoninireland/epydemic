@@ -17,8 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from numpy.random import default_rng
-from epydemic import Bitstream, Element
+from epydemic import Bitstream, Element, rng
 from typing import List, Tuple, Iterator, Optional
 
 
@@ -31,9 +30,6 @@ class TreeNode():
     :param p: (optional) the parent node (defaults to None)
 
     '''
-
-    # Random number generator shared by all instances
-    rng = default_rng()
 
 
     def __init__(self, d: Element, p: Optional['TreeNode'] = None):
@@ -431,7 +427,7 @@ class TreeNode():
         if l == 1:
             return self._data
         else:
-            i = self.rng.integers(l)
+            i = rng.integers(l)
             if i < self._leftSize:
                 return self._left.draw()
             elif i == self._leftSize:

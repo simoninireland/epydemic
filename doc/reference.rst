@@ -119,4 +119,5 @@ Supporting code
 .. toctree::
    :maxdepth: 2
 
+   rng
    drawset

@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import NetworkGenerator
+from epydemic import NetworkGenerator, rng
 from networkx import Graph, configuration_model
 from math import exp
 from mpmath import polylog
@@ -82,7 +82,6 @@ class PLCNetwork(NetworkGenerator):
         :param p: model function
         :param maxdeg: maximum node degree we'll consider (defaults to 100)
         :returns: a network with the given degree distribution'''
-        rng = numpy.random.default_rng()
         ns = []
         t = 0
         for i in range(N):

@@ -27,7 +27,7 @@ if sys.version_info >= (3, 8):
 else:
     # backport compatibility with older typing
     from typing_extensions import Final
-from epydemic import Locus, Process, Node, Edge, Element
+from epydemic import rng, Locus, Process, Node, Edge, Element
 
 # Helper types
 Handlers = Tuple[Callable[[Graph, Element], None],   # add handler
@@ -298,7 +298,6 @@ class CompartmentedModel(Process):
         dist = self.initialCompartmentDistribution()
 
         # assign nodes to compartments
-        rng = numpy.random.default_rng()
         g = self.network()
         for n in g.nodes():
             # select a compartment according to the initial distribution

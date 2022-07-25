@@ -19,9 +19,8 @@
 
 import sys
 from copy import copy
-import numpy                     # type: ignore
 from networkx import Graph
-from epydemic import Dynamics, Process, NetworkGenerator
+from epydemic import Dynamics, rng, Process, NetworkGenerator
 if sys.version_info >= (3, 8):
     from typing import Any, Dict, Union, Final
 else:
@@ -52,7 +51,6 @@ class SynchronousDynamics(Dynamics):
         :returns: a dict of experimental results'''
         self.simulationStarted(params)
 
-        rng = numpy.random.default_rng()
         proc = self.process()
         t = 1.0
         events = 0

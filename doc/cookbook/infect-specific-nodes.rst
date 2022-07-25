@@ -42,6 +42,8 @@ the following:
 
 .. code-block:: python
 
+    from epydemic import rng       # the random number generator
+
     def build(self, params):
 	'''Build the network without any initial random infection.
 
@@ -56,7 +58,6 @@ the following:
 	N = len(ns)
 
 	# choose one node and infect it
-	rng = numpy.random.default_rng()
 	n = rng.integers(N)
 	self.changeInitialCompartment(n, self.INFECTED)
 
@@ -65,11 +66,13 @@ the following:
 	for n in ns:
 	    self.changeInitialCompartment(n, self.SUSCEPTIBLE)
 
-Overriding :meth:`CompartmentedModel.build` inhibits random seeding by
-setting the probability to zero. (We have to do this as the
-:meth:`SIR.build` method sets the initial distribution and so accesses
-the :attr:`SIR.P_INFECTED` parameter -- and fails if it isn't
-set. Other compartmented models do the same.)
+(We've imported ``epydemic``'s :ref:`global random number generator
+<rng>` from which we draw the numbers we need.) Overriding
+:meth:`CompartmentedModel.build` inhibits random seeding by setting
+the probability to zero. (We have to do this as the :meth:`SIR.build`
+method sets the initial distribution and so accesses the
+:attr:`SIR.P_INFECTED` parameter -- and fails if it isn't set. Other
+compartmented models do the same.)
 
 The overridden :meth:`CompartmentedModel.initialCompartments` first
 chooses a node, marks it as infected, and then marks all other nodes

@@ -25,7 +25,7 @@ if sys.version_info >= (3, 8):
     from typing import Final
 else:
     from typing_extensions import Final
-from epydemic import SIR, Node, Edge
+from epydemic import SIR, rng, Node, Edge
 
 
 class SIvR(SIR):
@@ -110,7 +110,6 @@ class SIvR(SIR):
 
         # stash the efficacy
         self._efficacy = params[self.EFFICACY]
-        self._rng = numpy.random.default_rng()
 
         # default to no time offset
         self._offset = params.get(self.T_OFFSET, 0.0)
@@ -145,7 +144,7 @@ class SIvR(SIR):
         g = self.network()
         if g.nodes[n][self.VACCINATED] and g.nodes[n][self.VACCINATION_TIME] + self._offset < t:
             # node is vaccinated, test for effect
-            if self._rng.random() > self._efficacy:
+            if rng.random() > self._efficacy:
                 # infect anyway
                 self.changeCompartment(n, self.INFECTED)
                 self.markOccupied(e, t)

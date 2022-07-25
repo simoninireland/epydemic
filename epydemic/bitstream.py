@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from epydemic import rng
 from typing import Optional, List, Iterable
-import numpy
 
 
 class Bitstream(object):
@@ -27,26 +27,11 @@ class Bitstream(object):
 
     :param size: (optional) size of the entropy pool in words'''
 
-    # Singleton instance, created on demand
-    default_rng: Optional['Bitstream'] = None    #: Default bit stream generator.
-
-    @classmethod
-    def init_default_rng(cl) -> 'Bitstream':
-        '''Static method to return the default bitstream. This is called
-        during system initialisation so that there is a generator always
-        available.
-
-        @returns: the bitstream'''
-        if cl.default_rng is None:
-            cl.default_rng = Bitstream()
-
     # Underlying types
     Dtype = numpy.int64                        #: Type for elements of the entropy pool.
     DtypeSize = 63                             #: Bits per element (excluding sign bit).
 
     def __init__(self, size: int = 100):
-        self._rng = numpy.random.default_rng()
-
         self._pool: List[int] = []                      # entropy pool
         self._size: int = size                          # size of the pool
         self._max: int = 2 ** self.DtypeSize - 1        # maximum value of an entry in the pool
@@ -60,7 +45,7 @@ class Bitstream(object):
     def _refill(self):
         '''Re-fill the entropy pool. This creates another batch of random numbers
         to be drawn from.'''
-        self._pool = self._rng.integers(self._max, size=self._size, dtype=self.Dtype)
+        self._pool = rng.integers(self._max, size=self._size, dtype=self.Dtype)
         self._nElement = 0
         self._element = int(self._pool[0])
 

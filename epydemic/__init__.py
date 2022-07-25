@@ -47,6 +47,10 @@ ways to encourage good software engineering practices.
 
 '''
 
+# a global random number generator
+from numpy.random import default_rng
+rng = default_rng()
+
 # helper types
 from .types import Node, Edge, Element
 from .bitstream import Bitstream
@@ -98,6 +102,3 @@ from .processsequence import ProcessSequence
 
 # other experiments
 from .newmanziff import NewmanZiff, BondPercolation, SitePercolation
-
-# late initialisation
-Bitstream.init_default_rng()
