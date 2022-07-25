@@ -121,8 +121,8 @@ some state for compartments as follows:
 
     def __init__(self):
 	super().__init__()
-	self._compartments: Dict[str, float] = dict()         # compartment -> initial probability
-	self._effects: Dict[str, List[Handlers]] = dict()     # compartment -> event handlers
+	self._compartments = dict()       # compartment -> initial probability
+	self._effects = dict()            # compartment -> event handlers
 
 	# state variable tags
 	self.COMPARTMENT = self.stateVariable('compartment')
@@ -138,7 +138,7 @@ example:
 
 .. code-block:: python
 
-    def setCompartment(self, n: Node, c: str):
+    def setCompartment(self, n, c):
 	'''Set the compartment of a node. This assumes that the node doesn't
 	already have a compartment set, and so should be used only for
 	initialising new nodes: in all other cases, use
@@ -154,7 +154,7 @@ example:
 	# propagate the change to any other compartments
 	self._callEnterHandlers(n, c)
 
-    def getCompartment(self, n: Node) -> str:
+    def getCompartment(self, n):
 	'''Return the compartment of a node.
 
 	:param n: the node
