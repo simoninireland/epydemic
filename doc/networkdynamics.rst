@@ -33,12 +33,13 @@ according to the following process:
   configure the working copy: it calls :meth:`Process.reset` to reset
   the process, sets its working network by calling :meth:`Process.setNetwork`,
   then builds the process instance using :meth:`Process.build` and sets it
-  up rerady for simulation by calling :meth:`Processd.setUp`.
+  up ready for simulation by calling :meth:`Process.setUp`.
 * The :meth:`Dynamics.do` method is called to perform the simulation, returning
   a dict of experimental results. This method is overridden by sub-classes
   to define the style of simulation being performed.
 * The :meth:`Dynamics.tearDown` method is called to clean-up the simulation
-  class, using :meth:`NetworkExperiment.tearDown` to destroy the working network.
+  class, using :meth:`Process.tearDown` to tear-down the process anmd
+  then calling :meth:`NetworkExperiment.tearDown` to destroy the working network.
 
 This decomposition is very flexible. At its simplest, a dynamics takes
 a fixed prototype network as a parameter to its construction and copies it
@@ -47,7 +48,7 @@ for every run. More complex use cases supply an instance of
 by the experimental parameters.
 
 Note the division of labour. A :class:`Dynamics` object provides the scheduling
-for events, which are themselves sapecified and defined in a :class:`Process`
+for events, which are themselves specified and defined in a :class:`Process`
 object. There is seldom any need to interact directly with a :class:`Dynamics` object
 other than through its execution interface.
 
@@ -100,17 +101,11 @@ Loci for stochastic events are craeted by :class:`Process` instances.
 .. automethod:: Dynamics.lociForProcess
 
 
-Probabilistic events
---------------------
+Stochastic event distributions
+------------------------------
 
-Stochastic events can be attached to each locus defined for the simulation.
-
-.. automethod:: Dynamics.addEventPerElement
-
-.. automethod:: Dynamics.addFixedRateEvent
-
-Thes events form a probability distribution from which events can be drawn
-in the course of the simulation.
+The stochastic events are defined and managed in the :class:`Process`
+class. The dynamics only cares about their distributions.
 
 .. automethod:: Dynamics.perElementEventDistribution
 

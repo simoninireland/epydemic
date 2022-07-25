@@ -27,6 +27,17 @@ Five methods provide the core API for defining new processes, and are typically 
 .. automethod:: Process.results
 
 
+Process hierarchy
+-----------------
+
+Processes can be nested, for example using a :class:`ProcessSequence`.
+The component processes can be accessed using a common interface:
+
+.. automethod:: Process.processes
+
+.. automethod:: Process.allProcesses
+
+
 Getting ready to run
 --------------------
 
@@ -43,6 +54,7 @@ Several other methods provide information for the process.
 .. automethod:: Process.setMaximumTime
 
 .. automethod:: Process.maximumTime
+
 
 
 Accessing and evolving the network
@@ -96,28 +108,29 @@ Events
 Events are the code fragments that run as part of the simulation. The
 collection of events defined by a process form all the possible
 actions that the simulation will perform. Events can be given
-meaningful names, which don't affect the execution of the simulation
-All these methods are simply helpers for the corresponding methods in
-:class:`Dynamics`.
+meaningful names, which don't affect the execution of the simulation.
 
-There are three broad classes of events. *Per-element* events occur with a probability
-on each element of a locis. This means that loci with more elements will generate a higher
-rate of events.
+There are three broad classes of events. *Per-element* events occur
+with a probability on each element of a locis. This means that loci
+with more elements will generate a higher rate of events.
 
 .. automethod:: Process.addEventPerElement
 
-*Fixed-rate* events, by contrast, occur with a probability that's independent of the
-number of elements in a locus, as long as it's not empty. This means that the rate at
-which such events fire is independent of the size of the locus.
+*Fixed-rate* events, by contrast, occur with a probability that's
+independent of the number of elements in a locus, as long as it's not
+empty. This means that the rate at which such events fire is
+independent of the size of the locus.
 
 .. automethod:: Process.addFixedRateEvent
 
-These two kinds of events are both *stochastic*, in the sense that they are generated according
-to an exponential probability distribution.
+These two kinds of events are both *stochastic*, in the sense that
+they are generated according to an exponential probability
+distribution.
 
-In contrast, *posted* events are set to occur at a particular simulation time. As the
-simulation proceeds it will execute posted events in the correct time sequence relative
-to the different stochastic events that are generated.
+In contrast, *posted* events are set to occur at a particular
+simulation time. As the simulation proceeds it will execute posted
+events in the correct time sequence relative to the different
+stochastic events that are generated.
 
 .. automethod:: Process.postEvent
 
@@ -127,6 +140,22 @@ to the different stochastic events that are generated.
 
 .. automethod:: Process.postRepeatingEvent
 
+
+Event distributions
+-------------------
+
+The stochastic events form probability distributions from which events
+can be drawn in the course of the simulation. The events are added
+using the methods above; the distributions are computed automatically.
+
+.. automethod:: Process.perElementEventDistribution
+
+.. automethod:: Process.perElementEventRateDistribution
+
+.. automethod:: Process.fixedRateEventDistribution
+
+In some cases it may be necessary to create the distributions
+directly, in which case these methods can be overridden.
 
 
 Identifiers for instances, runs, and state

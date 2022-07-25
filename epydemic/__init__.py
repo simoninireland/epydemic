@@ -1,6 +1,6 @@
 # Initialisation for epydemic
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2022 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -83,6 +83,7 @@ from .seir_model import SEIR
 
 # variant disease models
 from .sir_model_fixed_recovery import SIR_FixedRecovery
+from .sir_model_variable_infection import SIR_VariableInfection
 from .sis_model_fixed_recovery import SIS_FixedRecovery
 
 # other processes

@@ -73,6 +73,8 @@ the required component process.
 
 .. automethod:: ProcessSequence.__getitem__
 
+.. automethod:: ProcessSequence.allProcesses
+
 .. note::
 
    See the cookbook recipe :ref:`dynamic-population` for an extended

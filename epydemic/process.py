@@ -85,6 +85,20 @@ class Process():
 
     # ---------- Process instance and run identifiers ----------
 
+    def processes(self) -> List['Process']:
+        '''Return a list of component processes. For a standard process
+        this is just the process itself.
+
+        :returns: a list containing this process'''
+        return [self]
+
+    def allProcesses(self) -> List['Process']:
+        '''Return a recursive list of component processes. For a standard process
+        this is the same as calling :math:`processes`..
+
+        :returns: a list containing this process'''
+        return self.processes()
+
     def instanceId(self) -> int:
         '''Return the unique instance identifier of this process.
 
@@ -134,6 +148,8 @@ class Process():
 
         """
         self._runId += 1
+        self._perElementEvents = []
+        self._perLocusEvents = []
 
     def build(self, params: Dict[str, Any]):
         """Build the process model. This should be overridden by sub-classes,
@@ -339,8 +355,7 @@ class Process():
             self.removeEdge(*e)
 
 
-    # ---------- Probabilistic and posted events ----------
-    # These are helper methods that delegate to the dynamics
+    # ---------- Probabilistic events ----------
 
     def addLocus(self, n: str, l: 'Locus' = None) -> 'Locus':
         """Add a named locus.
@@ -363,30 +378,50 @@ class Process():
         :returns: the locus'''
         return self.loci()[n]
 
-    def addEventPerElement(self, l: Union[str, 'Locus'], p: float,
+    def addEventPerElement(self, l: Union[str, 'Locus'], pr: float,
                            ef: EventFunction, name: Optional[str] = None):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability for each element of the locus, and calling
-        the :term:`event function` when it is selected. The locus may
-        be a :class:`Locus` object or a string, which is taken to be a
-        locus of this process.
-        This is a helper method that calls :meth:`Dynamics.addEventPerElement`
-        on the dynamics running the process.
+        the :term:`event function` when it is selected.
 
-        Unlike fixed probability events added by
-        :meth:`addFixedRateEvent`, a per-element event happens with
-        the same probability to each element in the locus. This leads
-        to larger loci giving rise to a higher rate of events.
+        The optional name is used in conjunction with
+        :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
 
         :param l: the locus or locus name
-        :param p: the event probability
+        :param pr: the event probability
         :param ef: the event function
         :param name: (optional) meaningful name of the event
 
         """
-        self._dynamics.addEventPerElement(self, l, p, ef, name)
+        if isinstance(l, str):
+            l = self.locus(l)
+        self._perElementEvents.append((l, pr, ef, name))
 
-    def addFixedRateEvent(self, l: Union[str, 'Locus'], p: float,
+    def perElementEventDistribution(self, t: float) -> EventDistribution:
+        """Return the distribution of per-element events at the given time.
+        By default the distribution is time-independent.
+
+        Note that this method returns the *probability* of events, not their
+        expected *rates*, for which use :meth:`perElementEventRateDistribution`.
+
+        :param t: the simulation time
+        :returns: a list of (locus, probability, event function) triples"""
+        return self._perElementEvents
+
+    def perElementEventRateDistribution(self, t: float) -> EventDistribution:
+        """Return the rates of per-element events at the given time.
+        By default the distribution is time-independent.
+
+        Note that this is method returns event *rates*, not their *probabilities*
+        as returned by :meth:`perElementEventDistribution`. The rate is simply
+        an event's probability multiplied by the size of the locus on which it occurs,
+        giving the expected number of events occurring from that locus in unit time.
+
+        :param t: the simulation time
+        :returns: a list of (locus, rate, event function) triples"""
+        return [(l, pr * len(l), ef, name) for (l, pr, ef, name) in self.perElementEventDistribution(t)]
+
+    def addFixedRateEvent(self, l: Union[str, 'Locus'], pr: float,
                           ef: EventFunction, name: Optional[str] = None):
         """Add a probabilistic event at a locus, occurring with a particular
         (fixed) probability, and calling the :term:`event function`
@@ -395,18 +430,31 @@ class Process():
         process. This is a helper method that calls :meth:`Dynamics.addFixedRateEvent`
         on the dynamics running the process.
 
-
         Unlike fixed rate events added by :meth:`addEventPerElement`,
         a fixed probability event happens with the same probability
         regardless of how many elements are in the locus.
 
         :param l: the locus or locus name
-        :param p: the event probability
+        :param pr: the event probability
         :param ef: the event function
         :param name: (optional) meaningful name of the event
 
         """
-        self._dynamics.addFixedRateEvent(self, l, p, ef, name)
+        if isinstance(l, str):
+            l = self.locus(l)
+        self._perLocusEvents.append((l, pr, ef, name))
+
+    def fixedRateEventDistribution(self, t: float) -> EventDistribution:
+        """Return the distribution of fixed-rate events at the given time.
+        By default the distribution is time-independent.
+
+        :param t: the simulation time
+        :returns: a list of (locus, probability, event function) triples"""
+        return self._perLocusEvents
+
+
+    # ---------- Posted events ----------
+    # These are helper methods that delegate to the dynamics
 
     def postEvent(self, t: float, e: Any,
                   ef: EventFunction, name: Optional[str] = None) -> int:

@@ -132,8 +132,6 @@ class Dynamics(NetworkExperiment):
         # set up the event stream
         self._loci = dict()
         self._processLoci = dict()
-        self._perElementEvents = dict()
-        self._perLocusEvents = dict()
         self._postedEvents = []
         self._postedEventFinder = dict()
         self._eventId = 0
@@ -213,44 +211,21 @@ class Dynamics(NetworkExperiment):
             # process doesn't have loci, return an empty dict
             return dict()
 
-    def addEventPerElement(self, p: Process, l: Union[str, Locus], pr: float,
-                           ef: EventFunction, name: Optional[str] = None):
-        """Add a probabilistic event at a locus, occurring with a particular
-        (fixed) probability for each element of the locus, and calling
-        the :term:`event function` when it is selected.
-
-        The optional name is used in conjunction with
-        :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
-
-        :param p: the process
-        :param l: the locus or locus name
-        :param pr: the event probability
-        :param ef: the event function
-        :param name: (optional) meaningful name of the event
-
-        """
-        if isinstance(l, str):
-            l = self.locus(l)
-        self._perElementEvents[p].append((l, pr, ef, name))
-
     def perElementEventDistribution(self, t: float) -> EventDistribution:
-        """Return the distribution of per-element events for all processes' loci
-        at the given time. By default the distribution is time-independent.
+        """Return the distribution of of all processes' per-element events at the given time.
 
         Note that this method returns the *probability* of events, not their
         expected *rates*, for which use :meth:`perElementEventRateDistribution`.
 
         :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
-        probs = []
-        for p in self._perElementEvents:
-            for (l, pr, ef, name) in self._perElementEvents[p]:
-                probs.append((l, pr, ef, name))
-        return probs
+        dist = []
+        for p in self._process.allProcesses():
+            dist.extend(p.perElementEventDistribution(t))
+        return dist
 
     def perElementEventRateDistribution(self, t: float) -> EventDistribution:
-        """Return the rates of per-element events for all processes' loci
-        at the given time. By default the distribution is time-independent.
+        """Return the rates of per-element events for all processes at the given time.
 
         Note that this is method returns event *rates*, not their *probabilities*
         as returned by :meth:`perElementEventDistribution`. The rate is simply
@@ -259,43 +234,20 @@ class Dynamics(NetworkExperiment):
 
         :param t: the simulation time
         :returns: a list of (locus, rate, event function) triples"""
-        rates = []
-        for (l, pr, ef, name) in self.perElementEventDistribution(t):
-            rates.append((l, pr * len(l), ef, name))
-        return rates
-
-    def addFixedRateEvent(self, p: Process, l: Union[str, Locus], pr: float,
-                          ef: EventFunction, name: Optional[str] = None):
-        """Add a probabilistic event at a locus, occurring with a particular
-        (fixed) probability, and calling the :term:`event function`
-        when it is selected.
-
-        The optional name is used in conjunction with
-        :ref:`event taps <event-taps>` when calling :meth:`eventFired`.
-
-        :param p: the process
-        :param l: the locus or locus name
-        :param pr: the event probability
-        :param ef: the event function
-        :param name: (optional) meaningful name of the event
-
-        """
-        if isinstance(l, str):
-            l = self.locus(l)
-        self._perLocusEvents[p].append((l, pr, ef, name))
+        dist = []
+        for p in self._process.allProcesses():
+            dist.extend(p.perElementEventRateDistribution(t))
+        return dist
 
     def fixedRateEventDistribution(self, t: float) -> EventDistribution:
-        """Return the distribution of fixed-rate events for all processes' loci
-        at the given time. By default the distribution is time-independent.
+        """Return the distribution of fixed-rate events for all processes at the given time.
 
         :param t: the simulation time
         :returns: a list of (locus, probability, event function) triples"""
-        rates = []
-        for p in self._perLocusEvents:
-            for (l, pr, ef, name) in self._perLocusEvents[p]:
-                if len(l) > 0:
-                    rates.append((l, pr, ef, name))
-        return rates
+        dist = []
+        for p in self._process.allProcesses():
+            dist.extend(p.fixedRateEventDistribution(t))
+        return dist
 
     def eventRateDistribution(self, t: float) -> EventDistribution:
         """Return the event distribution, a sequence of (l, r, f, n) tuples

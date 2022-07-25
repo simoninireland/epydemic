@@ -29,6 +29,8 @@ class ProcessSequence(Process):
     each component process a name by which it can be retrieved by *other* processes.
     This allows more complex interactions between processes.
 
+    Once created, the processes within a process sequence can't be changed.
+
     If you need to use non-anonymous process sequences, it's often better to
     define a sub-class to manage all the names, since the component processes
     will almost certainly make assumptions about the existence of the processes
@@ -39,14 +41,20 @@ class ProcessSequence(Process):
     def __init__(self, ps: Union[List[Process], Dict[str, Process]]):
         if isinstance(ps, dict):
             # named processes
-            self._processes = list(cast(Dict[str, Process], ps).values())
-            self._processNames = ps
+            self._processes : List[Process] = list(cast(Dict[str, Process], ps).values())
+            self._processNames : Dict[str, Process] = ps
         else:
             # list of anonymous processes
-            self._processes = ps
-            self._processNames = None
+            self._processes : List[Process] = ps
+            self._processNames : Dict[str, Process] = None
         for p in self._processes:
             p.setContainer(self)
+
+        # recursively find all the processes in the sequence
+        self._allProcesses : List[Process] = []
+        for p in self._processes:
+            self._allProcesses.extend(p.allProcesses())
+
         super().__init__()
 
 
@@ -92,6 +100,13 @@ class ProcessSequence(Process):
             raise ValueError(f'No component process {n}')
         else:
             return p
+
+    def allProcesses(self) -> List[Process]:
+        '''Return a list of all processes in the sequence. This will recurse into
+        any processes that are themselces sequences.
+
+        :returns: a list of processes'''
+        return self._allProcesses
 
 
     # ---------- Process interface ----------

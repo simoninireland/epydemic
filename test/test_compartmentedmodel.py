@@ -91,6 +91,7 @@ class CompartmentedModelTest(unittest.TestCase):
         m = SIR()
         e = StochasticDynamics(m)
         self._params[SIR.P_INFECTED] = 1.0    # infect all nodes initially
+        m.reset()
         m.build(self._params)
         with self.assertRaises(Exception):
             m.trackNodesInCompartment(SIR.INFECTED)      # part of SIR already
@@ -100,6 +101,7 @@ class CompartmentedModelTest(unittest.TestCase):
         m = SIR()
         e = StochasticDynamics(m)
         self._params[SIR.P_INFECTED] =  1.0    # infect all nodes initially
+        m.reset()
         m.build(self._params)
         with self.assertRaises(Exception):
             m.trackEdgesBetweenCompartments(SIR.SUSCEPTIBLE, SIR.INFECTED, name = SIR.SI)      # part of SIR already
