@@ -41,7 +41,7 @@ Adding more compartments
 Let's consider a variant of SIR called SIRS, where someone can become
 susceptible again after some time. (This models diseases where the
 immunity given by infection is time-bounded.)  Again, we'll define a
-slightlyu simplied version of ``epydemic``'s built-in :class:`SIRS`
+slightly simplied version of ``epydemic``'s built-in :class:`SIRS`
 process.
 
 For SIRS we need to add three things to SIR:
