@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+import numpy
 from epydemic import rng
 from typing import Optional, List, Iterable
 
