@@ -21,7 +21,6 @@ import unittest
 from collections import Counter
 from scipy.stats import chisquare
 from mpmath import gammainc
-from numpy.random import default_rng
 from numpy import exp
 from epydemic import *
 from epydemic.gf import *
@@ -106,7 +105,6 @@ class GFTest(unittest.TestCase):
         # two samples to be the same size to high tolerance
         diff = sum(d_network) - sum(d_theory)
         inc = -1 if diff > 0 else 1
-        rng = default_rng()
         for _ in range(abs(diff)):
             i = rng.integers(len(d_network))
             d_network[i] += inc
