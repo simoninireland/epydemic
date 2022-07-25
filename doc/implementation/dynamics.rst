@@ -104,16 +104,16 @@ values of the experimental parameters. Plotting the results we get:
 .. figure:: sir-synchronous.png
    :align: center
 
-The stochastic case is generally faster than synchronous case. This is
-unsurprising: the probability of an SI edge passing an infection (for
-example) is low in any timestep, so most of the checks that the
-simulation performs will fail. By contrast the stochastic dynamics
-"steps over" time when nothing is happening. It is also statistically
-exact, in that the next event (and the time until it) is chosen using
-all the available information relating to all previous events, rather
-than all the one in the previous timestep as happens in the
-synchronous case. This can sometimes lead to different curves even for
-the same parameters.
+The stochastic case is generally faster than synchronous case -- often
+massively faster. This is unsurprising: the probability of an SI edge
+passing an infection (for example) is usually low in any timestep, so
+most of the checks that the simulation performs will fail. By contrast
+the stochastic dynamics "steps over" time when nothing is happening.
+It is also statistically exact, in that the next event (and the time
+until it) is chosen using all the available information relating to
+all previous events, rather than all the one in the previous timestep
+as happens in the synchronous case. This can sometimes lead to
+different curves even for the same parameters.
 
 
 Posted events
