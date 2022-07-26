@@ -49,6 +49,7 @@ Process variants
    :maxdepth: 2
 
    sir_fixed_recovery
+   sir_variable_infection
    sis_fixed_recovery
    sirs
 

@@ -18,7 +18,7 @@ Processes
 ---------
 
 .. inheritance-diagram:: SIR SIS SEIR SIRS
-			 SIR_FixedRecovery SIS_FixedRecovery
+			 SIR_FixedRecovery SIR_VariableInfection SIS_FixedRecovery
 			 AddDelete Percolate Monitor NetworkStatistics
 			 ProcessSequence
    :parts: 1
