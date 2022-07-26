@@ -25,16 +25,20 @@ particular event. This allows the rates of events to change over time.
 
 The dynamics works as follows:
 
-* The event rate distribution is acquird from the process by calling :meth:`Process.eventRateDistribution`,
-  which returns both per-event and fixed-rate events.
-* Based on these rates, a random time offset to the next event is drawn from an
-  exponential distribution.
-* The event that occurs at this time is then drawn from the combined distribution
-  of all the available events.
+* The event rate distribution is acquird from the process by calling
+  :meth:`Process.eventRateDistribution`, which returns both per-event
+  and fixed-rate events.
+* Based on these rates, a random time offset to the next event is
+  drawn from an exponential distribution.
+* The event that occurs at this time is then drawn from the combined
+  distribution of the rates of all the available events.
+* Any events posted for before this ofset time are run by calling
+  :meth:`Dynamics.runPendingEvents`.
 * The simulation time is updated by the time offset.
-* Any events posted for before this time are run by calling :meth:`Dynamics.runPendingEvents`.
-* An element is drawn randomly from the event locus, and the corresponding event is fired.
-* This process continues until the process is at equilibrium, as indicated
-  by its :meth:`Process.atEquilibrium` method.
+* An element is drawn randomly from the event locus, and the
+  corresponding event is fired.
+* The firing of the event is recorded through the event tap.
+* This process continues until the process is at equilibrium, as
+  indicated by its :meth:`Process.atEquilibrium` method.
 
 .. automethod:: StochasticDynamics.do

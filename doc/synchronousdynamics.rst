@@ -2,7 +2,7 @@
 ==========================================================
 
 .. currentmodule:: epydemic
-   
+
 .. autoclass:: SynchronousDynamics
    :show-inheritance:
 
@@ -18,17 +18,20 @@ Running a dynamics
 
 Synchronous dynamics works as follows:
 
-* Any events posted for (or before) the current simulation time
-  are fired by calling :meth:`Dynamics.runPendingEvents`.
-* The dynamics accesses the underlying process to acquire the event distribution for per-element
-  events by calling :meth:`Process.perElementEventDistribution`.
-* For each locus having elements, it selects each element in turn and fires an event on
-  that element with the probability given for that event.
-* The dynamics then accesses the fixed-rate event distribution of the process
-  by calling :meth:`Process.fixedRateEventDistribution`
-* For each non-empty locus, it fires at event with the probability given for that event.
+* Any events posted for (or before) the current simulation time are
+  fired by calling :meth:`Dynamics.runPendingEvents`.
+* The dynamics accesses the underlying process to acquire the event
+  distribution for per-element events by calling
+  :meth:`Process.perElementEventDistribution`.
+* For each locus having elements, it selects each element in turn and
+  fires an event on that element with the probability given for that
+  event, and records this through the event tap.
+* The dynamics then accesses the fixed-rate event distribution of the
+  process by calling :meth:`Process.fixedRateEventDistribution`
+* For each non-empty locus, it fires at event with the probability
+  given for that event and records this through the event tap.
 * The current simulation time is updated.
-* This continues until the process indicates that it has reached equilibrium,
-  as determined by :meth:`Process.atEqulibrium`.
+* This continues until the process indicates that it has reached
+  equilibrium, as determined by :meth:`Process.atEqulibrium`.
 
 .. automethod:: SynchronousDynamics.do

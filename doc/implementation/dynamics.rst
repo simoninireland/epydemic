@@ -142,3 +142,12 @@ the event function to `None`. Accessing the queue through any of the
 :ref:`posted event methods <dynamics-posted-events>` automatically
 discards any leading un-posted events, so the un-posting mechanism is
 transparent to client code.
+
+
+Event tapping
+-------------
+
+For both dynamics, the processing is wrapped using the functions from
+the :ref:`event taps interface <event-taps>`. These include marking
+the start and end of the simulation, and every event fired (whether
+per-event, fixed-rate, or posted).
