@@ -90,7 +90,7 @@ class StochasticDynamics(Dynamics):
                     # find the largest event for which the cumulative rates
                     # are less than the random threshold
                     xs = 0
-                    for v in range(0, len(transitions)):
+                    for v in range(len(transitions)):
                         (l, xsp, ef, name) = transitions[v]
                         if (xs + xsp) > xc:
                             break
