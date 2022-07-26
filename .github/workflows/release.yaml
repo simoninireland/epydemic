@@ -15,12 +15,11 @@ jobs:
         with:
           clean: false
       - name: Create release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # provided by environment
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ github.ref }}                 # also provided by environment
-          release_name: Release ${{ github.ref }}
+          tag: ${{ github.ref }}
+          release: Release ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             See HISTORY for release changes
           draft: false
