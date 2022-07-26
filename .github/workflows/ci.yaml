@@ -14,7 +14,8 @@ jobs:
         python-version: [3.6, 3.7, 3.8, 3.9, 3.10.3]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check-out code for branch
+        uses: actions/checkout@v3
         with:
           clean: false
       - name: Test suite running on python-${{ matrix.python-version }}
