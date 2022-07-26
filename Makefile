@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.10.1
+VERSION = 1.11.1
 
 
 # ----- Sources -----
@@ -47,6 +47,7 @@ SOURCES_CODE = \
 	epydemic/compartmentedmodel.py \
 	epydemic/sir_model.py \
 	epydemic/sir_model_fixed_recovery.py \
+	epydemic/sir_model_variable_infection.py \
 	epydemic/sis_model.py \
 	epydemic/sis_model_fixed_recovery.py \
 	epydemic/sirs_model.py \
@@ -79,6 +80,7 @@ SOURCES_TESTS = \
 	test/test_loci.py \
 	test/test_sir.py \
 	test/test_sir_fixedrecovery.py \
+	test/test_sir_variable_infection.py \
 	test/test_sis.py \
 	test/test_sis_fixedrecovery.py \
 	test/test_sirs.py \
@@ -110,10 +112,12 @@ SOURCES_DOCUMENTATION = \
 	doc/classes.rst \
 	doc/zbibliography.rst \
 	doc/glossary.rst \
+	doc/helper-types.rst \
 	doc/networkdynamics.rst \
 	doc/synchronousdynamics.rst \
 	doc/stochasticdynamics.rst \
 	doc/drawset.rst \
+	doc/rng.rst \
 	doc/loci.rst \
 	doc/compartmentedmodel.rst \
 	doc/generator.rst \
