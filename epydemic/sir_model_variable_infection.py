@@ -74,7 +74,8 @@ class SIR_VariableInfection(SIR):
         self.INFECTIVITY = self.stateVariable('infectivity')
 
     def build(self, params: Dict[str, Any]):
-        '''Build the model.
+        '''Build the model. This adds a tracker for SI edges, but
+        with no associated stochastic event.
 
         :param params: the simulation parameters'''
         CompartmentedModel.build(self, params)             # skip the base SIR.build()
@@ -92,7 +93,10 @@ class SIR_VariableInfection(SIR):
         self.addEventPerElement(self.INFECTED, pRemove, self.remove, name=self.REMOVED)
 
     def setUp(self, params: Dict[str, Any]):
-        '''Set up compartments and infectivites.
+        '''Set up compartments and infectivites. Initial compartments are
+        saet according to the usual approach for SIR using the parameter
+        :attr:`SIR.P_INFECTED`. Per-edge infectivities are set using
+        a call to :meth:`initialInfectivities`.
 
         :param params: the simulation parameters'''
         super().setUp(params)
