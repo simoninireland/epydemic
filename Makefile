@@ -125,6 +125,7 @@ SOURCES_DOCUMENTATION = \
 	doc/sir.rst \
 	doc/sis.rst \
 	doc/sir_fixed_recovery.rst \
+	doc/sir_variable_infection.rst \
 	doc/sis_fixed_recovery.rst \
 	doc/sirs.rst \
 	doc/seir.rst \

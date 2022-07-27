@@ -1,3 +1,11 @@
+Version 1.11.1 (2022-07-27)
+
+   - Refactored event rate distributions into Process instead of Dynamics
+   - Added per-edge infection variant of SIR
+   - Added a global random number generator to simplify replacement if needed
+   - Further documented event taps and dynamics
+   - Automated GitHub releases and Zenodo DOIs for each release
+
 Version 1.10.1 (2022-07-21)
 
    - Added un-posting of posted events
