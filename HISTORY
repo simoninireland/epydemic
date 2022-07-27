@@ -5,6 +5,8 @@ Version 1.11.1 (2022-07-27)
    - Added a global random number generator to simplify replacement if needed
    - Further documented event taps and dynamics
    - Automated GitHub releases and Zenodo DOIs for each release
+   - Changed Makefilke target for doing a release to "release" (instead
+     of "upload"
 
 Version 1.10.1 (2022-07-21)
 

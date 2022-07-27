@@ -296,8 +296,11 @@ sdist: $(DIST_SDIST)
 # Build a wheel distribution
 wheel: $(DIST_WHEEL)
 
+# Make a new release
+release: master-only commit sdist wheel upload
+
 # Upload a source distribution to PyPi
-upload: master-only commit sdist wheel
+upload:
 	$(GPG) --detach-sign -a dist/$(PACKAGENAME)-$(VERSION).tar.gz
 	$(ACTIVATE) && $(RUN_TWINE)
 
@@ -368,6 +371,7 @@ Available targets:
    make env          create a development virtual environment
    make sdist        create a source distribution
    make wheel        create binary (wheel) distribution
+   make release      make a release
    make upload       upload distribution to PyPi
    make clean        clean-up the build
    make reallyclean  clean up the virtualenv as well
