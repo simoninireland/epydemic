@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software and want to cite it, please reference the following."
+title: "epdemic: Epidemic simulation on networks in Python"
+authors:
+  - family-names: "Dobson"
+    given-names: "Simon"
+    orcid: "https://orcid.org/0000-0001-9633-2103"
+identifiers:
+  - description: "DOI for code"
+    type: doi
+    value: "10.5281/zenodo.6912247"
+date-released: 2022-07-27
+license: GPL-3.0
+repository-code: "https://github.com/simoninireland/epydemic"
