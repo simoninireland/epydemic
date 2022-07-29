@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.11.1
+VERSION = 1.12.1
 
 
 # ----- Sources -----
@@ -196,6 +196,7 @@ SOURCES_UTILS = \
 # Extras for the build and packaging system
 SOURCES_EXTRA = \
 	README.rst \
+	CITATION.ctf \
 	LICENSE \
 	HISTORY \
 	CONTRIBUTORS \

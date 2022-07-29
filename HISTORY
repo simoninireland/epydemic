@@ -1,3 +1,6 @@
+Version 1.12.1
+
+
 Version 1.11.1 (2022-07-27)
 
    - Refactored event rate distributions into Process instead of Dynamics
