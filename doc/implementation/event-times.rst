@@ -45,7 +45,7 @@ There are two places we could implement this:
 
 1. locally, within the :class:`PulseCoupledOscillator` class, by
    quantising the values we use for phases; or
-2. globally, within the :class:`Dynamics` class, to only allowe event
+2. globally, within the :class:`Dynamics` class, to only allow event
    times to happen to a given precision.
 
 We've chosen the former as a simpler and less burdensome approach,
