@@ -104,7 +104,7 @@ its own devices, without being updated).
 
 .. automethod:: PulseCoupledOscillator.getState
 
-.. automethod:: PulseCoupledOscillator.setFiringTIme
+.. automethod:: PulseCoupledOscillator.setFiringTime
 
 .. automethod:: PulseCoupledOscillator.getFiringTime
 
