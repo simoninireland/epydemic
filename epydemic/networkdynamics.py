@@ -399,7 +399,7 @@ class Dynamics(NetworkExperiment):
         # if we get here there are no events remainiong
         return None
 
-    def nextPendingEventTime(self) -> float:
+    def nextPendingEventTime(self) -> Optional[float]:
         '''Return the simulation time for the next pending posted event, without
         affecting the event queue.
 
