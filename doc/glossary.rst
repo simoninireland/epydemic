@@ -8,7 +8,7 @@ Glossary
 .. glossary::
 
    addition-deletion process
-      A process that adds and removes nodes from a network. The usual
+      A :term:`process` that adds and removes nodes from a network. The usual
       model :cite:`AdditionDeletionNetworks` adds nodes at a
       constant rate and with constant degree, removes nodes randomly
       at a constant rate, and connects new nodes to existing nodes according
@@ -102,12 +102,12 @@ Glossary
       A simulation technique developed initially for *ab initio*
       chemistry simulations :cite:`Gillespie76,Gillespie77`.
 
-   largest connected component
-      The largest collection of nodes in the network linked by
-      edges. Often called the LCC. In some cases we may also be
-      interested in the sizes of other components: for example the
-      second-largest connected component (SLCC) can give useful
-      information.
+   largest connected component The largest collection of nodes in the
+      network linked by edges. Often called the LCC, and sometimes
+      called the :term:`giant connected component`. In some cases we
+      may also be interested in the sizes of other components: for
+      example the second-largest connected component (SLCC) can give
+      useful information.
 
    locus
       A "place" at which dynamics can occur, that is to say, where
@@ -138,6 +138,11 @@ Glossary
       :term:`process dynamics` will execute the posted events at the
       appropriate time
 
+   process
+      A system that associates a state vector with each node (and
+      possibly edge) in a network, and describes how they evolve over
+      time.
+
    process dynamics
       The simulation approach used, which selects how and when each
       :term:`event` fires. Process dynamics execute events in time
@@ -162,13 +167,20 @@ Glossary
       and are then Removed and take no further part in the dynamics.
 
    stochastic process
-      A process whose exact progression is determined by random
+      A :term:`process` whose exact progression is determined by random
       variables drawn from particular probability distributions.
 
    stochastic dynamics
       Also known as Gillespie dynamics, this :term:`process dynamics` operates
       in :term:`continuous time` with one event occurring at each time
       point.
+
+   synchronisation
+      A :term:`process` that places an oscillator on each node in a
+      network and allow them to interact. In many cases the intention
+      is to have the oscillators converge to a common phase; this can
+      be difficult to achieve, and gives rise to a huge set of
+      interesting possible dynamics.
 
    synchronous dynamics
       A :term:`process dynamics` using :term:`discrete time`, where a

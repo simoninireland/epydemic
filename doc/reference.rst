@@ -66,6 +66,7 @@ Other processes
    opinion
    sivr
    vaccinate
+   pulsecoupled
 
 
 Analysis processes

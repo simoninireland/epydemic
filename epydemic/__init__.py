@@ -93,6 +93,7 @@ from .shuffle import ShuffleK
 from .opinion_model import Opinion
 from .sivr_model import SIvR
 from .vaccinate_model import Vaccinate
+from .pulsecoupled import PulseCoupledOscillator
 
 # monitoring anmd summarisation processes
 from .monitor import Monitor
