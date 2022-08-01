@@ -20,7 +20,7 @@
 from math import exp, log
 from networkx import neighbors, complete_graph
 import sys
-from typing import Dict, Any
+from typing import Dict, Any, List
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
