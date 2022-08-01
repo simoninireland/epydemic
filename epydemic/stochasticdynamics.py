@@ -63,13 +63,9 @@ class StochasticDynamics(Dynamics):
                     # no pending events either, so we're done
                     break
                 else:
-                    # set the new simulation time
-                    t = et
-                    self.setCurrentSimulationTime(t)
-
                     # run the event
-                    events += self.runPendingEvents(t)
-
+                    events += self.runPendingEvents(et)
+                    t = et
             else:
                 # we have stochastic events to run
 
