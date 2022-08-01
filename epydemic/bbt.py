@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import Bitstream, Element, rng
-from typing import List, Tuple, Iterator, Optional
+from typing import Tuple, Iterator, Optional
+from epydemic import Element, rng
 
 
 class TreeNode():

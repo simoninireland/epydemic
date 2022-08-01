@@ -36,12 +36,12 @@ class AddDelete(Process):
     of the size of the network, and a fixed degree for added nodes.'''
 
     # parameters
-    P_ADD: Final[str] = "epydemic.addDelete.pAdd"        #: Parameter for the node addition probability
-    P_DELETE: Final[str] = "epydemic.addDelete.pDelete"  #: Parameter for the node deletion probability
-    DEGREE: Final[str] = "epydemic.addDelete.addDegree"  #: Degree of newly-added nodes
+    P_ADD: Final[str] = "epydemic.addDelete.pAdd"        #: Parameter for the node addition probability.
+    P_DELETE: Final[str] = "epydemic.addDelete.pDelete"  #: Parameter for the node deletion probability.
+    DEGREE: Final[str] = "epydemic.addDelete.addDegree"  #: Degree of newly-added nodes.
 
     # loci
-    NODES : Final[str] = "allnodes"       #: Name of the locus holding all nodes in the network
+    NODES: Final[str] = "allnodes"                       #: Name of the locus holding all nodes in the network.
 
     def __init__(self):
         super().__init__()
@@ -68,7 +68,7 @@ class AddDelete(Process):
         self.addFixedRateEvent(self.NODES, pAdd, self.add)
         self.addFixedRateEvent(self.NODES, pDelete, self.delete)
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         super().setUp(params)
 
         # add all nodes to the all-nodes locus

@@ -1,7 +1,7 @@
 # Helper types
 #
 # Copyright (C) 2017--2020 Simon Dobson
-# 
+#
 # This file is part of epydemic, epidemic network simulations in Python.
 #
 # epydemic is free software: you can redistribute it and/or modify
@@ -23,5 +23,3 @@ from typing import Union, Tuple, Any
 Node = Any                   #: A node in a network, which may be any object.
 Edge = Tuple[Node, Node]     #: An edge in a network, connecting exactly two nodes (which may be the same).
 Element = Union[Node, Edge]  #: An element in a simulation, either a node or an edge.
-
-

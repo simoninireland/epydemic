@@ -41,17 +41,17 @@ class ProcessSequence(Process):
     def __init__(self, ps: Union[List[Process], Dict[str, Process]]):
         if isinstance(ps, dict):
             # named processes
-            self._processes : List[Process] = list(cast(Dict[str, Process], ps).values())
-            self._processNames : Dict[str, Process] = ps
+            self._processes: List[Process] = list(cast(Dict[str, Process], ps).values())
+            self._processNames: Dict[str, Process] = ps
         else:
             # list of anonymous processes
-            self._processes : List[Process] = ps
-            self._processNames : Dict[str, Process] = None
+            self._processes: List[Process] = ps
+            self._processNames: Dict[str, Process] = None
         for p in self._processes:
             p.setContainer(self)
 
         # recursively find all the processes in the sequence
-        self._allProcesses : List[Process] = []
+        self._allProcesses: List[Process] = []
         for p in self._processes:
             self._allProcesses.extend(p.allProcesses())
 
@@ -143,7 +143,7 @@ class ProcessSequence(Process):
         for p in self.processes():
             p.tearDown()
 
-    def atEquilibrium(self, t : float):
+    def atEquilibrium(self, t: float):
         '''Test for equilibrium. A process sequence is at equilibrium if and when all
         its component processes are.
 

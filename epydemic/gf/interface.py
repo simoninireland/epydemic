@@ -17,13 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-import sys
-from typing import List, Callable, Union, cast
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    # backport compatibility with older typing
-    from typing_extensions import Final
+from typing import List, Callable
 from networkx import Graph
 from epydemic.gf import GF, DiscreteGF, ContinuousGF
 

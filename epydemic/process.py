@@ -318,9 +318,9 @@ class Process():
         """
         g = self.network()
         if n not in g:
-            raise Exception('No node {n} in network'.format(n = n))
+            raise Exception('No node {n} in network'.format(n=n))
         if m not in g:
-            raise Exception('No node {n} in network'.format(n = m))
+            raise Exception('No node {n} in network'.format(n=m))
         g.add_edge(n, m, **kwds)
 
     def addEdgesFrom(self, es: Iterable[Edge], **kwds):

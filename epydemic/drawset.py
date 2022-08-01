@@ -25,7 +25,7 @@ class DrawSet():
     '''A set re-implementation.
 
     This class provides a re-implementation of sets that also provides
-    an efficient (:math:`O(\log N)`) method for drawing an element at random.
+    an efficient (:math:`O(\\log N)`) method for drawing an element at random.
 
     We implement only those parts of the set API that we need: perhaps
     ought to add the rest, for future-proofing.

@@ -42,7 +42,7 @@ class SIRS(SIR):
     def __init__(self):
         super().__init__()
 
-    def build(self, params : Dict[str, Any]):
+    def build(self, params: Dict[str, Any]):
         '''Build the SIRS model.
 
         :param params: the model parameters'''
@@ -54,7 +54,7 @@ class SIRS(SIR):
 
         self.addEventPerElement(self.REMOVED, pResuscept, self.resuscept, self.RESUSCEPT)
 
-    def resuscept(self, t : float, n : Any):
+    def resuscept(self, t: float, n: Any):
         '''Perform a re-susceptibility event. This changes the compartment of
         the node from :attr:`REMOVED` to :attr:`SUSCEPTIBLE`.
 

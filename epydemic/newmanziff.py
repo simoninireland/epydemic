@@ -18,7 +18,6 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import NetworkExperiment, Node, Edge
-from epyc import Experiment, ResultsDict
 from networkx import Graph
 import numpy
 import sys
@@ -51,7 +50,7 @@ class NewmanZiff(NetworkExperiment):
         # components data structure is initially empty
         self._components: numpy.ndarray = None
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         '''Set up the process.
 
         :param params: the experimental parameters'''
@@ -66,7 +65,7 @@ class NewmanZiff(NetworkExperiment):
         self._components = None
         super().tearDown()
 
-    def rootOf(self, n : Node) -> Node:
+    def rootOf(self, n: Node) -> Node:
         '''Return the root of the component containing node n, updating
         the tree accordingly.
 
@@ -86,7 +85,7 @@ class NewmanZiff(NetworkExperiment):
             # return the root
             return r
 
-    def join(self, c1 : Node, c2 : Node) -> int:
+    def join(self, c1: Node, c2: Node) -> int:
         '''Join two components (as represented by their roots), returning
         the size of the combined component. The root of the combined
         component is c1.
@@ -194,10 +193,10 @@ class BondPercolation(NewmanZiff):
     P: Final[str] = 'epydemic.bondpercolation.pOccupied'     #: Result holding series of percolation values.
     GCC: Final[str] = 'epydemic.bondpercolation.gcc'         #: Result holding sizes of largest component.
 
-    def __init__(self, g : Graph = None, samples : Union[int, Iterable[float]] = None):
+    def __init__(self, g: Graph = None, samples: Union[int, Iterable[float]] = None):
         super().__init__(g, samples)
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         '''Set up the process, creating the initial components data structure from the
         underlying network.
 
@@ -208,7 +207,7 @@ class BondPercolation(NewmanZiff):
         self._gcc = 1           # all nodes are individual components, unconnected by occupied edges
         self._ncomponents = N
 
-    def occupy(self, n : Node, m : Node) -> Optional[int]:
+    def occupy(self, n: Node, m: Node) -> Optional[int]:
         '''Occupy an edge. If this causes two components to be joined,
         update the GCC and return the size of the new component; otherwise
         return None.
@@ -234,7 +233,7 @@ class BondPercolation(NewmanZiff):
             # no new component was formed
             return None
 
-    def sample(self, p : float) -> Dict[str, Any]:
+    def sample(self, p: float) -> Dict[str, Any]:
         '''Take a sample. The default samples the size of the GCC.
 
         :param p: the current occupation probability
@@ -244,7 +243,7 @@ class BondPercolation(NewmanZiff):
         res[self.GCC] = self._gcc
         return res
 
-    def percolate(self, es : List[Edge]):
+    def percolate(self, es: List[Edge]):
         '''Perform the bond percolation process. This runs through the
         list of edges, occupying them and taking samples of the occupied
         network's statistics at the requested sample points. The samples
@@ -269,7 +268,7 @@ class BondPercolation(NewmanZiff):
             self.occupy(n, m)
 
             # take a sample if this is a sample point
-            if  (i + 1) / M >= self._samplepoints[samplePoint]:
+            if (i + 1) / M >= self._samplepoints[samplePoint]:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
                 self._samples.append(self.sample(self._samplepoints[samplePoint]))
@@ -279,7 +278,7 @@ class BondPercolation(NewmanZiff):
                 if samplePoint > len(self._samplepoints):
                     break
 
-    def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
+    def do(self, params: Dict[str, Any]) -> List[Dict[str, Any]]:
         '''Perform the percolation process. This passes a permuted
         list of edges to :meth:`NewmanZiff.percolate`, which performs
         the actual operation.
@@ -314,10 +313,10 @@ class SitePercolation(NewmanZiff):
     P: Final[str] = 'epydemic.sitepercolation.pOccupied'    #: Result holding sequence of percolation values.
     GCC: Final[str] = 'epydemic.sitepercolation.gcc'        #: Result holding sizes of largest component.
 
-    def __init__(self, g : Graph = None, samples : Union[int, Iterable[float]] = None):
+    def __init__(self, g: Graph = None, samples: Union[int, Iterable[float]] = None):
         super().__init__(g, samples)
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         '''Set up the process, creating the initial components data structure from the
         underlying network.
 
@@ -353,7 +352,7 @@ class SitePercolation(NewmanZiff):
         else:
             return super().inLargestComponent(n)
 
-    def occupy(self, nr : Node) -> int:
+    def occupy(self, nr: Node) -> int:
         '''Occupy a node, which is then joined to all adjacent occupied nodes.
         This will update the GCC and return the size of the new component.
 
@@ -384,7 +383,7 @@ class SitePercolation(NewmanZiff):
         # return the new component size
         return csize
 
-    def sample(self, p : float) -> Dict[str, Any]:
+    def sample(self, p: float) -> Dict[str, Any]:
         '''Take a sample. The default samples the size of the GCC.
 
         :param p: the current occupation probability
@@ -394,7 +393,7 @@ class SitePercolation(NewmanZiff):
         res[self.GCC] = self._gcc
         return res
 
-    def percolate(self, ns : List[Node]):
+    def percolate(self, ns: List[Node]):
         '''Perform the site percolation process. This runs through the
         list of nodes, occupying them and taking samples of the occupied
         network's statistics at the requested sample points. The samples
@@ -419,7 +418,7 @@ class SitePercolation(NewmanZiff):
             self.occupy(n)
 
             # take a sample if this is a sample point
-            if  (i + 1) / N >= self._samplepoints[samplePoint]:
+            if (i + 1) / N >= self._samplepoints[samplePoint]:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
                 self._samples.append(self.sample(self._samplepoints[samplePoint]))
@@ -429,7 +428,7 @@ class SitePercolation(NewmanZiff):
                 if samplePoint > len(self._samplepoints):
                     break
 
-    def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
+    def do(self, params: Dict[str, Any]) -> List[Dict[str, Any]]:
         '''Perform the percolation process. This passes a permuted
         list of nodes to :meth:`NewmanZiff.percolate`, which performs
         the actual operation.

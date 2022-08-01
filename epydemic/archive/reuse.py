@@ -20,11 +20,6 @@
 import sys
 from networkx import Graph
 from typing import Any, Dict, List, Tuple
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    # backport compatibility with older typing
-    from typing_extensions import Final
 from epydemic import NetworkGenerator
 from epydemicarchive.api.v1.client import Archive
 

@@ -19,8 +19,7 @@
 
 from copy import copy
 from typing import Dict, Any, Iterator
-from networkx import get_edge_attributes
-from epydemic import Process, CompartmentedModel, SIR, rng, Locus, Element, EventDistribution
+from epydemic import Process, CompartmentedModel, SIR, rng, Element, EventDistribution
 
 
 class SingletonLocus:
@@ -109,7 +108,7 @@ class SIR_VariableInfection(SIR):
         uniformly on the range :math:`[0.0, 1.0]`. Sub-classes may override this
         to provide different distributions.'''
         g = self.network()
-        for(_, _, data) in g.edges(data=True):
+        for (_, _, data) in g.edges(data=True):
             i = rng.random()
             data[self.INFECTIVITY] = i
 

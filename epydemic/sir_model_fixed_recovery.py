@@ -40,7 +40,7 @@ class SIR_FixedRecovery(SIR):
     def __init__(self):
         super().__init__()
 
-    def build(self, params : Dict[str, Any]):
+    def build(self, params: Dict[str, Any]):
         '''Build the variant SIR model. The difference between this and the
         reference :class:`SIR` model is that only infection events happen
         probabilistically, with removal events happening on a fixed schedule
@@ -58,7 +58,7 @@ class SIR_FixedRecovery(SIR):
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
         self.addFixedRateEvent(self.SI, pInfect, self.infect, name=self.INFECTED)
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         '''After setting up as normal, post remove events for any nodes that are
         initially infected.
 
@@ -75,7 +75,7 @@ class SIR_FixedRecovery(SIR):
             # post the corresponding removal event
             self.postEvent(tInfected, n, self.remove, name=self.REMOVED)
 
-    def infect(self, t : float, e : Any):
+    def infect(self, t: float, e: Any):
         '''Perform the normal infection event, and then post an event to remove the
         infected node at the appropriate time.
 

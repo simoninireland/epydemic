@@ -19,14 +19,13 @@
 
 import sys
 from networkx import Graph
+from typing import Dict, Any, Optional, Iterator
 if sys.version_info >= (3, 8):
-    from typing import Dict, Any, Optional, Iterator, Final, cast
+    from typing import Final
 else:
     # backport compatibility with older typing
-    from typing import Dict, Any, Optional, Iterator
     from typing_extensions import Final
 
-from typing import Dict, Any, Optional, cast
 
 class NetworkGenerator(object):
     '''An object that generates instances of networks on demand.

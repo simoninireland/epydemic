@@ -17,18 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import NetworkGenerator, rng
+import sys
 from networkx import Graph, configuration_model
 from math import exp
 from mpmath import polylog
-import numpy
-import sys
+from typing import Any, Dict, Optional, Callable
 if sys.version_info >= (3, 8):
-    from typing import Any, Dict, Optional, Callable, Final
+    from typing import Final
 else:
     # backport compatibility with older typing
-    from typing import Any, Dict, Optional, Callable
     from typing_extensions import Final
+from epydemic import NetworkGenerator, rng
 
 
 class PLCNetwork(NetworkGenerator):
@@ -70,8 +69,10 @@ class PLCNetwork(NetworkGenerator):
         :param kappa: the degree cutoff
         :returns: a model function'''
         C = polylog(alpha, exp(-1.0 / kappa))
+
         def p(k: int) -> float:
             return (pow((k + 0.0), -alpha) * exp(-(k + 0.0) / kappa)) / C
+
         return p
 
     def _generateFrom(self, N: int, p: Callable[[int], float], maxdeg: int = 100):

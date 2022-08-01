@@ -40,7 +40,7 @@ class SIS_FixedRecovery(SIS):
     def __init__(self):
         super().__init__()
 
-    def build(self, params : Dict[str, Any]):
+    def build(self, params: Dict[str, Any]):
         '''Build the variant SIS model. The difference between this and the
         reference :class:`SIS` model is that only infection events happen
         probabilistically, with recovery events happening on a fixed schedule
@@ -57,7 +57,7 @@ class SIS_FixedRecovery(SIS):
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
         self.addEventPerElement(self.SI, pInfect, self.infect, name=self.INFECTED)
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         '''After setting up as normal, post recovery events for any nodes that are
         initially infected.
 
@@ -74,7 +74,7 @@ class SIS_FixedRecovery(SIS):
             # post the corresponding removal event
             self.postEvent(tInfected, n, self.recover, name=self.RECOVERED)
 
-    def infect( self, t : float, e : Any):
+    def infect(self, t: float, e: Any):
         '''Perform the normal infection event, and then post an event to recover
         the infected node back to susceptible at the appropriate time.
 

@@ -18,7 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from math import exp, log
-from networkx import neighbors, complete_graph
+from networkx import neighbors
 import sys
 from typing import Dict, Any, List
 if sys.version_info >= (3, 8):
@@ -26,7 +26,7 @@ if sys.version_info >= (3, 8):
 else:
     # backport compatibility with older typing
     from typing_extensions import Final
-from epydemic import rng, Process, Node, Element
+from epydemic import rng, Process, Node
 
 
 class PulseCoupledOscillator(Process):
@@ -42,7 +42,7 @@ class PulseCoupledOscillator(Process):
     When the state reaches 1 the node is triggered and fires -- for
     example by emitting a pulse of light -- and resets its state and
     phase to 0. On observing such a pulse, each other node advances
-    its own state by some amount :math:`\epsilon`. If this takes the node's
+    its own state by some amount :math:`\\epsilon`. If this takes the node's
     state above 1, then it too resets its phase and state to 0, and is
     henceforth synchronised with the node that triggered it; otherwise
     the node's phase is advanced to match its new state.
@@ -108,7 +108,7 @@ class PulseCoupledOscillator(Process):
 
         :param phi: the phase
         :returns: the normalised phase'''
-        return  max(min(round(phi, self.PHASE_PRECISION), 1.0), 0.0)
+        return max(min(round(phi, self.PHASE_PRECISION), 1.0), 0.0)
 
     def getFiringTime(self, n: Node):
         '''Get the next firing time of a node.
@@ -138,7 +138,7 @@ class PulseCoupledOscillator(Process):
         # add a new firing event
         g.nodes[n][self.NODE_EVENT_ID] = self.postEvent(round(et, self.PHASE_PRECISION), n, self.fired, name=self.FIRED)
 
-    def getPhase(self, t: float , n: Node, normalise: bool = False) -> float:
+    def getPhase(self, t: float, n: Node, normalise: bool = False) -> float:
         '''Get the phase of a node. This is computed by working back
         from the next-scheduled firing time.
 
@@ -153,7 +153,6 @@ class PulseCoupledOscillator(Process):
         :param m: the node
         :param normalise: (optional) if True, combine phases of 0.0 and 1.0 (defaults to False)
         :returns: the current phase'''
-        g = self.network()
 
         # get the time at which we're supposed to fire next
         oldTime = self.getFiringTime(n)
@@ -194,7 +193,7 @@ class PulseCoupledOscillator(Process):
 
         :param phi: the phase
         :returns: the state'''
-        return (1 / self._b) * log (1 + (exp(self._b) - 1) * phi)
+        return (1 / self._b) * log(1 + (exp(self._b) - 1) * phi)
 
     def stateToPhase(self, u: float) -> float:      # g (2.14)
         '''Convert a state to the corresponding phase (function

@@ -17,18 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-import os
-from tempfile import NamedTemporaryFile
-import sys
-import json
 from datetime import datetime
-from networkx import Graph, write_adjlist
+from networkx import Graph
 from typing import Any, Dict, List
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    # backport compatibility with older typing
-    from typing_extensions import Final
 from epydemic import NetworkGenerator
 from epydemicarchive.api.v1.client import Archive
 

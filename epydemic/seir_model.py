@@ -69,7 +69,7 @@ class SEIR(CompartmentedModel):
     def __init__(self):
         super().__init__()
 
-    def build(self, params : Dict[str, Any]):
+    def build(self, params: Dict[str, Any]):
         '''Build the SEIR model.
 
         :param params: the model parameters'''

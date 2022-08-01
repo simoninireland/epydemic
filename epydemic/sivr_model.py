@@ -19,7 +19,6 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-import numpy                     # type: ignore
 from typing import Dict, Any
 if sys.version_info >= (3, 8):
     from typing import Final
@@ -52,16 +51,16 @@ class SIvR(SIR):
     """
 
     # Experimental parameters
-    EFFICACY : Final[str] = 'epydemic.SIvR.pEfficacy'   #: Experimental parameter for vaccine efficacy.
-    T_OFFSET : Final[str] = 'epydemic.SIvR.tOffset'     #: Experimental parameter for delay in applying vaccine.
+    EFFICACY: Final[str] = 'epydemic.SIvR.pEfficacy'   #: Experimental parameter for vaccine efficacy.
+    T_OFFSET: Final[str] = 'epydemic.SIvR.tOffset'     #: Experimental parameter for delay in applying vaccine.
 
     # Loci
-    INFECTED_N : Final[str] = 'epydemic.SIvR.In'        #: Tracker for infected unvaccinated nodes.
-    INFECTED_V : Final[str] = 'epydemic.SIvR.Iv'        #: Tracker for infected vaccinated nodes.
+    INFECTED_N: Final[str] = 'epydemic.SIvR.In'        #: Tracker for infected unvaccinated nodes.
+    INFECTED_V: Final[str] = 'epydemic.SIvR.Iv'        #: Tracker for infected vaccinated nodes.
 
     # Node attributes
-    VACCINATED : Final[str] = 'vaccincated'             #: Node attribute storing vaccine status.
-    VACCINATION_TIME : Final[str] = 'vaccination_time'  #: Node attribute for vaccination time..
+    VACCINATED: Final[str] = 'vaccincated'             #: Node attribute storing vaccine status.
+    VACCINATION_TIME: Final[str] = 'vaccination_time'  #: Node attribute for vaccination time..
 
 
     # ---------- Managing vaccination data ----------

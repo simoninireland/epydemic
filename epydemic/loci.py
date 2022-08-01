@@ -19,7 +19,6 @@
 
 from epydemic import Element, DrawSet, Process
 from networkx import Graph
-from typing import Iterator
 
 
 class Locus(DrawSet):

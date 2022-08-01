@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from typing import Union, Dict, List,Any, cast
+from typing import Union, Dict, Any, cast
 from networkx import Graph
 from epyc import Experiment
-from epydemic import NetworkGenerator, FixedNetwork, Element
+from epydemic import NetworkGenerator, FixedNetwork
 
 
 class NetworkExperiment(Experiment):

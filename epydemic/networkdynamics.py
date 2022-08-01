@@ -165,7 +165,7 @@ class Dynamics(NetworkExperiment):
         :param l: the locus (defaults to a simple set-based locus)
         :returns: the locus"""
         if n in self._loci.keys():
-            raise Exception("Locus {n} already exists in the simulation".format(n = n))
+            raise Exception("Locus {n} already exists in the simulation".format(n=n))
 
         # store locus by name
         if l is None:
@@ -365,7 +365,7 @@ class Dynamics(NetworkExperiment):
 
         :poram id: the event
         :returns: the event's posted simulation time'''
-        (et, _, _, _, _, _)  = self._postedEventFinder[id]
+        (et, _, _, _, _, _) = self._postedEventFinder[id]
         return et
 
     def _discardUnpostedEvents(self):
@@ -374,7 +374,7 @@ class Dynamics(NetworkExperiment):
         posted event queue (if there is one) is guaranteed to be "real".'''
         while len(self._postedEvents) > 0:
             (_, id, _, ef, _, _) = self._postedEvents[0]
-            if ef == None:
+            if ef is None:
                 # the head event has been unposted, discard it
                 heappop(self._postedEvents)
             else:
@@ -478,7 +478,7 @@ class Dynamics(NetworkExperiment):
         :param res: the experimental results'''
         pass
 
-    def eventFired(self, t: float, p: Process, name: str, e : Element):
+    def eventFired(self, t: float, p: Process, name: str, e: Element):
         '''Respond to the occurrance of the given event. The method is
         passed the simulation time, originating process, event name,
         and the element affected -- and isn't passed the event
