@@ -166,6 +166,13 @@ Glossary
       Susceptible to the disease, to Infected and able to infect others,
       and are then Removed and take no further part in the dynamics.
 
+   stochastic event
+      An :term:`event` whose occurrence is determined by a
+      probability distribution. In a  :term:`compartmented model of
+      disease`, for example, the passage of an infection over an edge
+      is a stochastic event, the rate and location of which are
+      determined according to the distribution of infections.
+
    stochastic process
       A :term:`process` whose exact progression is determined by random
       variables drawn from particular probability distributions.
