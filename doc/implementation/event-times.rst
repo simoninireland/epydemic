@@ -43,7 +43,7 @@ errors affect us.
 
 There are two places we could implement this:
 
-1. locally, within the :class:`PulseCOupledOscillator` class, by
+1. locally, within the :class:`PulseCoupledOscillator` class, by
    quantising the values we use for phases; or
 2. globally, within the :class:`Dynamics` class, to only allowe event
    times to happen to a given precision.
