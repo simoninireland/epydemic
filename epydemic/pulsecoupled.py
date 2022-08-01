@@ -207,7 +207,7 @@ class PulseCoupledOscillator(Process):
     def bumpPhase(self, phi: float) -> float:       # h (2.1)
         '''Advance the phase and state of a node after it has observed
         a firing (the "return map" function :math:`h` in :cite:`MirolloStrogatz`).
-        By default this incremenbts the state by the value given in the
+        By default this increments the state by the value given in the
         :attr:`COUPLING` parameter.
 
         :param phi: the phase
