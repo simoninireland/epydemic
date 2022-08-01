@@ -42,8 +42,8 @@ Reference epidemic disease processes
    seir
 
 
-Process variants
-----------------
+Disease process variants
+------------------------
 
 .. toctree::
    :maxdepth: 2
