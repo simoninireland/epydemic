@@ -109,11 +109,12 @@ its own devices, without being updated).
 .. automethod:: PulseCoupledOscillator.getFiringTime
 
 It is important to manage the phase carefully to avoid numerical
-instability caused by unrestricted use of floating-point
-operations. Phases are kept in the range :math:`[0.0, 1.0]` and held
-to a fixed numerical precision defined by :attr:`PHASE_PRECISION`.
-(See :ref:`the implementation note on event times
-<implementation-event-times>` for a discussion of this.)
+instability caused by unrestricted use of floating-point operations.
+Phases are kept in the range :math:`[0.0, 1.0]` and held to a fixed
+numerical precision defined by
+:attr:`PulseCoupledOscillator.PHASE_PRECISION`. (See :ref:`the
+implementation note on event times <implementation-event-times>` for a
+discussion of this.)
 
 .. automethod:: PulseCoupledOscillator.normalisePhase
 
