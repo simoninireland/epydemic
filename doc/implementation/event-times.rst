@@ -17,7 +17,7 @@ can cause some hard-to-find bugs where two values that "should" be
 equal aren't within the implementation. Normally all we require of two
 simulation times is that we can determine whether one happens before
 the other, and there is no enormous problem if rounding causes two
-times to be swapped.
+times to be swapped (or indeed made equal).
 
 However, if we perform more complex and more essential calculations
 with event times, we may find ourselves trying to determine more than
@@ -28,10 +28,10 @@ This situation arises in the implementation of :ref:`pulse-coupled
 oscillators <pulsecoupled>` Each oscillator has an associated phase, a
 state, and a posted event that will cause it to fire when its state
 next hits 1. Rather than store phase and state explicitly, we compute
-them from the event time. This means we don;t run the risk of the
-three values becoming inconsistent; it also means that we need to
-calculate with, and test equality on, event times. At this point we
-may observe rounding errors.
+them from the event time. This means we don't run the risk of the
+three values becoming inconsistent; however, it also means that we
+need to calculate with, and test equality on, event times. So not just
+an ordering. At this point we may observe rounding errors.
 
 There is a simple solution to this problem. Rather than use the full
 generality of floating-point numbers for phases and event times, we
@@ -50,8 +50,8 @@ There are two places we could implement this:
 
 We've chosen the former as a simpler and less burdensome approach,
 encapsulated within the :meth:`PulseCoupledOscillator.normalisePhase`
-method.. This might turn out hot to have been the right choice, and if
-more situations arise in which unrestricted event times cause problems
-we may change to the latter. In the meantime, if you find yourself
-interacting with event times, please be careful about the numerical
-precision..
+method. This might turn out not to have been the right choice in the
+long run, and if more situations arise in which unrestricted event
+times cause problems we may change to the latter. In the meantime, if
+you find yourself interacting with event times, please be careful
+about the numerical precision.
