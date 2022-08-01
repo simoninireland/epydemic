@@ -28,8 +28,11 @@ VERSION = 1.12.1
 
 # Source code
 SOURCES_SETUP_IN = setup.py.in
-SOURCES_CODE = \
+SOURCES_CODE_INIT = \
 	epydemic/__init__.py \
+	epydemic/gf/__init__.py \
+	epydemic/archive/__init__.py
+SOURCES_CODE = \
 	epydemic/types.py \
 	epydemic/bitstream.py \
 	epydemic/bbt.py \
@@ -62,17 +65,15 @@ SOURCES_CODE = \
 	epydemic/vaccinate_model.py \
 	epydemic/sivr_model.py \
 	epydemic/pulsecoupled.py \
-	epydemic/gf/__init__.py \
 	epydemic/gf/gf.py \
 	epydemic/gf/function_gf.py \
 	epydemic/gf/discrete_gf.py \
 	epydemic/gf/continuous_gf.py \
 	epydemic/gf/interface.py \
 	epydemic/gf/standard_gfs.py \
-	epydemic/archive/__init__.py \
 	epydemic/archive/builder.py
+SOURCES_TESTS_INIT = test/__init__.py
 SOURCES_TESTS = \
-	test/__init__.py \
 	test/test_bitstream.py \
 	test/test_networkdynamics.py \
 	test/test_stochasticrates.py \
@@ -220,6 +221,7 @@ TOX = tox
 COVERAGE = coverage
 PIP = pip
 TWINE = twine
+FLAKE8 = flake8
 GPG = gpg
 GIT = git
 ETAGS = etags
@@ -278,6 +280,10 @@ test: env Makefile setup.py
 # Run coverage checks over the test suite
 coverage: env
 	$(ACTIVATE) && $(RUN_COVERAGE)
+
+# Run lint checks
+lint: env
+	$(ACTIVATE) && $(FLAKE8) $(SOURCES_CODE) --count --statistics --ignore=E501,E303,E301,E302,E261,E741,E265,E402
 
 # Build the API documentation using Sphinx
 .PHONY: doc
@@ -368,6 +374,7 @@ define HELP_MESSAGE
 Available targets:
    make test         run the test suite for all Python versions we support
    make coverage     run coverage checks of the test suite
+   make lint         run lint style checks
    make tags         build the TAGS file
    make doc          build the API documentation using Sphinx
    make diagrams     create the diagrams for the API documentation
