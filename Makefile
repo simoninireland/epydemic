@@ -141,6 +141,7 @@ SOURCES_DOCUMENTATION = \
 	doc/shuffle.rst \
 	doc/processsequence.rst \
 	doc/newmanziff.rst  \
+	doc/pulsecoupled.rst \
 	doc/gf.rst \
 	doc/standard-gfs.rst \
 	doc/tutorial.rst \
