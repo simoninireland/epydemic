@@ -34,7 +34,6 @@ SOURCES_CODE_INIT = \
 	epydemic/archive/__init__.py
 SOURCES_CODE = \
 	epydemic/types.py \
-	epydemic/bitstream.py \
 	epydemic/bbt.py \
 	epydemic/drawset.py \
 	epydemic/networkexperiment.py \
