@@ -192,6 +192,15 @@ class PulseCoupledTest(unittest.TestCase):
             for i in range(1, len(ss)):
                 self.assertLessEqual(ss[i], ss[i -1])
 
+    def testSyncDiscreteTime(self):
+        '''Test that we synchronise when evaluated in discrete time.'''
+        self._e = SynchronousDynamics(self._p, FixedNetwork(self._g))
+
+        self._lab.runExperiment(self._e)
+        df = self._lab.dataframe()
+        for phis in df[PulseCoupledOscillator.PHASES]:
+            for phi in phis[1:]:
+                self.assertEqual(phi, phis[0])
 
 if __name__ == '__main__':
     unittest.main()
