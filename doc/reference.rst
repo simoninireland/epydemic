@@ -61,12 +61,12 @@ Other processes
    :maxdepth: 2
 
    adddelete
+   pulsecoupled
    percolate
    shuffle
    opinion
    sivr
    vaccinate
-   pulsecoupled
 
 
 Analysis processes
