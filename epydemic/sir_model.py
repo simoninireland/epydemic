@@ -1,6 +1,6 @@
 # SIR as a compartmented model
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2022 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
