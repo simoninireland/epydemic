@@ -206,6 +206,7 @@ SOURCES_EXTRA = \
 	CONTRIBUTING.rst
 SOURCES_GENERATED = \
 	MANIFEST \
+	TAGS \
 	setup.py
 
 # Distribution files
@@ -268,10 +269,6 @@ RUN_JOSS_PREVIEW = docker run --rm --volume $(ROOT):/data --user $(id -u):$(id -
 help:
 	@make usage
 
-# Build the tags file
-tags:
-	$(ETAGS) -o TAGS $(SOURCES_CODE) $(SOURCES_TESTS)
-
 # Run tests for all versions of Python we're interested in
 test: env Makefile setup.py
 	$(ACTIVATE) && $(RUN_TESTS)
@@ -299,25 +296,27 @@ $(VENV):
 	$(ACTIVATE) && $(PIP) install -U pip wheel && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
 	$(ACTIVATE) && mypy --install-types --non-interactive
 
+# Make a new release
+release: $(SOURCES_GENERATED) master-only lint commit sdist wheel upload
+
 # Build a source distribution
 sdist: $(DIST_SDIST)
 
 # Build a wheel distribution
 wheel: $(DIST_WHEEL)
 
-# Make a new release
-release: master-only lint commit sdist wheel upload
-
 # Upload a source distribution to PyPi
 upload:
 	$(GPG) --detach-sign -a dist/$(PACKAGENAME)-$(VERSION).tar.gz
 	$(ACTIVATE) && $(RUN_TWINE)
 
-# Check we're on the master branch befoire uploading
+# Check we're on the master branch before uploading
 master-only:
-	if [ "$(GIT_BRANCH)" != "master" ]; then echo "Can only upload from master branch"; exit 1; fi
+	if [ "$(GIT_BRANCH)" != "master" ]; then echo "Can only release from master branch"; exit 1; fi
 
 # Update the remote repos on release
+# (This will trigger .github/workflows/release.yaml to create a GitHib release, and
+# .github/workflows/ci.yaml to run the full integrationm test suite)
 commit: check-local-repo-clean
 	$(GIT) push origin master
 	$(GIT) tag -a v$(VERSION) -m "Version $(VERSION)"
@@ -352,37 +351,37 @@ reallyclean: clean
 
 # Manifest for the package
 MANIFEST: Makefile
-	echo  $(SOURCES_EXTRA) $(SOURCES_GENERATED) $(SOURCES_CODE) | $(TR) ' ' '\n' >$@
+	echo $(SOURCES_EXTRA) $(SOURCES_GENERATED) $(SOURCES_CODE_INIT) $(SOURCES_CODE) | $(TR) ' ' '\n' >$@
 
 # The setup.py script
 setup.py: $(SOURCES_SETUP_IN) $(REQUIREMENTS) Makefile
 	$(CAT) $(SOURCES_SETUP_IN) | $(SED) -e 's|VERSION|$(VERSION)|g' -e 's|REQUIREMENTS|$(PY_REQUIREMENTS)|g' >$@
 
 # The source distribution tarball
-$(DIST_SDIST): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
+$(DIST_SDIST): $(SOURCES_GENERATED) $(SOURCES_CODE_INIT) $(SOURCES_CODE) Makefile
 	$(ACTIVATE) && $(RUN_SETUP) sdist
 
 # The binary (wheel) distribution
-$(DIST_WHEEL): $(SOURCES_GENERATED) $(SOURCES_CODE) Makefile
+$(DIST_WHEEL): $(SOURCES_GENERATED) $(SOURCES_CODE_INIT) $(SOURCES_CODE) Makefile
 	$(ACTIVATE) && $(RUN_SETUP) bdist_wheel
+
+# The tags file
+TAGS:
+	$(ETAGS) -o TAGS $(SOURCES_CODE)
+
 
 
 # ----- Usage -----
 
 define HELP_MESSAGE
 Available targets:
-   make test         run the test suite for all Python versions we support
+   make test         run the test suite
+   make env          create a development virtual environment
    make coverage     run coverage checks of the test suite
    make lint         run lint style checks
-   make tags         build the TAGS file
    make doc          build the API documentation using Sphinx
    make diagrams     create the diagrams for the API documentation
-   make joss-paper   preview the JOSS paper on epydemic (uses docker)
-   make env          create a development virtual environment
-   make sdist        create a source distribution
-   make wheel        create binary (wheel) distribution
-   make release      make a release
-   make upload       upload distribution to PyPi
+   make release      make a release and upload to PyPi
    make clean        clean-up the build
    make reallyclean  clean up the virtualenv as well
 
