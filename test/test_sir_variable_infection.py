@@ -51,7 +51,7 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
         self.assertEqual(rc[SIR.SUSCEPTIBLE] + rc[SIR.REMOVED], self._network.order())
 
     def testConstantInfection(self):
-        '''Test we get the same results under standard and variable infection when the infection is constant.'''
+        '''Test we get consistent results under standard and variable infection when the infection is constant.'''
 
         # under ordinary SIR
         e = StochasticDynamics(SIR(), self._network)
@@ -80,7 +80,8 @@ class SIRTest(unittest.TestCase, CompartmentedDynamicsTest):
 
         # check consistency
         self.assertAlmostEqual(rc_basic[epyc.Experiment.RESULTS][SIR.REMOVED],
-                               rc_var[epyc.Experiment.RESULTS][SIR.REMOVED], delta=5)
+                               rc_var[epyc.Experiment.RESULTS][SIR.REMOVED],
+                               delta=int(self._network.order() * 0.05))  # within 5% difference
 
 
 if __name__ == '__main__':
