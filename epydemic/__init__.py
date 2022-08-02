@@ -53,7 +53,6 @@ rng = default_rng()
 
 # helper types
 from .types import Node, Edge, Element
-from .bitstream import Bitstream
 from .bbt import TreeNode
 from .drawset import DrawSet
 
