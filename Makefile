@@ -306,7 +306,7 @@ sdist: $(DIST_SDIST)
 wheel: $(DIST_WHEEL)
 
 # Make a new release
-release: master-only commit sdist wheel upload
+release: master-only lint commit sdist wheel upload
 
 # Upload a source distribution to PyPi
 upload:
