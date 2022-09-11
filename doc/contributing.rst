@@ -49,9 +49,10 @@ Please don't neglect the tests. We use continuous integration for
 features provide automated unit tests. Please also don't neglect
 documentation, and remember that docstrings aren't enough on their own.
 
-We use the `Python black coding style <https://pypi.org/project/black/>`_,
-and it'd be helpful if any pulled code did the same. We use type
-annotations to improve maintainability.
+We use the `Python Black coding style <https://pypi.org/project/black/>`_,
+and it'd be helpful if any pulled code did the same. We use
+`type annotations <https://docs.python.org/3/library/typing.html>`_ to
+improve maintainability.
 
 
 Installing the codebase
