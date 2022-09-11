@@ -60,48 +60,54 @@ on a single machine or in the cloud.
 Features
 --------
 
-* Compatible with Python 3.6 and later, as well as with PyPy3
+- Compatible with Python 3.6 and later, as well as with PyPy3
 
-* Internal data structures optimised for performance at large scales
+- Internal data structures optimised for performance at large scales
 
-* Supports both discrete-time :term:`synchronous dynamics` and
+- Supports both discrete-time :term:`synchronous dynamics` and
   continuous-time :term:`stochastic dynamics` (Gillespie) simulation
 
-* All details of network processes encapsulated in a single class
+- All details of network processes encapsulated in a single class
 
-* Uses ``networkx`` for representing disease networks, allowing random
+- Uses ``networkx`` for representing disease networks, allowing random
   networks to be generated easily and real networks to be imported
   from outside sources
 
-* Support for a generic :term:`compartmented model of disease`,
+- Support for a generic :term:`compartmented model of disease`,
   allowing complex and custom diseases to be described
 
-* Susceptible-Infected-Removed (:term:`SIR`),
+- Susceptible-Infected-Removed (:term:`SIR`),
   Susceptible-Infected-Susceptible (:term:`SIS`),
   and Susceptible-Exposed-Infected-Susceptible (:term:`SEIR`)
   models built-in, with variations
 
-* Opinion dynamics to model the spread of rumours
+- Opinion dynamics to model the spread of rumours
 
-* Vaccination models that reduce infection in vaccinated
+- Vaccination models that reduce infection in vaccinated
   sub-populations, and allow those populations to change as the result
   of anti-vaccination rumours
 
-* Addition-deletion process to model natural birth and death
+- Addition-deletion process to model natural birth and death
 
-* An implementation of the Newman-Ziff algorithm for studying
+- Pulse-coupled synchronisation process to explore the behaviour of
+  coupled oscillators and similar systems.
+
+- An implementation of the Newman-Ziff algorithm for studying
   :term:`percolation`
 
-* Includes a library for working with :term:`generating functions`, as
+- Includes a library for working with :term:`generating functions`, as
   used in many research papers in network science
 
-* Integrated with ``epyc``'s :ref:`labs <epyc:lab-class>` and
+- Integrated with ``epyc``'s :ref:`labs <epyc:lab-class>` and
   :ref:`experiments <epyc:experiment-class>`, including execution
   in parallel on compute clusters for doing simulations at scale
 
-* Fully compatible with ``jupyter`` notebooks and labs
+- Fully compatible with ``jupyter`` notebooks and labs
 
-* Annotated with ``typing`` type annotations
+- Annotated with ``typing`` type annotations
+
+- Assorted notes and recipes on the implementation of epidemic process
+  simulations
 
 
 .. toctree::
