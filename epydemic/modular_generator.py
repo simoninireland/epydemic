@@ -32,7 +32,7 @@ from epydemic import rng, NetworkGenerator
 
 class ModularNetwork(NetworkGenerator):
     '''A generator of modular ER networks as described by
-    :cite:`H\'bert-Dufresne and Allard <PercolationSmearedPhaseTransition>`.
+    Hebert-Dufresne and Allard :cite:`PercolationSmearedPhaseTransition`.
     These consist of several ER networks, a "core" and several "satellites",
     having different sizes and edge densities, with each satellite linked
     to the core by a single edge.
@@ -49,8 +49,8 @@ class ModularNetwork(NetworkGenerator):
     PHI_sat: Final[str] = 'modular.satellite.phi-sat'  #: Experimental parameter holding the edge probability of the satellite networks.
 
     # Node attributes
-    ORIGIN: Final[str] = "origin"                      #: State variable holding a node's network of origin (0 being the core).
-    CENTRE_LINK: Final[str] = "centre-link"            #: State variable that is True for nodes that are the endpoints of links from satellite to core.
+    ORIGIN: Final[str] = "origin"                      #: State variable holding a node's network of origin (0 being the core, other indices being the satellites).
+    CENTRE_LINK: Final[str] = "centre-link"            #: State variable that is True for nodes that are the endpoints of links from a satellite to the core.
 
 
     def topology(self) -> str:

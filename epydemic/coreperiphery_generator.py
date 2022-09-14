@@ -32,7 +32,7 @@ from epydemic import rng, NetworkGenerator
 
 class CorePeripheryNetwork(NetworkGenerator):
     '''A generator of core-periphery networks as described by
-    :cite:`H\'bert-Dufresne and Allard <PercolationSmearedPhaseTransition>`.
+    Hebert-Dufresne and Allard :cite:`PercolationSmearedPhaseTransition`.
     These consist of two ER networks of different sizes and internal
     edge densities, connected by edges with the density of the periphery
     (which is typically substantially less than that of the core).
@@ -44,13 +44,13 @@ class CorePeripheryNetwork(NetworkGenerator):
     '''
 
     # Network parameters
-    N_core : Final[str] = 'coreperiphery.core.N-core'              #: Experimental parameter holding the size of the core network.
-    PHI_core : Final[str] = 'coreperiphery.core.phi-core'          #: Experimental parameter holding the edge probability of the core network.
-    N_per : Final[str] = 'coreperiphery.periphery.N-periphery'     #: Experimental parameter holding the size of the peripheral network.
-    PHI_per : Final[str] = 'coreperiphery.periphery.phi-periphery' #: Experimental parameter holding the edger probability of the peripheral network.
+    N_core: Final[str] = 'coreperiphery.core.N-core'              #: Experimental parameter holding the size of the core network.
+    PHI_core: Final[str] = 'coreperiphery.core.phi-core'          #: Experimental parameter holding the edge probability of the core network.
+    N_per: Final[str] = 'coreperiphery.periphery.N-periphery'     #: Experimental parameter holding the size of the peripheral network.
+    PHI_per: Final[str] = 'coreperiphery.periphery.phi-periphery' #: Experimental parameter holding the edge probability of the peripheral network.
 
     # Node attributes
-    ORIGIN : Final[str] = "origin"                                     #: State variable holding a node's origin in the core (0) or periphery (1).
+    ORIGIN: Final[str] = "origin"                                     #: State variable holding a node's origin in the core (0) or periphery (1).
 
 
     def topology(self) -> str:
@@ -92,7 +92,7 @@ class CorePeripheryNetwork(NetworkGenerator):
         # as within the periphery itself
         for n in g_core.nodes():
             for m in g_per.nodes():
-                if rng.random() < phi_per:
+                if rng.random() <= phi_per:
                     g.add_edge(n, m)             # edges added to composed network
 
         # restrict to the LCC
