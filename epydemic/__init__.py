@@ -64,6 +64,8 @@ from .loci import Locus
 from .generator import NetworkGenerator
 from .standard_generators import FixedNetwork, ERNetwork, BANetwork
 from .plc_generator import PLCNetwork
+from .coreperiphery_generator import CorePeripheryNetwork
+from .modular_generator import ModularNetwork
 
 # networks with dynamical processes
 from .networkexperiment import NetworkExperiment

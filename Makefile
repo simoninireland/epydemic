@@ -43,6 +43,8 @@ SOURCES_CODE = \
 	epydemic/generator.py \
 	epydemic/standard_generators.py \
 	epydemic/plc_generator.py \
+	epydemic/coreperiphery_generator.py \
+	epydemic/modular_generator.py \
 	epydemic/loci.py \
 	epydemic/process.py \
 	epydemic/processsequence.py \
@@ -124,6 +126,8 @@ SOURCES_DOCUMENTATION = \
 	doc/compartmentedmodel.rst \
 	doc/generator.rst \
 	doc/standard_generators.rst \
+	doc/core-periphery_generator.rst \
+	doc/modular_generator.rst \
 	doc/sir.rst \
 	doc/sis.rst \
 	doc/sir_fixed_recovery.rst \

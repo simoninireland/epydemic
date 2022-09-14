@@ -104,6 +104,8 @@ Network generators
    :maxdepth: 2
 
    standard_generators
+   core-periphery_generator
+   modular_generator
 
 
 Generating functions
