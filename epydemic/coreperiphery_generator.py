@@ -26,7 +26,7 @@ else:
     from typing_extensions import Final
 from networkx import (Graph,
                       fast_gnp_random_graph, convert_node_labels_to_integers,
-                      compose, connected_components, subgraph)
+                      compose, connected_components)
 from epydemic import rng, NetworkGenerator
 
 
