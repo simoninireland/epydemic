@@ -97,6 +97,9 @@ SOURCES_TESTS = \
 	test/test_newmanziff.py \
 	test/test_opinion.py \
 	test/test_vaccination.py \
+	test/test_generators.py \
+	test/test_coreperiphery.py \
+	test/test_modular.py \
 	test/test_gf.py \
 	test/test_gof.py \
 	test/test_events.py \
