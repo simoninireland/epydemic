@@ -1,5 +1,5 @@
-epydemic: Epidemic simulations on networks in Python
-=====================================================
+epydemic: Epidemic (and other) simulations on networks in Python
+================================================================
 
 .. image:: https://badge.fury.io/py/epydemic.svg
     :target: https://badge.fury.io/py/epydemic
@@ -28,16 +28,18 @@ epidemic (and other) processes on networks. Epidemic processes are
 very important in both network science and its applications. The most
 common application is to study the ways in which diseases progress in
 different network conditions, depending on their infectiousness and
-other properties.
+other properties, but ``epydemic`` can be used to study any network
+processes of interest.
 
 ``epydemic`` provides simulation under synchronous and stochastic
 (Gillespie) dynamics, using the well-known ``networkx`` package to
 represent and manipulate networks. It supports a generic model for
 compartmented models of disease with several standard models provided
 and which can be extended to other, more complex, diseases. It also
-supports other network processes such as addition-deletion networks,
-and a library for handling generating functions used in network
-analysis.
+supports other network processes such as addition-deletion networks
+and pulse-coupled synchronisation, generators for several different
+ensembles of random networks, and a library for handling generating
+functions used in network analysis.
 
 ``epydemic`` is built on top of the ``epyc`` experiment management
 library, allowing simulations to be conducted at scale on individual
