@@ -18,13 +18,15 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
     # backport compatibility with older typing
     from typing_extensions import Final
-from networkx import Graph, fast_gnp_random_graph, convert_node_labels_to_integers
+from networkx import (Graph,
+                      fast_gnp_random_graph, convert_node_labels_to_integers,
+                      compose, connected_components)
 from epydemic import rng, NetworkGenerator
 
 
@@ -48,14 +50,8 @@ class CorePeripheryNetwork(NetworkGenerator):
     PHI_per : Final[str] = 'coreperiphery.periphery.phi-periphery' #: Experimental parameter holding the edger probability of the peripheral network.
 
     # Node attributes
-    ORIGIN : Final[str] = None                                     #: State variable holding a node's origin in the core (0) or periphery (1).
+    ORIGIN : Final[str] = "origin"                                     #: State variable holding a node's origin in the core (0) or periphery (1).
 
-
-    def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] = None):
-        super().__init__(params, limit)
-
-        # state variable unique tags
-        self.ORIGIN = self.stateVariable('origin')
 
     def topology(self) -> str:
         '''Return the topology marker string.

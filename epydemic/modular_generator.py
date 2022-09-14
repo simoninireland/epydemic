@@ -18,13 +18,15 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
     # backport compatibility with older typing
     from typing_extensions import Final
-from networkx import Graph, fast_gnp_random_graph, convert_node_labels_to_integers, set_node_attributes
+from networkx import (Graph,
+                      fast_gnp_random_graph, convert_node_labels_to_integers,
+                      set_node_attributes, compose, connected_components)
 from epydemic import rng, NetworkGenerator
 
 
@@ -40,23 +42,16 @@ class ModularNetwork(NetworkGenerator):
     '''
 
     # Network parameters
-    N_core : Final[str] = 'modular.centre.N-core'       #: Experimental parameter holding the size of the core network.
-    PHI_core : Final[str] = 'modular.centre.phi-core'   #: Experimental parameter holding the edge probability of the core network.
-    SATELLITES : Final[str] = 'modular.satellites'      #: Experimental parameter holding the number of satellite networks.
-    N_sat : Final[str] = 'modular.satellite.N-sat'      #: Experimental parameter holding the size of the satellite networks.
-    PHI_sat : Final[str] = 'modular.satellite.phi-sat'  #: Experimental parameter holding the edge probability of the satellite networks.
+    N_core: Final[str] = 'modular.centre.N-core'       #: Experimental parameter holding the size of the core network.
+    PHI_core: Final[str] = 'modular.centre.phi-core'   #: Experimental parameter holding the edge probability of the core network.
+    SATELLITES: Final[str] = 'modular.satellites'      #: Experimental parameter holding the number of satellite networks.
+    N_sat: Final[str] = 'modular.satellite.N-sat'      #: Experimental parameter holding the size of the satellite networks.
+    PHI_sat: Final[str] = 'modular.satellite.phi-sat'  #: Experimental parameter holding the edge probability of the satellite networks.
 
     # Node attributes
-    ORIGIN : Final[str] = None                          #: State variable holding a node's network of origin (0 being the core).
-    CENTRE_LINK : Final[str] = None                     #: State variable that is True for nodes that are the endpoints of links from satellite to core.
+    ORIGIN: Final[str] = "origin"                      #: State variable holding a node's network of origin (0 being the core).
+    CENTRE_LINK: Final[str] = "centre-link"            #: State variable that is True for nodes that are the endpoints of links from satellite to core.
 
-
-    def __init__(self, params: Dict[str, Any] = None, limit: Optional[int] = None):
-        super().__init__(params, limit)
-
-        # state variable unique tags
-        self.ORIGIN = self.stateVariable('origin')
-        self.CENTRE_LINK = self.stateVariable('centre-link')
 
     def topology(self) -> str:
         '''Return the topology marker string.
@@ -100,12 +95,15 @@ class ModularNetwork(NetworkGenerator):
         ns_centre = list(g_centre.nodes())
         for i in range(satellites):
             # choose a random node in the centre
-            m = numpy.random.choice(ns_centre)
+            m = rng.choice(ns_centre)
 
             # choose a random node from the satellite
             ns_sat = list(g_sats[i].nodes())
-            n = numpy.random.choice(ns_sat)
+            n = rng.choice(ns_sat)
+
+            # mark the nodes as linked
             g.nodes[n][self.CENTRE_LINK] = True
+            g.nodes[m][self.CENTRE_LINK] = True
 
             # add the edge
             g.add_edge(n, m)
