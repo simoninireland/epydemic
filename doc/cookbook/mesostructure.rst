@@ -33,8 +33,8 @@ divided into two sub-sets, and all edges link a node in one to a node
 in the other. Or we might get a clustered network, where the edges
 form lots of triangles. These are both still an ER network, but
 they've got extra structure beyond what we expect. We refer to these
-extra properties as *microstructures* if they affect a very small
-number of nodes, or *mesostructures* if they're larger.
+extra properties as :term:`microstructure` if they affect a very small
+number of nodes, or :term:`mesostructure` if they're larger.
 
 The ensemble of possible ER networks is enormous, and if we select an
 element at random -- a *particular* ER network -- we're unlikely to
