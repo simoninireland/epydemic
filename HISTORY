@@ -1,6 +1,8 @@
 Version 1.12.1
 
    - Added pulse-coupled oscillators
+   - Added core-periphery and modular ER network generators
+   - Added a cookbook recipe on defining network ensembles
 
 Version 1.11.1 (2022-07-27)
 
