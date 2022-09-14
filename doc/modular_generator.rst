@@ -18,6 +18,12 @@ Experimental parameters
 
 .. autoattribute:: ModularNetwork.PHI_sat
 
+The network will also have two attributes defined on its nodes:
+
+.. autoattribute:: ModularNetwork.ORIGIN
+
+.. autoattribute:: ModularNetwork.CENTRE_LINK
+
 
 Generator methods
 -----------------

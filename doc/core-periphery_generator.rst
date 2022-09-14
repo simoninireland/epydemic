@@ -16,6 +16,10 @@ Experimental parameters
 
 .. autoattribute:: CorePeripheryNetwork.PHI_per
 
+The generated network also has a node attribute defined:
+
+.. autoattribute:: CorePeripheryNetwork.ORIGIN
+
 
 Generator methods
 -----------------
