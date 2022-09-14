@@ -94,7 +94,7 @@ class ModularNetwork(NetworkGenerator):
         :returns: the topology marker'''
         return 'ER-modular'
 
-    def _generate(self, params):
+    def _generate(self, params: Dict[str, Any]):
         '''Generate a modular ER network.
 
         :param params: the experimental parameters
