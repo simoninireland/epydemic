@@ -14,4 +14,5 @@ This page is a cookbook-in-progress of ways to use ``epydemic`` in practice.
     cookbook/keep-network.rst
     cookbook/compare-series.rst
     cookbook/percolation-threshold.rst
+    cookbook/mesostructure.rst
     cookbook/speed.rst
