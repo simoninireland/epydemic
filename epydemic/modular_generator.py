@@ -77,7 +77,7 @@ class ModularNetwork(NetworkGenerator):
 
         Satellite 0 is equivalent to the core, as extracted by :meth:`coreSubNetwork`.
         Satellite numbers higher than the number of satellites created will return
-        empoty networks.
+        empty networks.
 
         :param g: the network
         :param i: the satellite index
