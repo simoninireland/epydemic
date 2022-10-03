@@ -17,9 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+import numpy
+from epyc import Experiment
 from epydemic import NetworkExperiment, Node, Edge, NewmanZiff
 from networkx import Graph
-import numpy
 import sys
 from typing import Any, Dict, Union, Optional, Iterable, List, cast
 if sys.version_info >= (3, 8):
@@ -69,12 +70,12 @@ class ResidualBondPercolation(NewmanZiff):
         return '{stem}-{l}'.format(stem=cls.P_RESIDUAL_STEM, l=depth)
 
 
-    def __init__(self, g : Graph =None, samples : Union[int, Iterable[float]] =None, residuals =1):
-        super(ResidualBondPercolation, self).__init__(g, samples)
+    def __init__(self, g: Graph = None, samples : Union[int, Iterable[float]] = None, residuals: int = 1):
+        super().__init__(g, samples)
         self._residuals = residuals
 
     def setUp(self, params : Dict[str, Any]):
-        super(ResidualBondPercolation, self).setUp(params)
+        super().setUp(params)
         self._networkIndex = 0
         self._parent = 0
         self._phis = dict()
@@ -85,7 +86,7 @@ class ResidualBondPercolation(NewmanZiff):
         self._components = numpy.full(N, -1, numpy.int32)
         self._networks = numpy.full(N, 1, numpy.int16)
 
-    def rootOf(self, n : Node, network : int) -> Optional[Node]:
+    def rootOf(self, n: Node, network: int) -> Optional[Node]:
         np = self._components[n]
         nn = self._networks[n]
 
@@ -127,13 +128,13 @@ class ResidualBondPercolation(NewmanZiff):
             # node is in a network inaccessible to us, ignore
             return None
 
-    def orderOfNetwork(self, network : int) -> int:
+    def orderOfNetwork(self, network: int) -> int:
         if network < 1:
             return 0
         else:
             return numpy.count_nonzero(self._networks == network)
 
-    def occupy(self, n : Node, m : Node, network) -> Optional[int]:
+    def occupy(self, n: Node, m: Node, network) -> Optional[int]:
         nr = self.rootOf(n, network)
         mr = self.rootOf(m, network)
         if nr is None or mr is None:
@@ -148,7 +149,7 @@ class ResidualBondPercolation(NewmanZiff):
             #assert(self._networks[nr] == self._networks[mr])
             return None
 
-    def join(self, c1 : Node, c2 : Node) -> int:
+    def join(self, c1: Node, c2: Node) -> int:
         # extract the sizes of the compoents
         c1size = -self._components[c1]
         c2size = -self._components[c2]
@@ -166,7 +167,7 @@ class ResidualBondPercolation(NewmanZiff):
         # return the size of the new component
         return csize
 
-    def sample(self, p, es, nexti, N, M, depth, network):
+    def sample(self, p: float, es: Iterable[Edge], nexti: int, N: int, M: int, depth: int, network: int):
         samples = []
 
         # take the sample at this point
@@ -186,7 +187,7 @@ class ResidualBondPercolation(NewmanZiff):
 
         return samples
 
-    def repercolate(self, p, es, depth, network):
+    def repercolate(self, p: float, es: Iterable[Edge], depth: int, network: int):
         phi = ResidualBondPercolation.P_RESIDUAL(depth)
         self._phis[phi] = p
         oldparent = self._parent
@@ -199,7 +200,7 @@ class ResidualBondPercolation(NewmanZiff):
         self._parent = oldparent
         return ss
 
-    def percolate(self, es, depth):
+    def percolate(self, es: Iterable[Edge], depth: int):
         N = self.network().order() - self.orderOfNetwork(self._parent)
         M = len(es)
         self._networkIndex += 1
@@ -231,7 +232,7 @@ class ResidualBondPercolation(NewmanZiff):
 
         return samples
 
-    def do(self, params : Dict[str, Any]) -> List[Dict[str, Any]]:
+    def do(self, params: Dict[str, Any]) -> List[Dict[str, Any]]:
         '''Perform the bond percolation process.
 
         :param params: experimental parameters
