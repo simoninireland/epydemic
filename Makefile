@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.12.1
+VERSION = 1.13.1
 
 
 # ----- Sources -----
@@ -37,6 +37,8 @@ SOURCES_CODE = \
 	epydemic/bbt.py \
 	epydemic/drawset.py \
 	epydemic/networkexperiment.py \
+	epydemic/newmanziff.py \
+	epydemic/nz_extended.py \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
 	epydemic/stochasticdynamics.py \

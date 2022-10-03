@@ -1,4 +1,8 @@
-Version 1.12.1
+Version 1.13.1
+
+   - Added extended newman_Ziff algorithm for nested percolation
+
+Version 1.12.1 (2022-09-14)
 
    - Added pulse-coupled oscillators
    - Added core-periphery and modular ER network generators
