@@ -28,24 +28,40 @@ method (inherited from `epyc.Experiment`), passing a dict of
 parameters. The network dynamics then performs a single simulation
 according to the following process:
 
-* The :meth:`Dynamics.setUp` method uses :meth:`NetworkExperiment.setUp` to
-  create a working network. It then lets the :class:`Process`
-  configure the working copy: it calls :meth:`Process.reset` to reset
-  the process, sets its working network by calling :meth:`Process.setNetwork`,
-  then builds the process instance using :meth:`Process.build` and sets it
+* The :meth:`Dynamics.setUp` method uses
+  :meth:`NetworkExperiment.setUp` to delete any old working network
+  and build a new one. It then lets the :class:`Process` configure the
+  working copy: it calls :meth:`Process.reset` to reset the process,
+  sets its working network by calling :meth:`Process.setNetwork`, then
+  builds the process instance using :meth:`Process.build` and sets it
   up ready for simulation by calling :meth:`Process.setUp`.
 * The :meth:`Dynamics.do` method is called to perform the simulation, returning
   a dict of experimental results. This method is overridden by sub-classes
   to define the style of simulation being performed.
 * The :meth:`Dynamics.tearDown` method is called to clean-up the simulation
-  class, using :meth:`Process.tearDown` to tear-down the process anmd
-  then calling :meth:`NetworkExperiment.tearDown` to destroy the working network.
+  class, using :meth:`Process.tearDown` to tear-down the process
 
 This decomposition is very flexible. At its simplest, a dynamics takes
 a fixed prototype network as a parameter to its construction and copies it
 for every run. More complex use cases supply an instance of
 :class:`NetworkGenerator` that samples from a class of random networks defined
 by the experimental parameters.
+
+.. note::
+
+   In versions of `epydemic` prior to 1.13.1 the working network was
+   discarded as part of tear-down, making it inaccessible once the
+   experimental run had ended.
+
+   Starting with version 1.13.1, this behaviour was changed so that
+   the working network is retained until the *next* experiment is
+   performed, whereupon it is discarded and a new working network is
+   created.
+
+   This change simplifies using `epydemic` at a small scale, since one
+   can directly see the network that exists after an experimental run
+   without having to explicitly save it. It makes no difference beyond
+   this.
 
 Note the division of labour. A :class:`Dynamics` object provides the scheduling
 for events, which are themselves specified and defined in a :class:`Process`
