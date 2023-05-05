@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017--2022 Simon Dobson
+# Copyright (C) 2017--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
