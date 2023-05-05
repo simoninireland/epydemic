@@ -83,6 +83,13 @@ Glossary
       of the simulation, but may be more complex and
       comprise a vector of information.
 
+   epidemic threshold
+      The critical point of transmissibility at which an outbreak
+      becomes an epidemic and infects a substantial fraction of the
+      network. The existence and value of an epidemic threshold
+      depend on the topology of the network as well as the disease
+      parameters.
+
    event
       A simulation event that changes the state of the underlying
       network or simulation. Events can occur in :term:`continuous
