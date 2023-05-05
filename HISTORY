@@ -1,6 +1,10 @@
 Version 1.13.1
 
-   - Added extended newman_Ziff algorithm for nested percolation
+   - Added extended Newman-Ziff algorithm for nested percolation
+   - Changed ther behaviour of NetworkExperimenb to not delete the working
+     network in tearDFown() at the end of a run, to simplify small-scale use,
+     but to replace it on setUp() instead
+   - Added multiplication and division by constants to generating functions
 
 Version 1.12.1 (2022-09-14)
 

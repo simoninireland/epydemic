@@ -255,5 +255,60 @@ class GFTest(unittest.TestCase):
         self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
 
 
+    # ---------- Operators ----------
+
+    def testMulContinuous(self):
+        '''Test we can multiply a continuous GF by a constant.'''
+        gf = gf_er(10000, 20)
+        gf4 = gf * 4
+        for i in range(1, 20):
+            self.assertEqual(gf4[i], 4 * gf[i])
+
+    def testDivContinuous(self):
+        '''Test we can divide a continuous GF by a constant.'''
+        gf = gf_er(10000, 20)
+        gf4 = gf / 4
+        for i in range(1, 20):
+            self.assertAlmostEqual(gf4[i], gf[i] / 4, places=3)
+
+    def testMulFunction(self):
+        '''Test we can multiply a function GF by a constant.'''
+        gf = gf_ba(3)
+        gf4 = gf * 4
+        for i in range(1, 20):
+            self.assertEqual(gf4[i], 4 * gf[i])
+
+    def testDivFunction(self):
+        '''Test we can divide a function GF by a constant.'''
+        gf = gf_ba(3)
+        gf4 = gf / 4
+        for i in range(1, 20):
+            self.assertAlmostEqual(gf4[i], gf[i] / 4, places=3)
+
+    def testMulNetwork(self):
+        '''Test we can multiply a measured empirical GF by a constant.'''
+        N = 10000
+        kmean = 20
+        phi = kmean / N
+
+        g = networkx.gnp_random_graph(N, phi)
+        gf = gf_from_network(g)
+        gf4 = gf * 4
+        for i in range(1, 20):
+            self.assertEqual(gf4[i], 4 * gf[i])
+
+    def testDivNetwork(self):
+        '''Test we can divide a measured empirical GF by a constant.'''
+        N = 10000
+        kmean = 20
+        phi = kmean / N
+
+        g = networkx.gnp_random_graph(N, phi)
+        gf = gf_from_network(g)
+        gf4 = gf / 4
+        for i in range(1, 20):
+            self.assertAlmostEqual(gf4[i], gf[i] / 4, places=3)
+
+
 if __name__ == '__main__':
     unittest.main()

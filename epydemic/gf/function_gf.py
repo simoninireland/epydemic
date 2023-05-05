@@ -1,6 +1,6 @@
 # Generating functions with a function for coefficients
 #
-# Copyright (C) 2021 Simon Dobson
+# Copyright (C) 2021--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -81,3 +81,14 @@ class FunctionGF(GF):
         :returns: a generating function'''
         df = self._differentiate(self._coefficients, order)
         return FunctionGF(df, self._maxTerm)
+
+    def __mul__(self, n):
+        '''Multiply the generating function by a constant.
+
+        :param n: the constant
+        :returns: the scaled generating function'''
+
+        def make_scaled(f, n):
+            return lambda x: n * f(x)
+
+        return FunctionGF(make_scaled(self._coefficients, n), self._maxTerm)

@@ -1,6 +1,6 @@
 # Base class generating functions
 #
-# Copyright (C) 2021 Simon Dobson
+# Copyright (C) 2021--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -62,10 +62,11 @@ class GF:
     def __init__(self):
         pass
 
+
     # ---------- Subclass API ----------
 
     def getCoefficient(self, i: int) -> float:
-        '''Return the 'th coefficient, that is the coefficient of the
+        '''Return the i'th coefficient, that is the coefficient of the
         term in :math:`x^i`.
 
         This method should be overridden by sub-classes.
@@ -91,8 +92,23 @@ class GF:
         This method should be overridden by sub-classes.
 
         :param order: (optional) the order of derivative (defaults to 1)
-        :returns: the dserivative generating function'''
+        :returns: the deerivative of the generating function'''
         raise NotImplementedError('GF.derivative() must be overridden by sub-classes')
+
+    def __mul__(self, n):
+        '''Multiply the generating function by a constant.
+
+        :param n: the number
+        :returns: the new generating function'''
+        raise NotImplementedError('GF.__mul_() must be overridden by sub-classes')
+
+    def __truediv__(self, n):
+        '''Divide the generating function by a constant.
+        This is implemented by inverting the constant and multiplying.
+
+        :param n: the number
+        :returns: the new generating function'''
+        return self * (1 / n)
 
 
     # ---------- Client API ----------
@@ -120,5 +136,5 @@ class GF:
         '''Return the derivative of the generating function to the desired order.
 
         :param order: (optional) the order of derivative (defaults to 1)
-        :returns: the dserivative generating function'''
+        :returns: the derivative of the generating function'''
         return self.derivative(order)

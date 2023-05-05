@@ -1,6 +1,6 @@
 # Continuous generating functions
 #
-# Copyright (C) 2021 Simon Dobson
+# Copyright (C) 2021--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -96,3 +96,15 @@ class ContinuousGF(GF):
         :param order: (optional) order of derivative (defaults to 1)
         :returns: a generating function'''
         return ContinuousGF(self._f, self._order + order)
+
+    def __mul__(self, n):
+        '''Multiply the continuous generating function by a constant.
+        This simply scales the underlying function.
+
+        :param n: the constant
+        :returns: the scaled generating function'''
+
+        def make_scaled(f, n):
+            return lambda x: n * f(x)
+
+        return ContinuousGF(make_scaled(self._f, n), self._order)
