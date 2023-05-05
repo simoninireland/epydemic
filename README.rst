@@ -13,8 +13,8 @@ epydemic: Epidemic (and other) simulations on networks in Python
 .. image:: https://pepy.tech/badge/epydemic
     :target: https://pepy.tech/project/epydemic
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.6912247.svg
-   :target: https://doi.org/10.5281/zenodo.6912247
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.6875267.svg
+   :target: https://doi.org/10.5281/zenodo.6875267
 
 .. image:: https://www.gnu.org/graphics/gplv3-88x31.png
     :target: https://www.gnu.org/licenses/gpl-3.0.en.html
