@@ -50,6 +50,9 @@ class ResidualBondPercolation(NewmanZiff):
     us explore the effects that percolation has on the structure of the residual
     network.
 
+    :param g: (optional) the underlying network or generator
+    :param samples: (optional) number of samples or list of sample points (defaults to 100)
+    :param residuals: (optional) the number of recursions beyond the base network (defaults to 1)
     '''
 
     # Experimental results
@@ -70,11 +73,11 @@ class ResidualBondPercolation(NewmanZiff):
         return '{stem}-{l}'.format(stem=cls.P_RESIDUAL_STEM, l=depth)
 
 
-    def __init__(self, g: Graph = None, samples : Union[int, Iterable[float]] = None, residuals: int = 1):
+    def __init__(self, g: Graph = None, samples: Union[int, Iterable[float]] = None, residuals: int = 1):
         super().__init__(g, samples)
         self._residuals = residuals
 
-    def setUp(self, params : Dict[str, Any]):
+    def setUp(self, params: Dict[str, Any]):
         super().setUp(params)
         self._networkIndex = 0
         self._parent = 0
