@@ -4,7 +4,9 @@ Version 1.13.1
    - Changed ther behaviour of NetworkExperiment to not delete the working
      network in tearDown() at the end of a run, to simplify small-scale use,
      but to replace it on setUp() instead
-   - Added multiplication and division by constants to generating functions
+   - Added a simple algebra of generating functions, including addition,
+     subtraction, and multiplication byt constants and other generating
+     functions
 
 Version 1.12.1 (2022-09-14)
 
