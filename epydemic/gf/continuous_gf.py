@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from typing import Callable
+from numbers import Number
 import numpy
 from mpmath import factorial
 from epydemic.gf import GF
@@ -50,7 +51,9 @@ class ContinuousGF(GF):
         if not isinstance(self._f, numpy.vectorize):
             self._f = numpy.vectorize(self._f)
 
-    def _differentiate(self, z: float, n: int = 1, r: float = 1.0, dx: float = 1e-2) -> complex:
+    def _differentiate(self, z: float, n: int = 1,
+                       r: float = 1.0,
+                       dx: float = 1e-2) -> complex:
         '''Compute the n'th derivative of f at z using
         a Cauchy contour integral of radius r.
 
@@ -97,7 +100,7 @@ class ContinuousGF(GF):
         :returns: a generating function'''
         return ContinuousGF(self._f, self._order + order)
 
-    def __mul__(self, n):
+    def scale(self, n: Number) -> GF:
         '''Multiply the continuous generating function by a constant.
         This simply scales the underlying function.
 

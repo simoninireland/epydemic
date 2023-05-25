@@ -69,10 +69,12 @@ SOURCES_CODE = \
 	epydemic/sivr_model.py \
 	epydemic/pulsecoupled.py \
 	epydemic/gf/gf.py \
+	epydemic/gf/interface.py \
 	epydemic/gf/function_gf.py \
 	epydemic/gf/discrete_gf.py \
 	epydemic/gf/continuous_gf.py \
-	epydemic/gf/interface.py \
+	epydemic/gf/sum_gf.py \
+	epydemic/gf/product_gf.py \
 	epydemic/gf/standard_gfs.py \
 	epydemic/archive/builder.py
 SOURCES_TESTS_INIT = test/__init__.py
