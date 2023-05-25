@@ -88,9 +88,9 @@ times:
    # extract the degree-5 nodes (the hard way)
    nodes_of_degree_5 = (G0.dx(5))(0) / math.factorial(5)
 
-Finally, a generating function can be multiplied and divided by a
-constant, which is use when (for example) computing an :term:`epidemic
-threshold`:
+Finally, generating functions have (some) algebra implemented for them
+directly. They can be multiplied and divided by a constant, which is
+use when (for example) computing an :term:`epidemic threshold`:
 
 .. code-block:: python
 
@@ -104,3 +104,22 @@ threshold`:
 
    # compute the critical threshold
    p_c = float(pRemove / G1.dx()(1))
+
+They can also be added together, subtracted one from the other, and
+multiplied together. These operations all return new generating
+functions, and so can be combined with differentiation. To check that
+differentiation is linear, for example, we might do:
+
+.. code-block:: python
+
+   # create two generating functions from coefficients
+   gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+   gf2 = gf_from_coefficients([0, 2])
+
+   # differentiate twice, two different ways
+   d1 = (gf1 * gf2).dx(2)
+   d2 = (gf1 * gf2).dx().dx()
+
+   # make sure the results are the same
+   for i in range(6):
+      self.assertEqual(d1[i], d2[i])
