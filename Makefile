@@ -224,6 +224,7 @@ SOURCES_GENERATED = \
 DIST_SDIST = dist/$(PACKAGENAME)-$(VERSION).tar.gz
 DIST_WHEEL = dist/$(PACKAGENAME)-$(VERSION)-py3-none-any.whl
 
+
 # ----- Tools -----
 
 # Base commands
@@ -246,6 +247,12 @@ RM = rm -fr
 CP = cp
 CHDIR = cd
 ZIP = zip -r
+
+# Makefile environment
+SHELL := bash
+.SHELLFLAGS := -eu -o pipefail -c
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
 
 # Files that are locally changed vs the remote repo
 # (See https://unix.stackexchange.com/questions/155046/determine-if-git-working-directory-is-clean-from-a-script)
@@ -380,7 +387,6 @@ $(DIST_WHEEL): $(SOURCES_GENERATED) $(SOURCES_CODE_INIT) $(SOURCES_CODE) Makefil
 # The tags file
 TAGS:
 	$(ETAGS) -o TAGS $(SOURCES_CODE)
-
 
 
 # ----- Usage -----
