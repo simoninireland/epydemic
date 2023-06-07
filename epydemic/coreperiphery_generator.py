@@ -50,7 +50,7 @@ class CorePeripheryNetwork(NetworkGenerator):
     PHI_per: Final[str] = 'coreperiphery.periphery.phi-periphery' #: Experimental parameter holding the edge probability of the peripheral network.
 
     # Node attributes
-    ORIGIN: Final[str] = "origin"                                     #: State variable holding a node's origin in the core (0) or periphery (1).
+    ORIGIN: Final[str] = "origin"                                 #: State variable holding a node's origin in the core (0) or periphery (1).
 
 
     def topology(self) -> str:
@@ -67,7 +67,7 @@ class CorePeripheryNetwork(NetworkGenerator):
 
         # generate the core network
         N_core = params[self.N_core]
-        phi_core = params[self.PHI_per]
+        phi_core = params[self.PHI_core]
         g_core = fast_gnp_random_graph(N_core, phi_core)
 
         # generate the periphery network
