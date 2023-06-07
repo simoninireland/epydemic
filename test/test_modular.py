@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import ModularNetwork
+from epydemic import rng, ModularNetwork
 from epyc import Experiment
 import unittest
 import networkx
@@ -64,16 +64,16 @@ class ModularTests(unittest.TestCase):
                                                            self._g.nodes[e[1]][ModularNetwork.ORIGIN] == i))]
             self.assertEqual(len(core_sat_es), 1)
             e = core_sat_es[0]
-            self.assertTrue(self._g.nodes[e[0]][ModularNetwork.CENTRE_LINK])
-            self.assertTrue(self._g.nodes[e[1]][ModularNetwork.CENTRE_LINK])
+            self.assertTrue(self._g.nodes[e[0]][ModularNetwork.CORE_LINK])
+            self.assertTrue(self._g.nodes[e[1]][ModularNetwork.CORE_LINK])
 
         # check all other nodes are correctly labelled
         ns = [n for n in self._g.nodes() if self._g.nodes[n][ModularNetwork.ORIGIN] == 0]
-        self.assertEqual(len([n for n in ns if self._g.nodes[n][ModularNetwork.CENTRE_LINK]]),
+        self.assertEqual(len([n for n in ns if self._g.nodes[n][ModularNetwork.CORE_LINK]]),
                          self._params[ModularNetwork.SATELLITES])
         for i in range(1, self._params[ModularNetwork.SATELLITES] + 1):
             ns = [n for n in self._g.nodes() if self._g.nodes[n][ModularNetwork.ORIGIN] == i]
-            self.assertEqual(len([n for n in ns if self._g.nodes[n][ModularNetwork.CENTRE_LINK]]),
+            self.assertEqual(len([n for n in ns if self._g.nodes[n][ModularNetwork.CORE_LINK]]),
                              1)
 
         # check that there are no edges between satellites
@@ -81,6 +81,49 @@ class ModularTests(unittest.TestCase):
             self.assertTrue((self._g.nodes[e[0]][ModularNetwork.ORIGIN] == self._g.nodes[e[1]][ModularNetwork.ORIGIN]) or
                             (self._g.nodes[e[0]][ModularNetwork.ORIGIN] == 0 or
                              self._g.nodes[e[1]][ModularNetwork.ORIGIN] == 0))
+
+    def testExtraction(self):
+        '''Test we can extract the core and satellites.'''
+
+        # core
+        c = ModularNetwork.coreSubNetwork(self._g)
+        self.assertEqual(self._params[ModularNetwork.N_core], c.order())
+        core_es = [e for e in self._g.edges() if (self._g.nodes[e[0]][ModularNetwork.ORIGIN] == 0 and
+                                                  self._g.nodes[e[1]][ModularNetwork.ORIGIN] == 0)]
+        self.assertEqual(len(c.edges()), len(core_es))
+        for e in c.edges():
+            self.assertIn(e, core_es)
+
+        # satellites
+        for i in range(1, self._params[ModularNetwork.SATELLITES] + 1):
+            p = ModularNetwork.satelliteSubNetwork(self._g, i)
+            self.assertEqual(self._params[ModularNetwork.N_sat], p.order())
+            per_es = [e for e in self._g.edges() if (self._g.nodes[e[0]][ModularNetwork.ORIGIN] == i and
+                                                     self._g.nodes[e[1]][ModularNetwork.ORIGIN] == i)]
+            self.assertEqual(len(p.edges()), len(per_es))
+            for e in per_es:
+                self.assertTrue(p.has_edge(e[0], e[1]))
+
+            # test there is exactly one linked node
+            self.assertEqual(len([n for n in p.nodes() if p.nodes[n][ModularNetwork.CORE_LINK]]), 1)
+
+
+    def testFailExtraction(self):
+        '''Test we spot the lack of structure markers on at least one node.'''
+
+        # remove structure annotation from one random node
+        n = rng.choice(list(self._g.nodes()))
+        attr = self._g.nodes[n]
+        del attr[ModularNetwork.ORIGIN]
+
+        with self.assertRaises(ValueError):
+            c = ModularNetwork.coreSubNetwork(self._g)
+
+    def testFailWrongNetworkType(self):
+        '''Test we fail when passed a non-modular network.'''
+        g = networkx.fast_gnp_random_graph(500, 0.01)
+        with self.assertRaises(ValueError):
+            c = ModularNetwork.coreSubNetwork(g)
 
 
 if __name__ == '__main__':

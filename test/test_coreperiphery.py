@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from epydemic import CorePeripheryNetwork
+from epydemic import rng, CorePeripheryNetwork
 from epyc import Experiment
 import unittest
 import networkx
@@ -57,6 +57,44 @@ class CorePeripheryTests(unittest.TestCase):
         link_es = len([e for e in self._g.edges() if self._g.nodes[e[0]][CorePeripheryNetwork.ORIGIN] != self._g.nodes[e[1]][CorePeripheryNetwork.ORIGIN]])
         self.assertAlmostEqual(link_es / ((core_ns + per_ns) * ((core_ns + per_ns) - 1) / 2),
                                self._params[CorePeripheryNetwork.PHI_per], places=1)
+
+    def testExtraction(self):
+        '''Test we can extract the core and periphery.'''
+
+        # core
+        c = CorePeripheryNetwork.coreSubNetwork(self._g)
+        self.assertEqual(self._params[CorePeripheryNetwork.N_core], c.order())
+        core_es = [e for e in self._g.edges() if (self._g.nodes[e[0]][CorePeripheryNetwork.ORIGIN] == 0 and
+                                                  self._g.nodes[e[1]][CorePeripheryNetwork.ORIGIN] == 0)]
+        self.assertEqual(len(c.edges()), len(core_es))
+        for e in c.edges():
+            self.assertIn(e, core_es)
+
+        # periphery
+        p = CorePeripheryNetwork.peripherySubNetwork(self._g)
+        self.assertEqual(self._params[CorePeripheryNetwork.N_per], p.order())
+        per_es = [e for e in self._g.edges() if (self._g.nodes[e[0]][CorePeripheryNetwork.ORIGIN] == 1 and
+                                                 self._g.nodes[e[1]][CorePeripheryNetwork.ORIGIN] == 1)]
+        self.assertEqual(len(p.edges()), len(per_es))
+        for e in per_es:
+            self.assertTrue(p.has_edge(e[0], e[1]))
+
+    def testFailExtraction(self):
+        '''Test we spot the lack of structure markers on at least one node.'''
+
+        # remove structure annotation from one random node
+        n = rng.choice(list(self._g.nodes()))
+        attr = self._g.nodes[n]
+        del attr[CorePeripheryNetwork.ORIGIN]
+
+        with self.assertRaises(ValueError):
+            c = CorePeripheryNetwork.coreSubNetwork(self._g)
+
+    def testFailWrongNetworkType(self):
+        '''Test we fail when passed a non-ore-periphery network.'''
+        g = networkx.fast_gnp_random_graph(500, 0.01)
+        with self.assertRaises(ValueError):
+            c = CorePeripheryNetwork.coreSubNetwork(g)
 
 
 if __name__ == '__main__':

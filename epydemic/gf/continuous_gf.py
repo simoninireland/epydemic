@@ -1,6 +1,6 @@
 # Continuous generating functions
 #
-# Copyright (C) 2021 Simon Dobson
+# Copyright (C) 2021--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from typing import Callable
+from numbers import Number
 import numpy
 from mpmath import factorial
 from epydemic.gf import GF
@@ -50,7 +51,9 @@ class ContinuousGF(GF):
         if not isinstance(self._f, numpy.vectorize):
             self._f = numpy.vectorize(self._f)
 
-    def _differentiate(self, z: float, n: int = 1, r: float = 1.0, dx: float = 1e-2) -> complex:
+    def _differentiate(self, z: float, n: int = 1,
+                       r: float = 1.0,
+                       dx: float = 1e-2) -> complex:
         '''Compute the n'th derivative of f at z using
         a Cauchy contour integral of radius r.
 
@@ -96,3 +99,15 @@ class ContinuousGF(GF):
         :param order: (optional) order of derivative (defaults to 1)
         :returns: a generating function'''
         return ContinuousGF(self._f, self._order + order)
+
+    def scale(self, n: Number) -> GF:
+        '''Multiply the continuous generating function by a constant.
+        This simply scales the underlying function.
+
+        :param n: the constant
+        :returns: the scaled generating function'''
+
+        def make_scaled(f, n):
+            return lambda x: n * f(x)
+
+        return ContinuousGF(make_scaled(self._f, n), self._order)

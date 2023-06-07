@@ -25,6 +25,10 @@ from .function_gf import FunctionGF
 from .discrete_gf import DiscreteGF
 from .continuous_gf import ContinuousGF
 
+# generating function combinators
+from .sum_gf import SumGF
+from .product_gf import ProductGF
+
 # public interface
 from .interface import gf_from_series, gf_from_coefficients, gf_from_coefficient_function, gf_from_network
 from .standard_gfs import gf_er, gf_powerlaw, gf_ba, gf_plc

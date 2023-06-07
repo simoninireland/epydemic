@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017--2022 Simon Dobson
+# Copyright (C) 2017--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -69,10 +69,12 @@ SOURCES_CODE = \
 	epydemic/sivr_model.py \
 	epydemic/pulsecoupled.py \
 	epydemic/gf/gf.py \
+	epydemic/gf/interface.py \
 	epydemic/gf/function_gf.py \
 	epydemic/gf/discrete_gf.py \
 	epydemic/gf/continuous_gf.py \
-	epydemic/gf/interface.py \
+	epydemic/gf/sum_gf.py \
+	epydemic/gf/product_gf.py \
 	epydemic/gf/standard_gfs.py \
 	epydemic/archive/builder.py
 SOURCES_TESTS_INIT = test/__init__.py
@@ -172,7 +174,6 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/monitoring-progress.rst \
 	doc/cookbook/infect-specific-nodes.rst \
 	doc/cookbook/dynamic-population.rst \
-	doc/cookbook/keep-network.rst \
 	doc/cookbook/percolation-threshold.rst \
 	doc/cookbook/mesostructure.rst \
 	doc/cookbook/from-r-to-probabilities.rst \
@@ -209,7 +210,7 @@ SOURCES_UTILS = \
 # Extras for the build and packaging system
 SOURCES_EXTRA = \
 	README.rst \
-	CITATION.ctf \
+	CITATION.cff \
 	LICENSE \
 	HISTORY \
 	CONTRIBUTORS \
@@ -232,6 +233,7 @@ COVERAGE = coverage
 PIP = pip
 TWINE = twine
 FLAKE8 = flake8
+MYPY = mypy
 GPG = gpg
 GIT = git
 ETAGS = etags
@@ -304,7 +306,7 @@ $(VENV):
 	$(VIRTUALENV) $(VENV)
 	$(CAT) $(REQUIREMENTS) $(DEV_REQUIREMENTS) >$(VENV)/requirements.txt
 	$(ACTIVATE) && $(PIP) install -U pip wheel && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
-	$(ACTIVATE) && mypy --install-types --non-interactive
+	$(ACTIVATE) && $(MYPY) --install-types --non-interactive
 
 # Make a new release
 release: $(SOURCES_GENERATED) master-only lint commit sdist wheel upload
@@ -326,7 +328,7 @@ master-only:
 
 # Update the remote repos on release
 # (This will trigger .github/workflows/release.yaml to create a GitHib release, and
-# .github/workflows/ci.yaml to run the full integrationm test suite)
+# .github/workflows/ci.yaml to run the full integration test suite)
 commit: check-local-repo-clean
 	$(GIT) push origin master
 	$(GIT) tag -a v$(VERSION) -m "Version $(VERSION)"

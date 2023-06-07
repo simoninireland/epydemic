@@ -1,4 +1,5 @@
 wheel
+pyright
 tox
 coverage
 pylint
@@ -9,9 +10,8 @@ sphinx-autodoc-typehints
 sphinxcontrib-bibtex
 doc8
 flake8
+black
 twine
-jedi
-jedi-language-server
 matplotlib
 seaborn
 mypy

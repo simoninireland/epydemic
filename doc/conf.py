@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'epydemic'
-copyright = u'2017--2022, Simon Dobson'
+copyright = u'2017--2023, Simon Dobson'
 author = u'Simon Dobson'
 
 # The version info for the project you're documenting, acts as replacement for

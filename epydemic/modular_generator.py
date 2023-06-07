@@ -42,16 +42,51 @@ class ModularNetwork(NetworkGenerator):
     '''
 
     # Network parameters
-    N_core: Final[str] = 'modular.centre.N-core'       #: Experimental parameter holding the size of the core network.
-    PHI_core: Final[str] = 'modular.centre.phi-core'   #: Experimental parameter holding the edge probability of the core network.
-    SATELLITES: Final[str] = 'modular.satellites'      #: Experimental parameter holding the number of satellite networks.
-    N_sat: Final[str] = 'modular.satellite.N-sat'      #: Experimental parameter holding the size of the satellite networks.
-    PHI_sat: Final[str] = 'modular.satellite.phi-sat'  #: Experimental parameter holding the edge probability of the satellite networks.
+    N_core: Final[str] = 'modular.N-core'          #: Experimental parameter holding the size of the core network.
+    PHI_core: Final[str] = 'modular.phi-core'      #: Experimental parameter holding the edge probability of the core network.
+    SATELLITES: Final[str] = 'modular.satellites'  #: Experimental parameter holding the number of satellite networks.
+    N_sat: Final[str] = 'modular.N-sat'            #: Experimental parameter holding the size of the satellite networks.
+    PHI_sat: Final[str] = 'modular.phi-sat'        #: Experimental parameter holding the edge probability of the satellite networks.
 
     # Node attributes
-    ORIGIN: Final[str] = "origin"                      #: State variable holding a node's network of origin (0 being the core, other indices being the satellites).
-    CENTRE_LINK: Final[str] = "centre-link"            #: State variable that is True for nodes that are the endpoints of links from a satellite to the core.
+    ORIGIN: Final[str] = "origin"                  #: State variable holding a node's network of origin (0 being the core, other indices being the satellites).
+    CORE_LINK: Final[str] = "core-link"            #: State variable that is True for nodes that are the endpoints of links from a satellite to the core.
 
+
+    @staticmethod
+    def coreSubNetwork(g: Graph) -> Graph:
+        '''Return the sub-network composing the core. This method
+        will only work for networks created by this class, that have
+        the :attr:`ORIGIN` property set correctly. An exception will
+        be raised if the core can't be identified.
+
+        :param g: the network
+        :returns: the core sub-network'''
+        try:
+            ns = [n for n in g.nodes() if g.nodes[n][ModularNetwork.ORIGIN] == 0]
+            return g.subgraph(ns)
+        except KeyError:
+            raise ValueError('Network does not have modular structure marked')
+
+    @staticmethod
+    def satelliteSubNetwork(g: Graph, i: int) -> Graph:
+        '''Return the sub-network composing the i'th satellite. This method
+        will only work for networks created by this class, that have
+        the :attr:`ORIGIN` property set correctly. An exception will
+        be raised if the core can't be identified.
+
+        Satellite 0 is equivalent to the core, as extracted by :meth:`coreSubNetwork`.
+        Satellite numbers higher than the number of satellites created will return
+        empty networks.
+
+        :param g: the network
+        :param i: the satellite index
+        :returns: the core sub-network'''
+        try:
+            ns = [n for n in g.nodes() if g.nodes[n][ModularNetwork.ORIGIN] == i]
+            return g.subgraph(ns)
+        except KeyError:
+            raise ValueError('Network does not have modular structure marked')
 
     def topology(self) -> str:
         '''Return the topology marker string.
@@ -59,7 +94,7 @@ class ModularNetwork(NetworkGenerator):
         :returns: the topology marker'''
         return 'ER-modular'
 
-    def _generate(self, params):
+    def _generate(self, params: Dict[str, Any]):
         '''Generate a modular ER network.
 
         :param params: the experimental parameters
@@ -91,7 +126,7 @@ class ModularNetwork(NetworkGenerator):
 
         # join the satellites to the centre with a single link
         # between random nodes
-        set_node_attributes(g, name=self.CENTRE_LINK, values=False)
+        set_node_attributes(g, name=self.CORE_LINK, values=False)
         ns_centre = list(g_centre.nodes())
         for i in range(satellites):
             # choose a random node in the centre
@@ -102,8 +137,8 @@ class ModularNetwork(NetworkGenerator):
             n = rng.choice(ns_sat)
 
             # mark the nodes as linked
-            g.nodes[n][self.CENTRE_LINK] = True
-            g.nodes[m][self.CENTRE_LINK] = True
+            g.nodes[n][self.CORE_LINK] = True
+            g.nodes[m][self.CORE_LINK] = True
 
             # add the edge
             g.add_edge(n, m)

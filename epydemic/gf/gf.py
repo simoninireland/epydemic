@@ -1,6 +1,6 @@
 # Base class generating functions
 #
-# Copyright (C) 2021 Simon Dobson
+# Copyright (C) 2021--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,7 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from typing import Union, cast
+from numbers import Number
 from functools import lru_cache
+import epydemic.gf
 
 
 class GF:
@@ -62,10 +65,11 @@ class GF:
     def __init__(self):
         pass
 
+
     # ---------- Subclass API ----------
 
     def getCoefficient(self, i: int) -> float:
-        '''Return the 'th coefficient, that is the coefficient of the
+        '''Return the i'th coefficient, that is the coefficient of the
         term in :math:`x^i`.
 
         This method should be overridden by sub-classes.
@@ -91,8 +95,40 @@ class GF:
         This method should be overridden by sub-classes.
 
         :param order: (optional) the order of derivative (defaults to 1)
-        :returns: the dserivative generating function'''
+        :returns: the derivative of the generating function'''
         raise NotImplementedError('GF.derivative() must be overridden by sub-classes')
+
+    def scale(self, n: Number) -> 'GF':
+        '''Multiply the generating function by a constant scaling
+        factor.
+
+        This method should be overridden by sub-classes.
+
+        :param n: the scaling factor
+        :returns: the new generating function'''
+        raise NotImplementedError('GF.scale() must be overridden by sub-classes')
+
+    def product(self, gf: 'GF') -> 'GF':
+        '''Form the product of this generating function with another.
+
+        This method returns an instance of :class:`ProductGF` that
+        computes the product. It can be overridden by sub-classes
+        to provide a more efficient implementation.
+
+        :param gf: the other generating function
+        :returns: the new generating function'''
+        return epydemic.gf.ProductGF(self, gf)
+
+    def sum(self, gf: 'GF') -> 'GF':
+        '''Form the sum of this generating function with another.
+
+        This method returns an instance of :class:`SumGF` that
+        computes the sum. It can be overridden by sub-classes
+        to provide a more efficient implementation.
+
+        :param gf: the other generating function
+        :returns: the new generating function'''
+        return epydemic.gf.SumGF(self, gf)
 
 
     # ---------- Client API ----------
@@ -120,5 +156,52 @@ class GF:
         '''Return the derivative of the generating function to the desired order.
 
         :param order: (optional) the order of derivative (defaults to 1)
-        :returns: the dserivative generating function'''
+        :returns: the derivative of the generating function'''
         return self.derivative(order)
+
+    def __add__(self, f: Union[Number, 'GF']) -> 'GF':
+        '''Add the generating function. The other term may
+        be a number or another generating function.
+
+        :param f: the other term
+        :returns: the new generating function'''
+        if isinstance(f, Number):
+            return self.sum(epydemic.gf.gf_from_coefficients([cast(Number, f)]))
+        elif isinstance(f, GF):
+            return self.sum(cast(GF, f))
+        else:
+            raise ValueError('GF.__add__ takes a number or a generating function')
+
+    def __sub__(self, f: Union[Number, 'GF']) -> 'GF':
+        '''Subtract the generating function. The other term may
+        be a number or another generating function.
+
+        :param f: the other term
+        :returns: the new generating function'''
+        if isinstance(f, Number):
+            return self.sum(epydemic.gf.gf_from_coefficients([cast(Number, f) * -1]))
+        elif isinstance(f, GF):
+            return self.sum(cast(GF, f) * -1)
+        else:
+            raise ValueError('GF.__sub__ takes a number or a generating function')
+
+    def __mul__(self, f: Union[Number, 'GF']) -> 'GF':
+        '''Multiply the generating function. The other factor may
+        be a number or another generating function.
+
+        :param f: the other factor
+        :returns: the new generating function'''
+        if isinstance(f, Number):
+            return self.scale(cast(Number, f))
+        elif isinstance(f, GF):
+            return self.product(cast(GF, f))
+        else:
+            raise ValueError('GF.__mul;__ takes a number or a generating function')
+
+    def __truediv__(self, n : float):
+        '''Divide the generating function by a constant.
+        This is implemented by inverting the constant and multiplying.
+
+        :param n: the number
+        :returns: the new generating function'''
+        return self.scale(1 / n)

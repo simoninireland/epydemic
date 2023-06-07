@@ -114,6 +114,42 @@ class GFTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             gf = DiscreteGF()
 
+    def testDiffCoeff(self):
+        '''Test we can differentiate coefficients.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+
+        d = gf1.dx()
+        self.assertEqual(d[0], 2)
+        self.assertEqual(d[1], 6)
+        self.assertEqual(d[2], 0)
+        self.assertEqual(d[3], 4)
+        self.assertEqual(d[4], 0)
+
+    def testDiffCoeffTwice(self):
+        '''Test we can differentiate coefficients twice.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+
+        d = gf1.dx(2)
+        self.assertEqual(d[0], 6)
+        self.assertEqual(d[1], 0)
+        self.assertEqual(d[2], 12)
+
+    def testDiffCoeffTwiceLinear(self):
+        '''Test differentiation over coefficients is linear.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+
+        d1 = gf1.dx(2)
+        d2 = gf1.dx().dx()
+        for i in range(5):
+            self.assertEqual(d1[i], d2[i])
+
+    def testDiffCoeffTwiceToZero(self):
+        '''Test we can differentiate coefficients of a low-order GF twice, yielding zero.'''
+        gf1 = gf_from_coefficients([0, 2])
+
+        d = gf1.dx(2)
+        self.assertEqual(d[0], 0)
+        self.assertEqual(d[1], 0)
 
     # Continuous series distributions
 
@@ -253,6 +289,270 @@ class GFTest(unittest.TestCase):
         degrees = [d for (_, d) in g.degree()]
         kmean_empirical = sum(degrees) / 5000
         self.assertAlmostEqual(gf_prime(1), kmean_empirical, delta=1)
+
+
+    # ---------- Operators ----------
+
+    def testMulContinuous(self):
+        '''Test we can multiply a continuous GF by a constant.'''
+        gf = gf_er(10000, 20)
+        gf4 = gf * 4
+        for i in range(1, 20):
+            self.assertEqual(gf4[i], 4 * gf[i])
+
+    def testDivContinuous(self):
+        '''Test we can divide a continuous GF by a constant.'''
+        gf = gf_er(10000, 20)
+        gf4 = gf / 4
+        for i in range(1, 20):
+            self.assertAlmostEqual(gf4[i], gf[i] / 4, places=3)
+
+    def testMulFunction(self):
+        '''Test we can multiply a function GF by a constant.'''
+        gf = gf_ba(3)
+        gf4 = gf * 4
+        for i in range(1, 20):
+            self.assertEqual(gf4[i], 4 * gf[i])
+
+    def testDivFunction(self):
+        '''Test we can divide a function GF by a constant.'''
+        gf = gf_ba(3)
+        gf4 = gf / 4
+        for i in range(1, 20):
+            self.assertAlmostEqual(gf4[i], gf[i] / 4, places=3)
+
+    def testMulNetwork(self):
+        '''Test we can multiply a measured empirical GF by a constant.'''
+        N = 10000
+        kmean = 20
+        phi = kmean / N
+
+        g = networkx.gnp_random_graph(N, phi)
+        gf = gf_from_network(g)
+        gf4 = gf * 4
+        for i in range(1, 20):
+            self.assertEqual(gf4[i], 4 * gf[i])
+
+    def testDivNetwork(self):
+        '''Test we can divide a measured empirical GF by a constant.'''
+        N = 10000
+        kmean = 20
+        phi = kmean / N
+
+        g = networkx.gnp_random_graph(N, phi)
+        gf = gf_from_network(g)
+        gf4 = gf / 4
+        for i in range(1, 20):
+            self.assertAlmostEqual(gf4[i], gf[i] / 4, places=3)
+
+    def testProductSimple(self):
+        '''Test we can do simple multiplication of GFs.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        p = gf1 * gf2
+        self.assertEqual(p[0], 0)
+        self.assertEqual(p[1], 6)
+        self.assertEqual(p[2], 4)
+        self.assertEqual(p[3], 6)
+        self.assertEqual(p[4], 0)
+        self.assertEqual(p[5], 2)
+
+    def testProductTwo(self):
+        '''Test we can do more complex multiplication of GFs.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([1, 2])
+
+        p = gf1 * gf2
+        self.assertEqual(p[0], 3)
+        self.assertEqual(p[1], 8)
+        self.assertEqual(p[2], 7)
+        self.assertEqual(p[3], 6)
+        self.assertEqual(p[4], 1)
+        self.assertEqual(p[5], 2)
+
+    def testProductTwoAssociate(self):
+        '''Test that the product of GFs associates.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        p1 = gf1 * gf2
+        p2 = gf2 * gf1
+        for i in range(5):
+            self.assertEqual(p2[i], p2[i])
+
+    def testProductConst(self):
+        '''Test that two products formed in different ways are the same.'''
+        c = 2
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([c])
+
+        p1 = gf1 * gf2
+        p2 = gf1 * c
+        for i in range(5):
+            self.assertEqual(p1[i], p2[i])
+
+    def testProductScale(self):
+        '''Test we can scale a multiplication of GFs.'''
+        c = 4
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([1, 2])
+
+        p1 = gf1 * gf2
+        p2 = p1 * c
+        for i in range(5):
+            self.assertEqual(p2[i], p1[i] * c)
+
+    def testProductScaleAssociate(self):
+        '''Test that multiplication of a product by a constant associates.'''
+        c = 4
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([1, 2])
+
+        p1 = gf1 * gf2
+        p2 = gf2 * gf1
+        for i in range(5):
+            self.assertEqual(p2[i], p2[i])
+
+    def testAddConstant(self):
+        '''Test we can add a constant to a GF.'''
+        c = 2
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+
+        s = gf1 + c
+        self.assertEqual(s[0], gf1[0] + c)
+        for i in range(1, 5):
+            self.assertEqual(s[i], gf1[i])
+
+    def testAddTwo(self):
+        '''Test we can do the sum of GFs.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([1, 2])
+
+        s = gf1 + gf2
+        self.assertEqual(s[0], 4)
+        self.assertEqual(s[1], 4)
+        self.assertEqual(s[2], 3)
+        self.assertEqual(s[3], 0)
+        self.assertEqual(s[4], 1)
+        self.assertEqual(s[5], 0)
+
+    def testSubConstant(self):
+        '''Test we can subtract a constant from a GF.'''
+        c = 2
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+
+        s = gf1 - c
+        self.assertEqual(s[0], gf1[0] - c)
+        for i in range(1, 5):
+            self.assertEqual(s[i], gf1[i])
+
+    def testSubTwo(self):
+        '''Test we can subtract two GFs.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([1, 2])
+
+        s = gf1 - gf2
+        self.assertEqual(s[0], 2)
+        self.assertEqual(s[1], 0)
+        self.assertEqual(s[2], 3)
+        self.assertEqual(s[3], 0)
+        self.assertEqual(s[4], 1)
+        self.assertEqual(s[5], 0)
+
+    def testSumProd(self):
+        '''Test we can get sums in two ways.'''
+        c = 2
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([c])
+
+        p = gf1 * gf2
+        s = gf1 + gf1
+        for i in range(6):
+            self.assertEqual(s[i], p[i])
+
+    def testSumScale(self):
+        '''Test we can scale a sum.'''
+        c = 2
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        s = (gf1 + gf2) * c
+        self.assertEqual(s[0], 3 * c)
+        self.assertEqual(s[1], 4 * c)
+        self.assertEqual(s[2], 3 * c)
+        self.assertEqual(s[3], 0)
+        self.assertEqual(s[4], c)
+        self.assertEqual(s[5], 0)
+
+    def testDiffSumOnce(self):
+        '''Test we can differentiate a sum once.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        d = (gf1 + gf2).dx()
+        self.assertEqual(d[0], 4)
+        self.assertEqual(d[1], 6)
+        self.assertEqual(d[2], 0)
+        self.assertEqual(d[3], 4)
+        self.assertEqual(d[4], 0)
+
+    def testDiffSumTwice(self):
+        '''Test we can differentiate a sum twice.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        d = (gf1 + gf2).dx(2)
+        self.assertEqual(d[0], 6)
+        self.assertEqual(d[1], 0)
+        self.assertEqual(d[2], 12)
+        self.assertEqual(d[3], 0)
+        self.assertEqual(d[4], 0)
+
+    def testDiffSumTwiceLinear(self):
+        '''Test that differentiating a sum twice is linear..'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        d1 = (gf1 + gf2).dx(2)
+        d2 = (gf1 + gf2).dx().dx()
+        for i in range(5):
+            self.assertEqual(d1[i], d2[i])
+
+    def testDiffProdOnce(self):
+        '''Test we can differentiate a product once.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        d = (gf1 * gf2).dx()
+        self.assertEqual(d[0], 6)
+        self.assertEqual(d[1], 8)
+        self.assertEqual(d[2], 18)
+        self.assertEqual(d[3], 0)
+        self.assertEqual(d[4], 10)
+        self.assertEqual(d[5], 0)
+
+    def testDiffProdTwice(self):
+        '''Test we can differentiate a product once.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        d = (gf1 * gf2).dx(2)
+        self.assertEqual(d[0], 8)
+        self.assertEqual(d[1], 36)
+        self.assertEqual(d[2], 0)
+        self.assertEqual(d[3], 40)
+        self.assertEqual(d[4], 0)
+
+    def testDiffProdTwiceLinear(self):
+        '''Test differention of products is linear.'''
+        gf1 = gf_from_coefficients([3, 2, 3, 0, 1])
+        gf2 = gf_from_coefficients([0, 2])
+
+        d1 = (gf1 * gf2).dx(2)
+        d2 = (gf1 * gf2).dx().dx()
+        for i in range(6):
+            self.assertEqual(d1[i], d2[i])
 
 
 if __name__ == '__main__':

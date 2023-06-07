@@ -44,16 +44,46 @@ class CorePeripheryNetwork(NetworkGenerator):
     '''
 
     # Network parameters
-    N_core: Final[str] = 'coreperiphery.core.N-core'              #: Experimental parameter holding the size of the core network.
-    PHI_core: Final[str] = 'coreperiphery.core.phi-core'          #: Experimental parameter holding the edge probability of the core network.
-    N_per: Final[str] = 'coreperiphery.periphery.N-periphery'     #: Experimental parameter holding the size of the peripheral network.
-    PHI_per: Final[str] = 'coreperiphery.periphery.phi-periphery' #: Experimental parameter holding the edge probability of the peripheral network.
+    N_core: Final[str] = 'coreperiphery.N-core'         #: Experimental parameter holding the size of the core network.
+    PHI_core: Final[str] = 'coreperiphery.phi-core'     #: Experimental parameter holding the edge probability of the core network.
+    N_per: Final[str] = 'coreperiphery.N-periphery'     #: Experimental parameter holding the size of the peripheral network.
+    PHI_per: Final[str] = 'coreperiphery.phi-periphery' #: Experimental parameter holding the edge probability of the peripheral network.
 
     # Node attributes
-    ORIGIN: Final[str] = "origin"                                 #: State variable holding a node's origin in the core (0) or periphery (1).
+    ORIGIN: Final[str] = "origin"                       #: State variable holding a node's origin in the core (0) or periphery (1).
 
+    @staticmethod
+    def coreSubNetwork(g: Graph) -> Graph:
+        '''Return the sub-network composing the core. This method
+        will only work for networks created by this class, that have
+        the :attr:`ORIGIN` property set correctly. An exception will
+        be raised if the core can't be identified.
+
+        :param g: the network
+        :returns: the core sub-network'''
+        try:
+            ns = [n for n in g.nodes() if g.nodes[n][CorePeripheryNetwork.ORIGIN] == 0]
+            return g.subgraph(ns)
+        except KeyError:
+            raise ValueError('Network does not have core-periphery structure marked')
+
+    @staticmethod
+    def peripherySubNetwork(g: Graph) -> Graph:
+        '''Return the sub-network composing the periphery. This method
+        will only work for networks created by this class, that have
+        the :attr:`ORIGIN` property set correctly. An exception will
+        be raised if the core can't be identified.
+
+        :param g: the network
+        :returns: the core sub-network'''
+        try:
+            ns = [n for n in g.nodes() if g.nodes[n][CorePeripheryNetwork.ORIGIN] == 1]
+            return g.subgraph(ns)
+        except KeyError:
+            raise ValueError('Network does not have core-periphery structure marked')
 
     def topology(self) -> str:
+
         '''Return the topology marker string.
 
         :returns: the topology marker'''
