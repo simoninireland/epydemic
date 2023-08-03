@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017--2022 Simon Dobson
+# Copyright (C) 2017--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.12.1
+VERSION = 1.13.1
 
 
 # ----- Sources -----
@@ -37,6 +37,8 @@ SOURCES_CODE = \
 	epydemic/bbt.py \
 	epydemic/drawset.py \
 	epydemic/networkexperiment.py \
+	epydemic/newmanziff.py \
+	epydemic/nz_extended.py \
 	epydemic/networkdynamics.py \
 	epydemic/synchronousdynamics.py \
 	epydemic/stochasticdynamics.py \
@@ -67,10 +69,12 @@ SOURCES_CODE = \
 	epydemic/sivr_model.py \
 	epydemic/pulsecoupled.py \
 	epydemic/gf/gf.py \
+	epydemic/gf/interface.py \
 	epydemic/gf/function_gf.py \
 	epydemic/gf/discrete_gf.py \
 	epydemic/gf/continuous_gf.py \
-	epydemic/gf/interface.py \
+	epydemic/gf/sum_gf.py \
+	epydemic/gf/product_gf.py \
 	epydemic/gf/standard_gfs.py \
 	epydemic/archive/builder.py
 SOURCES_TESTS_INIT = test/__init__.py
@@ -170,7 +174,6 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/monitoring-progress.rst \
 	doc/cookbook/infect-specific-nodes.rst \
 	doc/cookbook/dynamic-population.rst \
-	doc/cookbook/keep-network.rst \
 	doc/cookbook/percolation-threshold.rst \
 	doc/cookbook/mesostructure.rst \
 	doc/cookbook/from-r-to-probabilities.rst \
@@ -207,7 +210,7 @@ SOURCES_UTILS = \
 # Extras for the build and packaging system
 SOURCES_EXTRA = \
 	README.rst \
-	CITATION.ctf \
+	CITATION.cff \
 	LICENSE \
 	HISTORY \
 	CONTRIBUTORS \
@@ -221,6 +224,7 @@ SOURCES_GENERATED = \
 DIST_SDIST = dist/$(PACKAGENAME)-$(VERSION).tar.gz
 DIST_WHEEL = dist/$(PACKAGENAME)-$(VERSION)-py3-none-any.whl
 
+
 # ----- Tools -----
 
 # Base commands
@@ -230,6 +234,7 @@ COVERAGE = coverage
 PIP = pip
 TWINE = twine
 FLAKE8 = flake8
+MYPY = mypy
 GPG = gpg
 GIT = git
 ETAGS = etags
@@ -242,6 +247,12 @@ RM = rm -fr
 CP = cp
 CHDIR = cd
 ZIP = zip -r
+
+# Makefile environment
+SHELL := bash
+.SHELLFLAGS := -eu -o pipefail -c
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
 
 # Files that are locally changed vs the remote repo
 # (See https://unix.stackexchange.com/questions/155046/determine-if-git-working-directory-is-clean-from-a-script)
@@ -302,7 +313,7 @@ $(VENV):
 	$(VIRTUALENV) $(VENV)
 	$(CAT) $(REQUIREMENTS) $(DEV_REQUIREMENTS) >$(VENV)/requirements.txt
 	$(ACTIVATE) && $(PIP) install -U pip wheel && $(CHDIR) $(VENV) && $(PIP) install -r requirements.txt
-	$(ACTIVATE) && mypy --install-types --non-interactive
+	$(ACTIVATE) && $(MYPY) --install-types --non-interactive
 
 # Make a new release
 release: $(SOURCES_GENERATED) master-only lint commit sdist wheel upload
@@ -324,7 +335,7 @@ master-only:
 
 # Update the remote repos on release
 # (This will trigger .github/workflows/release.yaml to create a GitHib release, and
-# .github/workflows/ci.yaml to run the full integrationm test suite)
+# .github/workflows/ci.yaml to run the full integration test suite)
 commit: check-local-repo-clean
 	$(GIT) push origin master
 	$(GIT) tag -a v$(VERSION) -m "Version $(VERSION)"
@@ -376,7 +387,6 @@ $(DIST_WHEEL): $(SOURCES_GENERATED) $(SOURCES_CODE_INIT) $(SOURCES_CODE) Makefil
 # The tags file
 TAGS:
 	$(ETAGS) -o TAGS $(SOURCES_CODE)
-
 
 
 # ----- Usage -----

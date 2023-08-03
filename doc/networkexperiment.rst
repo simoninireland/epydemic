@@ -10,7 +10,7 @@
 In use
 ------
 
-:class:`NetworkExperiment` simply adds functions to associate a netywork or a network
+:class:`NetworkExperiment` simply adds functions to associate a network or a network
 generator with a computational experiment.
 
 .. automethod:: NetworkExperiment.network
@@ -27,5 +27,3 @@ time; if it was provided with an instance of
 defined by the generator is used.
 
 .. automethod:: NetworkExperiment.setUp
-
-.. automethod:: NetworkExperiment.tearDown

@@ -103,6 +103,21 @@ class ProcessTest(unittest.TestCase):
         r2 = p.runId()
         self.assertNotEqual(r1, r2)
 
+    def testNetworkPersists(self):
+        '''Test that the working network is retained after a run (but not re-used).'''
+        p = Process()
+        g = networkx.fast_gnp_random_graph(10000, 0.001)
+        e = StochasticDynamics(p, g)
+
+        rc1 = e.run(fatal=True)
+        g1 = e.network()
+        self.assertIsNotNone(g1)
+
+        rc1 = e.run(fatal=True)
+        g2 = e.network()
+        self.assertIsNotNone(g2)
+        self.assertNotEqual(g1, g2)
+
 
 if __name__ == '__main__':
     unittest.main()

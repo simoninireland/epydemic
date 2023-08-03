@@ -88,7 +88,7 @@ class NetworkExperiment(Experiment):
         return self._generator
 
 
-    # ---------- Set-up and tear-down ----------
+    # ---------- Set-up ----------
 
     def setUp(self, params: Dict[str, Any]):
         '''Set up the experiment for a run. This creates a working copy of the
@@ -98,6 +98,9 @@ class NetworkExperiment(Experiment):
         '''
         super().setUp(params)
 
+        # delete any working network from previous runs
+        self._graph = None
+
         # generate a working network instance
         gen = self.networkGenerator()
         g = gen.set(params).generate()
@@ -105,8 +108,3 @@ class NetworkExperiment(Experiment):
 
         # update the parameters with the topology marker for the generator
         params[NetworkGenerator.TOPOLOGY] = gen.topology()
-
-    def tearDown(self):
-        '''At the end of each experiment, throw away the working network.'''
-        super().tearDown()
-        self._graph = None

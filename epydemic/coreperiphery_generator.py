@@ -97,7 +97,7 @@ class CorePeripheryNetwork(NetworkGenerator):
 
         # generate the core network
         N_core = params[self.N_core]
-        phi_core = params[self.PHI_per]
+        phi_core = params[self.PHI_core]
         g_core = fast_gnp_random_graph(N_core, phi_core)
 
         # generate the periphery network

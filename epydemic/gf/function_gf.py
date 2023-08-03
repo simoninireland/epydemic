@@ -1,6 +1,6 @@
 # Generating functions with a function for coefficients
 #
-# Copyright (C) 2021 Simon Dobson
+# Copyright (C) 2021--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -18,6 +18,7 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from typing import Callable
+from numbers import Number
 from epydemic.gf import GF
 
 
@@ -60,11 +61,6 @@ class FunctionGF(GF):
         :returns: the derivative coefficient function'''
 
         def df(i: int) -> float:
-            # low-order terms fall away
-            if i < order:
-                return 0
-
-            # high-order terms are transformed
             m = f(i + order)
             for j in range(1, order + 1):
                 m *= (i + j)
@@ -81,3 +77,14 @@ class FunctionGF(GF):
         :returns: a generating function'''
         df = self._differentiate(self._coefficients, order)
         return FunctionGF(df, self._maxTerm)
+
+    def scale(self, n: Number) -> GF:
+        '''Multiply the generating function by a constant.
+
+        :param n: the constant
+        :returns: the scaled generating function'''
+
+        def make_scaled(f, n):
+            return lambda x: n * f(x)
+
+        return FunctionGF(make_scaled(self._coefficients, n), self._maxTerm)

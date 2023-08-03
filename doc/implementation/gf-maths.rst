@@ -6,18 +6,21 @@ Implementing generating functions
 ==================================
 
 The method of :term:`generating functions` is now ubiquitous in the
-network science literature. Despite this, code to support the
-creation and use of generating functions is still hard to come by, and
-can be tricky to implement. In this section we'll briefly discuss the
-challenges posed, and the way in whcih ``epydemic`` addresses them in
-the :ref:`generating functions library <gf>`.
+network science literature, having been first widely introduced by
+Newman, Strogatz, and Watts in 2001 :cite:`ArbitraryDegreeDistributions`.
+Despite this, code to support the creation and use of generating
+functions is still hard to come by and can be tricky to implement. In
+this section we'll briefly discuss the challenges posed, and the way
+in which ``epydemic`` addresses them in the :ref:`generating functions
+library <gf>`.
 
 
 Generating functions in overview
 --------------------------------
 
-First, a very swift overview. A generating function is a formal power
-series of the form:
+First, a very swift overview. (Wilf :cite:`generatingfunctionology`
+provides considerably more detail.) A generating function is a formal
+power series of the form:
 
 .. math::
 

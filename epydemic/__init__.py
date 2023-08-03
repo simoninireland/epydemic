@@ -105,3 +105,4 @@ from .processsequence import ProcessSequence
 
 # other experiments
 from .newmanziff import NewmanZiff, BondPercolation, SitePercolation
+from .nz_extended import ResidualBondPercolation

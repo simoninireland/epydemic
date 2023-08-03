@@ -1,6 +1,6 @@
 # Discrete generating functions created from actual networks
 #
-# Copyright (C) 2021 Simon Dobson
+# Copyright (C) 2021--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
