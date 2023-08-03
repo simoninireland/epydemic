@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from itertools import combinations_with_replacement
 import epydemic.gf
 from epydemic.gf import GF
 
@@ -43,7 +42,7 @@ class SumGF(GF):
 
         :param i: the index
         :returns: the coefficient'''
-        return  self._gf1[i] + self._gf2[i]
+        return self._gf1[i] + self._gf2[i]
 
     def evaluate(self, x: float) -> float:
         '''Evaluate the product at x. This simply adds the

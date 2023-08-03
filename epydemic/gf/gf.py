@@ -198,7 +198,7 @@ class GF:
         else:
             raise ValueError('GF.__mul;__ takes a number or a generating function')
 
-    def __truediv__(self, n : float):
+    def __truediv__(self, n: float):
         '''Divide the generating function by a constant.
         This is implemented by inverting the constant and multiplying.
 

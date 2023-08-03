@@ -19,7 +19,7 @@
 
 import numpy
 from epyc import Experiment
-from epydemic import NetworkExperiment, Node, Edge, NewmanZiff
+from epydemic import Node, Edge, NewmanZiff
 from networkx import Graph
 import sys
 from typing import Any, Dict, Union, Optional, Iterable, List, cast
@@ -56,14 +56,14 @@ class ResidualBondPercolation(NewmanZiff):
     '''
 
     # Experimental results
-    P_RESIDUAL_STEM : Final[str] = 'epydemic.residualbondpercolation.pOccupied'
-    DEPTH_RESIDUAL : Final[str] = 'epydemic.residualbondpercolation.depth'
-    N_RESIDUAL : Final[str] = 'epydemic.residualbondpercolation.N'
-    M_RESIDUAL : Final[str] = 'epydemic.residualbondpercolation.M'
-    GCC_RESIDUAL : Final[str] = 'epydemic.residualbondpercolation.gcc'
+    P_RESIDUAL_STEM: Final[str] = 'epydemic.residualbondpercolation.pOccupied'
+    DEPTH_RESIDUAL: Final[str] = 'epydemic.residualbondpercolation.depth'
+    N_RESIDUAL: Final[str] = 'epydemic.residualbondpercolation.N'
+    M_RESIDUAL: Final[str] = 'epydemic.residualbondpercolation.M'
+    GCC_RESIDUAL: Final[str] = 'epydemic.residualbondpercolation.gcc'
 
     @classmethod
-    def P_RESIDUAL(cls, depth : int) -> str:
+    def P_RESIDUAL(cls, depth: int) -> str:
         '''Return the experimental result corresponding to the occupation probability
         at the given depth: 0 for the primary network, 1 for the first residual network,
         and so on.
@@ -224,13 +224,14 @@ class ResidualBondPercolation(NewmanZiff):
 
             # occupy the edge
             (n, m) = es[i]
-            csize = self.occupy(n, m, network)
+            self.occupy(n, m, network)
 
             # take a sample if this is a sample point
-            if  (i + 1) / M >= self._samples[samplePoint]:
+            s = cast(float, self._samples[samplePoint])
+            if (i + 1) / M >= s:
                 # we're at the closest probability after the requested sample point,
                 # so build the sample
-                samples.extend(self.sample(self._samples[samplePoint], es, i + 1, N, M, depth, network))
+                samples.extend(self.sample(s, es, i + 1, N, M, depth, network))
                 samplePoint += 1
 
         return samples
