@@ -112,7 +112,7 @@ class GFTest(unittest.TestCase):
     def testNoParametersDiscreteGF(self):
         '''Test we detect no valid parameters passed to build a discrete generating function.'''
         with self.assertRaises(TypeError):
-~            gf = DiscreteGF()
+            _ = DiscreteGF()
 
     def testDiffCoeff(self):
         '''Test we can differentiate coefficients.'''
