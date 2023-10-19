@@ -1,6 +1,6 @@
 # Networks dynamics simulation base class
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -46,12 +46,6 @@ class Dynamics(NetworkExperiment):
     generator can be any iterator but will typically be an instance of
     :class:`NetworkGenerator`.
 
-    The dynamics also provides the interface for :ref:`event-taps`,
-    allowing external code to tap-into the changes the experiment makes
-    to the network. Sub-classes need to insert calls to this interface
-    as appropriate, notably around the main body of the simulation and
-    at each significant change.
-
     :param p: network process to run
     :param g: (optional) prototype network or network generator'''
 
@@ -74,9 +68,6 @@ class Dynamics(NetworkExperiment):
         self._perLocusEvents: Dict[Process, EventDistribution] = dict()    # dict from processes to events that occur per-locus
         self._postedEvents: List[PostedEvent] = []                         # pri-queue of fixed-time events
         self._postedEventFinder: Dict[int, PostedEvent] = {}               # mapping from event id to event structure
-
-        # initialise the event tap sub-system
-        self.initialiseEventTaps()
 
 
     # ---------- Configuration ----------
@@ -450,54 +441,3 @@ class Dynamics(NetworkExperiment):
                 pef()
                 self.eventFired(t, p, name, e)
                 n += 1
-
-
-    # ---------- Event taps ----------
-
-    def initialiseEventTaps(self):
-        '''Initialise the event tap sub-system, which allows external code
-        access to the event stream of the simulation as it runs.
-
-        The default does nothing.'''
-        pass
-
-    def simulationStarted(self, params: Dict[str, Any]):
-        '''Called when the simulation has been configured and set up, any
-        processes built, and is ready to run.
-
-        The default does nothing.
-
-        :param params: the experimental parameters'''
-        pass
-
-    def simulationEnded(self, res: Union[Dict[str, Any], List[Dict[str, Any]]]):
-        '''Called when the simulation has stopped, immediately before tear-down.
-
-        The default does nothing.
-
-        :param res: the experimental results'''
-        pass
-
-    def eventFired(self, t: float, p: Process, name: str, e: Element):
-        '''Respond to the occurrance of the given event. The method is
-        passed the simulation time, originating process, event name,
-        and the element affected -- and isn't passed the event
-        function, which is used elsewhere.
-
-        This method is called in the past tense, *after* the event function
-        has been run. This lets the effects of the event be observed.
-
-        The event name is simply the optional name that was given to the event
-        when it was declared using :meth:`addEventPerElement` or
-        :meth:`addFixedRateEvent`. It will be None if no name was provided.
-
-        The default does nothing. It can be overridden by sub-classes to
-        provide event-level logging or other functions.
-
-        :param t: the simulation time
-        :param p: the process firing the event
-        :param name: the event name
-        :param e: the element
-
-        '''
-        pass

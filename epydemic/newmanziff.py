@@ -1,6 +1,6 @@
 # The Newman-Ziff algorithm for site (node) and bond (edge) percolation
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -175,19 +175,23 @@ class NewmanZiff(NetworkExperiment):
 
 
 class BondPercolation(NewmanZiff):
-    '''A bond (edge) percolation experiment. This experiment computes the size of
-    the giant connected component (GCC) as edges are "occupied" within the underlying network.
-    It samples the GCC at a given sequence of occupation probabilities, returning
-    a time series of the growth of the GCC.
+    '''A bond (edge) percolation experiment. This experiment computes
+    the size of the giant connected component (GCC) as edges are
+    "occupied" within the underlying network. It samples the GCC at a
+    given sequence of occupation probabilities, returning a time
+    series of the growth of the GCC.
 
-    Each occupation of a bond is treated as an event.
+    Each occupation of a bond is treated as an event. The event will
+    be sent to the event tap.
 
-    :param g: (optional) the underlying network or generator
-    :param samples: (optional) number of samples or list of sample points (defaults to 100)'''
+    :param g: (optional) the underlying network or generator :param
+    samples: (optional) number of samples or list of sample points
+    (defaults to 100)
+
+    '''
 
     # Event names
     OCCUPY: Final[str] = 'epydemic.bondpercolation.occupy'   #: Name for bond-occupation event.
-    SAMPLE: Final[str] = 'epydemic.bondpercolation.sample'   #: Name for sampling event.
 
     # Experimental results
     P: Final[str] = 'epydemic.bondpercolation.pOccupied'     #: Result holding series of percolation values.
@@ -266,6 +270,7 @@ class BondPercolation(NewmanZiff):
 
             # occupy the edge
             self.occupy(n, m)
+            self.eventFired(i, None, self.OCCUPY, (n, m))
 
             # take a sample if this is a sample point
             if (i + 1) / M >= self._samplepoints[samplePoint]:
@@ -285,6 +290,8 @@ class BondPercolation(NewmanZiff):
 
         :param params: experimental parameters
         :returns: a list of dicts of experimental results'''
+        self.simulationStarted(params)
+
         # extract and shuffle the edges
         g = self.network()
         es = list(g.edges()).copy()
@@ -292,22 +299,27 @@ class BondPercolation(NewmanZiff):
 
         # percolate the network using these edges
         self.percolate(es)
+
+        # return the experimental results
         res = self.experimentalResults()
+        self.simulationEnded(res)
         return res
 
 
 class SitePercolation(NewmanZiff):
-    '''A site (node) percolation experiment. This experiment computes the size of
-    the giant connected component (GCC) as nodes are "occupied" within the underlying network.
-    It samples the GCC at a given sequence of occupation probabilities, returning
-    a time series of the growth of the GCC.
+    '''A site (node) percolation experiment. This experiment computes
+    the size of the giant connected component (GCC) as nodes are
+    "occupied" within the underlying network. It samples the GCC at a
+    given sequence of occupation probabilities, returning a time
+    series of the growth of the GCC.
 
     :param g: (optional) the underlying network or generator
-    :param samples: (optional) number of samples or list of sample points (defaults to 100)'''
+    :param samples: (optional) number of samples or list of sample points (defaults to 100)
+
+    '''
 
     # Event names
     OCCUPY: Final[str] = 'epydemic.sitepercolation.occupy'   #: Name for site-occupation event.
-    SAMPLE: Final[str] = 'epydemic.sitepercolation.sample'   #: Name for sampling event.
 
     # Experimental results
     P: Final[str] = 'epydemic.sitepercolation.pOccupied'    #: Result holding sequence of percolation values.
@@ -414,8 +426,9 @@ class SitePercolation(NewmanZiff):
         for i in range(N):
             n = ns[i]
 
-            # occupy the edge
+            # occupy the node
             self.occupy(n)
+            self.eventFired(i, None, self.OCCUPY, n)
 
             # take a sample if this is a sample point
             if (i + 1) / N >= self._samplepoints[samplePoint]:
@@ -435,6 +448,8 @@ class SitePercolation(NewmanZiff):
 
         :param params: experimental parameters
         :returns: a list of dicts of experimental results'''
+        self.simulationStarted(params)
+
         # extract and shuffle the nodes
         g = self.network()
         ns = list(g.nodes()).copy()
@@ -442,5 +457,8 @@ class SitePercolation(NewmanZiff):
 
         # percolate the network using these nodes
         self.percolate(ns)
+
+        # retrurn the experimental results
         res = self.experimentalResults()
+        self.simulationEnded(res)
         return res

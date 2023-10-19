@@ -1,6 +1,6 @@
 # Networks experiment base class
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from typing import Union, Dict, Any, cast
+from typing import Union, Dict, Any, List, cast
 from networkx import Graph
 from epyc import Experiment
-from epydemic import NetworkGenerator, FixedNetwork
+from epydemic import NetworkGenerator, FixedNetwork, Process, Element
 
 
 class NetworkExperiment(Experiment):
@@ -29,6 +29,12 @@ class NetworkExperiment(Experiment):
     be a fixed network used for each experimental run, or a network
     generator that will be used to generate a new instance for each
     run.
+
+    The experiment also provides the interface for :ref:`event-taps`,
+    allowing external code to tap-into the changes the experiment makes
+    to the network. Sub-classes need to insert calls to this interface
+    as appropriate, notably around the main body of the simulation and
+    at each significant change.
 
     :param g: (optional) prototype network or network generator
 
@@ -41,6 +47,9 @@ class NetworkExperiment(Experiment):
             g = FixedNetwork(g)
         self._generator: NetworkGenerator = cast(NetworkGenerator, g) # network generator
         self._graph: Graph = None                                     # working network instance
+
+        # initialise the event tap sub-system
+        self.initialiseEventTaps()
 
 
     # ---------- Configuration ----------
@@ -108,3 +117,59 @@ class NetworkExperiment(Experiment):
 
         # update the parameters with the topology marker for the generator
         params[NetworkGenerator.TOPOLOGY] = gen.topology()
+
+
+    # ---------- Event taps ----------
+
+    def initialiseEventTaps(self):
+        '''Initialise the event tap sub-system, which allows external code
+        access to the event stream of the simulation as it runs.
+
+        The default does nothing.'''
+        pass
+
+    def simulationStarted(self, params: Dict[str, Any]):
+        '''Called when the simulation has been configured and set up, any
+        processes built, and is ready to run.
+
+        The default does nothing.
+
+        :param params: the experimental parameters'''
+        pass
+
+    def simulationEnded(self, res: Union[Dict[str, Any], List[Dict[str, Any]]]):
+        '''Called when the simulation has stopped, immediately before tear-down.
+
+        The default does nothing.
+
+        :param res: the experimental results'''
+        pass
+
+    def eventFired(self, t: float, p: Process, name: str, e: Element):
+        '''Respond to the occurrance of the given event. The method is
+        passed the simulation time, originating process, event name,
+        and the element affected -- and isn't passed the event
+        function, which is used elsewhere. p will be None if the event
+        is not associated with a :class:`Process` instance.
+
+        This method is called in the past tense, *after* the event has
+        happened. This lets the effects of the event be observed from
+        within the tap.
+
+        The event name is simply the optional name to differentiate
+        between different kinds of event. When used from
+        :class:`Dynamics`, event names are generated automatically
+        from the names associated with event handlers when they are
+        defined in the corresponding :class:`Process`, using
+        :meth:`Process.addEventPerElement` or :meth:`Process.addFixedRateEvent`.
+
+        The default does nothing. It can be overridden by sub-classes to
+        provide event-level logging or other functions.
+
+        :param t: the simulation time
+        :param p: the process firing the event
+        :param name: the event name
+        :param e: the element
+
+        '''
+        pass
