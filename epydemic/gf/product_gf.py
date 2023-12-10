@@ -67,11 +67,11 @@ class ProductGF(GF):
         '''Evaluate the product at x. This simply multiplies the
         results of evaluating the two factors individually.
 
-        :param x: the argumentr
+        :param x: the argument
         :returns: the value of the product of generating functions'''
         return self._gf1(x) * self._gf2(x)
 
-    def derivative(self, order: int = 1) -> 'GF':
+    def derivative(self, order: int = 1) -> GF:
         '''Return a new generating function representing the derivative.
         This applies the product rule of calculus to generate a product
         of the derivatives.
@@ -106,6 +106,6 @@ class ProductGF(GF):
         '''Multiply the generating function by another. This creates
         a nested sum.
 
-        :param gf the other generating function
+        :param gf: the other generating function
         :returns: the new generating function'''
         return epydemic.gf.SumGF(self, gf)
