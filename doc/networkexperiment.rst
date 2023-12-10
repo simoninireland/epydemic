@@ -34,7 +34,7 @@ Event taps
 
 Whenever the network changes, there is an opportunity for the
 experiment to log it or take some other action. We refer to this as
-the *event tap*, as it captures the entire stream of events regardless
+the :term:`event tap`, as it captures the entire stream of events regardless
 of how they are defined. See :ref:`event-taps` for a discussion.
 
 To use the event tap interface, you need to override these
