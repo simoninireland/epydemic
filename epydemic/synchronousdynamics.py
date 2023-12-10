@@ -1,6 +1,6 @@
 # Synchronous dynamics base class
 #
-# Copyright (C) 2017--2021 Simon Dobson
+# Copyright (C) 2017--2023 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -20,12 +20,12 @@
 import sys
 from copy import copy
 from networkx import Graph
-from epydemic import Dynamics, rng, Process, NetworkGenerator
+from epydemic import Dynamics, rng, Process, NetworkGenerator, Locus, Element, EventFunction
+from typing import Any, Dict, Union, Tuple, List
 if sys.version_info >= (3, 8):
-    from typing import Any, Dict, Union, Final
+    from typing import Final
 else:
     # backport compatibility with older typing
-    from typing import Any, Dict, Union
     from typing_extensions import Final
 
 
@@ -44,6 +44,49 @@ class SynchronousDynamics(Dynamics):
     def __init__(self, p: Process, g: Union[Graph, NetworkGenerator] = None):
         super().__init__(p, g)
 
+    def allEventsInTimestep(self, t: float) -> List[Tuple[Locus, Element, EventFunction, str]]:
+        '''Return the list of events to be executed in this timestep.
+        This includes both the stochastic and fixed-rate events, but
+        does not include posted events.
+
+        By default this method accesses the stochastic event
+        distribution, chooses those events that should be fired based
+        on the choice probability, and returns them in order. It then
+        re-visits the distributions for fixed-rate events and
+        choose random elements for them to happen on.
+
+        This behaviour can be overridden by sub-classes to provide a
+        different ordering for events. The order sometimes has a
+        significant impact on the behaviour of the simulation.
+
+        :param t: the simulation time
+        :returns: a list of locus, element, event function, and name
+
+        '''
+        evs = []
+
+        # stochastic events
+        dist = self.perElementEventDistribution(t)
+        for (l, p, ef, name) in dist:
+            if (len(l) > 0) and (p > 0.0):
+                for e in l:
+                    # test for occurrance of the event on this element
+                    if rng.random() <= p:
+                        # yes, record the event element and function
+                        evs.append((l, e, ef, name))
+
+        # fixed-rate events
+        dist = self.fixedRateEventDistribution(t)
+        for (l, p, ef, name) in dist:
+            if (len(l) > 0) and (p > 0.0):
+                # test for the occurrance of the event
+                if rng.random() <= p:
+                    # yes, draw a random element of the locus and record it
+                    e = l.draw()
+                    evs.append((l, e, ef, name))
+
+        return evs
+
     def do(self, params: Dict[str, Any]) -> Dict[str, Any]:
         '''Execute the process under synchronous dynamics.
 
@@ -61,32 +104,15 @@ class SynchronousDynamics(Dynamics):
             # fire any events posted for at or before this time
             nev = self.runPendingEvents(t)
 
-            # run through all the events in the distribution
-            dist = self.perElementEventDistribution(t)
-            for (l, p, ef, name) in dist:
-                if (len(l) > 0) and (p > 0.0):
-                    # run through every possible element on which this event may occur
-                    for e in copy(l):
-                        # make sure the element hasn't been removed from the locus
-                        # through the processing of a previous element
-                        if e in l:
-                            # test for occurrance of the event on this element
-                            if rng.random() <= p:
-                                # yes, perform the event
-                                ef(t, e)
-                                self.eventFired(t, l.process(), name, e)
-                                nev = nev + 1
-
-            # run through all the fixed-rate events for this timestep
-            dist = self.fixedRateEventDistribution(t)
-            for (l, p, ef, name) in dist:
-                if (len(l) > 0) and (p > 0.0):
-                    if rng.random() <= p:
-                        # yes, perform the event on an element drawn at random
-                        e = l.draw()
-                        ef(t, e)
-                        self.eventFired(t, l.process(), name, e)
-                        nev = nev + 1
+            # run all the stochastic and fixed-rate events
+            evs = self.allEventsInTimestep(t)
+            for (l, e, ef, name) in evs:
+                # test the the element is still in the locus
+                if e in l:
+                    # yes, fire the event
+                    ef(t, e)
+                    self.eventFired(t, l.process(), name, e)
+                    nev = nev + 1
 
             # add the events to the count
             events = events + nev

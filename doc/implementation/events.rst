@@ -104,7 +104,7 @@ The event taps interface is implemented on :class:`NetworkExperiment`
 to allow *all* experiments to generate an event stream. This allows
 sub-classes of :class:`NetworkExperiment` to act on *every* event.
 
-Event tags are most naturally associated with the :class:`Dynamics`
+Event taps are most naturally associated with the :class:`Dynamics`
 sub-classes, all of which provide event taps in their main event loop
 that tap all events regardless of which process defines it and
 whether it was stochastic or posted. When events are defined or posted

@@ -38,8 +38,21 @@ Glossary
       for a survey,
 
    component
-      A set of nodes connected by edges. A node with a single
-      component is called *fully connected*.
+      A set of nodes connected by edges. The nodes with a single
+      component are called *fully connected*. A network may have
+      several components, each consisting of a set of connected nodes
+      but which are not connected to nodes in other components.
+
+   complex system
+
+      There are several definitions of complex system, none of which
+      are universally accepted. One view is that a system is complex
+      if the chains of cause and effect within it are difficult to
+      untangle; another is that complex systems exhibit "emergent
+      properties" at their large scales that are unpredictable from
+      even a detailed understanding of the small-scale interactions;
+      another, slightly more tongue-in-cheek, is that a complex system
+      is one that we don't really understand yet.
 
    contact tree
       The way in which individuals were infected during thhe infection.
@@ -104,6 +117,17 @@ Glossary
       or edges, depending in the :term:`locus` at which the event
       occurs.
 
+   event tap
+      An way to tap the sequence of events that happen in a simulation.
+      See :ref:`event-taps` for a discussion.
+
+   fine structure
+
+      An umbrella term for :term:`mesostructure` and
+      :term:`microstructure`. Fine structure arises from the choices
+      made when connecting nodes to other nodes and constructing its
+      :term:`neighbourhood`.
+
    generating functions
       A mathematical tool for working with entire
       probability distributions, often used in network science
@@ -166,6 +190,12 @@ Glossary
       frequently in a network. A triangle is a common motif, as are
       cycles and cliques. The building blocks of
       :term:`microstructure`.
+
+   neighbourhood
+      The collection of nodes around another "focal" node. One may
+      consider the immediate neighbours to form the
+      "1-neighbourhood", or all the neighbours of those neighbours
+      (the "2-neighbourhood"), and so on.
 
    network generator
       A process that samples a class or ensemble of random networks to

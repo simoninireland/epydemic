@@ -13,7 +13,10 @@ order. This is the job of the dynamics classes, the sub-classes of
 ``epydemic`` has two simulation dynamics, for continuous-time and
 discrete-time simulation. In most cases continuous time (stochastic)
 dynamics is the correct choice, but we explain below in detail how
-they differ.
+they differ. You should also read about
+:ref:`_implementation-event-interactions` to understand the details of
+how different choices of dynamics can sometimes affect the results of
+simulations.
 
 
 Continuous-time (stochastic or Gillespie) dynamics
@@ -109,11 +112,6 @@ massively faster. This is unsurprising: the probability of an SI edge
 passing an infection (for example) is usually low in any timestep, so
 most of the checks that the simulation performs will fail. By contrast
 the stochastic dynamics "steps over" time when nothing is happening.
-It is also statistically exact, in that the next event (and the time
-until it) is chosen using all the available information relating to
-all previous events, rather than all the one in the previous timestep
-as happens in the synchronous case. This can sometimes lead to
-different curves even for the same parameters.
 
 
 Posted events
