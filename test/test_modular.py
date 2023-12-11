@@ -83,11 +83,16 @@ class ModularTests(unittest.TestCase):
                              self._g.nodes[e[1]][ModularNetwork.ORIGIN] == 0))
 
     def testExtraction(self):
-        '''Test we can extract the core and satellites.'''
+        '''Test we can extract the core and satellites.
+
+        We allow up to 5% variation in the size of components to allow
+        for the fact that the generated network may not be fully
+        connected.
+        '''
 
         # core
         c = ModularNetwork.coreSubNetwork(self._g)
-        self.assertEqual(self._params[ModularNetwork.N_core], c.order())
+        self.assertAlmostEqual(self._params[ModularNetwork.N_core], c.order(), delta=(c.order() * 0.05))
         core_es = [e for e in self._g.edges() if (self._g.nodes[e[0]][ModularNetwork.ORIGIN] == 0 and
                                                   self._g.nodes[e[1]][ModularNetwork.ORIGIN] == 0)]
         self.assertEqual(len(c.edges()), len(core_es))
@@ -97,7 +102,7 @@ class ModularTests(unittest.TestCase):
         # satellites
         for i in range(1, self._params[ModularNetwork.SATELLITES] + 1):
             p = ModularNetwork.satelliteSubNetwork(self._g, i)
-            self.assertEqual(self._params[ModularNetwork.N_sat], p.order())
+            self.assertAlmostEqual(self._params[ModularNetwork.N_sat], p.order(), delta=(p.order() * 0.05))
             per_es = [e for e in self._g.edges() if (self._g.nodes[e[0]][ModularNetwork.ORIGIN] == i and
                                                      self._g.nodes[e[1]][ModularNetwork.ORIGIN] == i)]
             self.assertEqual(len(p.edges()), len(per_es))
