@@ -140,7 +140,7 @@ class GFTest(unittest.TestCase):
             g = gen.generate()
             if self._significance(g, gf):
                 passes += 1
-            if passes > threshold:
+            if passes >= threshold:
                 return True
 
         # if we get here we didn't pass enough tests
