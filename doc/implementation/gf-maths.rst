@@ -141,7 +141,7 @@ the complex plane. That is, we compute:
 
 Getting from here to an implementation is quite involved, but we can
 implement the Cauchy procedure in Python quite easily (see
-Dobson :cite:`cncp` for the details).
+Dobson :cite:`hdnd` for the details).
 
 
 .. _gf-maths-constraints:
