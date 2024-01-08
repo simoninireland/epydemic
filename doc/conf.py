@@ -119,8 +119,8 @@ html_theme = 'sphinx_rtd_theme'
 # html_theme_options = {}
 html_theme_options = {
     #'logo': 'logo.png',
-    'github_user': 'simoninireland',
-    'github_repo': 'epydemic',
+    #'github_user': 'simoninireland',
+    #'github_repo': 'epydemic',
 }
 html_sidebars = {
     '**': [
