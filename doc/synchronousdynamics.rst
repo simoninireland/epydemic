@@ -26,6 +26,7 @@ Synchronous dynamics works as follows:
   "fire-able" at the start of the timestep; they
   may not actually be fired if a previous (in the same timestep) has
   removed the event's element from the locus.
+* The number of events fired is updated.
 * The current simulation time is updated.
 * This continues until the process indicates that it has reached
   equilibrium, as determined by :meth:`Process.atEqulibrium`.
