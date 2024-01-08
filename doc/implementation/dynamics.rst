@@ -14,7 +14,7 @@ order. This is the job of the dynamics classes, the sub-classes of
 discrete-time simulation. In most cases continuous time (stochastic)
 dynamics is the correct choice, but we explain below in detail how
 they differ. You should also read about
-:ref:`_implementation-event-interactions` to understand the details of
+:ref:`implementation-event-orderings` to understand the details of
 how different choices of dynamics can sometimes affect the results of
 simulations.
 
