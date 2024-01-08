@@ -50,10 +50,12 @@ class SynchronousDynamics(Dynamics):
         does not include posted events.
 
         By default this method accesses the stochastic event
-        distribution, chooses those events that should be fired based
-        on the choice probability, and returns them in order. It then
-        re-visits the distributions for fixed-rate events and
-        choose random elements for them to happen on.
+        distribution and looks at each event type in the order in
+        which they were registered by :meth:`Process.build`. It
+        chooses those events that should be fired based on the choice
+        probability, and returns them in order. It then re-visits the
+        distributions for fixed-rate events and choose random elements
+        for them to happen on.
 
         This behaviour can be overridden by sub-classes to provide a
         different ordering for events. The order sometimes has a
@@ -61,7 +63,6 @@ class SynchronousDynamics(Dynamics):
 
         :param t: the simulation time
         :returns: a list of locus, element, event function, and name
-
         '''
         evs = []
 
