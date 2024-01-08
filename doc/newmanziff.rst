@@ -75,10 +75,6 @@ percolation process or to create new percolation process variants.
 
 .. automethod:: NewmanZiff.inLargestComponent
 
-These are mainly used either for sub-classing when creating new
-percolation experiments, or in defining :ref:`events <nz-events>` for
-use with :ref:`event taps <event-taps>`
-
 
 Results
 -------
@@ -116,11 +112,11 @@ The percolation process returns two time series:
 
 .. autoattribute:: BondPercolation.GCC
 
-The process has two events:
+The process has one event:
 
 .. autoattribute:: BondPercolation.OCCUPY
 
-.. autoattribute:: BondPercolation.SAMPLE
+.. automethod:: BondPercolation.occupy
 
 .. note::
 
@@ -145,25 +141,8 @@ The percolation process returns two time series:
 
 .. autoattribute:: SitePercolation.GCC
 
-The process has two events:
+The process has one events:
 
 .. autoattribute:: SitePercolation.OCCUPY
 
-.. autoattribute:: SitePercolation.SAMPLE
-
-
-.. _nz-events:
-
-Events
-------
-
-Both bond and site percolation have two types of event:
-
-- A "occupation" event, occurring whenever an edge or node is occupied
-  as part of the percolation; and
-- A "sampling" event, which occurs every time the largest component is
-  sampled according to the schedule set in the constructor.
-
-Each event is fed to the :ref:`event taps interface <event-taps>`. The
-occupation event passes whichever element was occupied, the sampling
-event always passes `None`.
+.. automethod:: SitePercolation.occupy
