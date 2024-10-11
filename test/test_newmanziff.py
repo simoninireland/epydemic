@@ -18,10 +18,31 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 from epydemic import BondPercolation, SitePercolation, PLCNetwork
-from epyc import Lab, RepeatedExperiment
+from epyc import Experiment, Lab, RepeatedExperiment
 import numpy
 import unittest
-from networkx import complete_graph
+from networkx import complete_graph, nodes
+
+class SamplingBondPercolation(BondPercolation):
+    '''Bond percolation that samples the number of edges in the working network.'''
+
+    EDGES = 'edges'
+
+    def sample(self, p):
+        res = super().sample(p)
+        res[self.EDGES] = len(self.network().edges)
+        return res
+
+class SamplingSitePercolation(SitePercolation):
+    '''Site percolation that samples the number of nodes in the working network.'''
+
+    NODES = 'nodes'
+
+    def sample(self, p):
+        res = super().sample(p)
+        res[self.NODES] = self.network().order()
+        return res
+
 
 class NewmanZiffTest(unittest.TestCase):
 
@@ -92,6 +113,27 @@ class NewmanZiffTest(unittest.TestCase):
             ps = r[BondPercolation.P]
             self.assertEqual(len(ps), 10)
 
+    def testBondsGrowingWorkingNetwork(self):
+        '''Test that the working network grows as we bond percolate.'''
+        params = dict()
+        params[PLCNetwork.N] = 1000
+        params[PLCNetwork.EXPONENT] = 2.5
+        params[PLCNetwork.CUTOFF] = 20
+        g = PLCNetwork()._generate(params)
+        e = SamplingBondPercolation(g, samples=100)
+        rc = e.run()
+        edges = rc[Experiment.RESULTS][SamplingBondPercolation.EDGES]
+
+        # occupied edge set grows monotonically
+        self.assertEqual(edges[0], 0)
+        self.assertEqual(edges[-1], len(g.edges))
+        for i in range(len(edges) - 1):
+            self.assertTrue(edges[i] <  edges[i + 1])
+
+        # at the end we have all the edges again
+        self.assertSetEqual(set(g.edges), set(e.network().edges))
+
+
    # ---------- Site percolation ----------
 
     def testSiteZero(self):
@@ -108,7 +150,34 @@ class NewmanZiffTest(unittest.TestCase):
         params[PLCNetwork.CUTOFF] = 20
         e = SitePercolation(PLCNetwork())
         rc = e.set(params).run(fatal=True)
-        #print(rc)
+
+    def testSitesGrowingWorkingNetwork(self):
+        '''Test that the working network grows as we site percolate.'''
+        params = dict()
+        params[PLCNetwork.N] = 1000
+        params[PLCNetwork.EXPONENT] = 2.5
+        params[PLCNetwork.CUTOFF] = 20
+        g = PLCNetwork()._generate(params)
+        e = SamplingSitePercolation(g, samples=100)
+        rc = e.run()
+        nodes = rc[Experiment.RESULTS][SamplingSitePercolation.NODES]
+
+        # occupied node set grows monotonically
+        self.assertEqual(nodes[0], 0)
+        self.assertEqual(nodes[-1], g.order())
+        for i in range(len(nodes) - 1):
+            self.assertTrue(nodes[i] <  nodes[i + 1])
+
+        # at the end we have the network we started with (nodes and edges)
+        self.assertEqual(g.order(), e.network().order())
+        self.assertSetEqual(set(g.nodes), set(e.network().nodes))
+        self.assertEqual(len(g.edges), len(e.network().edges))
+        # (we don't guarantee edge direction is maintained,
+        # so the simple way with sets doesn't work)
+        #self.assertSetEqual(set(e.network().edges), set(g.edges))
+        for (n, m) in e.network().edges:
+            self.assertTrue((n, m) in g.edges or (m, n) in g.edges)
+
 
 
 if __name__ == '__main__':

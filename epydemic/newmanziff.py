@@ -55,6 +55,7 @@ class NewmanZiff(NetworkExperiment):
 
         :param params: the experimental parameters'''
         super().setUp(params)
+
         self._samples = []
         self._gcc = 0
         self._ncomponents = 0
@@ -184,6 +185,12 @@ class BondPercolation(NewmanZiff):
     Each occupation of a bond is treated as an event. The event will
     be sent to the event tap.
 
+    The working copy of the network will initially have no edges.
+    As the process evolves, the working network will grow as edges are
+    occupied. This means that you can observe the percolating network
+    directly from :meth:`sample` by calling :meth:`NetworkExperiment.network`,
+    for example to observe its other properties.
+
     :param g: (optional) the underlying network or generator :param
     samples: (optional) number of samples or list of sample points
     (defaults to 100)
@@ -206,6 +213,7 @@ class BondPercolation(NewmanZiff):
 
         :param params: the experimental parameters'''
         super().setUp(params)
+
         N = self.network().order()
         self._components = numpy.full(N, -1, numpy.int32)
         self._gcc = 1           # all nodes are individual components, unconnected by occupied edges
@@ -216,12 +224,20 @@ class BondPercolation(NewmanZiff):
         update the GCC and return the size of the new component; otherwise
         return None.
 
-        This method should be overridden to collect more statistics about the network
-        as components join.
+        To collect statistics as the network grows, override
+        :meth:`sample` in preference to this method, as that allows
+        the sample rate to be controlled.
 
         :param n: one node
-        :param m: the other nodse
-        :returns: the size of any newly-combined component, or None'''
+        :param m: the other node
+        :returns: the size of any newly-combined component, or None
+
+        '''
+
+        # add the newly-occupied edge into the working network
+        self.network().add_edge(n, m)
+
+        # update the component tree
         nr = self.rootOf(n)
         mr = self.rootOf(m)
         if mr != nr:
@@ -297,6 +313,11 @@ class BondPercolation(NewmanZiff):
         es = list(g.edges()).copy()
         numpy.random.shuffle(es)
 
+        # remove all edges from the working network, so they can
+        # be added back as we percolate
+        g = self.network()
+        g.remove_edges_from(g.edges)
+
         # percolate the network using these edges
         self.percolate(es)
 
@@ -313,6 +334,16 @@ class SitePercolation(NewmanZiff):
     given sequence of occupation probabilities, returning a time
     series of the growth of the GCC.
 
+    The working copy of the network will initially have no nodes. As
+    the process evolves, the working network will grow as nodes are
+    occupied, and edges between occupied nodes will also be added.
+    This means that you can observe the percolating network directly
+    from :meth:`sample` by calling :meth:`NetworkExperiment.network`,
+    for example to observe its other properties.
+
+    This mthod doesn't maintain the sense of edges as they are
+    occupied, and wouldn't work as expected with directed networks.
+
     :param g: (optional) the underlying network or generator
     :param samples: (optional) number of samples or list of sample points (defaults to 100)
 
@@ -327,6 +358,7 @@ class SitePercolation(NewmanZiff):
 
     def __init__(self, g: Graph = None, samples: Union[int, Iterable[float]] = None):
         super().__init__(g, samples)
+        self._originalWorkingNetwork : Graph = None
 
     def setUp(self, params: Dict[str, Any]):
         '''Set up the process, creating the initial components data structure from the
@@ -339,6 +371,10 @@ class SitePercolation(NewmanZiff):
         self._components = numpy.full(N, self._unoccupied, numpy.int32)
         self._gcc = 0          # initially there are no components
         self._ncomponents = 0
+
+        # store a copy of the original working network,
+        # that we can use when adding edges bac
+        self._originalWorkingNetwork = self.network().copy()
 
     def componentSize(self, n: Node) -> int:
         '''Return the size of the component containing the node. This will
@@ -368,12 +404,26 @@ class SitePercolation(NewmanZiff):
         '''Occupy a node, which is then joined to all adjacent occupied nodes.
         This will update the GCC and return the size of the new component.
 
-        This method should be overridden to collect more statistics about the network
-        as components join.
+        To collect statistics as the network grows, override
+        :meth:`sample` in preference to this method, as that allows
+        the sample rate to be controlled.
 
         :param nr: the node
         :returns: the size of any newly-combined component'''
         g = self.network()
+        og = self._originalWorkingNetwork
+
+        # add the node back
+        g.add_node(nr)
+
+        # add back all edges from the original working network
+        # that have endpoints of this node and nodes already
+        # occupied in the working copy
+        ns = g.nodes
+        for m in og.neighbors(nr):
+            if m in ns:
+                # add an edge with neighbour
+                g.add_edge(nr, m)
 
         # mark the node as a singleton component
         self._components[nr] = -1
@@ -381,7 +431,7 @@ class SitePercolation(NewmanZiff):
         csize = 1
 
         # connect to all neighbouring occupied nodes
-        for m in g.neighbors(nr):
+        for m in og.neighbors(nr):                       # using the original working network
             if self._components[m] != self._unoccupied:
                 # neighbour is occupied, join to it
                 mr = self.rootOf(m)
@@ -454,6 +504,10 @@ class SitePercolation(NewmanZiff):
         g = self.network()
         ns = list(g.nodes()).copy()
         numpy.random.shuffle(ns)
+
+        # remove all nodes from the working network, so they can
+        # be added back as we percolate
+        g.remove_nodes_from(list(g.nodes))
 
         # percolate the network using these nodes
         self.percolate(ns)
