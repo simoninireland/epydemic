@@ -1,6 +1,6 @@
 # Makefile for epydemic
 #
-# Copyright (C) 2017--2023 Simon Dobson
+# Copyright (C) 2017--2024 Simon Dobson
 #
 # This file is part of epydemic, epidemic network simulations in Python.
 #
@@ -21,7 +21,7 @@
 PACKAGENAME = epydemic
 
 # The version we're building
-VERSION = 1.13.1
+VERSION = 1.14.1
 
 
 # ----- Sources -----
@@ -168,6 +168,7 @@ SOURCES_DOCUMENTATION = \
 	doc/implementation/no-multiple-inheritance.rst \
 	doc/implementation/events.rst \
 	doc/implementation/dynamics.rst \
+	doc/implementation/event-interactions.rst \
 	doc/implementation/gf-maths.rst \
 	doc/cookbook.rst \
 	doc/cookbook/population-powerlaw-cutoff.rst \
