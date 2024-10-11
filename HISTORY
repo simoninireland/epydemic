@@ -1,3 +1,15 @@
+Version 1.14.1
+
+   - Refactored the event taps interface to NetworkExperiment instead
+     of Dynamics, to allow a wider class of experiments to generate
+     graph signals
+   - Refactored SynchronousDynamics so that the choice of events to fire,
+     and their order, is localised into a single method, allEventsInTimestep(),
+     that can then be changed if required.
+   - Changed the definitions of BondPercolation and SitePercolation to reconstruct
+     the working network as they go, so that if sample() uses network() it
+     observes the network being constructed during percolation.
+
 Version 1.13.1 (2023-08-03)
 
    - Added extended Newman-Ziff algorithm for nested percolation
