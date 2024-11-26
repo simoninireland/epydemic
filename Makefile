@@ -108,7 +108,8 @@ SOURCES_TESTS = \
 	test/test_gof.py \
 	test/test_events.py \
 	test/test_sto_sync.py \
-	test/test_pulsecoupled.py
+	test/test_pulsecoupled.py \
+	test/test_coinfection.py
 TESTSUITE = test
 
 SOURCES_DOC_CONF = doc/conf.py
