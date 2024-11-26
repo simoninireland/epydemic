@@ -7,10 +7,18 @@
    :show-inheritance:
 
 
+.. note::
+
+   Instance names can be any string: however, it may make other tasks
+   easier if they are a single work without spaces, for
+   "First-disease" rather than "First disease".
+
+
 Setup and initialisation
 ------------------------
 
-Five methods provide the core API for defining new processes, and are typically overridden by sub-classes.
+Five methods provide the core API for defining new processes, and are
+typically overridden by sub-classes.
 
 .. automethod:: Process.reset
 
@@ -55,6 +63,26 @@ Several other methods provide information for the process.
 
 .. automethod:: Process.maximumTime
 
+
+Accessing parameters
+--------------------
+
+The :meth:`Process.build` and :meth:`Process.setUp` methods pass
+parameters to a process instance. You can access this dict directly,
+or (better) access all the relevant parameters in one operation. This
+approach works better when there may be multiple instances of a
+process, because it automatically takes account of parameters
+decorated with instance names.
+
+.. automethod:: Process.getParameters
+
+.. automethod:: Process.setParameters
+
+If necessary you can decorate and undecorate parameter names manually.
+
+.. automethod:: Process.parameterNameInInstance
+
+.. automethod:: Process.undecoratedParameterName
 
 
 Accessing and evolving the network
@@ -158,25 +186,43 @@ In some cases it may be necessary to create the distributions
 directly, in which case these methods can be overridden.
 
 
-Identifiers for instances, runs, and state
+Identifiers for processes, runs, and state
 ------------------------------------------
 
-Every process instance has an identifier that's guaranteed to be
-unique within this simulation, and a run identifier that's
-guaranteed to be unique to different runs of the same process
-instance. Taken together, these two identifiers uniquely identify
-a single run of a single process instance.
+Every process has an identifier that's guaranteed to be unique within
+this simulation, and a run identifier that's guaranteed to be unique
+to different runs of the same process instance. Taken together, these
+two identifiers uniquely identify a single run of a single process
+instance.
 
-.. automethod:: Process.instanceId
+.. automethod:: Process.uniqueId
 
 .. automethod:: Process.runId
 
-There is also a method for defining "constants" to be used as
-attributes on nodes and edges for storing process state.
+There is a method for defining "constants" to be used as attributes on
+nodes and edges for storing process state.
 
 .. automethod:: Process.stateVariable
 
 (See :ref:`subclassing` for an example of how to define state variables.)
+
+Finally, names can be decorated with a process' instance name.
+
+.. automethod:: Process.decorateName
+
+.. automethod:: Process.undecorateName
+
+
+Running multiple instances
+--------------------------
+
+You may also want to run several different instances of the same
+process within a single simulation, for example when exploring
+co-infection with two diseases having different spreading parameters.
+In this case you can give names to process instances and use these
+to decorate their parameters.
+
+.. automethod:: Process.instanceName
 
 
 Containment
