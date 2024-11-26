@@ -85,11 +85,11 @@ class ProcessTest(unittest.TestCase):
         with self.assertRaises(Exception):
             self._p.addEdge(7, 1)
 
-    def testInstanceIds(self):
-        '''Test instances ids are unique.'''
+    def testUniqueIds(self):
+        '''Test unique ids are unique.'''
         p1 = Process()
         p2 = Process()
-        self.assertNotEqual(p1.instanceId(), p2.instanceId())
+        self.assertNotEqual(p1.uniqueId(), p2.uniqueId())
 
     def testRunIds(self):
         '''Test that two runs of the same process have different run ids.'''
@@ -117,6 +117,105 @@ class ProcessTest(unittest.TestCase):
         g2 = e.network()
         self.assertIsNotNone(g2)
         self.assertNotEqual(g1, g2)
+
+
+    # ---------- Multiple instances ----------
+
+    def testDecorateUndecorate(self):
+        '''Test we can (un)decorate parameters with instance names.'''
+        p = Process("example")
+        k = "param1"
+        self.assertEqual(p.undecoratedName(p.parameterNameInInstance(k)), k)
+
+
+    def testDistinct(self):
+        '''Test that two process instances can have different values for the same parameter.'''
+        p1 = Process("one")
+        p2 = Process("two")
+        params = dict()
+        p1.setParameters(params, {"param1": 10})
+        p2.setParameters(params, {"param1": 20})
+
+        self.assertEqual(p1.getParameters(params, ["param1"]), [10])
+        self.assertEqual(p2.getParameters(params, ["param1"]), [20])
+
+
+    def testInherit(self):
+        '''Test that a process inherits an undecorated name.'''
+        p1 = Process("one")
+        params = dict()
+        p1.setParameters(params, {"param1": 10})
+        params["param2"] = 50
+
+        self.assertEqual(p1.getParameters(params, ["param1"]), [10])
+        self.assertEqual(p1.getParameters(params, ["param2"]), [50])
+
+        # check we still fail with totally missing parameter
+        with self.assertRaises(KeyError):
+            p1.getParameters(params, ["param3"])
+
+
+    def testParameterSetGet(self):
+        '''Test we can set and get parameters correctly.'''
+        p1 = Process("one")
+        p2 = Process("two")
+        params = dict()
+
+        # process one
+        p1.setParameters(params, {"param1": 10,
+                                  "param2": 20})
+
+        # process two
+        p2.setParameters(params, {"param1": 70,
+                                  "param2": 90,
+                                  "param3": 99})
+
+        self.assertEqual(p1.getParameters(params, ["param1", "param2"]), [10, 20])
+        self.assertEqual(p2.getParameters(params, ["param1", "param2", "param3"]), [70, 90, 99])
+        self.assertEqual(p2.getParameters(params, ["param1", "param3", "param2"]), [70, 99, 90])
+        with self.assertRaises(KeyError):
+            p1.getParameters(params, ["param3"])
+
+
+    def testParameterSetGetNoName(self):
+        '''Test we can set and get parameters correctly when one process is unnamed.'''
+        p1 = Process("one")
+        p2 = Process()
+        params = dict()
+
+        # process one
+        p1.setParameters(params, {"param1": 10,
+                                  "param2": 20})
+
+        # process two
+        p2.setParameters(params, {"param1": 70,
+                                  "param2": 90,
+                                  "param3": 99})
+
+        self.assertEqual(p1.getParameters(params, ["param1", "param2"]), [10, 20])
+        self.assertEqual(p2.getParameters(params, ["param1", "param2", "param3"]), [70, 90, 99])
+
+        # named process inherits the parameter of the unnamed process
+        self.assertEqual(p1.getParameters(params, ["param3"]), [99])
+
+
+    def testTwoUnnamed(self):
+        '''Test that unnamed processes will work as expected, overwriting common parameters.'''
+        p1 = Process()
+        p2 = Process()
+        params = dict()
+
+        # process one
+        p1.setParameters(params, {"param1": 10,
+                                  "param2": 20})
+
+        # process two
+        p2.setParameters(params, {"param1": 70,
+                                  "param2": 90,
+                                  "param3": 99})
+
+        self.assertEqual(p1.getParameters(params, ["param1", "param2", "param3"]), [70, 90, 99])
+        self.assertEqual(p2.getParameters(params, ["param1", "param2", "param3"]), [70, 90, 99])
 
 
 if __name__ == '__main__':
