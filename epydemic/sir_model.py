@@ -30,7 +30,9 @@ from epydemic import CompartmentedModel
 class SIR(CompartmentedModel):
     '''The Susceptible-Infected-Removed :term:`compartmented model of disease`.
     Susceptible nodes are infected by infected neighbours, and recover to
-    removed.'''
+    removed.
+
+    :param: name (optional) instance name'''
 
     # Model parameters
     P_INFECTED: Final[str] = 'epydemic.sir.pInfected'  #: Parameter for probability of initially being infected.
@@ -45,8 +47,8 @@ class SIR(CompartmentedModel):
     # Locus containing the edges at which dynamics can occur
     SI: Final[str] = 'epydemic.sir.SI'                 #: Edge able to transmit infection.
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
 
     def build(self, params: Dict[str, Any]):
         '''Build the SIR model.
@@ -54,9 +56,8 @@ class SIR(CompartmentedModel):
         :param params: the model parameters'''
         super().build(params)
 
-        pInfected = params[self.P_INFECTED]
-        pInfect = params[self.P_INFECT]
-        pRemove = params[self.P_REMOVE]
+        [pInfected, pInfect, pRemove] = self.getParameters(params,
+                                                           [self.P_INFECTED, self.P_INFECT, self.P_REMOVE])
 
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
