@@ -55,8 +55,10 @@ processes that might be multiply instanciated -- which is probably all
 of them. All the standard processes in ``epydemic`` use this style and
 so are safe to multiply instanciate.
 
+:meth:`Process.decoratedNameInInstance` can be used to decorate a
+parameter or result name, for exaple when accessing columns in a
+``DataFrame`` created from results.
+
 Decoration is performed using the :meth:`Process.decoratedName` and
 :meth:`Process.undecoratedName` methods, which add and remove
-decorations respectively. These can be used in other places as
-required: they are used to name loci, for example, so that the
-processes maintain their own sets of nodes and edges to operate over.
+decorations respectively.
