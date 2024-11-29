@@ -81,6 +81,13 @@ approach works better when there may be multiple instances of a
 process, because it automatically takes account of parameters
 decorated with instance names.
 
+.. note::
+
+   See the :ref:`tutorial page on running a simulation
+   <use-standard-model>` for an example using these functions, and
+   the :ref:`cookbook recipe on co-infection <coinfection>` for an
+   example using multiple instances.
+
 .. automethod:: Process.getParameters
 
 .. automethod:: Process.setParameters
@@ -108,7 +115,7 @@ specific process instance.
 
 As with parameters, :meth:`Process.decoratedNameInInstance` will
 return the decorated name of any parameter or result. This is useful
-when accessing a set of results through a DataFrame.
+when accessing a set of results through ``pandas``.
 
 
 Accessing and evolving the network
