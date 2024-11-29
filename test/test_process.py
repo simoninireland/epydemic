@@ -125,7 +125,7 @@ class ProcessTest(unittest.TestCase):
         '''Test we can (un)decorate parameters with instance names.'''
         p = Process("example")
         k = "param1"
-        self.assertEqual(p.undecoratedName(p.parameterNameInInstance(k)), k)
+        self.assertEqual(p.undecoratedName(p.decoratedgNameInInstance(k)), k)
 
 
     def testDistinct(self):
