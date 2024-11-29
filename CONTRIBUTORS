@@ -8,5 +8,9 @@ their contributions to epydemic:
 - Aleksejs Sazonovs (applications in zoonotic disease modelling)
 - Oleksander Konovalov (continuous integration)
 - Liberty Askew (vaccination and opinion dynamics models)
-- Luke Beardmore (explored GPU implementation)
-- Hamish Finn (explored the subtleties of synchronous dymamics event orderings)
+- Luke Beardsmore (explored GPU implementation)
+- Hamish Finn (explored the subtleties of synchronous dymamics
+  event orderings)
+- Martin Prestage (discovered more complicated Newman-Ziff use
+  cases that led to progressively building the network as it
+  percolates)
