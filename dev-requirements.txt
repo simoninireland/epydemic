@@ -1,7 +1,6 @@
 wheel
 pyright
 pytest
-tox
 coverage
 pylint
 rope
