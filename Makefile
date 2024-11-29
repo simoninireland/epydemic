@@ -281,7 +281,7 @@ RUN_TESTS = $(PYTEST) $(SOURCES_TESTS)
 RUN_COVERAGE = $(COVERAGE) erase && $(COVERAGE) run -a setup.py test && $(COVERAGE) report -m --include '$(PACKAGENAME)*'
 RUN_SETUP = $(PYTHON) setup.py
 RUN_SPHINX_HTML = PYTHONPATH=$(ROOT) make html
-RUN_TWINE = $(TWINE) upload --verbose dist/*
+RUN_TWINE = $(TWINE) upload --repository epydemic --config-file ~/.pypirc dist/*
 RUN_JOSS_PREVIEW = docker run --rm --volume $(ROOT):/data --user $(id -u):$(id -g) --env JOURNAL=joss openjournals/paperdraft
 
 
