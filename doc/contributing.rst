@@ -3,7 +3,10 @@ Contributing
 
 ``epydemic`` is an open-source project, and we welcome comments, issue
 reports, requests for new features, and (especially!) code for new
-features.
+features. The
+`CONTRIBUTORS file <https://github.com/simoninireland/epydemic/blob/master/CONTRIBUTORS>`_
+contains the names and contributions of several people who've helped
+to improve ``epydemic`` over the years.
 
 
 To report an issue
