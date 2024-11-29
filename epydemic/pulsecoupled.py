@@ -62,7 +62,7 @@ class PulseCoupledOscillator(Process):
     are both monotonic (decreasing and increasing respectively). This
     isn't necessarily true for other networks.
 
-    '''
+    :param: name (optional) instance name'''
 
     # Tuning parameters
     PHASE_PRECISION: int = 5                                       #: Number of places or precision for phases.
@@ -84,8 +84,8 @@ class PulseCoupledOscillator(Process):
     FIRED: Final[str] = 'epydemic.pulsecoupled.fired'               #: The name of the firing event.
 
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
 
         # state variable tags
         self.NODE_EVENT_ID = self.stateVariable('event')
@@ -110,6 +110,7 @@ class PulseCoupledOscillator(Process):
         :returns: the normalised phase'''
         return max(min(round(phi, self.PHASE_PRECISION), 1.0), 0.0)
 
+
     def getFiringTime(self, n: Node):
         '''Get the next firing time of a node.
 
@@ -121,6 +122,7 @@ class PulseCoupledOscillator(Process):
             return None
         else:
             return self.pendingEventTime(id)
+
 
     def setFiringTime(self, n: Node, et: float):
         '''Set the next firing time of a node, replacing the
@@ -137,6 +139,7 @@ class PulseCoupledOscillator(Process):
 
         # add a new firing event
         g.nodes[n][self.NODE_EVENT_ID] = self.postEvent(round(et, self.PHASE_PRECISION), n, self.fired, name=self.FIRED)
+
 
     def getPhase(self, t: float, n: Node, normalise: bool = False) -> float:
         '''Get the phase of a node. This is computed by working back
@@ -167,6 +170,7 @@ class PulseCoupledOscillator(Process):
 
         return phi
 
+
     def getState(self, t: float, n: Node) -> float:
         '''Get the state of the given node.
 
@@ -174,6 +178,7 @@ class PulseCoupledOscillator(Process):
         :param n: the node
         :returns: the state of the node'''
         return self.phaseToState(self.getPhase(t, n))
+
 
     def setPhase(self, t: float, n: Node, phi: float):
         '''Set the phase of the given node. This re-sets the next
@@ -195,6 +200,7 @@ class PulseCoupledOscillator(Process):
         :returns: the state'''
         return (1 / self._b) * log(1 + (exp(self._b) - 1) * phi)
 
+
     def stateToPhase(self, u: float) -> float:      # g (2.14)
         '''Convert a state to the corresponding phase (function
         :math:`g` in :cite:`MirolloStrogatz`).
@@ -202,6 +208,7 @@ class PulseCoupledOscillator(Process):
         :param u: the state
         :returns: the phase'''
         return (exp(self._b * u) - 1) / (exp(self._b) - 1)
+
 
     def bumpPhase(self, phi: float) -> float:       # h (2.1)
         '''Advance the phase and state of a node after it has observed
@@ -226,6 +233,7 @@ class PulseCoupledOscillator(Process):
             self.setPhase(0.0, n, phase)
             #print(f'Node {n} phase {phase} fire {firingTime}')
 
+
     def fire(self, t: float, n: Node):
         '''Handle the firing of an oscillator, when its phase hits 1.
         This marks all neighbours for update and resets the phase of
@@ -248,6 +256,7 @@ class PulseCoupledOscillator(Process):
         self.setPhase(t, n, 0.0)
         self._bumped.add(n)
 
+
     def synchronised(self, t: float, n: Node, m: Node):
         '''What to do when a node becomes synchronised with another.
         The default sets its phase to 0, meaning it will fire at
@@ -258,6 +267,7 @@ class PulseCoupledOscillator(Process):
         :param m: the node that is now newly-synchronised with n'''
         #print(f'Sync {m}')
         self.setPhase(t, m, 0.0)
+
 
     def cascade(self, t: float, n: Node, m: Node):
         '''Cascade the firing of one node into updating the phases
@@ -326,6 +336,7 @@ class PulseCoupledOscillator(Process):
         super().setUp(params)
         self.initialisePhases()
 
+
     def build(self, params: Dict[str, Any]):
         '''Build the oscillator model.
 
@@ -335,13 +346,17 @@ class PulseCoupledOscillator(Process):
         super().build(params)
 
         # grab the parameters
-        self._period = params.get(self.PERIOD, 1.0)      # defaults to unit period
-        self._b = params.get(self.B, 1.0)                # defaults to unit dissipation
-        self._coupling = params.get(self.COUPLING, 1.0)  # defaults to unit coupling
+        [period, b, coupling] = self.getParameters(params, [(self.PERIOD, 1.0),     # defaults to unit period
+                                                            (self.B, 1.0),          # defaults to unit dissipation
+                                                            (self.COUPLING, 1.0)])  # defaults to unit coupling
+        self._period = period
+        self._b = b
+        self._coupling = coupling
 
         # set up the result arrays
         self._firingTimes = []
         self._firingNodes = []
+
 
     def results(self) -> Dict[str, Any]:
         '''Add the final phases of all oscillators to the results.
@@ -352,10 +367,11 @@ class PulseCoupledOscillator(Process):
         # final phases of all oscillators
         g = self.network()
         t = self.currentSimulationTime()
-        rc[self.PHASES] = [self.getPhase(t, n) for n in g.nodes()]
+        finalPhases = [self.getPhase(t, n) for n in g.nodes()]
 
-        # firing times
-        rc[self.FIRING_TIMES] = self._firingTimes
-        rc[self.FIRING_NODES] = self._firingNodes
+        # store results
+        self.setResults(rc, {self.FIRING_TIMES: self._firingTimes,
+                             self.FIRING_NODES: self._firingNodes,
+                             self.PHASES: finalPhases})
 
         return rc

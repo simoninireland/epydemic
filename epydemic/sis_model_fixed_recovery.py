@@ -29,7 +29,9 @@ from epydemic import SIS
 class SIS_FixedRecovery(SIS):
     '''The Susceptible-Infected-Susceptible :term:`compartmented model of disease`,
     in the variation where the time spent infected is fixed rather than happening
-    with some probability.'''
+    with some probability.
+
+    :param: name (optional) instance name'''
 
     # the additional model parameter
     T_INFECTED: Final[str] = 'epydemic.sis.tInfected'   #: Parameter for the time spent infected before becoming susceptible again.
@@ -37,8 +39,9 @@ class SIS_FixedRecovery(SIS):
     # node attribute for infection time
     INFECTION_TIME: Final[str] = 'infection_time'          #: Attribute recording when a node became infected
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
+
 
     def build(self, params: Dict[str, Any]):
         '''Build the variant SIS model. The difference between this and the
@@ -47,15 +50,17 @@ class SIS_FixedRecovery(SIS):
         depending on the :attr:`T_INFECTED` parameter.
 
         :param params: the model parameters'''
-        pInfected = params[self.P_INFECTED]
-        pInfect = params[self.P_INFECT]
-        self._tInfected = params[self.T_INFECTED]
+
+        [pInfected, pInfect, tInfected] = self.getParameters(params,
+                                                             [self.P_INFECTED, self.P_INFECT, self.T_INFECTED])
+        self._tInfected = tInfected
 
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
 
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
         self.addEventPerElement(self.SI, pInfect, self.infect, name=self.INFECTED)
+
 
     def setUp(self, params: Dict[str, Any]):
         '''After setting up as normal, post recovery events for any nodes that are
@@ -73,6 +78,7 @@ class SIS_FixedRecovery(SIS):
 
             # post the corresponding removal event
             self.postEvent(tInfected, n, self.recover, name=self.RECOVERED)
+
 
     def infect(self, t: float, e: Any):
         '''Perform the normal infection event, and then post an event to recover

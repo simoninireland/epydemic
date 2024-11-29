@@ -9,6 +9,14 @@ Version 1.14.1
    - Changed the definitions of BondPercolation and SitePercolation to reconstruct
      the working network as they go, so that if sample() uses network() it
      observes the network being constructed during percolation.
+   - Added instance names to processes, and functions to decorate paremeter
+     names and loci names, to support multiple simultaneous instances of
+     the same process in a single simlulation.
+   - Added parameter setting and setting that respects process names.
+   - Added default values whnr retrieving parameters to make defaulting easier.
+   - Added process name capture alongside hitting times in CompartmentedModel.
+   - Changed hitting and occupation times to be per-simulation, not per-process.
+   - Changed all the standard disease models to work with multiple instances.
 
 Version 1.13.1 (2023-08-03)
 

@@ -33,7 +33,9 @@ class AddDelete(Process):
     are connected to existing nodes.
 
     The default behaviour has fixed addition and removal probabilities, independent
-    of the size of the network, and a fixed degree for added nodes.'''
+    of the size of the network, and a fixed degree for added nodes.
+
+    :param: name (optional) instance name'''
 
     # parameters
     P_ADD: Final[str] = "epydemic.addDelete.pAdd"        #: Parameter for the node addition probability.
@@ -43,8 +45,8 @@ class AddDelete(Process):
     # loci
     NODES: Final[str] = "allnodes"                       #: Name of the locus holding all nodes in the network.
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
 
 
     # ---------- Setup and initialisation ----------

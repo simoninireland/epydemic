@@ -69,7 +69,7 @@ We can bring these three elements together in a sub-class:
 	super().build(params)
 
 	# add components needed for SIRS
-	pResuscept = params[self.P_RESUSCEPT]
+	[pResuscept] = self.getParameters(params, [self.P_RESUSCEPT])
 	self.trackNodesInCompartment(self.REMOVED)
 
 	self.addEventPerElement(self.REMOVED, pResuscept, self.resuscept, self.RESUSCEPT)

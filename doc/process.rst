@@ -10,8 +10,9 @@
 .. note::
 
    Instance names can be any string: however, it may make other tasks
-   easier if they are a single work without spaces, for
-   "First-disease" rather than "First disease".
+   easier if they are a single word without spaces or other characters
+   that Python might become confused by in some contexts, for
+   "First_disease" rather than "First disease" or "First.disease".
 
 
 Setup and initialisation
@@ -64,8 +65,14 @@ Several other methods provide information for the process.
 .. automethod:: Process.maximumTime
 
 
-Accessing parameters
---------------------
+Setting and accessing parameters
+--------------------------------
+
+.. versionadded:: 1.14.1
+
+   Parameter and result handling were changed in ``epydemic`` version
+   1.14.1 to accommodate using multiple instances of a process within
+   a single simulation.
 
 The :meth:`Process.build` and :meth:`Process.setUp` methods pass
 parameters to a process instance. You can access this dict directly,
@@ -78,11 +85,30 @@ decorated with instance names.
 
 .. automethod:: Process.setParameters
 
-If necessary you can decorate and undecorate parameter names manually.
+If necessary you can decorate parameter names manually.
 
-.. automethod:: Process.parameterNameInInstance
+.. automethod:: Process.decoratedNameInInstance
 
-.. automethod:: Process.undecoratedParameterName
+
+Storing and accessing results
+-----------------------------
+
+.. versionadded:: 1.14.1
+
+   Parameter and result handling were changed in ``epydemic`` version
+   1.14.1 to accommodate using multiple instances of a process within
+   a single simulation.
+
+As with parameters, results may use decorated names to bind them to a
+specific process instance.
+
+.. automethod:: Process.setResults
+
+.. automethod:: Process.getResults
+
+As with parameters, :meth:`Process.decoratedNameInInstance` will
+return the decorated name of any parameter or result. This is useful
+when accessing a set of results through a DataFrame.
 
 
 Accessing and evolving the network
@@ -208,9 +234,9 @@ nodes and edges for storing process state.
 
 Finally, names can be decorated with a process' instance name.
 
-.. automethod:: Process.decorateName
+.. automethod:: Process.decoratedName
 
-.. automethod:: Process.undecorateName
+.. automethod:: Process.undecoratedName
 
 
 Running multiple instances
@@ -219,6 +245,11 @@ Running multiple instances
 You may also want to run several different instances of the same
 process within a single simulation, for example when exploring
 co-infection with two diseases having different spreading parameters.
+
+.. note::
+
+   ``epydemic`` has supported multiple process instances since version 1.14.1
+
 In this case you can give names to process instances and use these
 to decorate their parameters.
 

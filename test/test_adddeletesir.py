@@ -28,8 +28,9 @@ class DynamicSIR(SIR, AddDelete):
 
     N = 'networkSize'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
+
 
     def addNewNode(self, **kwds):
         '''Mark new nodes as susceptible.
@@ -46,6 +47,7 @@ class DynamicSIR(SIR, AddDelete):
         # return the name of the new node
         return n
 
+
     def removeNode(self, n):
         '''Mark any node as removed before deleting.
 
@@ -56,6 +58,7 @@ class DynamicSIR(SIR, AddDelete):
 
         # delete the node
         super().removeNode(n)
+
 
     def results( self ):
         '''Save the size of the resulting network.
@@ -72,8 +75,9 @@ class CompartmentedAddDelete(AddDelete):
     N = 'networkSize'
     DISEASE = 'diseaseModel'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
+
 
     def addNewNode(self, **kwds):
         '''Mark new nodes as susceptible.
@@ -90,6 +94,7 @@ class CompartmentedAddDelete(AddDelete):
         # return the name of the new node
         return n
 
+
     def removeNode(self, n):
         '''Mark any node as removed before deleting.
 
@@ -100,6 +105,7 @@ class CompartmentedAddDelete(AddDelete):
 
         # delete the node
         super().removeNode(n)
+
 
     def results( self ):
         '''Save the size of the resulting network.

@@ -163,10 +163,11 @@ The code to do this is:
 
 .. code-block:: python
 
-    def build( self, params ):
-	pInfected = params[self.P_INFECTED]
-	pInfect = params[self.P_INFECT]
-	pRemove = params[self.P_REMOVE]
+    def build(self, params):
+	[pInfected, pInfect, pRemove] = self.getParameters(params,
+							   [self.P_INFECTED,
+							    self.P_INFECT,
+							    self.P_REMOVE])
 
 	self.addCompartment(self.INFECTED, pInfected)
 	self.addCompartment(self.REMOVED, 0.0)
@@ -178,7 +179,9 @@ The code to do this is:
 	self.addEventPerElement(self.SI, pInfect, self.infect)
 	self.addEventPerElement(self.INFECTED, pRemove, self.remove)
 
-We first grab the parameters by name from the parameters dict. We then
+We first grab the parameters by name from the parameters dict. They
+are returned in a list int he same order as we request them,. making
+it easy to assign them to variables using pattern-matching. We then
 declare the three compartments by calling
 :meth:`CompartmentedModel.addCompartment`, which takes a compartment
 name and the initial probability that a node will randomly be placed

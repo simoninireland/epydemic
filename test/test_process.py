@@ -218,5 +218,15 @@ class ProcessTest(unittest.TestCase):
         self.assertEqual(p2.getParameters(params, ["param1", "param2", "param3"]), [70, 90, 99])
 
 
+    def testDefaultValues(self):
+        '''Test we can provide default values for parameters.'''
+        p1 = Process("one")
+        params = dict()
+        p1.setParameters(params, {"param1": 10})
+
+        self.assertEqual(p1.getParameters(params, ["param1"]), [10])
+        self.assertEqual(p1.getParameters(params, ["param1", ("param2", 15)]), [10, 15])
+
+
 if __name__ == '__main__':
     unittest.main()

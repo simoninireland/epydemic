@@ -48,7 +48,8 @@ class SIvR(SIR):
     The :meth:`vaccinateNode` method is defined to vaccinate a given node. It isn't called
     by any events within this model, but can be called by another process to initiate
     vaccination.
-    """
+
+    :param: name (optional) instance name"""
 
     # Experimental parameters
     EFFICACY: Final[str] = 'epydemic.SIvR.pEfficacy'   #: Experimental parameter for vaccine efficacy.
@@ -80,12 +81,14 @@ class SIvR(SIR):
         g.nodes[n][SIvR.VACCINATED] = True
         g.nodes[n][SIvR.VACCINATION_TIME] = t
 
+
     def nodeVaccinated(self, n: Node) -> bool:
         '''Tests the vaccination status of a node.
 
         :param n: the node
         :returns: True if the node has been vaccinated'''
         return self.network().nodes[n].get(SIvR.VACCINATED, False)
+
 
     def nodeVaccinatedAt(self, n: Node) -> float:
         '''Return the vaccination time of a node. This is defined to be
@@ -108,14 +111,17 @@ class SIvR(SIR):
         super().build(params)
 
         # stash the efficacy
-        self._efficacy = params[self.EFFICACY]
+        efficacy = self.getParameters(params, [self.EFFICACY])
+        self._efficacy = efficacy
 
         # default to no time offset
-        self._offset = params.get(self.T_OFFSET, 0.0)
+        [tOffset] = self.getParameters(params, [(self.T_OFFSET, 0.0)])
+        self._offset = tOffset
 
         # track (un)vaccinated nodes
         self.addLocus(self.INFECTED_N)    # infected but unvaccinated nodes
         self.addLocus(self.INFECTED_V)    # infected and vaccinated nodes
+
 
     def setUp(self, params: Dict[str, Any]):
         '''Set up the simulation. All nodes are initially marked
@@ -157,6 +163,7 @@ class SIvR(SIR):
 
             # log as infected-but-unvaccinated
             self.locus(self.INFECTED_N).enterHandler(g, n)
+
 
     def remove(self, t: float, n: Node):
         '''Perform the remove event and also remove from the marker loci.

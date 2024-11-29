@@ -20,6 +20,7 @@
 from typing import Dict, List, Tuple, Any, Callable, Iterable, Union, Optional
 from networkx import Graph
 from epydemic import Node, Edge, Element
+from epyc import ResultsDict
 
 # There is a circular import between Process and Dynamics, and between
 # Process and Locus, at the typing level (but not at the execution
@@ -155,52 +156,85 @@ class Process():
         return k if i < 0 else k[:i]
 
 
-    def parameterNameInInstance(self, k: str) -> str:
-        '''Return the name of a parameter in a specific process instance.
+    def decoratedNameInInstance(self, k: str) -> str:
+        '''Return the name of a parameter or result name in a specific process instance.
 
-        This uses :meth:`decoratedName` to decorate the parameter name
-        with any process instance name.
+        This uses :meth:`decoratedName` to decorate the name with any
+        process instance name.
 
-        :param k: the parameter name
-        :return: the decorated parameter name'''
+        :param k: the name name
+        :return: the decorated parameter name
+
+        '''
         return self.decoratedName(k)
 
 
-    def getParameter(self, params: Dict[str, Any], k: str) -> Any:
-        '''Return the named parameter.
+    def getDecoratedName(self, d: Dict[str, Any], k: Union[str, Tuple[str, Any]]) -> Any:
+        '''Return the named parameter or result.
 
         This method takes account of the process' instance name if it
         has one, allowing multiple process instance. If there is no
-        parameter decorated with the given instance name, any
+        name decorated with the given instance name, any
         undecorated parameter is returned instead. (This lets all
-        process instances share a common parameter value.) An
-        exception is raised if the requested parameter isn't defined.
+        process instances share a common named value.) An
+        exception is raised if the requested name isn't defined.
 
-        :param params: the model parameters
-        :param k: the parameter
+        Each name can either be a string or a pair of a string
+        and a default value that is returned if the parameter named value can't be
+        acquired.
+
+        :param d: the dict
+        :param k: the decorated name
         :returns the value
 
         '''
-        dk = self.parameterNameInInstance(k)
+
+        # extract actual key
+        actualk = k[0] if isinstance(k, tuple) else k
+
+        # extract the decorated key
+        dk = self.decoratedNameInInstance(actualk)
+
         try:
-            return params[dk]    # decorated name
+            return d[dk]                # decorated name
         except KeyError:
-            return params[k]     # undecorated name as fallback
+            try:
+                return d[actualk]       # undecorated name as fallback
+            except KeyError:
+                if isinstance(k, tuple):
+                    return k[1]              # return the default value supplied
+                else:
+                    raise KeyError(actualk)  # no default, re-throw the exception
 
 
-    def getParameters(self, params: Dict[str, Any], ks: List[str]) -> List[Any]:
+    def getParameters(self, params: Dict[str, Any], ks: List[Union[str, Tuple[str, Any]]]) -> List[Any]:
         '''Return the parameters of a process.
 
-        The parameters are extracted from the parameters and returned as a list,
-        with an exception being raised if any undefined parameters are requested.
+        This should be used in :meth:`Process.build` and
+        :meth:`Process.setUp` to access the process' experimental
+        parameters.
+
+        The parameters are extracted from the parameters dict and
+        returned as a list, with an exception being raised if any
+        undefined parameters are requested. The parameters extracted
+        use :meth:`Process.decoratedName` to take account of any
+        instance name assigned to this process. If no decorated
+        parameter is defined, an undecorated parameter with the same
+        underlying name (found using :meth:`Process.undecratedName`
+        will be used.
+
+        Each parameter can either be a string or a pair of a string
+        and a default value that is returned if the parameter can't be
+        acquired.
 
         :param params: the parameters
-        :param parameters: a list of parameters
+        :param ks: a list of parameters, optionally with default values
         :returns: the extracted parameters
+
         '''
         vs = []
         for k in ks:
-            v = self.getParameter(params, k)
+            v = self.getDecoratedName(params, k)
             vs.append(v)
         return vs
 
@@ -208,14 +242,64 @@ class Process():
     def setParameters(self, params: Dict[str, Any], kvs: Dict[str, Any]) -> Dict[str, Any]:
         '''Set the parameters.
 
-        The parameters will be decorated with an instance name.
+        This method should be used when setting up an experiment. The
+        parameters will be decorated with an instance name.
 
         :param: params: the parameters dict
         :params kvs: the parameter names and values
-        :returns: the updated dict'''
+        :returns: the updated dict
+
+        '''
         for k in kvs.keys():
-            params[self.parameterNameInInstance(k)] = kvs[k]
+            params[self.decoratedNameInInstance(k)] = kvs[k]
         return params
+
+
+    def setResults(self, rc: Dict[str, Any], kvs: Dict[str, Any]) -> Dict[str, Any]:
+        '''Set the results.
+
+        This should be used in :meth:`Process.results` to add results
+        to the results dict of the process when it completes. The
+        results will be decorated with an instance name.
+
+        :param: rc: the results
+        :params kvs: the result names and values
+        :returns: the updated dict
+
+        '''
+        for k in kvs.keys():
+            rc[self.decoratedNameInInstance(k)] = kvs[k]
+        return rc
+
+
+    def getResults(self, rc: ResultsDict, ks: List[str]) -> List[Any]:
+        '''Return results from an ``epyc`` results dict.
+
+        This should be used when accessing the results of an
+        experiment, to extract the results that correspond to a
+        particular process instance. It accesses the "results" part of
+        the results dict returned by :meth:`epyc.Experiment.run` or
+        :meth:`epyc.Lab.runExperiment`.
+
+        The parameters are extracted from the parameters dict and
+        returned as a list, with an exception being raised if any
+        undefined parameters are requested. The parameters extracted
+        use :meth:`Process.decoratedName` to take account of any
+        instance name assigned to this process. If no decorated
+        parameter is defined, an undecorated parameter with the same
+        underlying name (found using :meth:`Process.undecratedName`
+        will be used.
+
+        :param rc: the results dict
+        :param ks: a list of parameters
+        :returns: the extracted results
+
+        '''
+        vs = []
+        for k in ks:
+            v = self.getDecoratedName(rc, k)
+            vs.append(v)
+        return vs
 
 
     # ---------- Process state variables ----------
@@ -360,7 +444,8 @@ class Process():
 
     def currentSimulationTime(self) -> float:
         '''Return the current simulation time. Only makes sense
-        when called from a running simulation.
+        when called from a running simulation, for example within
+        an event handler.
 
         :returns: the time'''
         return self.dynamics().currentSimulationTime()

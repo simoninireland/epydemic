@@ -42,6 +42,7 @@ class SIS(CompartmentedModel):
     results in any way, but can be used by sub-classes wanting to
     analyse the behaviour of the epidemic.
 
+    :param: name (optional) instance name
     '''
 
     # Node and edge attributes
@@ -63,8 +64,9 @@ class SIS(CompartmentedModel):
     # Locus containing the edges at which dynamics can occur
     SI: Final[str] = 'epydemic.sis.SI'                 #: Edge able to transmit infection.
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
+
 
     def build(self, params: Dict[str, Any]):
         '''Build the SIS model.
@@ -72,9 +74,8 @@ class SIS(CompartmentedModel):
         :param params: the model parameters'''
         super().build(params)
 
-        pInfected = params[self.P_INFECTED]
-        pInfect = params[self.P_INFECT]
-        pRecover = params[self.P_RECOVER]
+        [pInfected, pInfect, pRecover] = self.getParameters(params,
+                                                            [self.P_INFECTED, self.P_INFECT, self.P_RECOVER])
 
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
@@ -84,6 +85,7 @@ class SIS(CompartmentedModel):
 
         self.addEventPerElement(self.INFECTED, pRecover, self.recover, name=self.RECOVERED)
         self.addEventPerElement(self.SI, pInfect, self.infect, name=self.INFECTED)
+
 
     def countOccupied(self, e: Edge) -> int:
         '''Update the count of the number of times an edge has passed
@@ -100,6 +102,7 @@ class SIS(CompartmentedModel):
             data[self.N_OCCUPIED] = 1
         return data[self.N_OCCUPIED]
 
+
     def countInfected(self, n: Node) -> int:
         '''Update the count of the number of times a node has become infected.
 
@@ -113,6 +116,7 @@ class SIS(CompartmentedModel):
             data[self.N_INFECTED] = 1
         return data[self.N_INFECTED]
 
+
     def infect(self, t: float, e: Edge):
         '''Perform an infection event. This changes the compartment of
         the susceptible-end node to :attr:`INFECTED`. It also marks the edge
@@ -125,6 +129,7 @@ class SIS(CompartmentedModel):
         self.changeCompartment(n, self.INFECTED)
         self.markOccupied(e, t)
         self.markHit(n, t, firstOnly=True)    # record only the first hitting time
+
 
     def recover(self, t: float, n: Node):
         '''Perform a recovery event. This changes the compartment of

@@ -31,11 +31,13 @@ class SingletonLocus:
         self._process = p
         self._value = e
 
+
     def __len__(self) -> int:
         '''Length is always 1.
 
         :returns: 1'''
         return 1
+
 
     def draw(self) -> Element:
         '''Draw the only value.
@@ -43,11 +45,13 @@ class SingletonLocus:
         :returns: the value'''
         return self._value
 
+
     def process(self) -> Process:
         '''Return the process the locus is attached to.
 
         :returns: the process'''
         return self._process
+
 
     def __iter__(self) -> Iterator[Element]:
         '''Iterate over the one element.
@@ -60,17 +64,20 @@ class SIR_VariableInfection(SIR):
     '''A version of the SIR :term:`compartmented model of disease` where each
     edge can have a different infectivity. This is the basic machinery for
     supporting models with different populations of individuals, different
-    environments, or different levels of contact.'''
+    environments, or different levels of contact.
+
+    :param: name (optional) instance name'''
 
     # Edge attribute for infectivity
     INFECTIVITY: str = None   #: State variable holding an edge's infectivity.
 
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
 
         # state variables
         self.INFECTIVITY = self.stateVariable('infectivity')
+
 
     def build(self, params: Dict[str, Any]):
         '''Build the model. This adds a tracker for SI edges, but
@@ -79,8 +86,8 @@ class SIR_VariableInfection(SIR):
         :param params: the simulation parameters'''
         CompartmentedModel.build(self, params)             # skip the base SIR.build()
 
-        pInfected = params[self.P_INFECTED]
-        pRemove = params[self.P_REMOVE]
+        [pInfected, pRemove] = self.getParameters(params,
+                                                  [self.P_INFECTED, self.P_REMOVE])
 
         self.addCompartment(self.SUSCEPTIBLE, 1 - pInfected)
         self.addCompartment(self.INFECTED, pInfected)
@@ -90,6 +97,7 @@ class SIR_VariableInfection(SIR):
         self.trackNodesInCompartment(self.INFECTED)
 
         self.addEventPerElement(self.INFECTED, pRemove, self.remove, name=self.REMOVED)
+
 
     def setUp(self, params: Dict[str, Any]):
         '''Set up compartments and infectivites. Initial compartments are
@@ -103,6 +111,7 @@ class SIR_VariableInfection(SIR):
         # set up the edge infectivities
         self.initialInfectivities()
 
+
     def initialInfectivities(self):
         '''Assign an infectivity to an edge. The default takes infectivities
         uniformly on the range :math:`[0.0, 1.0]`. Sub-classes may override this
@@ -111,6 +120,7 @@ class SIR_VariableInfection(SIR):
         for (_, _, data) in g.edges(data=True):
             i = rng.random()
             data[self.INFECTIVITY] = i
+
 
     def perElementEventDistribution(self, t: float) -> EventDistribution:
         '''Construct the event distribution from the contents of the SI

@@ -10,6 +10,7 @@ for those who are interested.
     implementation/events.rst
     implementation/challenges.rst
     implementation/no-multiple-inheritance.rst
+    implementation/multiple-instances.rst
     implementation/dynamics.rst
     implementation/event-interactions.rst
     implementation/event-times.rst

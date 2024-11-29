@@ -31,12 +31,13 @@ We can build a dict giving values to these three parameters:
    import epyc
 
    param = dict()
-   param[epydemic.SIR.P_INFECTED] = 0.01
-   param[epydemic.SIR.P_INFECT] = 0.1
-   param[epydemic.SIR.P_REMOVE] = 0.05
+   m.setParameters(param, {SIR.P_INFECT: 0.1,
+			   SIR.P_REMOVE: 0.05,
+			   SIR.P_INFECTED: 0.01})
 
-To run the simulation, we first call the ``set()`` method on the dynamics object to set the disease parameters,
-and then call the ``run()`` method:
+To run the simulation, we first call the ``set()`` method on the
+dynamics object to set the disease parameters, and then call the
+``run()`` method:
 
 .. code-block:: python
 
@@ -61,19 +62,23 @@ we'll see something like this:
 
    {''I': 0, 'S': 9821, 'R': 110}
 
-What does this mean? The dict holds the sizes of the three SIR compartments, susceptible (``S``, also
-known as :attr:`SIR.SUSCEPTIBLE`), infected (``I``), and removed (``R``). What this result shows is that
-we have no nodes in the infected compartment (the epidemic has died out, and no-one else can be infected); 9821
-nodes still in the susceptible compartment who have never been infected; and 110 nodes who had the disease and have
-recovered (or been removed) from it.
+What does this mean? The dict holds the sizes of the three SIR
+compartments, susceptible (``S``, also known as
+:attr:`SIR.SUSCEPTIBLE`), infected (``I``), and removed (``R``). What
+this result shows is that we have no nodes in the infected compartment
+(the epidemic has died out, and no-one else can be infected); 9821
+nodes still in the susceptible compartment who have never been
+infected; and 110 nodes who had the disease and have recovered (or
+been removed) from it.
 
 
 Re-running the epidemic
 -----------------------
 
-But wait! -- is this the whole story? Well clearly not, because a disease is a stochastic process depending on
-random factors. Another epidemic with the *same* parameters on the *same* network  might generate a
-*different* result.
+But wait! -- is this the whole story? Well clearly not, because a
+disease is a stochastic process depending on random factors. Another
+epidemic with the *same* parameters on the *same* network might
+generate a *different* result.
 
 We can check this by re-running the experiment again:
 
@@ -81,16 +86,20 @@ We can check this by re-running the experiment again:
 
    (e.run())[epyc.Experiment.RESULTS]
 
-Notice that we didn't have to re-set the parameters: the experiment just re-used the ones already set. Looking at
-the results we might see:
+Notice that we didn't have to re-set the parameters: the experiment
+just re-used the ones already set. Looking at the results we might
+see:
 
 .. code-block:: python
 
   {'I': 0, 'S': 9807, 'R': 124}
 
-Slightly more nodes were infected this time and therefore ended up removed (124 in the ``R`` compartment). If we
-ran the process again, we could see a different result again: the results could all be similar, or might possibly
-show some dramatic variation such as not having anyone at all becoming infected other than those who initially were.
+Slightly more nodes were infected this time and therefore ended up
+removed (124 in the ``R`` compartment). If we ran the process again,
+we could see a different result again: the results could all be
+similar, or might possibly show some dramatic variation such as not
+having anyone at all becoming infected other than those who initially
+were.
 
 
 Larger scale: explore infection rates

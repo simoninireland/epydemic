@@ -46,3 +46,11 @@ Multiple inheritance
 
 We :ref:`no longer recommend using multiple inheritance
 <no-multiple-inheritance>` to compose processes.
+
+
+Multiple instances
+------------------
+
+You can run several instances of the same process with different
+parameters within a single simulation. There is a :ref:`recipe
+<coinfection>` that describes this.

@@ -31,7 +31,9 @@ class SIRS(SIR):
     Susceptible nodes are infected by infected neighbours, and recover to removed where
     they remain for a time before returning to susceptible models the situation in which
     disease exposure confers partial immunity in time, rather than full immunity
-    (as for :class:`SIR`) or no immunity ( as for :class:`SIS`).'''
+    (as for :class:`SIR`) or no immunity ( as for :class:`SIS`).
+
+    :param: name (optional) instance name'''
 
     # Extra model parameter
     P_RESUSCEPT: Final[str] = 'epydemic.sirs.pResuscept'    #: Parameter for probability of losing immunity
@@ -39,8 +41,9 @@ class SIRS(SIR):
     # Event name
     RESUSCEPT: Final[str] = 'epydemic.sirs.RS'              #: Compartment/event name for returning to susceptible.
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
+
 
     def build(self, params: Dict[str, Any]):
         '''Build the SIRS model.
@@ -49,10 +52,11 @@ class SIRS(SIR):
         super().build(params)
 
         # add components needed for SIRS
-        pResuscept = params[self.P_RESUSCEPT]
+        [pResuscept] = self.getParameters(params, [self.P_RESUSCEPT])
         self.trackNodesInCompartment(self.REMOVED)
 
         self.addEventPerElement(self.REMOVED, pResuscept, self.resuscept, self.RESUSCEPT)
+
 
     def resuscept(self, t: float, n: Any):
         '''Perform a re-susceptibility event. This changes the compartment of

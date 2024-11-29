@@ -46,11 +46,13 @@ class MultiCompartmentedEdgeLocus(CompartmentedEdgeLocus):
         self._left = l
         self._rights = set(rs)
 
+
     def compartments(self) -> List[str]:
         '''Return the compartments of the node endpoints we monitor.
 
         :returns: the compartments'''
         return list(self._rights.union(set(self._left)))
+
 
     def matches(self, g: Graph, n: Node, m: Node) -> int:
         '''Test whether the given edge has the correct compartment endpoints for
@@ -92,7 +94,8 @@ class Opinion(CompartmentedModel):
     The difference between this process and :class:`SIR` is that
     "spreaders" become "stiflers" at a rate proportional to their
     contact with stiflers *and* spreaders.
-    """
+
+    :param: name (optional) instance name"""
 
     # Experimental parameters
     P_AFFECTED: Final[float] = 'epydemic.opinion.pAffected'  #: Parameter for probability of initially being affected at start.
@@ -106,8 +109,8 @@ class Opinion(CompartmentedModel):
     GP: Final[str] = 'epydemic.opinion.GP'                   #: Compartment for edges able to transmit the rumour.
     PPT: Final[str] = 'epydemic.opinion.PPT'                 #: Compartment for edges able to stifle the rumour.
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name: str = None):
+        super().__init__(name)
 
     def build(self, params: Dict[str, Any]):
         """

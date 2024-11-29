@@ -38,17 +38,18 @@ class CoinfectionTest(unittest.TestCase):
         p1 = SIR("First disease")
         p1.setParameters(params,
                          {SIR.P_INFECT: 0.1,
-                          SIR.P_INFECTED: 1.0 / N,
-                          SIR.P_REMOVE: 0.005,
+                          SIR.P_INFECTED: 5.0 / N,
                           })
 
         # second infection
         p2 = SIR("Second disease")
         p2.setParameters(params,
                          {SIR.P_INFECT: 0.3,
-                          SIR.P_INFECTED: 1.0 / N,
-                          SIR.P_REMOVE: 0.005,
+                          SIR.P_INFECTED: 5.0 / N,
                           })
+
+        # common removal rate
+        params[SIR.P_REMOVE] = 0.005
 
         # run the processes together
         ps = ProcessSequence([p1, p2])
@@ -57,8 +58,8 @@ class CoinfectionTest(unittest.TestCase):
 
         # we should have more nodes hit by the second infection than by the first
         g = e.network()
-        hit1 = [n for n in g.nodes if g.nodes[n].get(p1.HITTING_PROCESS_NAME) == "First disease"]
-        hit2 = [n for n in g.nodes if g.nodes[n].get(p2.HITTING_PROCESS_NAME) == "Second disease"]
+        hit1 = [n for n in g.nodes if g.nodes[n].get(p1.HITTING_PROCESS_NAME) == p1.instanceName()]
+        hit2 = [n for n in g.nodes if g.nodes[n].get(p2.HITTING_PROCESS_NAME) == p2.instanceName()]
         self.assertTrue(len(hit2) > len(hit1))
         self.assertEqual(rc[Experiment.RESULTS][SIR.REMOVED], len(hit1) + len(hit2))
 

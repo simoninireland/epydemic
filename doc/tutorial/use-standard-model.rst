@@ -17,6 +17,18 @@ We first need to import the basic classes.
    from epydemic import SIR, StochasticDynamics, ERNetwork
 
 
+Creating a model
+----------------
+
+Let's start with a disaese process. For simplicity we'll using the
+builtin :class:`SIR` process.
+
+.. code-block:: python
+
+    # create a model
+    m = SIR()                      # the model (process) to simulate
+
+
 Providing parameters
 --------------------
 
@@ -30,9 +42,16 @@ probability.
 .. code-block:: python
 
     param = dict()
-    param[SIR.P_INFECT] = 0.1        # the probability of infection
-    param[SIR.P_REMOVE] = 0.5        # the probability of removal
-    param[SIR.P_INFECTED] = 0.01     # the random fraction of nodes initially infected
+    m.setParameters(param, {SIR.P_INFECT: 0.1,      # the probability of infection
+			    SIR.P_REMOVE: 0.5,      # the probability of removal
+			    SIR.P_INFECTED: 0.01})  # the fraction of nodes initially infected
+
+.. note::
+
+   We set the parameters relating to the process using
+   :meth:`Process.setParameters`. You can also put the parameters into
+   the dict directly, but this way is more flexible for more
+   complicated cases involving multiple processes.
 
 
 Providing a network
@@ -56,8 +75,7 @@ We can now perform a single run of the simulation, using :term:`stochastic dynam
 
 .. code-block:: python
 
-    # create a model and a dynamics to run it
-    m = SIR()                      # the model (process) to simulate
+    # create a network and tie it together with the model using a dynamics
     g = ERNetwork()                # network generator for ER networks
     e = StochasticDynamics(m, g)   # use stochastic (Gillespie) dynamics
 
@@ -80,7 +98,7 @@ We can re-run the simulation, with or without changing the parameters.
     e.run()
 
     # change something and re-run
-    param[SIR.P_REMOVE] = 1.0
+    m.setParameters(param, {SIR.P_REMOVE: 1.0})
     rc = e.set(param).run()
 
 
@@ -91,7 +109,12 @@ The ``run`` method returns a dict of results. The structure of this
 dict is defined by ``epyc``, and is described :ref:`here
 <epyc:results-experiment>`: for our purposes, we will simply see a
 nested dict with the results of the experiment appearing in a dict
-under the ``epyc.Experiment.RESULTS`` key.
+under the ``epyc.Experiment.RESULTS`` key. Or you can simply use
+:meth:`Process.getResults`:
+
+.. code-block:: python
+
+   [nS, nI, nR] = m.getResults(rc, [SIR.S, SIR.I, SIR.R])
 
 The experimental resuilts are constructed by the
 :meth:`Process.results` method. This is overridden by

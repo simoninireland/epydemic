@@ -79,7 +79,6 @@ SOURCES_CODE = \
 	epydemic/archive/builder.py
 SOURCES_TESTS_INIT = test/__init__.py
 SOURCES_TESTS = \
-	test/test_bitstream.py \
 	test/test_networkdynamics.py \
 	test/test_stochasticrates.py \
 	test/test_compartmentedmodel.py \
@@ -167,6 +166,7 @@ SOURCES_DOCUMENTATION = \
 	doc/implementation.rst \
 	doc/implementation/challenges.rst \
 	doc/implementation/no-multiple-inheritance.rst \
+	doc/implementation/multiple-instances.rst \
 	doc/implementation/events.rst \
 	doc/implementation/dynamics.rst \
 	doc/implementation/event-interactions.rst \
@@ -179,6 +179,7 @@ SOURCES_DOCUMENTATION = \
 	doc/cookbook/percolation-threshold.rst \
 	doc/cookbook/mesostructure.rst \
 	doc/cookbook/from-r-to-probabilities.rst \
+	doc/cookbook/coinfection.rst \
 	doc/cookbook/speed.rst \
 	doc/cookbook/compare-series.rst
 SOURCES_DIAGRAMS = \
@@ -231,7 +232,7 @@ DIST_WHEEL = dist/$(PACKAGENAME)-$(VERSION)-py3-none-any.whl
 
 # Base commands
 PYTHON = python3
-TOX = tox
+PYTEST = pytest
 COVERAGE = coverage
 PIP = pip
 TWINE = twine
@@ -276,7 +277,7 @@ DEV_REQUIREMENTS = dev-requirements.txt
 PY_REQUIREMENTS = $(shell $(SED) -e '/^typing_extensions/d' -e 's/^\(.*\)/"\1",/g' $(REQUIREMENTS) | $(TR) '\n' ' ')
 
 # Constructed commands
-RUN_TESTS = $(TOX)
+RUN_TESTS = $(PYTEST) $(SOURCES_TESTS)
 RUN_COVERAGE = $(COVERAGE) erase && $(COVERAGE) run -a setup.py test && $(COVERAGE) report -m --include '$(PACKAGENAME)*'
 RUN_SETUP = $(PYTHON) setup.py
 RUN_SPHINX_HTML = PYTHONPATH=$(ROOT) make html
