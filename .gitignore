@@ -111,6 +111,7 @@ TAGS
 # Environment variables
 .envrc
 .direnv/
+.pypirc
 
 # Profiling results
 *.pstats
