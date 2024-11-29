@@ -89,6 +89,8 @@ Features
   and Susceptible-Exposed-Infected-Susceptible (:term:`SEIR`)
   models built-in, with variations
 
+- Support for multiple diseases (co-infection) in the same simulation
+
 - Opinion dynamics to model the spread of rumours
 
 - Vaccination models that reduce infection in vaccinated
@@ -98,10 +100,10 @@ Features
 - Addition-deletion process to model natural birth and death
 
 - Pulse-coupled synchronisation process to explore the behaviour of
-  coupled oscillators and similar systems.
+  coupled oscillators and similar systems
 
-- An implementation of the Newman-Ziff algorithm for studying
-  :term:`percolation`
+- An implementation of the Newman-Ziff algorithm for studying both
+  bond and site :term:`percolation`
 
 - Includes a library for working with :term:`generating functions`, as
   used in many research papers in network science
