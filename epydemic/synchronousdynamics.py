@@ -18,7 +18,6 @@
 # along with epydemic. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import sys
-from copy import copy
 from networkx import Graph
 from epydemic import Dynamics, rng, Process, NetworkGenerator, Locus, Element, EventFunction
 from typing import Any, Dict, Union, Tuple, List

@@ -358,7 +358,7 @@ class SitePercolation(NewmanZiff):
 
     def __init__(self, g: Graph = None, samples: Union[int, Iterable[float]] = None):
         super().__init__(g, samples)
-        self._originalWorkingNetwork : Graph = None
+        self._originalWorkingNetwork: Graph = None
 
     def setUp(self, params: Dict[str, Any]):
         '''Set up the process, creating the initial components data structure from the
