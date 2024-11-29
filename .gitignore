@@ -108,6 +108,10 @@ ENV/
 \#*\#
 TAGS
 
+# Environment variables
+.envrc
+.direnv/
+
 # Profiling results
 *.pstats
 
